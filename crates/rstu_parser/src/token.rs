@@ -125,14 +125,12 @@ impl TokenKind {
         })
     }
 
+    #[rustfmt::skip]
     token_kinds!(
         // IMPORTANT:
         // The order of the enum matters, as the first matching token will be picked.
         // Format (name, context length, context regex, token regex)
-        (
-            Separator,
-            format!(r"\n[{0}]{{4,}}\n", RECOMMENDED_SECTION_CHARS)
-        ),
+        (Separator, format!(r"\n[{0}]{{4,}}\n", RECOMMENDED_SECTION_CHARS)),
         (Indent, r"\n[ \t]+[^ \t\n]"),
         (Spaces, r"[^ \t\n][ \t]+[^ \t]"),
         (DoubleDot, r"[\n\s]\.\.[\n\s]"),
@@ -141,53 +139,14 @@ impl TokenKind {
         (BlankLine, r"\n[ \t]*\n(.|\n)"),
         (NewLine, r"[^\n]\n(.|\n)"),
         (Word, r"[^A-Za-z0-9_][A-Za-z0-9_]+[^A-Za-z0-9_]"),
-        (
-            Strong,
-            format!(
-                r"(?:{0}\*\*[^\s]|[^\s]\*\*{1})",
-                INLINE_PRE_CHARS, INLINE_POST_CHARS
-            )
-        ),
-        (
-            Emphasis,
-            format!(
-                r"(?:{0}\*[^\s]|[^\s]\*{1})",
-                INLINE_PRE_CHARS, INLINE_POST_CHARS
-            )
-        ),
-        (
-            InlineLiteral,
-            format!(
-                r"(?:{0}``[^\s]|[^\s]``{1})",
-                INLINE_PRE_CHARS, INLINE_POST_CHARS
-            )
-        ),
-        (
-            InterpretedText,
-            format!(
-                r"(?:{0}`[^\s]|[^\s]`{1})",
-                INLINE_PRE_CHARS, INLINE_POST_CHARS
-            )
-        ),
-        (
-            SubstitutionReference,
-            format!(
-                r"(?:{0}\|[^\s]|[^\s]\|{1})",
-                INLINE_PRE_CHARS, INLINE_POST_CHARS
-            )
-        ),
-        (
-            InlineInternalTarget,
-            format!(r"{0}_`[^\s]", INLINE_PRE_CHARS)
-        ),
-        (
-            FootnoteReferenceOpen,
-            format!(r"{0}\[[^\s]", INLINE_PRE_CHARS)
-        ),
-        (
-            FootnoteReferenceClose,
-            format!(r"[^\s]\]_{0}", INLINE_POST_CHARS)
-        ),
+        (Strong, format!(r"(?:{0}\*\*[^\s]|[^\s]\*\*{1})", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
+        (Emphasis, format!(r"(?:{0}\*[^\s]|[^\s]\*{1})", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
+        (InlineLiteral, format!(r"(?:{0}``[^\s]|[^\s]``{1})", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
+        (InterpretedText, format!(r"(?:{0}`[^\s]|[^\s]`{1})", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
+        (SubstitutionReference, format!(r"(?:{0}\|[^\s]|[^\s]\|{1})", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
+        (InlineInternalTarget, format!(r"{0}_`[^\s]", INLINE_PRE_CHARS)),
+        (FootnoteReferenceOpen, format!(r"{0}\[[^\s]", INLINE_PRE_CHARS)),
+        (FootnoteReferenceClose, format!(r"[^\s]\]_{0}", INLINE_POST_CHARS)),
         (HyperlinkReference, format!(r"[^\s]_{0}", INLINE_POST_CHARS)),
         (Punctuation, r"(.|\n)[[:punct:]](.|\n)"),
         (LiteralChar, r"(.|\n).(.|\n)"),
