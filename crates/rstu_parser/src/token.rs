@@ -90,27 +90,27 @@ impl TokenCategory {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TokenKind {
-    Separator,
-    Indent,
-    Dedent,
-    Spaces,
-    DoubleDot,
-    DoubleColon,
-    TableHorizontal,
     BlankLine,
-    NewLine,
-    Word,
-    Punctuation,
-    Strong,
+    Dedent,
+    DoubleColon,
+    DoubleDot,
     Emphasis,
-    InterpretedText,
-    InlineLiteral,
-    SubstitutionReference,
-    InlineInternalTarget,
-    FootnoteReferenceOpen,
     FootnoteReferenceClose,
+    FootnoteReferenceOpen,
     HyperlinkReference,
+    Indent,
+    InlineInternalTarget,
+    InlineLiteral,
+    InterpretedText,
     LiteralChar,
+    NewLine,
+    Punctuation,
+    Separator,
+    Spaces,
+    Strong,
+    SubstitutionReference,
+    TableHorizontal,
+    Word,
 }
 
 impl TokenKind {
@@ -193,8 +193,6 @@ impl TokenKind {
         (LiteralChar, r"(.|\n).(.|\n)"),
         (Dedent, r"") // never matches, assigned by the lexer
     );
-
-    // tests according to inline markup recognition rules.
 
     pub fn find(self, input: &str) -> Option<&str> {
         self.regex().find(input).map(|m| m.as_str())
