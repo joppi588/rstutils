@@ -150,7 +150,7 @@ impl TokenKind {
         (HyperlinkReference, format!(r"[^\s]_{0}", INLINE_POST_CHARS)),
         (Punctuation, r"(.|\n)[[:punct:]](.|\n)"),
         (LiteralChar, r"(.|\n).(.|\n)"),
-        (Dedent, r"") // never matches, assigned by the lexer
+        (Dedent, r""), // never matches, assigned by the lexer
     );
 
     pub fn find(self, input: &str) -> Option<&str> {
