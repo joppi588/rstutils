@@ -1,0 +1,56 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: |
+        Unindented paragraph.
+- class: BlockQuote
+  children:
+  - class: BlankLine
+  - class: Block
+    attributes:
+      indent: 4
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: |
+            Block quote 1.
+    - class: BlankLine
+    - class: Attribution
+      attributes:
+        marker: '-- '
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: |
+              Attribution 1
+    - class: BlankLine
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: |
+            Block quote 2.
+- class: BlankLine
+- class: Comment
+  attributes:
+    text: ''
+- class: BlockQuote
+  children:
+  - class: BlankLine
+  - class: Block
+    attributes:
+      indent: 4
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: |
+            Block quote 3.

@@ -23,10 +23,8 @@ use test_parser::rst_vs_yaml;
 #[case("block_quote_08")]
 #[case("block_quote_09")]
 #[case("block_quote_10")]
-// TODO: Block quote and definition-list interaction is not implemented.
-// #[case("block_quote_11")]
-// TODO: Attribution nodes are not implemented.
-// #[case("block_quote_12")]
+#[case("block_quote_11")]
+#[case("block_quote_12")]
 fn parse_block_quote(#[case] test_case: &str) {
     rst_vs_yaml!("block_quotes/ok", test_case);
 }
