@@ -260,7 +260,6 @@ fn to_json_serializes_node_tree_without_parent() {
             "attributes": {
                 "lang": "rst"
             },
-            "text": null,
             "children": [
                 {
                     "kind": "Section",
@@ -268,13 +267,10 @@ fn to_json_serializes_node_tree_without_parent() {
                         "closing_style": "=========",
                         "opening_style": "========="
                     },
-                    "text": null,
                     "children": [
                         {
                             "kind": "Title",
-                            "attributes": {},
                             "text": "Heading 1\n",
-                            "children": []
                         }
                     ]
                 }
@@ -304,18 +300,14 @@ fn to_yaml_serializes_node_tree_without_parent() {
         r#"kind: Document
 attributes:
   lang: rst
-text: null
 children:
   - kind: Section
     attributes:
       closing_style: =========
       opening_style: =========
-    text: null
     children:
       - kind: Title
-        attributes: {}
         text: "Heading 1\n"
-        children: []
 "#,
     )
     .expect("failed to parse expected yaml");

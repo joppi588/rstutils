@@ -1,70 +1,41 @@
 kind: Document
-attributes: {}
-text: null
 children:
   - kind: Section
     attributes:
       section_marker: -------------------------------
-    text: null
     children:
       - kind: Title
-        attributes: {}
         text: "Short text with strong elements\n"
-        children: []
       - kind: Paragraph
-        attributes: {}
-        text: null
         children:
           - kind: Strong
             attributes:
               text: print this in bold text.
-            text: null
-            children: []
       - kind: Paragraph
-        attributes: {}
-        text: null
         children:
           - kind: PlainText
             attributes:
               text: "print "
-            text: null
-            children: []
           - kind: Strong
             attributes:
               text: this
-            text: null
-            children: []
           - kind: PlainText
             attributes:
               text: " too.\n"
-            text: null
-            children: []
       - kind: Paragraph
-        attributes: {}
-        text: null
         children:
           - kind: PlainText
             attributes:
               text: "This "
-            text: null
-            children: []
           - kind: Strong
             attributes:
               text: should
-            text: null
-            children: []
           - kind: PlainText
             attributes:
               text: " "
-            text: null
-            children: []
           - kind: Strong
             attributes:
               text: work as
-            text: null
-            children: []
           - kind: PlainText
             attributes:
               text: " well.\n"
-            text: null
-            children: []
