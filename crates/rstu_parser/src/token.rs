@@ -95,6 +95,7 @@ pub enum TokenKind {
     DoubleColon,
     DoubleDot,
     Emphasis,
+    Field,
     FootnoteReferenceClose,
     FootnoteReferenceOpen,
     HyperlinkReference,
@@ -131,14 +132,24 @@ impl TokenKind {
         // The order of the enum matters, as the first matching token will be picked.
         // Format (name, context length, context regex, token regex)
         (Separator, format!(r"\n[{0}]{{4,}}\n", RECOMMENDED_SECTION_CHARS)),
+
         (Indent, r"\n[ \t]+[^ \t\n]"),
-        (Spaces, r"[^ \t\n][ \t]+[^ \t]"),
-        (DoubleDot, r"[\n\s]\.\.[\n\s]"),
-        (DoubleColon, r"(.|\n)::(.|\n)"),
-        (TableHorizontal, r"\n=+(?:\s+=+)+\s*\n"),
         (BlankLine, r"\n[ \t]*\n(.|\n)"),
         (NewLine, r"[^\n]\n(.|\n)"),
+
+        // Directives
+        (DoubleDot, r"[\n\s]\.\.[\n\s]"),
+        (DoubleColon, r"(.|\n)::(.|\n)"),
+
+        (TableHorizontal, r"\n=+(?:\s+=+)+\s*\n"),
+
+
+        // Plain text
         (Word, r"[^A-Za-z0-9_][A-Za-z0-9_]+[^A-Za-z0-9_]"),
+        (Spaces, r"[^ \t\n][ \t]+[^ \t]"),
+        (Punctuation, r"(.|\n)[[:punct:]](.|\n)"),
+
+        // Inline
         (Strong, format!(r"(?:{0}\*\*[^\s]|[^\s]\*\*{1})", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
         (Emphasis, format!(r"(?:{0}\*[^\s]|[^\s]\*{1})", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
         (InlineLiteral, format!(r"(?:{0}``[^\s]|[^\s]``{1})", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
@@ -148,7 +159,10 @@ impl TokenKind {
         (FootnoteReferenceOpen, format!(r"{0}\[[^\s]", INLINE_PRE_CHARS)),
         (FootnoteReferenceClose, format!(r"[^\s]\]_{0}", INLINE_POST_CHARS)),
         (HyperlinkReference, format!(r"[^\s]_{0}", INLINE_POST_CHARS)),
-        (Punctuation, r"(.|\n)[[:punct:]](.|\n)"),
+
+        // Lists
+        (Field,r"[\s\n]:[^:]+:[.\n]"),
+
         (LiteralChar, r"(.|\n).(.|\n)"),
         (Dedent, r""), // never matches, assigned by the lexer
     );
@@ -314,5 +328,13 @@ mod tests {
         assert!(TokenKind::Word.is(TokenCategory::PLAIN));
         assert!(TokenKind::Punctuation.is(TokenCategory::PLAIN));
         assert!(!TokenKind::Separator.is(TokenCategory::PLAIN));
+    }
+
+    #[test]
+    fn field_token() {
+        assert_eq!(
+            TokenKind::Field.find("\n:some_field:\n"),
+            Some("\n:some_field:\n")
+        )
     }
 }
