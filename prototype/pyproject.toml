@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "rstutils-prototype"
+version = "0.0.1"
+description = "Prototype package for rstutils"
+authors = ["Jochen Schmaehling <tostmann1@web.de>"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+[tool.poetry.dev-dependencies]
+ruff = "^0.0.0"
+
+[build-system]
+requires = ["hatchling>=1.11,<2"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 88
+select = ["E", "F", "W", "C", "I", "R", "S"]
