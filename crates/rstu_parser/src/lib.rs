@@ -1,6 +1,12 @@
+// SPDX-FileCopyrightText: 2026 Jochen Schmaehling <tostmann1@web.de>
+//
+// SPDX-License-Identifier: MIT
+
+
 pub fn add(left: u64, right: u64) -> u64 {
     left + right
 }
+
 
 #[cfg(test)]
 mod tests {
