@@ -1,12 +1,15 @@
-use rstu_parser::add;
+use rstu_parser::lexer::tokenize;
+use std::fs;
+use std::path::Path;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+#[test]
+fn tokenize_lorem_ipsum_file() {
+    let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/data/lorem_ipsum.rst");
+    let contents = fs::read_to_string(path).expect("failed to read lorem ipsum test file");
 
-    #[test]
-    fn it_works_also_here() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+    let tokens = tokenize(&contents);
+
+    assert_eq!(tokens.len(), 19);
+    assert_eq!(tokens.first().map(String::as_str), Some("Lorem Ipsum Heading"));
+    assert_eq!(tokens.last().map(String::as_str), Some(""));
 }
