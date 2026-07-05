@@ -1,6 +1,8 @@
 {
   "name": "Rust Dev Container",
-  "image": "mcr.microsoft.com/devcontainers/rust:1",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
   "forwardPorts": [],
   "customizations": {
     "vscode": {
