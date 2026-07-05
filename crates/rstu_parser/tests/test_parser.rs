@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-use rstu_parser::{Document, NodeKind, parse};
+use rst_parser;
 use std::fs;
 use std::path::Path;
 

@@ -1,3 +1,10 @@
+// SPDX-FileCopyrightText: 2026 Jochen Schmaehling <tostmann1@web.de>
+//
+// SPDX-License-Identifier: MIT
+
+
+// Lexer development on hold
+
 use rstu_parser::lexer::tokenize;
 use std::fs;
 use std::path::Path;
