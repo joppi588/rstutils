@@ -19,56 +19,49 @@ fn test_parses_lorem_ipsum_document_tree() {
     // GIVEN An error-free RST file 
     // WHEN The file is parsed
     // THEN The document tree has heading, tile and bold text
-    let path = test_data_path("ok_mixed_lorem_ipsum.rst");
-    let contents = fs::read_to_string(path).expect("failed to read lorem ipsum test file");
-
+    let contents = fs::read_to_string(test_data_path("ok_mixed_lorem_ipsum.rst"))
+        .expect("failed to read lorem ipsum test file");
     let document = parse(&contents).expect("failed to parse lorem ipsum fixture");
 
     assert_eq!(document.children().len(), 1);
 
-    let first_child = document.children().first().expect("expected a section");
-    let section = match first_child {
-        StructuralSubElement::SubStructure(substructure) => match substructure.as_ref() {
-            SubStructure::Section(section) => section,
-            _ => panic!("expected a section node"),
-        },
-        _ => panic!("expected a section node"),
+    let StructuralSubElement::SubStructure(sub) = document.children().first().unwrap() else {
+        panic!("expected a section node");
+    };
+    let SubStructure::Section(section) = sub.as_ref() else {
+        panic!("expected a section node");
     };
 
-    let section_children = section.children();
-    let title = section_children
+    let children = section.children();
+    let title = children
         .iter()
-        .find_map(|child| match child {
-            StructuralSubElement::Title(title) => Some(title),
-            _ => None,
-        })
+        .find_map(|c| if let StructuralSubElement::Title(t) = c { Some(t) } else { None })
         .expect("expected a title element");
-    let title_text = title.children().iter().find_map(|child| match child {
-        TextOrInlineElement::String(text) => Some(text.as_str()),
-        _ => None,
-    });
+    let title_text = title
+        .children()
+        .iter()
+        .find_map(|c| if let TextOrInlineElement::String(s) = c { Some(s.as_str()) } else { None });
     assert_eq!(title_text, Some("Lorem Ipsum Heading"));
 
-    let last_child = section_children.last().expect("expected a trailing child");
-    let paragraph = match last_child {
-        StructuralSubElement::SubStructure(substructure) => match substructure.as_ref() {
-            SubStructure::BodyElement(body_element) => match body_element.as_ref() {
-                BodyElement::Paragraph(paragraph) => Some(paragraph),
-                _ => None,
-            },
-            _ => None,
-        },
-        _ => None,
-    }
-    .expect("expected a paragraph as the last child");
+    let StructuralSubElement::SubStructure(sub) = children.last().unwrap() else {
+        panic!("expected a paragraph as the last child");
+    };
+    let SubStructure::BodyElement(body) = sub.as_ref() else {
+        panic!("expected a paragraph as the last child");
+    };
+    let BodyElement::Paragraph(paragraph) = body.as_ref() else {
+        panic!("expected a paragraph as the last child");
+    };
 
-    let strong_text = paragraph.children().iter().find_map(|child| match child {
-        TextOrInlineElement::Strong(strong) => Some(strong.children().iter().find_map(|grandchild| match grandchild {
-            TextOrInlineElement::String(text) => Some(text.as_str()),
-            _ => None,
-        })),
-        _ => None,
-    })
-    .flatten();
+    let strong_text = paragraph
+        .children()
+        .iter()
+        .find_map(|c| if let TextOrInlineElement::Strong(s) = c { Some(s) } else { None })
+        .and_then(|strong| {
+            strong
+                .children()
+                .iter()
+                .find_map(|c| if let TextOrInlineElement::String(s) = c { Some(s.as_str()) } else { None })
+        });
     assert_eq!(strong_text, Some("end of file"));
 }
