@@ -8,11 +8,15 @@ use document_tree::{
 };
 use rst_parser::parse;
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
+
+fn test_data_path(filename: &str) -> PathBuf {
+    Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/data").join(filename)
+}
 
 #[test]
 fn parses_lorem_ipsum_document_tree() {
-    let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/data/ok_mixed_lorem_ipsum.rst");
+    let path = test_data_path("ok_mixed_lorem_ipsum.rst");
     let contents = fs::read_to_string(path).expect("failed to read lorem ipsum test file");
 
     let document = parse(&contents).expect("failed to parse lorem ipsum fixture");
