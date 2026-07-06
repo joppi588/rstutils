@@ -18,7 +18,7 @@ fn test_data_path(filename: &str) -> PathBuf {
 fn test_parses_lorem_ipsum_document_tree() {
     // GIVEN An error-free RST file 
     // WHEN The file is parsed
-    // THEN The document tree represents the file blocks
+    // THEN The document tree has heading, tile and bold text
     let path = test_data_path("ok_mixed_lorem_ipsum.rst");
     let contents = fs::read_to_string(path).expect("failed to read lorem ipsum test file");
 
@@ -26,8 +26,8 @@ fn test_parses_lorem_ipsum_document_tree() {
 
     assert_eq!(document.children().len(), 1);
 
-    let section = document.children().first().expect("expected a section");
-    let section = match section {
+    let first_child = document.children().first().expect("expected a section");
+    let section = match first_child {
         StructuralSubElement::SubStructure(substructure) => match substructure.as_ref() {
             SubStructure::Section(section) => section,
             _ => panic!("expected a section node"),
