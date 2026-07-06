@@ -1,0 +1,16 @@
+{
+  "name": "Rust Dev Container",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "forwardPorts": [],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "rust-lang.rust-analyzer"
+      ]
+    }
+  },
+  "postCreateCommand": "rustup toolchain install 1.94 --profile minimal && rustup override set 1.94",
+  "remoteUser": "vscode"
+}
