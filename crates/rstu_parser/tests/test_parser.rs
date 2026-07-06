@@ -21,7 +21,7 @@ fn test_parses_lorem_ipsum_document_tree() {
     // THEN The document tree has heading, tile and bold text
     let contents = fs::read_to_string(test_data_path("ok_mixed_lorem_ipsum.rst"))
         .expect("failed to read lorem ipsum test file");
-    let document = parse(&contents).expect("failed to parse lorem ipsum fixture");
+    let document = parse(&contents).expect("failed to parse lorem ipsum example");
 
     assert_eq!(document.children().len(), 1);
 
@@ -63,4 +63,17 @@ fn test_parses_lorem_ipsum_document_tree() {
                 .find_map(|c| if let TextOrInlineElement::String(s) = c { Some(s.as_str()) } else { None })
         });
     assert_eq!(strong_text, Some("end of file"));
+}
+
+#[test]
+fn test_fails_on_invalid_directive_syntax() {
+    // GIVEN An RST file with double-colon directive syntax (invalid)
+    // WHEN The file is parsed
+    // THEN Parsing should fail with an error
+    let contents = fs::read_to_string(test_data_path("nok_mixed_lorem_ipsum.rst"))
+        .expect("failed to read nok rst file");
+    
+    let result = parse(&contents);
+    
+    assert!(result.is_err(), "expected parse to fail for invalid directive syntax");
 }
