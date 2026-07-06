@@ -6,7 +6,7 @@ use document_tree::{
     HasChildren,
     element_categories::{BodyElement, StructuralSubElement, SubStructure, TextOrInlineElement},
 };
-use rst_parser::parse;
+use rstu_parser::parse;
 use std::fs;
 use std::path::{Path, PathBuf};
 
