@@ -15,7 +15,10 @@ fn test_data_path(filename: &str) -> PathBuf {
 }
 
 #[test]
-fn parses_lorem_ipsum_document_tree() {
+fn test_parses_lorem_ipsum_document_tree() {
+    // GIVEN An error-free RST file 
+    // WHEN The file is parsed
+    // THEN The document tree represents the file blocks
     let path = test_data_path("ok_mixed_lorem_ipsum.rst");
     let contents = fs::read_to_string(path).expect("failed to read lorem ipsum test file");
 
