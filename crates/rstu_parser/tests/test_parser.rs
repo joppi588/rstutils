@@ -31,7 +31,6 @@ fn test_parses_lorem_ipsum_document_tree() {
     let SubStructure::Section(section) = sub.as_ref() else {
         panic!("expected a section node");
     };
-
     let children = section.children();
     let title = children
         .iter()
