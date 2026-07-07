@@ -293,7 +293,6 @@ version = "0.1.0"
 name = "rstu_parser"
 version = "0.1.0"
 dependencies = [
- "anyhow",
  "document_tree",
  "rst_parser",
 ]
