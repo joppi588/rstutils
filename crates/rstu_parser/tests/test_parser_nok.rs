@@ -2,10 +2,6 @@
 //
 // SPDX-License-Identifier: MIT
 
-use document_tree::{
-    HasChildren,
-    element_categories::{BodyElement, StructuralSubElement, SubStructure, TextOrInlineElement},
-};
 use rst_parser::parse;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -26,4 +22,17 @@ fn test_failure_short_underline() {
     let result = parse(&contents);
     
     assert!(result.is_err(), "short underline");
+}
+
+#[test]
+fn test_failure_image_numeric_options() {
+    // GIVEN An RST file with an invalid numeric image option
+    // WHEN The file is parsed
+    // THEN Parsing fails with an error
+    let contents = fs::read_to_string(test_data_path("nok_image_numeric_options.rst"))
+        .expect("failed to read nok image options rst file");
+
+    let result = parse(&contents);
+
+    assert!(result.is_err(), "invalid image numeric option");
 }
