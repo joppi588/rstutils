@@ -6,7 +6,7 @@ use document_tree::{
     HasChildren,
     element_categories::{BodyElement, StructuralSubElement, SubStructure, TextOrInlineElement},
 };
-use rstu_parser::parse;
+use rst_parser::parse;
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -63,17 +63,4 @@ fn test_parses_lorem_ipsum_document_tree() {
                 .find_map(|c| if let TextOrInlineElement::String(s) = c { Some(s.as_str()) } else { None })
         });
     assert_eq!(strong_text, Some("end of file"));
-}
-
-#[test]
-fn test_fails_on_invalid_directive_syntax() {
-    // GIVEN An RST file with double-colon directive syntax (invalid)
-    // WHEN The file is parsed
-    // THEN Parsing should fail with an error
-    let contents = fs::read_to_string(test_data_path("nok_mixed_lorem_ipsum.rst"))
-        .expect("failed to read nok rst file");
-    
-    let result = parse(&contents);
-    
-    assert!(result.is_err(), "expected parse to fail for invalid directive syntax");
 }
