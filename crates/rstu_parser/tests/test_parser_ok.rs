@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: MIT
 
 use document_tree::{
+    attribute_types::Measure,
+    extra_attributes::ExtraAttributes,
     HasChildren,
     element_categories::{BodyElement, StructuralSubElement, SubStructure, TextOrInlineElement},
 };
@@ -21,7 +23,7 @@ fn test_parses_lorem_ipsum_document_tree() {
     // THEN The document tree has heading, tile and bold text
     let contents = fs::read_to_string(test_data_path("ok_mixed_lorem_ipsum.rst"))
         .expect("failed to read lorem ipsum test file");
-    let document = parse(&contents).expect("failed to parse lorem ipsum fixture");
+    let document = parse(&contents).expect("failed to parse lorem ipsum example");
 
     assert_eq!(document.children().len(), 1);
 
@@ -63,4 +65,35 @@ fn test_parses_lorem_ipsum_document_tree() {
                 .find_map(|c| if let TextOrInlineElement::String(s) = c { Some(s.as_str()) } else { None })
         });
     assert_eq!(strong_text, Some("end of file"));
+}
+
+#[test]
+fn test_parses_numeric_image_options() {
+    // GIVEN An RST file with numeric image options
+    // WHEN The file is parsed
+    // THEN The image node exposes height, width and scale
+    let contents = fs::read_to_string(test_data_path("ok_image_numeric_options.rst"))
+        .expect("failed to read image options test file");
+    let document = parse(&contents).expect("failed to parse image options example");
+
+    let image = document
+        .children()
+        .iter()
+        .find_map(|child| {
+            let StructuralSubElement::SubStructure(sub) = child else {
+                return None;
+            };
+            let SubStructure::BodyElement(body) = sub.as_ref() else {
+                return None;
+            };
+            let BodyElement::Image(image) = body.as_ref() else {
+                return None;
+            };
+            Some(image)
+        })
+        .expect("expected an image node");
+
+    assert_eq!(image.extra().height, Some(Measure::Mm(20.0)));
+    assert_eq!(image.extra().width, Some(Measure::Px(300.0)));
+    assert_eq!(image.extra().scale, Some(75));
 }
