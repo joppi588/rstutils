@@ -15,19 +15,19 @@ pub enum TokenKind {
 }
 
 static HEADING_UNDERLINE_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^=+\n$").unwrap());
+    LazyLock::new(|| Regex::new(r"^=+\n$").expect("valid heading regex"));
 
 static INDENT_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^[ \t]+$").unwrap());
+    LazyLock::new(|| Regex::new(r"^[ \t]+$").expect("valid indent regex"));
 
 static DIRECTIVE_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^\.\.\s+([A-Za-z_-]+)::[ \t]*$").unwrap());
+    LazyLock::new(|| Regex::new(r"^\.\.\s+([A-Za-z_-]+)::[ \t]*$").expect("valid directive regex"));
 
 static COMMENT_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^\.\.\s+.*[^:\s](?:\s*)$").unwrap());
+    LazyLock::new(|| Regex::new(r"^\.\.\s+.*[^:\s](?:\s*)$").expect("valid comment regex"));
 
 static TABLE_HORIZONTAL_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^=+(?:\s+=+)+\s*$").unwrap());
+    LazyLock::new(|| Regex::new(r"^=+(?:\s+=+)+\s*$").expect("valid table horizontal regex"));
 
 impl TokenKind {
     pub fn name(self) -> &'static str {
@@ -109,4 +109,3 @@ mod tests {
         assert!(!TokenKind::TableHorizontal.is_match("========"));
     }
 }
-
