@@ -109,3 +109,4 @@ mod tests {
         assert!(!TokenKind::TableHorizontal.is_match("========"));
     }
 }
+
