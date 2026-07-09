@@ -12,6 +12,7 @@ pub enum TokenKind {
     Directive,
     Comment,
     TableHorizontal,
+    BlankLine,
     LiteralString,
 }
 
@@ -30,6 +31,9 @@ static COMMENT_RE: LazyLock<Regex> =
 static TABLE_HORIZONTAL_RE: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"^=+(?:\s+=+)+\s*$").unwrap());
 
+static BLANK_LINE_RE: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"^[ \t]*$").unwrap());
+
 static LITERAL_STRING_RE: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"^([^\s`\n][^`\n]*)").unwrap());
 
@@ -41,6 +45,7 @@ impl TokenKind {
             TokenKind::Directive => "directive",
             TokenKind::Comment => "comment",
             TokenKind::TableHorizontal => "table_horizontal",
+            TokenKind::BlankLine => "blank_line",
             TokenKind::LiteralString => "literal_string",
         }
     }
@@ -52,6 +57,7 @@ impl TokenKind {
             TokenKind::Directive => &DIRECTIVE_RE,
             TokenKind::Comment => &COMMENT_RE,
             TokenKind::TableHorizontal => &TABLE_HORIZONTAL_RE,
+            TokenKind::BlankLine => &BLANK_LINE_RE,
             TokenKind::LiteralString => &LITERAL_STRING_RE,
         }
     }
@@ -113,6 +119,21 @@ mod tests {
     #[test]
     fn table_horizontal_non_matching() {
         assert!(!TokenKind::TableHorizontal.is_match("========"));
+    }
+
+    #[test]
+    fn blank_line_matches_empty() {
+        assert!(TokenKind::BlankLine.is_match(""));
+    }
+
+    #[test]
+    fn blank_line_matches_whitespace_only() {
+        assert!(TokenKind::BlankLine.is_match(" \t"));
+    }
+
+    #[test]
+    fn blank_line_non_matching_text() {
+        assert!(!TokenKind::BlankLine.is_match("text"));
     }
 
     #[test]
