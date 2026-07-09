@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: MIT
 
-// Lexer development on hold
-
 pub fn tokenize(input: &str) -> Vec<String> {
     let mut tokens = Vec::new();
     let mut start = 0;
