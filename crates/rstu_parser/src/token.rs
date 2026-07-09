@@ -5,6 +5,21 @@
 use regex::Regex;
 use std::sync::LazyLock;
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Token {
+    pub kind: TokenKind,
+    pub lexeme: String,
+}
+
+impl Token {
+    pub fn new(kind: TokenKind, lexeme: impl Into<String>) -> Self {
+        Self {
+            kind,
+            lexeme: lexeme.into(),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TokenKind {
     HeadingUnderline,
@@ -26,7 +41,7 @@ static DIRECTIVE_RE: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"^(\.\.\s+([A-Za-z_-]+)::.*)$").unwrap());
 
 static COMMENT_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^(\.\.\s(.*)$").unwrap());
+    LazyLock::new(|| Regex::new(r"^\.\.\s(.*)$").unwrap());
 
 static TABLE_HORIZONTAL_RE: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"^=+(?:\s+=+)+\s*$").unwrap());
@@ -34,8 +49,11 @@ static TABLE_HORIZONTAL_RE: LazyLock<Regex> =
 static BLANK_LINE_RE: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"^[ \t]*$").unwrap());
 
+static NEW_LINE_RE: LazyLock<Regex>=
+    LazyLock::new(|| Regex::new(r"\n").unwrap());
+
 static LITERAL_STRING_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^([^\s`\n][^`\n]*)").unwrap());
+    LazyLock::new(|| Regex::new(r"([^`\n]+)").unwrap());
 
 impl TokenKind {
     pub fn name(self) -> &'static str {
@@ -46,6 +64,7 @@ impl TokenKind {
             TokenKind::Comment => "comment",
             TokenKind::TableHorizontal => "table_horizontal",
             TokenKind::BlankLine => "blank_line",
+            TokenKind::NewLine => "new_line",
             TokenKind::LiteralString => "literal_string",
         }
     }
@@ -58,6 +77,7 @@ impl TokenKind {
             TokenKind::Comment => &COMMENT_RE,
             TokenKind::TableHorizontal => &TABLE_HORIZONTAL_RE,
             TokenKind::BlankLine => &BLANK_LINE_RE,
+            TokenKind::NewLine => &NEW_LINE_RE,
             TokenKind::LiteralString => &LITERAL_STRING_RE,
         }
     }
@@ -73,12 +93,12 @@ mod tests {
 
     #[test]
     fn heading_underline_matches() {
-        assert!(TokenKind::HeadingUnderline.is_match("====\n"));
+        assert!(TokenKind::HeadingUnderline.is_match("===="));
     }
 
     #[test]
     fn heading_underline_non_matching() {
-        assert!(!TokenKind::HeadingUnderline.is_match("==a=\n"));
+        assert!(!TokenKind::HeadingUnderline.is_match("==a="));
     }
 
     #[test]
