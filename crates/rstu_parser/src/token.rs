@@ -12,22 +12,26 @@ pub enum TokenKind {
     Directive,
     Comment,
     TableHorizontal,
+    LiteralString,
 }
 
 static HEADING_UNDERLINE_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^=+\n$").unwrap());
+    LazyLock::new(|| Regex::new(r"^(=+)$").unwrap());
 
 static INDENT_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^[ \t]+$").unwrap());
+    LazyLock::new(|| Regex::new(r"^([ \t]+)").unwrap());
 
 static DIRECTIVE_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^\.\.\s+([A-Za-z_-]+)::[ \t]*$").unwrap());
+    LazyLock::new(|| Regex::new(r"^(\.\.\s+([A-Za-z_-]+)::.*)$").unwrap());
 
 static COMMENT_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^\.\.\s+.*[^:\s](?:\s*)$").unwrap());
+    LazyLock::new(|| Regex::new(r"^(\.\.\s(.*)$").unwrap());
 
 static TABLE_HORIZONTAL_RE: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"^=+(?:\s+=+)+\s*$").unwrap());
+
+static LITERAL_STRING_RE: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"^([^\s`\n][^`\n]*)").unwrap());
 
 impl TokenKind {
     pub fn name(self) -> &'static str {
@@ -37,6 +41,7 @@ impl TokenKind {
             TokenKind::Directive => "directive",
             TokenKind::Comment => "comment",
             TokenKind::TableHorizontal => "table_horizontal",
+            TokenKind::LiteralString => "literal_string",
         }
     }
 
@@ -47,6 +52,7 @@ impl TokenKind {
             TokenKind::Directive => &DIRECTIVE_RE,
             TokenKind::Comment => &COMMENT_RE,
             TokenKind::TableHorizontal => &TABLE_HORIZONTAL_RE,
+            TokenKind::LiteralString => &LITERAL_STRING_RE,
         }
     }
 
@@ -107,6 +113,26 @@ mod tests {
     #[test]
     fn table_horizontal_non_matching() {
         assert!(!TokenKind::TableHorizontal.is_match("========"));
+    }
+
+    #[test]
+    fn literal_string_matches() {
+        assert!(TokenKind::LiteralString.is_match("Hello world"));
+    }
+
+    #[test]
+    fn literal_string_matches_until_backtick() {
+        assert!(TokenKind::LiteralString.is_match("Hello`world"));
+    }
+
+    #[test]
+    fn literal_string_non_matching_whitespace_prefix() {
+        assert!(!TokenKind::LiteralString.is_match(" hello"));
+    }
+
+    #[test]
+    fn literal_string_non_matching_backtick_prefix() {
+        assert!(!TokenKind::LiteralString.is_match("`hello"));
     }
 }
 
