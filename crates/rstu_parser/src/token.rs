@@ -32,6 +32,8 @@ pub enum TokenKind {
     LiteralString,
 }
 
+// Token regexp have three parts: pre-context, token, post-context. Contexts are non-matching groups.
+
 static HEADING_UNDERLINE_RE: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"(?:^|\n)(=+)(?:\n|$)").unwrap());
 
