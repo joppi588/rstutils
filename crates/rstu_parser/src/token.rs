@@ -5,6 +5,12 @@
 use regex::Regex;
 use std::sync::LazyLock;
 
+macro_rules! token_regex {
+    ($pattern:expr) => {
+        LazyLock::new(|| Regex::new($pattern).unwrap())
+    };
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Token {
     pub kind: TokenKind,
@@ -35,28 +41,28 @@ pub enum TokenKind {
 // Token regexp have three parts: pre-context, token, post-context. Contexts are non-matching groups.
 
 static HEADING_UNDERLINE_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"(?:^|\n)(=+)(?:\n|$)").unwrap());
+    token_regex!(r"(?:^|\n)(=+)(?:\n|$)");
 
 static INDENT_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"(?:^|\n)([ \t]+)(?:\n|$)").unwrap());
+    token_regex!(r"(?:^|\n)([ \t]+)(?:\n|$)");
 
 static DIRECTIVE_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"(?:^|\n)(\.\.\s+[A-Za-z_-]+::.*)(?:\n|$)").unwrap());
+    token_regex!(r"(?:^|\n)(\.\.\s+[A-Za-z_-]+::.*)(?:\n|$)");
 
 static COMMENT_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"(?:^|\n)(\.\.\s(?:[^:\n]|:[^:\n])*)(?:\n|$)").unwrap());
+    token_regex!(r"(?:^|\n)(\.\.\s(?:[^:\n]|:[^:\n])*)(?:\n|$)");
 
 static TABLE_HORIZONTAL_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"(?:^|\n)(=+(?:\s+=+)+\s*)(?:\n|$)").unwrap());
+    token_regex!(r"(?:^|\n)(=+(?:\s+=+)+\s*)(?:\n|$)");
 
 static BLANK_LINE_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"(?:^|\n)([ \t]*)(?:\n|$)").unwrap());
+    token_regex!(r"(?:^|\n)([ \t]*)(?:\n|$)");
 
-static NEW_LINE_RE: LazyLock<Regex>=
-    LazyLock::new(|| Regex::new(r"(?:^|[^\n])(\n)(?:$|[^\n])").unwrap());
+static NEW_LINE_RE: LazyLock<Regex> =
+    token_regex!(r"(?:^|[^\n])(\n)(?:$|[^\n])");
 
 static LITERAL_STRING_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"(?:^|\n)([^\s`\n][^`\n]*)(?:\n|$)").unwrap());
+    token_regex!(r"(?:^|\n)([^\s`\n][^`\n]*)(?:\n|$)");
 
 impl TokenKind {
     pub fn name(self) -> &'static str {
