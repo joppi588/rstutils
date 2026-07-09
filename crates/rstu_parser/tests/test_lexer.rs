@@ -2,22 +2,19 @@
 //
 // SPDX-License-Identifier: MIT
 
-
-// Lexer development on hold
-
 use rstu_parser::lexer::tokenize;
+use rstu_parser::token::{Token, TokenKind};
 use std::fs;
 use std::path::Path;
 
 #[test]
-#[ignore = "tokenizer not functional"]
-fn tokenize_lorem_ipsum_file() {
-    let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/data/lorem_ipsum.rst");
-    let contents = fs::read_to_string(path).expect("failed to read lorem ipsum test file");
+fn tokenize_ok_mixed_lorem_ipsum_file() {
+    let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/data/ok_mixed_lorem_ipsum.rst");
+    let contents = fs::read_to_string(path).expect("failed to read mixed lorem ipsum test file");
 
-    let tokens = tokenize(&contents);
+    let tokens: Vec<Token> = tokenize(&contents);
 
-    assert_eq!(tokens.len(), 19);
-    assert_eq!(tokens.first().map(String::as_str), Some("Lorem Ipsum Heading"));
-    assert_eq!(tokens.last().map(String::as_str), Some(""));
+    assert!(!tokens.is_empty());
+    assert_eq!(tokens.first().map(|t| t.kind), Some(TokenKind::LiteralString));
+    assert_eq!(tokens.last().map(|t| t.kind), Some(TokenKind::LiteralString));
 }

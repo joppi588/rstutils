@@ -1,0 +1,4 @@
+The lexer shall work as follows:
+Add a newline character before the input string.
+find a matching token. If no match is found or the match does not start with the second character, return an error. 
+If a match is found, add the corresponding token to the output vector. remove the lexeme from the input string, leaving one character as context.
