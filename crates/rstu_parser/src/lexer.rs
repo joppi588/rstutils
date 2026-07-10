@@ -4,17 +4,6 @@
 
 use crate::token::{Token, TokenKind};
 
-const NON_LITERAL_TOKEN_KINDS: [TokenKind; 8] = [
-    TokenKind::HeadingUnderline,
-    TokenKind::Indent,
-    TokenKind::DoubleColon,
-    TokenKind::DoubleDot,
-    TokenKind::TableHorizontal,
-    TokenKind::BlankLine,
-    TokenKind::NewLine,
-    TokenKind::Word,
-];
-
 pub fn tokenize(input: &str) -> Vec<Token> {
     let mut tokens = Vec::new();
     let input = format!("\n{input}");
@@ -22,8 +11,9 @@ pub fn tokenize(input: &str) -> Vec<Token> {
 
     while remaining.len() > 1 {
         let mut best_match: Option<(TokenKind, usize, usize)> = None;
+        let mut literal_match: Option<(usize, usize)> = None;
 
-        for kind in NON_LITERAL_TOKEN_KINDS {
+        for kind in TokenKind::ALL {
             let token_match = match kind
                 .regex()
                 .captures_iter(&remaining)
@@ -38,6 +28,11 @@ pub fn tokenize(input: &str) -> Vec<Token> {
             };
 
             let candidate = (kind, token_match.start(), token_match.end());
+            if kind == TokenKind::LiteralString {
+                literal_match = Some((candidate.1, candidate.2));
+                continue;
+            }
+
             let replace = match best_match {
                 Some((_, best_start, _)) => candidate.1 < best_start,
                 None => true,
@@ -49,7 +44,11 @@ pub fn tokenize(input: &str) -> Vec<Token> {
         }
 
         let Some((kind, start, end)) = best_match else {
-            tokens.push(Token::new(TokenKind::LiteralString, &remaining[1..]));
+            let Some((start, end)) = literal_match else {
+                break;
+            };
+
+            tokens.push(Token::new(TokenKind::LiteralString, &remaining[start..end]));
             break;
         };
 

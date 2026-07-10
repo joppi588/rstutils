@@ -67,9 +67,21 @@ static WORD_RE: LazyLock<Regex> =
     token_regex!(r"(?:^|[^A-Za-z0-9_])([A-Za-z0-9_]+)(?:$|[^A-Za-z0-9_])");
 
 static LITERAL_STRING_RE: LazyLock<Regex> =
-    token_regex!(r"(?:^|\n)([^\s`\n][^`\n]*)(?:\n|$)");
+    token_regex!(r"(?:^|\n)(.*)(?:\n|$)");
 
 impl TokenKind {
+    pub const ALL: [TokenKind; 9] = [
+        TokenKind::HeadingUnderline,
+        TokenKind::Indent,
+        TokenKind::DoubleDot,
+        TokenKind::DoubleColon,
+        TokenKind::TableHorizontal,
+        TokenKind::BlankLine,
+        TokenKind::NewLine,
+        TokenKind::Word,
+        TokenKind::LiteralString,
+    ];
+
     pub fn name(self) -> &'static str {
         match self {
             TokenKind::HeadingUnderline => "heading_underline",
