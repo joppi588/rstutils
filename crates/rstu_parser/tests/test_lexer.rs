@@ -16,11 +16,11 @@ fn tokenize_ok_mixed_lorem_ipsum_file() {
     let kinds: Vec<TokenKind> = tokens.iter().map(|token| token.kind).collect();
     let expected_kinds = vec![
         TokenKind::Word,
-        TokenKind::LiteralString,
+        TokenKind::LiteralString, // Spaces
         TokenKind::Word,
         TokenKind::NewLine,
         TokenKind::HeadingUnderline,
-        TokenKind::LiteralString,
+        TokenKind::LiteralString, // Blankline
         TokenKind::LiteralString,
         TokenKind::DoubleDot,
         TokenKind::LiteralString,

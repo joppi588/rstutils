@@ -1,7 +1,0 @@
-The lexer shall work as follows:
-Add a newline character before the input string.
-find a matching token (use those except LiteralString). 
-If no match is found treat the remaining string as a LiteralString
-If the match does not start with the second character, treat the text until the token as LiteralString and add it as token to the output vector. 
-If a match is found, add the corresponding token to the output vector. 
-remove the matched lexemes from the input string, leaving one character as context.
