@@ -35,6 +35,7 @@ pub enum TokenKind {
     TableHorizontal,
     BlankLine,
     NewLine,
+    Word,
     LiteralString,
 }
 
@@ -62,6 +63,9 @@ static BLANK_LINE_RE: LazyLock<Regex> =
 static NEW_LINE_RE: LazyLock<Regex> =
     token_regex!(r"(?:^|[^\n])(\n)(?:$|[^\n])");
 
+static WORD_RE: LazyLock<Regex> =
+    token_regex!(r"(?:^|[^A-Za-z0-9_])([A-Za-z0-9_]+)(?:$|[^A-Za-z0-9_])");
+
 static LITERAL_STRING_RE: LazyLock<Regex> =
     token_regex!(r"(?:^|\n)([^\s`\n][^`\n]*)(?:\n|$)");
 
@@ -75,6 +79,7 @@ impl TokenKind {
             TokenKind::TableHorizontal => "table_horizontal",
             TokenKind::BlankLine => "blank_line",
             TokenKind::NewLine => "new_line",
+            TokenKind::Word => "word",
             TokenKind::LiteralString => "literal_string",
         }
     }
@@ -88,6 +93,7 @@ impl TokenKind {
             TokenKind::TableHorizontal => &TABLE_HORIZONTAL_RE,
             TokenKind::BlankLine => &BLANK_LINE_RE,
             TokenKind::NewLine => &NEW_LINE_RE,
+            TokenKind::Word => &WORD_RE,
             TokenKind::LiteralString => &LITERAL_STRING_RE,
         }
     }
@@ -190,6 +196,21 @@ mod tests {
     #[test]
     fn literal_string_non_matching_backtick_prefix() {
         assert!(!TokenKind::LiteralString.is_match("`hello"));
+    }
+
+    #[test]
+    fn word_matches_alphanumeric_and_underscore() {
+        assert!(TokenKind::Word.is_match("alpha_123"));
+    }
+
+    #[test]
+    fn word_matches_with_newline_boundary() {
+        assert!(TokenKind::Word.is_match("\nalpha_123\n"));
+    }
+
+    #[test]
+    fn word_non_matching_without_word_chars() {
+        assert!(!TokenKind::Word.is_match("---\n***"));
     }
 
 }
