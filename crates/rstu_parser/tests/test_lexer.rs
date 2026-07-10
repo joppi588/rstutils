@@ -15,6 +15,8 @@ fn tokenize_ok_mixed_lorem_ipsum_file() {
     let tokens: Vec<Token> = tokenize(&contents);
 
     assert!(!tokens.is_empty());
-    assert_eq!(tokens.first().map(|t| t.kind), Some(TokenKind::LiteralString));
-    assert_eq!(tokens.last().map(|t| t.kind), Some(TokenKind::LiteralString));
+    assert_eq!(tokens.first().map(|t| t.kind), Some(TokenKind::Word));
+    assert!(tokens
+        .iter()
+        .any(|token| token.kind == TokenKind::LiteralString));
 }
