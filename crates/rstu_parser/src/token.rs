@@ -80,6 +80,7 @@ impl TokenKind {
         TokenKind::NewLine,
         TokenKind::Word,
         TokenKind::LiteralString,
+        // LiteralString is the Fallback (always matching), don't add tokens below!
     ];
 
     pub fn name(self) -> &'static str {

@@ -6,13 +6,16 @@ use crate::token::{Token, TokenKind};
 
 pub fn tokenize(input: &str) -> Vec<Token> {
     let mut tokens = Vec::new();
-    let input = format!("\n{input}");
+    let input = format!("\n{input}\n");
     let mut remaining = input.as_str();
 
     while remaining.len() > 1 {
         let mut best_match: Option<(TokenKind, usize, usize)> = None;
         let mut literal_match: Option<(usize, usize)> = None;
 
+        // Optimizations
+        // Don't use capture groups, as we know that the context is 1char
+        // use find_at
         for kind in TokenKind::ALL {
             let token_match = match kind
                 .regex()
@@ -33,6 +36,7 @@ pub fn tokenize(input: &str) -> Vec<Token> {
                 continue;
             }
 
+            // Optimize: if candidate is found, continue immediately
             let replace = match best_match {
                 Some((_, best_start, _)) => candidate.1 < best_start,
                 None => true,
