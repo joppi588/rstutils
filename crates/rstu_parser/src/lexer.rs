@@ -36,10 +36,6 @@ pub fn tokenize(input: &str) -> Vec<Token> {
                 None => continue,
             };
 
-            if token_match.start() == 0 {
-                continue;
-            }
-
             let candidate = (kind, token_match.start(), token_match.end());
             let replace = match best_match {
                 Some((_, best_start, _)) => candidate.1 < best_start,
