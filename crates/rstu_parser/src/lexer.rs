@@ -17,7 +17,8 @@ const NON_LITERAL_TOKEN_KINDS: [TokenKind; 8] = [
 
 pub fn tokenize(input: &str) -> Vec<Token> {
     let mut tokens = Vec::new();
-    let mut remaining = format!("\n{input}");
+    let input = format!("\n{input}");
+    let mut remaining = input.as_str();
 
     while remaining.len() > 1 {
         let mut best_match: Option<(TokenKind, usize, usize)> = None;
@@ -57,7 +58,7 @@ pub fn tokenize(input: &str) -> Vec<Token> {
             if !literal.is_empty() {
                 tokens.push(Token::new(TokenKind::LiteralString, literal));
             }
-            remaining = remaining[(start - 1)..].to_string();
+            remaining = &remaining[(start - 1)..];
             continue;
         }
 
@@ -73,7 +74,7 @@ pub fn tokenize(input: &str) -> Vec<Token> {
                 .unwrap_or(0)
         };
         let keep_context_from = consume_until.saturating_sub(1);
-        remaining = remaining[keep_context_from..].to_string();
+        remaining = &remaining[keep_context_from..];
     }
 
     tokens
