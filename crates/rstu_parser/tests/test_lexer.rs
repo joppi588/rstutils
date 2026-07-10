@@ -13,10 +13,53 @@ fn tokenize_ok_mixed_lorem_ipsum_file() {
     let contents = fs::read_to_string(path).expect("failed to read mixed lorem ipsum test file");
 
     let tokens: Vec<Token> = tokenize(&contents);
+    let kinds: Vec<TokenKind> = tokens.iter().map(|token| token.kind).collect();
+    let expected_kinds = vec![
+        TokenKind::Word,
+        TokenKind::LiteralString,
+        TokenKind::Word,
+        TokenKind::NewLine,
+        TokenKind::HeadingUnderline,
+        TokenKind::LiteralString,
+        TokenKind::LiteralString,
+        TokenKind::DoubleDot,
+        TokenKind::LiteralString,
+        TokenKind::Word,
+        TokenKind::LiteralString,
+        TokenKind::NewLine,
+        TokenKind::LiteralString,
+        TokenKind::Word,
+        TokenKind::LiteralString,
+        TokenKind::Word,
+        TokenKind::LiteralString,
+        TokenKind::Word,
+        TokenKind::LiteralString,
+        TokenKind::Word,
+        TokenKind::LiteralString,
+        TokenKind::Word,
+        TokenKind::LiteralString,
+        TokenKind::Word,
+        TokenKind::LiteralString,
+        TokenKind::Word,
+        TokenKind::LiteralString,
+        TokenKind::Word,
+        TokenKind::LiteralString,
+        TokenKind::Word,
+        TokenKind::LiteralString,
+        TokenKind::Word,
+        TokenKind::LiteralString,
+        TokenKind::LiteralString,
+        TokenKind::DoubleDot,
+        TokenKind::LiteralString,
+        TokenKind::Word,
+        TokenKind::LiteralString,
+        TokenKind::LiteralString,
+        TokenKind::Word,
+        TokenKind::LiteralString,
+        TokenKind::Word,
+        TokenKind::LiteralString,
+        TokenKind::LiteralString,
+    ];
 
-    assert!(!tokens.is_empty());
-    assert_eq!(tokens.first().map(|t| t.kind), Some(TokenKind::Word));
-    assert!(tokens
-        .iter()
-        .any(|token| token.kind == TokenKind::LiteralString));
+    assert_eq!(kinds, expected_kinds);
 }
