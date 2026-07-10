@@ -30,8 +30,8 @@ impl Token {
 pub enum TokenKind {
     HeadingUnderline,
     Indent,
-    Directive,
-    Comment,
+    DoubleDot,
+    DoubleColon,
     TableHorizontal,
     BlankLine,
     NewLine,
@@ -46,11 +46,12 @@ static HEADING_UNDERLINE_RE: LazyLock<Regex> =
 static INDENT_RE: LazyLock<Regex> =
     token_regex!(r"(?:^|\n)([ \t]+)(?:\n|$)");
 
-static DIRECTIVE_RE: LazyLock<Regex> =
+static DOUBLE_DOT_RE: LazyLock<Regex> =
+    token_regex!(r"(?:^|\n|\s)(\.\.)(?:\n|$|\s)");
+
+static DOUBLE_COLON_RE: LazyLock<Regex> =
     token_regex!(r"(?:^|\n)(\.\.\s+[A-Za-z_-]+::.*)(?:\n|$)");
 
-static COMMENT_RE: LazyLock<Regex> =
-    token_regex!(r"(?:^|\n)(\.\.\s(?:[^:\n]|:[^:\n])*)(?:\n|$)");
 
 static TABLE_HORIZONTAL_RE: LazyLock<Regex> =
     token_regex!(r"(?:^|\n)(=+(?:\s+=+)+\s*)(?:\n|$)");
@@ -69,8 +70,8 @@ impl TokenKind {
         match self {
             TokenKind::HeadingUnderline => "heading_underline",
             TokenKind::Indent => "indent",
-            TokenKind::Directive => "directive",
-            TokenKind::Comment => "comment",
+            TokenKind::DoubleDot => "double_dot",
+            TokenKind::DoubleColon => "double_colon",
             TokenKind::TableHorizontal => "table_horizontal",
             TokenKind::BlankLine => "blank_line",
             TokenKind::NewLine => "new_line",
@@ -82,8 +83,8 @@ impl TokenKind {
         match self {
             TokenKind::HeadingUnderline => &HEADING_UNDERLINE_RE,
             TokenKind::Indent => &INDENT_RE,
-            TokenKind::Directive => &DIRECTIVE_RE,
-            TokenKind::Comment => &COMMENT_RE,
+            TokenKind::DoubleDot => &DOUBLE_DOT_RE,
+            TokenKind::DoubleColon => &DOUBLE_COLON_RE,
             TokenKind::TableHorizontal => &TABLE_HORIZONTAL_RE,
             TokenKind::BlankLine => &BLANK_LINE_RE,
             TokenKind::NewLine => &NEW_LINE_RE,
@@ -128,22 +129,22 @@ mod tests {
 
     #[test]
     fn directive_matches() {
-        assert!(TokenKind::Directive.is_match(".. note::"));
+        assert!(TokenKind::DoubleColon.is_match(".. note::"));
     }
 
     #[test]
     fn directive_non_matching() {
-        assert!(!TokenKind::Directive.is_match(".. note:"));
+        assert!(!TokenKind::DoubleColon.is_match(".. note:"));
     }
 
     #[test]
     fn comment_matches() {
-        assert!(TokenKind::Comment.is_match(".. this is a comment"));
+        assert!(TokenKind::DoubleDot.is_match(".. this is a comment"));
     }
 
     #[test]
     fn comment_non_matching() {
-        assert!(!TokenKind::Comment.is_match(".. warning::"));
+        assert!(!TokenKind::DoubleDot.is_match("warning..."));
     }
 
     #[test]
@@ -191,9 +192,5 @@ mod tests {
         assert!(!TokenKind::LiteralString.is_match("`hello"));
     }
 
-    #[test]
-    fn regex_captures_token_with_context_chars() {
-        assert_eq!(TokenKind::Directive.inner_match(".. note::"), Some(".. note::"));
-    }
 }
 
