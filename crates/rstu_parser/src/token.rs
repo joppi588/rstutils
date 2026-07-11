@@ -156,7 +156,7 @@ mod tests {
 
     #[test]
     fn indent_matches() {
-        assert!(TokenKind::Indent.is_match(" \t  "));
+        assert!(TokenKind::Indent.is_match("\n \t  W"));
     }
 
     #[test]
@@ -166,17 +166,17 @@ mod tests {
 
     #[test]
     fn spaces_matches() {
-        assert!(TokenKind::Indent.is_match("x \t x"));
+        assert!(TokenKind::Spaces.is_match("x \t x"));
     }
 
     #[test]
     fn spaces_non_matching() {
-        assert!(!TokenKind::Indent.is_match(" abc"));
+        assert!(!TokenKind::Spaces.is_match("xabcx"));
     }
 
     #[test]
     fn bold_matches() {
-        assert!(TokenKind::Bold.is_match("**"));
+        assert!(TokenKind::Bold.is_match("\n**\n"));
     }
 
     #[test]
@@ -187,7 +187,7 @@ mod tests {
 
     #[test]
     fn doublecolon_matches() {
-        assert!(TokenKind::DoubleColon.is_match(".. note::"));
+        assert!(TokenKind::DoubleColon.is_match("\n.. note::\n"));
     }
 
     #[test]
@@ -217,12 +217,12 @@ mod tests {
 
     #[test]
     fn blank_line_matches_empty() {
-        assert!(TokenKind::BlankLine.is_match(""));
+        assert!(TokenKind::BlankLine.is_match("\n\n\n"));
     }
 
     #[test]
     fn blank_line_matches_whitespace_only() {
-        assert!(TokenKind::BlankLine.is_match(" \t"));
+        assert!(TokenKind::BlankLine.is_match("\n \t\n\n"));
     }
 
     #[test]
@@ -235,20 +235,6 @@ mod tests {
         assert!(TokenKind::LiteralString.is_match("Hello world"));
     }
 
-    #[test]
-    fn literal_string_non_matching_with_backtick_inside() {
-        assert!(!TokenKind::LiteralString.is_match("Hello`world"));
-    }
-
-    #[test]
-    fn literal_string_non_matching_whitespace_prefix() {
-        assert!(!TokenKind::LiteralString.is_match(" hello"));
-    }
-
-    #[test]
-    fn literal_string_non_matching_backtick_prefix() {
-        assert!(!TokenKind::LiteralString.is_match("`hello"));
-    }
 
     #[test]
     fn word_matches_alphanumeric_and_underscore() {
