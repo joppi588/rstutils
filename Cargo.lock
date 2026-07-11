@@ -411,6 +411,7 @@ name = "rstu_parser"
 version = "0.1.0"
 dependencies = [
  "document_tree",
+ "regex",
  "rst_parser",
 ]
 
