@@ -41,6 +41,7 @@ pub enum TokenKind {
     BlankLine,
     NewLine,
     Word,
+    Bold,
     LiteralString,
 }
 
@@ -73,11 +74,14 @@ static NEW_LINE_RE: LazyLock<Regex> =
 static WORD_RE: LazyLock<Regex> =
     token_regex!(r"(?:^|[^A-Za-z0-9_])([A-Za-z0-9_]+)(?:$|[^A-Za-z0-9_])");
 
+static BOLD_RE: LazyLock<Regex> =
+    token_regex!(r"(?:.|\n)(\*\*)(?:.|\n)");
+
 static LITERAL_STRING_RE: LazyLock<Regex> =
     token_regex!(r"(?:^|\n)(.*)(?:\n|$)");
 
 impl TokenKind {
-    pub const ALL: [TokenKind; 10] = [
+    pub const ALL: [TokenKind; 11] = [
         TokenKind::HeadingUnderline,
         TokenKind::Indent,
         TokenKind::Spaces,
@@ -87,6 +91,7 @@ impl TokenKind {
         TokenKind::BlankLine,
         TokenKind::NewLine,
         TokenKind::Word,
+        TokenKind::Bold,
         TokenKind::LiteralString,
         // LiteralString is the Fallback (always matching), don't add tokens below!
     ];
@@ -102,6 +107,7 @@ impl TokenKind {
             TokenKind::BlankLine => "blank_line",
             TokenKind::NewLine => "new_line",
             TokenKind::Word => "word",
+            TokenKind::Bold => "bold",
             TokenKind::LiteralString => "literal_string",
         }
     }
@@ -117,6 +123,7 @@ impl TokenKind {
             TokenKind::BlankLine => &BLANK_LINE_RE,
             TokenKind::NewLine => &NEW_LINE_RE,
             TokenKind::Word => &WORD_RE,
+            TokenKind::Bold => &BOLD_RE,
             TokenKind::LiteralString => &LITERAL_STRING_RE,
         }
     }
@@ -165,6 +172,16 @@ mod tests {
     #[test]
     fn spaces_non_matching() {
         assert!(!TokenKind::Indent.is_match(" abc"));
+    }
+
+    #[test]
+    fn bold_matches() {
+        assert!(TokenKind::Bold.is_match("**"));
+    }
+
+    #[test]
+    fn bold_non_matching() {
+        assert!(!TokenKind::Bold.is_match("*"));
     }
 
 

@@ -78,13 +78,13 @@ fn tokenize_ok_mixed_lorem_ipsum_file() {
        (TokenKind::Word, "comment"),
        (TokenKind::NewLine, "\n"),
        (TokenKind::BlankLine, "\n"),
-       (TokenKind::LiteralString, "**"),
+       (TokenKind::Bold, "**"),
        (TokenKind::Word, "end"),
        (TokenKind::Spaces, " "),
        (TokenKind::Word, "of"),
        (TokenKind::Spaces, " "),
        (TokenKind::Word, "file"),
-       (TokenKind::LiteralString, "**"),
+       (TokenKind::Bold, "**"),
        (TokenKind::NewLine, "\n"),
        (TokenKind::LiteralString,"")
     ];
