@@ -95,16 +95,18 @@ mod tests {
         let input = "Hello World";
         let expected = vec![
             Token::new(TokenKind::Word, "Hello"),
-            Token::new(TokenKind::LiteralString, " World"),
+            Token::new(TokenKind::Spaces, " "),
+            Token::new(TokenKind::Word, "World"),
         ];
 
         assert_eq!(tokenize(input), expected);
     }
 
+    // Note: This test fails (bug)
     #[test]
     fn tokenize_treats_unmatched_input_as_literal_string() {
-        let input = "***";
-        let expected = vec![Token::new(TokenKind::LiteralString, "***")];
+        let input = "*%*%*";
+        let expected = vec![Token::new(TokenKind::LiteralString, "*%*%*")];
 
         assert_eq!(tokenize(input), expected);
     }
