@@ -24,6 +24,10 @@ impl Token {
             lexeme: lexeme.into(),
         }
     }
+
+    pub fn as_tuple(&self) -> (TokenKind, &str) {
+        (self.kind, &self.lexeme)
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
