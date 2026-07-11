@@ -50,7 +50,7 @@ static HEADING_UNDERLINE_RE: LazyLock<Regex> =
     token_regex!(r"(?:^|\n)(=+)(?:\n|$)");
 
 static INDENT_RE: LazyLock<Regex> =
-    token_regex!(r"(?:^|\n)([ \t]+)(?:\n|$)");
+    token_regex!(r"(?:^|\n)([ \t]+)(?:[^ \t\n])");
 
 static SPACES_RE: LazyLock<Regex> =
     token_regex!(r"(?:[^ \t\n])([ \t]+)([^ \t]|$)");
@@ -59,17 +59,16 @@ static DOUBLE_DOT_RE: LazyLock<Regex> =
     token_regex!(r"(?:^|\n|\s)(\.\.)(?:\n|$|\s)");
 
 static DOUBLE_COLON_RE: LazyLock<Regex> =
-    token_regex!(r"(?:^|\n)(\.\.\s+[A-Za-z_-]+::.*)(?:\n|$)");
-
+    token_regex!(r"(?:.|\n)(::)(.|\n)");
 
 static TABLE_HORIZONTAL_RE: LazyLock<Regex> =
     token_regex!(r"(?:^|\n)(=+(?:\s+=+)+\s*)(?:\n|$)");
 
 static BLANK_LINE_RE: LazyLock<Regex> =
-    token_regex!(r"(?:^|\n)([ \t]*)(?:\n|$)");
+    token_regex!(r"(?:\n)([ \t]*\n)(?:.|\n)");
 
 static NEW_LINE_RE: LazyLock<Regex> =
-    token_regex!(r"(?:^|[^\n])(\n)(?:$|[^\n])");
+    token_regex!(r"(?:[^\n])(\n)(?:.|\n)");
 
 static WORD_RE: LazyLock<Regex> =
     token_regex!(r"(?:^|[^A-Za-z0-9_])([A-Za-z0-9_]+)(?:$|[^A-Za-z0-9_])");

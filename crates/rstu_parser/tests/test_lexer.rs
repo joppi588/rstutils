@@ -22,8 +22,8 @@ fn tokenize_ok_mixed_lorem_ipsum_file() {
        (TokenKind::Word, "Heading"),
        (TokenKind::NewLine, "\n"),
        (TokenKind::HeadingUnderline, "==================="),
-       (TokenKind::LiteralString, "\n"),
-       (TokenKind::LiteralString, "\n"),
+       (TokenKind::NewLine, "\n"),
+       (TokenKind::BlankLine, "\n"),
        (TokenKind::DoubleDot, ".."),
        (TokenKind::Spaces, " "),
        (TokenKind::Word, "note"),
@@ -85,7 +85,8 @@ fn tokenize_ok_mixed_lorem_ipsum_file() {
        (TokenKind::Spaces, " "),
        (TokenKind::Word, "file"),
        (TokenKind::LiteralString, "**"),
-       (TokenKind::BlankLine, "\n"),
+       (TokenKind::NewLine, "\n"),
+       (TokenKind::LiteralString,"")
     ];
 
     assert_eq!(kinds, expected_kinds);
