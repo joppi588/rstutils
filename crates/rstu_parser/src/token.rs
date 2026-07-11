@@ -30,6 +30,7 @@ impl Token {
 pub enum TokenKind {
     HeadingUnderline,
     Indent,
+    Spaces,
     DoubleDot,
     DoubleColon,
     TableHorizontal,
@@ -46,6 +47,9 @@ static HEADING_UNDERLINE_RE: LazyLock<Regex> =
 
 static INDENT_RE: LazyLock<Regex> =
     token_regex!(r"(?:^|\n)([ \t]+)(?:\n|$)");
+
+static SPACES_RE: LazyLock<Regex> =
+    token_regex!(r"(?:[^ \t\n])([ \t]+)([^ \t]|$)");
 
 static DOUBLE_DOT_RE: LazyLock<Regex> =
     token_regex!(r"(?:^|\n|\s)(\.\.)(?:\n|$|\s)");
@@ -70,9 +74,10 @@ static LITERAL_STRING_RE: LazyLock<Regex> =
     token_regex!(r"(?:^|\n)(.*)(?:\n|$)");
 
 impl TokenKind {
-    pub const ALL: [TokenKind; 9] = [
+    pub const ALL: [TokenKind; 10] = [
         TokenKind::HeadingUnderline,
         TokenKind::Indent,
+        TokenKind::Spaces,
         TokenKind::DoubleDot,
         TokenKind::DoubleColon,
         TokenKind::TableHorizontal,
@@ -87,6 +92,7 @@ impl TokenKind {
         match self {
             TokenKind::HeadingUnderline => "heading_underline",
             TokenKind::Indent => "indent",
+            TokenKind::Spaces => "spaces",
             TokenKind::DoubleDot => "double_dot",
             TokenKind::DoubleColon => "double_colon",
             TokenKind::TableHorizontal => "table_horizontal",
@@ -101,6 +107,7 @@ impl TokenKind {
         match self {
             TokenKind::HeadingUnderline => &HEADING_UNDERLINE_RE,
             TokenKind::Indent => &INDENT_RE,
+            TokenKind::Spaces => &SPACES_RE,
             TokenKind::DoubleDot => &DOUBLE_DOT_RE,
             TokenKind::DoubleColon => &DOUBLE_COLON_RE,
             TokenKind::TableHorizontal => &TABLE_HORIZONTAL_RE,
@@ -111,6 +118,7 @@ impl TokenKind {
         }
     }
 
+    // TODO: Delete
     pub fn inner_match<'a>(self, input: &'a str) -> Option<&'a str> {
         self.regex()
             .captures(input)
@@ -147,22 +155,33 @@ mod tests {
     }
 
     #[test]
-    fn directive_matches() {
+    fn spaces_matches() {
+        assert!(TokenKind::Indent.is_match("x \t x"));
+    }
+
+    #[test]
+    fn spaces_non_matching() {
+        assert!(!TokenKind::Indent.is_match(" abc"));
+    }
+
+
+    #[test]
+    fn doublecolon_matches() {
         assert!(TokenKind::DoubleColon.is_match(".. note::"));
     }
 
     #[test]
-    fn directive_non_matching() {
+    fn doublecolon_non_matching() {
         assert!(!TokenKind::DoubleColon.is_match(".. note:"));
     }
 
     #[test]
-    fn comment_matches() {
+    fn doubledot_matches() {
         assert!(TokenKind::DoubleDot.is_match(".. this is a comment"));
     }
 
     #[test]
-    fn comment_non_matching() {
+    fn doubledot_non_matching() {
         assert!(!TokenKind::DoubleDot.is_match("warning..."));
     }
 

@@ -31,6 +31,8 @@ pub fn tokenize(input: &str) -> Vec<Token> {
             };
 
             let candidate = (kind, token_match.start(), token_match.end());
+            
+            // Not needed?
             if kind == TokenKind::LiteralString {
                 literal_match = Some((candidate.1, candidate.2));
                 continue;
@@ -67,6 +69,7 @@ pub fn tokenize(input: &str) -> Vec<Token> {
 
         tokens.push(Token::new(kind, &remaining[start..end]));
 
+        // Optimization: just update the start pointer
         let consume_until = if end > start {
             end
         } else {
