@@ -91,7 +91,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn tokenize_emits_literal_when_next_match_is_not_at_second_character() {
+    fn tokenize_spaces_words() {
         let input = "Hello World";
         let expected = vec![
             Token::new(TokenKind::Word, "Hello"),
