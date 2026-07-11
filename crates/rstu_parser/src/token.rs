@@ -47,6 +47,8 @@ pub enum TokenKind {
 
 // Token regexp have three parts: pre-context, token, post-context. Contexts are non-matching groups.
 
+static ALPHANUM: &str = r"A-Za-z0-9_";
+
 static HEADING_UNDERLINE_RE: LazyLock<Regex> =
     token_regex!(r"(?:^|\n)(=+)(?:\n|$)");
 
@@ -71,8 +73,10 @@ static BLANK_LINE_RE: LazyLock<Regex> =
 static NEW_LINE_RE: LazyLock<Regex> =
     token_regex!(r"(?:[^\n])(\n)(?:.|\n)");
 
-static WORD_RE: LazyLock<Regex> =
-    token_regex!(r"(?:^|[^A-Za-z0-9_])([A-Za-z0-9_]+)(?:$|[^A-Za-z0-9_])");
+static WORD_RE: LazyLock<Regex> = token_regex!(&format!(
+    r"(?:^|[^{0}:])(([{0}]+[:]??)+)(?:$|[^{0}:])",
+    ALPHANUM
+));
 
 static BOLD_RE: LazyLock<Regex> =
     token_regex!(r"(?:.|\n)(\*\*)(?:.|\n)");
@@ -244,6 +248,16 @@ mod tests {
     #[test]
     fn word_matches_with_newline_boundary() {
         assert!(TokenKind::Word.is_match("\nalpha_123\n"));
+    }
+
+    #[test]
+    fn word_matches_with_single_colon_separator() {
+        assert!(TokenKind::Word.is_match("\nalpha:beta\n"));
+    }
+
+    #[test]
+    fn word_non_matching_with_double_colon_separator() {
+        assert!(!TokenKind::Word.is_match("\nalpha::beta\n"));
     }
 
     #[test]
