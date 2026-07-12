@@ -8,3 +8,9 @@ mod test_parser {
     mod heading;
     mod sequence;
 }
+
+// Test code for the rst_parser project. For reference only, to be deleted.
+mod test_rst_parser {
+    mod test_parser_ok;
+    mod test_parser_nok;
+}
