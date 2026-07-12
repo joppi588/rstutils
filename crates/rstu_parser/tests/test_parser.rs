@@ -6,7 +6,7 @@ use rstu_ast::Block;
 use rstu_parser::parse;
 
 #[test]
-fn parses_heading_into_doctree() {
+fn parses_heading_into_ast() {
     let input = "Title Line\n==========\n\n";
 
     let document = parse(input).expect("expected valid heading");
@@ -21,7 +21,7 @@ fn parses_heading_into_doctree() {
 }
 
 #[test]
-fn parses_comment_into_doctree() {
+fn parses_comment_into_ast() {
     let input = ".. comment text.\n";
 
     let document = parse(input).expect("expected valid comment");
@@ -35,7 +35,7 @@ fn parses_comment_into_doctree() {
 }
 
 #[test]
-fn parses_directive_with_indented_block_into_doctree() {
+fn parses_directive_with_indented_block_into_ast() {
     let input = ".. note:: short arg\n   first line.\n   second line.\n";
 
     let document = parse(input).expect("expected valid directive");
