@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-use crate::doctree::{Block, Comment, Directive, Document, Heading, IndentedBlock, Sentence};
+use rstu_ast::{Block, Comment, Directive, Document, Heading, IndentedBlock, Sentence};
 use crate::lexer::tokenize;
 use crate::token::{Token, TokenKind};
 
@@ -291,7 +291,7 @@ impl Parser {
 #[cfg(test)]
 mod tests {
     use super::parse;
-    use crate::doctree::Block;
+    use rstu_ast::Block;
 
     #[test]
     fn parses_heading_comment_and_directive() {

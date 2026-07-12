@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: MIT
 
 pub mod lexer;
-pub mod doctree;
 pub mod parser;
 pub mod token;
 

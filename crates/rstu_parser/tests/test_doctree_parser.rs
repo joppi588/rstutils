@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-use rstu_parser::doctree::Block;
+use rstu_ast::Block;
 use rstu_parser::parse;
 
 #[test]
