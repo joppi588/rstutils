@@ -26,7 +26,7 @@ fn tokenize_ok_mixed_lorem_ipsum_file() {
        (TokenKind::BlankLine, "\n"),
        (TokenKind::DoubleDot, ".."),
        (TokenKind::Spaces, " "),
-       (TokenKind::Word, "note"),
+    (TokenKind::LiteralString, "note"),
        (TokenKind::DoubleColon, "::"),
        (TokenKind::NewLine, "\n"),
        (TokenKind::Indent, "   "),
