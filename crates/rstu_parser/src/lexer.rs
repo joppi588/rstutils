@@ -111,13 +111,7 @@ fn compose_stage2(tokens: Vec<Token>) -> Vec<Token> {
             && tokens[i + 2].kind == TokenKind::Word
             && tokens[i + 3].kind == TokenKind::DoubleColon
         {
-            let directive = [
-                tokens[i].lexeme.as_str(),
-                tokens[i + 1].lexeme.as_str(),
-                tokens[i + 2].lexeme.as_str(),
-                tokens[i + 3].lexeme.as_str(),
-            ]
-            .concat();
+            let directive: String = tokens[i..i + 4].iter().map(|t| t.lexeme.as_str()).collect();
             let directive_name = tokens[i + 2].lexeme.clone();
             composed.push(Token::new(TokenKind::Directive, directive).with_name(directive_name));
             i += 4;
