@@ -118,7 +118,8 @@ fn compose_stage2(tokens: Vec<Token>) -> Vec<Token> {
                 tokens[i + 3].lexeme.as_str(),
             ]
             .concat();
-            composed.push(Token::new(TokenKind::Directive, directive));
+            let directive_name = tokens[i + 2].lexeme.clone();
+            composed.push(Token::new(TokenKind::Directive, directive).with_name(directive_name));
             i += 4;
             continue;
         }
@@ -162,7 +163,7 @@ mod tests {
     #[test]
     fn tokenize_stage2_composes_directive() {
         let input = ".. note::";
-        let expected = vec![Token::new(TokenKind::Directive, ".. note::")];
+        let expected = vec![Token::new(TokenKind::Directive, ".. note::").with_name("note")];
 
         assert_eq!(
             tokenize_with_mode(input, TokenizeMode::Stage2Composed),

@@ -15,6 +15,7 @@ macro_rules! token_regex {
 pub struct Token {
     pub kind: TokenKind,
     pub lexeme: String,
+    pub name: Option<String>,
 }
 
 impl Token {
@@ -22,7 +23,13 @@ impl Token {
         Self {
             kind,
             lexeme: lexeme.into(),
+            name: None,
         }
+    }
+
+    pub fn with_name(mut self, name: impl Into<String>) -> Self {
+        self.name = Some(name.into());
+        self
     }
 
     pub fn as_tuple(&self) -> (TokenKind, &str) {
