@@ -105,15 +105,15 @@ fn compose_stage2(tokens: Vec<Token>) -> Vec<Token> {
     let mut i = 0;
 
     while i < tokens.len() {
-        if i + 3 < tokens.len()
-            && tokens[i].kind == TokenKind::DoubleDot
-            && tokens[i + 1].kind == TokenKind::Spaces
-            && tokens[i + 2].kind == TokenKind::Word
-            && tokens[i + 3].kind == TokenKind::DoubleColon
+        if let Some(window @ [
+            Token { kind: TokenKind::DoubleDot, .. },
+            Token { kind: TokenKind::Spaces, .. },
+            Token { kind: TokenKind::Word, lexeme: name, .. },
+            Token { kind: TokenKind::DoubleColon, .. },
+        ]) = tokens[i..].get(..4)
         {
-            let directive: String = tokens[i..i + 4].iter().map(|t| t.lexeme.as_str()).collect();
-            let directive_name = tokens[i + 2].lexeme.clone();
-            composed.push(Token::new(TokenKind::Directive, directive).with_name(directive_name));
+            let lexeme: String = window.iter().map(|t| t.lexeme.as_str()).collect();
+            composed.push(Token::new(TokenKind::Directive, lexeme).with_name(name.clone()));
             i += 4;
             continue;
         }
