@@ -35,21 +35,17 @@ fn tokenize_stage1_raw(input: &str) -> Vec<Token> {
         // Don't use capture groups, as we know that the context is 1char
         // use find_at
         for kind in TokenKind::ALL {
-            let token_match = match kind
-                .regex()
-                .captures_iter(&remaining)
-                .find_map(|captures| {
-                    captures
-                        .get(1)
-                        .filter(|token_match| token_match.start() > 0)
-                })
-            {
+            let token_match = match kind.regex().captures_iter(&remaining).find_map(|captures| {
+                captures
+                    .get(1)
+                    .filter(|token_match| token_match.start() > 0)
+            }) {
                 Some(token_match) => token_match,
                 None => continue,
             };
 
             let candidate = (kind, token_match.start(), token_match.end());
-            
+
             // Not needed?
             if kind == TokenKind::LiteralString {
                 literal_match = Some((candidate.1, candidate.2));
@@ -160,10 +156,7 @@ mod tests {
             Token::new(TokenKind::DoubleColon, "::"),
         ];
 
-        assert_eq!(
-            tokenize_with_mode(input, TokenizeMode::Stage1Raw),
-            expected
-        );
+        assert_eq!(tokenize_with_mode(input, TokenizeMode::Stage1Raw), expected);
     }
 
     #[test]

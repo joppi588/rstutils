@@ -3,22 +3,24 @@
 // SPDX-License-Identifier: MIT
 
 use document_tree::{
-    attribute_types::Measure,
-    extra_attributes::ExtraAttributes,
     HasChildren,
+    attribute_types::Measure,
     element_categories::{BodyElement, StructuralSubElement, SubStructure, TextOrInlineElement},
+    extra_attributes::ExtraAttributes,
 };
 use rst_parser::parse;
 use std::fs;
 use std::path::{Path, PathBuf};
 
 fn test_data_path(filename: &str) -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/data").join(filename)
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("tests/data")
+        .join(filename)
 }
 
 #[test]
 fn test_parses_lorem_ipsum_document_tree() {
-    // GIVEN An error-free RST file 
+    // GIVEN An error-free RST file
     // WHEN The file is parsed
     // THEN The document tree has heading, tile and bold text
     let contents = fs::read_to_string(test_data_path("ok_mixed_lorem_ipsum.rst"))
@@ -36,12 +38,21 @@ fn test_parses_lorem_ipsum_document_tree() {
     let children = section.children();
     let title = children
         .iter()
-        .find_map(|c| if let StructuralSubElement::Title(t) = c { Some(t) } else { None })
+        .find_map(|c| {
+            if let StructuralSubElement::Title(t) = c {
+                Some(t)
+            } else {
+                None
+            }
+        })
         .expect("expected a title element");
-    let title_text = title
-        .children()
-        .iter()
-        .find_map(|c| if let TextOrInlineElement::String(s) = c { Some(s.as_str()) } else { None });
+    let title_text = title.children().iter().find_map(|c| {
+        if let TextOrInlineElement::String(s) = c {
+            Some(s.as_str())
+        } else {
+            None
+        }
+    });
     assert_eq!(title_text, Some("Lorem Ipsum Heading"));
 
     let StructuralSubElement::SubStructure(sub) = children.last().unwrap() else {
@@ -57,12 +68,21 @@ fn test_parses_lorem_ipsum_document_tree() {
     let strong_text = paragraph
         .children()
         .iter()
-        .find_map(|c| if let TextOrInlineElement::Strong(s) = c { Some(s) } else { None })
+        .find_map(|c| {
+            if let TextOrInlineElement::Strong(s) = c {
+                Some(s)
+            } else {
+                None
+            }
+        })
         .and_then(|strong| {
-            strong
-                .children()
-                .iter()
-                .find_map(|c| if let TextOrInlineElement::String(s) = c { Some(s.as_str()) } else { None })
+            strong.children().iter().find_map(|c| {
+                if let TextOrInlineElement::String(s) = c {
+                    Some(s.as_str())
+                } else {
+                    None
+                }
+            })
         });
     assert_eq!(strong_text, Some("end of file"));
 }
