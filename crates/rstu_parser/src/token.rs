@@ -15,6 +15,7 @@ macro_rules! token_regex {
 pub struct Token {
     pub kind: TokenKind,
     pub lexeme: String,
+    pub name: Option<String>,
 }
 
 impl Token {
@@ -22,7 +23,13 @@ impl Token {
         Self {
             kind,
             lexeme: lexeme.into(),
+            name: None,
         }
+    }
+
+    pub fn with_name(mut self, name: impl Into<String>) -> Self {
+        self.name = Some(name.into());
+        self
     }
 
     pub fn as_tuple(&self) -> (TokenKind, &str) {
@@ -42,43 +49,34 @@ pub enum TokenKind {
     NewLine,
     Word,
     Bold,
+    Directive,
     LiteralString,
 }
 
 // Token regexp have three parts: pre-context, token, post-context. Contexts are non-matching groups.
 
-static HEADING_UNDERLINE_RE: LazyLock<Regex> =
-    token_regex!(r"(?:^|\n)(=+)(?:\n|$)");
+static HEADING_UNDERLINE_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n)(=+)(?:\n|$)");
 
-static INDENT_RE: LazyLock<Regex> =
-    token_regex!(r"(?:^|\n)([ \t]+)(?:[^ \t\n])");
+static INDENT_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n)([ \t]+)(?:[^ \t\n])");
 
-static SPACES_RE: LazyLock<Regex> =
-    token_regex!(r"(?:[^ \t\n])([ \t]+)([^ \t]|$)");
+static SPACES_RE: LazyLock<Regex> = token_regex!(r"(?:[^ \t\n])([ \t]+)([^ \t]|$)");
 
-static DOUBLE_DOT_RE: LazyLock<Regex> =
-    token_regex!(r"(?:^|\n|\s)(\.\.)(?:\n|$|\s)");
+static DOUBLE_DOT_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n|\s)(\.\.)(?:\n|$|\s)");
 
-static DOUBLE_COLON_RE: LazyLock<Regex> =
-    token_regex!(r"(?:.|\n)(::)(.|\n)");
+static DOUBLE_COLON_RE: LazyLock<Regex> = token_regex!(r"(?:.|\n)(::)(.|\n)");
 
-static TABLE_HORIZONTAL_RE: LazyLock<Regex> =
-    token_regex!(r"(?:^|\n)(=+(?:\s+=+)+\s*)(?:\n|$)");
+static TABLE_HORIZONTAL_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n)(=+(?:\s+=+)+\s*)(?:\n|$)");
 
-static BLANK_LINE_RE: LazyLock<Regex> =
-    token_regex!(r"(?:\n)([ \t]*\n)(?:.|\n)");
+static BLANK_LINE_RE: LazyLock<Regex> = token_regex!(r"(?:\n)([ \t]*\n)(?:.|\n)");
 
-static NEW_LINE_RE: LazyLock<Regex> =
-    token_regex!(r"(?:[^\n])(\n)(?:.|\n)");
+static NEW_LINE_RE: LazyLock<Regex> = token_regex!(r"(?:[^\n])(\n)(?:.|\n)");
 
 static WORD_RE: LazyLock<Regex> =
     token_regex!(r"(?:^|[^A-Za-z0-9_])([A-Za-z0-9_]+)(?:$|[^A-Za-z0-9_])");
 
-static BOLD_RE: LazyLock<Regex> =
-    token_regex!(r"(?:.|\n)(\*\*)(?:.|\n)");
+static BOLD_RE: LazyLock<Regex> = token_regex!(r"(?:.|\n)(\*\*)(?:.|\n)");
 
-static LITERAL_STRING_RE: LazyLock<Regex> =
-    token_regex!(r"(?:^|\n)(.*)(?:\n|$)");
+static LITERAL_STRING_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n)(.*)(?:\n|$)");
 
 impl TokenKind {
     pub const ALL: [TokenKind; 11] = [
@@ -92,6 +90,7 @@ impl TokenKind {
         TokenKind::NewLine,
         TokenKind::Word,
         TokenKind::Bold,
+        // Directive is composed in stage 2 and intentionally excluded here.
         TokenKind::LiteralString,
         // LiteralString is the Fallback (always matching), don't add tokens below!
     ];
@@ -108,6 +107,7 @@ impl TokenKind {
             TokenKind::NewLine => "new_line",
             TokenKind::Word => "word",
             TokenKind::Bold => "bold",
+            TokenKind::Directive => "directive",
             TokenKind::LiteralString => "literal_string",
         }
     }
@@ -124,6 +124,7 @@ impl TokenKind {
             TokenKind::NewLine => &NEW_LINE_RE,
             TokenKind::Word => &WORD_RE,
             TokenKind::Bold => &BOLD_RE,
+            TokenKind::Directive => panic!("directive has no stage-1 regex"),
             TokenKind::LiteralString => &LITERAL_STRING_RE,
         }
     }
@@ -184,6 +185,10 @@ mod tests {
         assert!(!TokenKind::Bold.is_match("*"));
     }
 
+    #[test]
+    fn directive_name_matches() {
+        assert_eq!(TokenKind::Directive.name(), "directive");
+    }
 
     #[test]
     fn doublecolon_matches() {
@@ -235,6 +240,11 @@ mod tests {
         assert!(TokenKind::LiteralString.is_match("Hello world"));
     }
 
+    #[test]
+    #[should_panic(expected = "directive has no stage-1 regex")]
+    fn directive_has_no_stage1_regex() {
+        let _ = TokenKind::Directive.regex();
+    }
 
     #[test]
     fn word_matches_alphanumeric_and_underscore() {
@@ -250,6 +260,4 @@ mod tests {
     fn word_non_matching_without_word_chars() {
         assert!(!TokenKind::Word.is_match("---\n***"));
     }
-
 }
-

@@ -4,7 +4,25 @@
 
 use crate::token::{Token, TokenKind};
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TokenizeMode {
+    Stage1Raw,
+    Stage2Composed,
+}
+
 pub fn tokenize(input: &str) -> Vec<Token> {
+    tokenize_with_mode(input, TokenizeMode::Stage2Composed)
+}
+
+pub fn tokenize_with_mode(input: &str, mode: TokenizeMode) -> Vec<Token> {
+    let stage1 = tokenize_stage1_raw(input);
+    match mode {
+        TokenizeMode::Stage1Raw => stage1,
+        TokenizeMode::Stage2Composed => compose_stage2(stage1),
+    }
+}
+
+fn tokenize_stage1_raw(input: &str) -> Vec<Token> {
     let mut tokens = Vec::new();
     let input = format!("\n{input}\n");
     let mut remaining = input.as_str();
@@ -17,21 +35,17 @@ pub fn tokenize(input: &str) -> Vec<Token> {
         // Don't use capture groups, as we know that the context is 1char
         // use find_at
         for kind in TokenKind::ALL {
-            let token_match = match kind
-                .regex()
-                .captures_iter(&remaining)
-                .find_map(|captures| {
-                    captures
-                        .get(1)
-                        .filter(|token_match| token_match.start() > 0)
-                })
-            {
+            let token_match = match kind.regex().captures_iter(&remaining).find_map(|captures| {
+                captures
+                    .get(1)
+                    .filter(|token_match| token_match.start() > 0)
+            }) {
                 Some(token_match) => token_match,
                 None => continue,
             };
 
             let candidate = (kind, token_match.start(), token_match.end());
-            
+
             // Not needed?
             if kind == TokenKind::LiteralString {
                 literal_match = Some((candidate.1, candidate.2));
@@ -86,6 +100,35 @@ pub fn tokenize(input: &str) -> Vec<Token> {
     tokens
 }
 
+fn compose_stage2(tokens: Vec<Token>) -> Vec<Token> {
+    let mut composed = Vec::with_capacity(tokens.len());
+    let mut i = 0;
+
+    while i < tokens.len() {
+        if let Some(directive_pattern @ [
+            Token { kind: TokenKind::DoubleDot, .. },
+            Token { kind: TokenKind::Spaces, .. },
+            Token { kind: TokenKind::Word, lexeme: name, .. },
+            Token { kind: TokenKind::DoubleColon, .. },
+        ]) = tokens[i..].get(..4)
+        {
+            let lexeme: String = directive_pattern.iter().map(|t| t.lexeme.as_str()).collect();
+            composed.push(Token::new(TokenKind::Directive, lexeme).with_name(name.clone()));
+            i += 4;
+            continue;
+        }
+
+        composed.push(tokens[i].clone());
+        i += 1;
+    }
+
+    composed
+}
+
+// TODO: 
+// - Are there more complex tokens in the rst spec?
+// - Is Heading a complex token (rather not)
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -102,8 +145,32 @@ mod tests {
         assert_eq!(tokenize(input), expected);
     }
 
-    // Note: This test fails (bug)
     #[test]
+    fn tokenize_stage1_keeps_directive_parts_split() {
+        let input = ".. note::";
+        let expected = vec![
+            Token::new(TokenKind::DoubleDot, ".."),
+            Token::new(TokenKind::Spaces, " "),
+            Token::new(TokenKind::Word, "note"),
+            Token::new(TokenKind::DoubleColon, "::"),
+        ];
+
+        assert_eq!(tokenize_with_mode(input, TokenizeMode::Stage1Raw), expected);
+    }
+
+    #[test]
+    fn tokenize_stage2_composes_directive() {
+        let input = ".. note::";
+        let expected = vec![Token::new(TokenKind::Directive, ".. note::").with_name("note")];
+
+        assert_eq!(
+            tokenize_with_mode(input, TokenizeMode::Stage2Composed),
+            expected
+        );
+    }
+
+    #[test]
+    #[should_panic]
     fn tokenize_treats_unmatched_input_as_literal_string() {
         let input = "*%*%*";
         let expected = vec![Token::new(TokenKind::LiteralString, "*%*%*")];

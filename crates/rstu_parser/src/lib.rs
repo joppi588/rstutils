@@ -5,10 +5,11 @@
 pub mod lexer;
 pub mod token;
 
+pub use lexer::{TokenizeMode, tokenize, tokenize_with_mode};
+
 pub fn add(left: u64, right: u64) -> u64 {
     left + right
 }
-
 
 #[cfg(test)]
 mod tests {
