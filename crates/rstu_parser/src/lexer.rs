@@ -105,14 +105,14 @@ fn compose_stage2(tokens: Vec<Token>) -> Vec<Token> {
     let mut i = 0;
 
     while i < tokens.len() {
-        if let Some(window @ [
+        if let Some(directive_pattern @ [
             Token { kind: TokenKind::DoubleDot, .. },
             Token { kind: TokenKind::Spaces, .. },
             Token { kind: TokenKind::Word, lexeme: name, .. },
             Token { kind: TokenKind::DoubleColon, .. },
         ]) = tokens[i..].get(..4)
         {
-            let lexeme: String = window.iter().map(|t| t.lexeme.as_str()).collect();
+            let lexeme: String = directive_pattern.iter().map(|t| t.lexeme.as_str()).collect();
             composed.push(Token::new(TokenKind::Directive, lexeme).with_name(name.clone()));
             i += 4;
             continue;
@@ -124,6 +124,10 @@ fn compose_stage2(tokens: Vec<Token>) -> Vec<Token> {
 
     composed
 }
+
+// TODO: 
+// - Are there more complex tokens in the rst spec?
+// - Is Heading a complex token (rather not)
 
 #[cfg(test)]
 mod tests {
