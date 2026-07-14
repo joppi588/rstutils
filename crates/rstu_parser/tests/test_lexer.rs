@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-use rstu_parser::lexer::tokenize;
+use rstu_parser::lexer::{tokenize, tokenize_with_mode, TokenizeMode};
 use rstu_parser::token::{Token, TokenKind};
 use std::fs;
 use std::path::Path;
@@ -24,10 +24,7 @@ fn tokenize_ok_mixed_lorem_ipsum_file() {
        (TokenKind::HeadingUnderline, "==================="),
        (TokenKind::NewLine, "\n"),
        (TokenKind::BlankLine, "\n"),
-       (TokenKind::DoubleDot, ".."),
-       (TokenKind::Spaces, " "),
-       (TokenKind::Word, "note"),
-       (TokenKind::DoubleColon, "::"),
+    (TokenKind::Directive, ".. note::"),
        (TokenKind::NewLine, "\n"),
        (TokenKind::Indent, "   "),
        (TokenKind::Word, "Lorem"),
@@ -90,4 +87,36 @@ fn tokenize_ok_mixed_lorem_ipsum_file() {
     ];
 
     assert_eq!(kinds, expected_kinds);
+}
+
+#[test]
+fn tokenize_directive_raw_and_composed_modes() {
+    let input = ".. note::";
+
+    let raw_tokens = tokenize_with_mode(input, TokenizeMode::Stage1Raw);
+    let raw: Vec<(TokenKind, &str)> = raw_tokens
+        .iter()
+        .map(|token| token.as_tuple())
+        .collect();
+    assert_eq!(
+        raw,
+        vec![
+            (TokenKind::DoubleDot, ".."),
+            (TokenKind::Spaces, " "),
+            (TokenKind::Word, "note"),
+            (TokenKind::DoubleColon, "::"),
+        ]
+    );
+
+    let composed_tokens = tokenize_with_mode(input, TokenizeMode::Stage2Composed);
+    let composed: Vec<(TokenKind, &str)> = composed_tokens
+        .iter()
+        .map(|token| token.as_tuple())
+        .collect();
+    assert_eq!(
+        composed,
+        vec![
+            (TokenKind::Directive, ".. note::"),
+        ]
+    );
 }

@@ -5,6 +5,8 @@
 pub mod lexer;
 pub mod token;
 
+pub use lexer::{tokenize, tokenize_with_mode, TokenizeMode};
+
 pub fn add(left: u64, right: u64) -> u64 {
     left + right
 }

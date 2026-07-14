@@ -42,6 +42,7 @@ pub enum TokenKind {
     NewLine,
     Word,
     Bold,
+    Directive,
     LiteralString,
 }
 
@@ -92,6 +93,7 @@ impl TokenKind {
         TokenKind::NewLine,
         TokenKind::Word,
         TokenKind::Bold,
+        // Directive is composed in stage 2 and intentionally excluded here.
         TokenKind::LiteralString,
         // LiteralString is the Fallback (always matching), don't add tokens below!
     ];
@@ -108,6 +110,7 @@ impl TokenKind {
             TokenKind::NewLine => "new_line",
             TokenKind::Word => "word",
             TokenKind::Bold => "bold",
+            TokenKind::Directive => "directive",
             TokenKind::LiteralString => "literal_string",
         }
     }
@@ -124,6 +127,7 @@ impl TokenKind {
             TokenKind::NewLine => &NEW_LINE_RE,
             TokenKind::Word => &WORD_RE,
             TokenKind::Bold => &BOLD_RE,
+            TokenKind::Directive => panic!("directive has no stage-1 regex"),
             TokenKind::LiteralString => &LITERAL_STRING_RE,
         }
     }
@@ -184,6 +188,11 @@ mod tests {
         assert!(!TokenKind::Bold.is_match("*"));
     }
 
+    #[test]
+    fn directive_name_matches() {
+        assert_eq!(TokenKind::Directive.name(), "directive");
+    }
+
 
     #[test]
     fn doublecolon_matches() {
@@ -233,6 +242,12 @@ mod tests {
     #[test]
     fn literal_string_matches() {
         assert!(TokenKind::LiteralString.is_match("Hello world"));
+    }
+
+    #[test]
+    #[should_panic(expected = "directive has no stage-1 regex")]
+    fn directive_has_no_stage1_regex() {
+        let _ = TokenKind::Directive.regex();
     }
 
 

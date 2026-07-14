@@ -4,7 +4,25 @@
 
 use crate::token::{Token, TokenKind};
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TokenizeMode {
+    Stage1Raw,
+    Stage2Composed,
+}
+
 pub fn tokenize(input: &str) -> Vec<Token> {
+    tokenize_with_mode(input, TokenizeMode::Stage2Composed)
+}
+
+pub fn tokenize_with_mode(input: &str, mode: TokenizeMode) -> Vec<Token> {
+    let stage1 = tokenize_stage1_raw(input);
+    match mode {
+        TokenizeMode::Stage1Raw => stage1,
+        TokenizeMode::Stage2Composed => compose_stage2(stage1),
+    }
+}
+
+fn tokenize_stage1_raw(input: &str) -> Vec<Token> {
     let mut tokens = Vec::new();
     let input = format!("\n{input}\n");
     let mut remaining = input.as_str();
@@ -86,6 +104,36 @@ pub fn tokenize(input: &str) -> Vec<Token> {
     tokens
 }
 
+fn compose_stage2(tokens: Vec<Token>) -> Vec<Token> {
+    let mut composed = Vec::with_capacity(tokens.len());
+    let mut i = 0;
+
+    while i < tokens.len() {
+        if i + 3 < tokens.len()
+            && tokens[i].kind == TokenKind::DoubleDot
+            && tokens[i + 1].kind == TokenKind::Spaces
+            && tokens[i + 2].kind == TokenKind::Word
+            && tokens[i + 3].kind == TokenKind::DoubleColon
+        {
+            let directive = [
+                tokens[i].lexeme.as_str(),
+                tokens[i + 1].lexeme.as_str(),
+                tokens[i + 2].lexeme.as_str(),
+                tokens[i + 3].lexeme.as_str(),
+            ]
+            .concat();
+            composed.push(Token::new(TokenKind::Directive, directive));
+            i += 4;
+            continue;
+        }
+
+        composed.push(tokens[i].clone());
+        i += 1;
+    }
+
+    composed
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -100,6 +148,33 @@ mod tests {
         ];
 
         assert_eq!(tokenize(input), expected);
+    }
+
+    #[test]
+    fn tokenize_stage1_keeps_directive_parts_split() {
+        let input = ".. note::";
+        let expected = vec![
+            Token::new(TokenKind::DoubleDot, ".."),
+            Token::new(TokenKind::Spaces, " "),
+            Token::new(TokenKind::Word, "note"),
+            Token::new(TokenKind::DoubleColon, "::"),
+        ];
+
+        assert_eq!(
+            tokenize_with_mode(input, TokenizeMode::Stage1Raw),
+            expected
+        );
+    }
+
+    #[test]
+    fn tokenize_stage2_composes_directive() {
+        let input = ".. note::";
+        let expected = vec![Token::new(TokenKind::Directive, ".. note::")];
+
+        assert_eq!(
+            tokenize_with_mode(input, TokenizeMode::Stage2Composed),
+            expected
+        );
     }
 
     // Note: This test fails (bug)
