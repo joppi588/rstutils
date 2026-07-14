@@ -21,6 +21,7 @@ impl ParseError {
     }
 }
 
+// TODO: move this into the Parser class
 pub fn parse(input: &str) -> Result<Document, ParseError> {
     let tokens = tokenize(input);
     let mut parser = Parser { tokens, pos: 0 };
@@ -32,7 +33,18 @@ struct Parser {
     pos: usize,
 }
 
+
+// We have the following cases:
+// Blank line: 
+// - starts a new block (eventually indented if the current one is indented)
+// - leaves a block if unindented
+// - ignore if it follows a blank line
+// see pest rules
+
+
 impl Parser {
+    // TODO: Check if other parser loop over the rules the same way.
+    // REFACTOR: use a list of functions, then a loop or a macro
     fn parse_document(&mut self) -> Result<Document, ParseError> {
         let mut blocks = Vec::new();
 
