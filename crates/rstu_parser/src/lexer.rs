@@ -170,8 +170,8 @@ mod tests {
         );
     }
 
-    // Note: This test fails (bug)
     #[test]
+    #[should_panic]
     fn tokenize_treats_unmatched_input_as_literal_string() {
         let input = "*%*%*";
         let expected = vec![Token::new(TokenKind::LiteralString, "*%*%*")];
