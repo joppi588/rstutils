@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: MIT
 
-mod section_stack;
 mod elements;
 pub use elements::{ElementKind,ElementCategory,ContentModel};
 use std::collections::BTreeMap;
