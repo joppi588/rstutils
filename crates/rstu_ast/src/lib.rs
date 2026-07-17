@@ -2,31 +2,12 @@
 //
 // SPDX-License-Identifier: MIT
 
-mod element_kind;
-pub use element_kind::ElementKind;
+mod section_stack;
+mod elements;
+pub use elements::{ElementKind,ElementCategory,ContentModel};
 use std::collections::BTreeMap;
 use std::error::Error;
 use std::fmt;
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum ElementCategory {
-    Root,
-    Structural,
-    StructuralSub,
-    Decorative,
-    Bibliographic,
-    Body,
-    BodySub,
-    Inline,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ContentModel {
-    Empty,
-    TextOnly,
-    TextOrInline,
-    ChildrenOnly,
-}
 
 
 #[derive(Debug, Clone, PartialEq, Eq)]

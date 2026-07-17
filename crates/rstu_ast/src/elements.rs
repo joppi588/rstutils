@@ -3,6 +3,27 @@
 // SPDX-License-Identifier: MIT
     
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ContentModel {
+    Empty,
+    TextOnly,
+    TextOrInline,
+    ChildrenOnly,
+}
+
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum ElementCategory {
+    Root,
+    Structural,
+    StructuralSub,
+    Decorative,
+    Bibliographic,
+    Body,
+    BodySub,
+    Inline,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ElementKind {
     Abbreviation,
