@@ -333,9 +333,21 @@ impl Node {
         self
     }
 
-    pub fn push_child(&mut self, mut child: Node) {
+    pub fn push_child(&mut self, mut child: Node) -> Result<(), ValidationError> {
+        if !allows_child(self.kind, child.kind) {
+            return Err(ValidationError::new(
+                format!(
+                    "invalid child {:?} inside {:?}",
+                    child.kind,
+                    self.kind
+                ),
+                Some(self.kind),
+                child.kind,
+            ));
+        }
         child.parent = Some(self.kind);
         self.children.push(child);
+        Ok(())
     }
 
     pub fn validate(&self) -> Result<(), ValidationError> {
