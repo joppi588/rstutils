@@ -298,6 +298,7 @@ impl ElementKind {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Node {
     pub kind: ElementKind,
+    pub parent: Option<ElementKind>,
     pub attributes: BTreeMap<String, String>,
     pub text: Option<String>,
     pub children: Vec<Node>,
@@ -307,6 +308,7 @@ impl Node {
     pub fn new(kind: ElementKind) -> Self {
         Self {
             kind,
+            parent: None,
             attributes: BTreeMap::new(),
             text: None,
             children: Vec::new(),
@@ -323,12 +325,16 @@ impl Node {
         self
     }
 
-    pub fn with_child(mut self, child: Node) -> Self {
+
+    // TODO: eventually remove, used only in tests
+    pub fn with_child(mut self, mut child: Node) -> Self {
+        child.parent = Some(self.kind);
         self.children.push(child);
         self
     }
 
-    pub fn push_child(&mut self, child: Node) {
+    pub fn push_child(&mut self, mut child: Node) {
+        child.parent = Some(self.kind);
         self.children.push(child);
     }
 
