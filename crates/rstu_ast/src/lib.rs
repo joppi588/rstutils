@@ -129,24 +129,24 @@ pub enum ElementKind {
 }
 
 impl ElementKind {
-    pub fn categories(self) -> &'static [ElementCategory] {
+    pub fn categories(self) -> Vec<ElementCategory> {
         use ElementCategory::*;
 
         match self {
-            ElementKind::Field => &[Bibliographic, BodySub],
-            ElementKind::Image => &[Body, Inline],
-            ElementKind::Raw => &[Body, Inline],
-            ElementKind::Reference => &[Body, Inline],
-            ElementKind::Target => &[Body, Inline],
-            ElementKind::Title => &[StructuralSub, BodySub],
-            ElementKind::Document => &[Root],
-            ElementKind::Section | ElementKind::Sidebar | ElementKind::Topic => &[Structural],
+            ElementKind::Field => vec![Bibliographic, BodySub],
+            ElementKind::Image => vec![Body, Inline],
+            ElementKind::Raw => vec![Body, Inline],
+            ElementKind::Reference => vec![Body, Inline],
+            ElementKind::Target => vec![Body, Inline],
+            ElementKind::Title => vec![StructuralSub, BodySub],
+            ElementKind::Document => vec![Root],
+            ElementKind::Section | ElementKind::Sidebar | ElementKind::Topic => vec![Structural],
             ElementKind::Meta
             | ElementKind::Transition
             | ElementKind::Subtitle
             | ElementKind::Decoration
-            | ElementKind::Docinfo => &[StructuralSub],
-            ElementKind::Header | ElementKind::Footer => &[Decorative],
+            | ElementKind::Docinfo => vec![StructuralSub],
+            ElementKind::Header | ElementKind::Footer => vec![Decorative],
             ElementKind::Address
             | ElementKind::Author
             | ElementKind::Authors
@@ -156,7 +156,7 @@ impl ElementKind {
             | ElementKind::Organization
             | ElementKind::Revision
             | ElementKind::Status
-            | ElementKind::Version => &[Bibliographic],
+            | ElementKind::Version => vec![Bibliographic],
             ElementKind::Attribution
             | ElementKind::Caption
             | ElementKind::Classifier
@@ -181,7 +181,7 @@ impl ElementKind {
             | ElementKind::Term
             | ElementKind::Tgroup
             | ElementKind::Thead
-            => &[BodySub],
+            => vec![BodySub],
             ElementKind::Abbreviation
             | ElementKind::Acronym
             | ElementKind::CitationReference
@@ -196,7 +196,7 @@ impl ElementKind {
             | ElementKind::Subscript
             | ElementKind::SubstitutionReference
             | ElementKind::Superscript
-            | ElementKind::TitleReference => &[Inline],
+            | ElementKind::TitleReference => vec![Inline],
             ElementKind::Pending
             | ElementKind::Comment
             | ElementKind::DoctestBlock
@@ -228,7 +228,7 @@ impl ElementKind {
             | ElementKind::SystemMessage
             | ElementKind::Table
             | ElementKind::Tip
-            | ElementKind::Warning => &[Body],
+            | ElementKind::Warning => vec![Body],
         }
     }
 
@@ -437,7 +437,7 @@ impl fmt::Display for ValidationError {
 
 impl Error for ValidationError {}
 
-fn is_any_of(kind: ElementKind, allowed: &[ElementKind]) -> bool {
+fn is_any_of<const N: usize>(kind: ElementKind, allowed: &[ElementKind; N]) -> bool {
     allowed.contains(&kind)
 }
 
