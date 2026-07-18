@@ -1,7 +1,0 @@
-// SPDX-FileCopyrightText: 2026 Jochen Schmaehling <tostmann1@web.de>
-//
-// SPDX-License-Identifier: MIT
-
-fn main() {
-    println!("Hello, world!");
-}
