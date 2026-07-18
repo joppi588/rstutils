@@ -129,18 +129,49 @@ impl Node {
 
 
     pub fn push_section(&mut self, section: Node)-> Result<(), ValidationError>{
+        let section_marker = section
+            .attributes
+            .get("section_marker")
+            .map(String::as_str)
+            .map(str::to_owned);
 
-        let marker =self.attributes.get("section_marker").map(|x| x.as_str());
+        if self.parent.is_none() {
+            return self.push_child(section);
+        }
 
-        match self.parent{
-            None => self.push_child(section),
-            _=>
-            match self.match_section_stack(marker){
-                Some(parent_node) => unsafe { (parent_node as *const Node as *mut Node).as_mut().unwrap().push_child(section) },
-                None => unsafe { self.parent.unwrap().as_mut().push_child(section) }
-            },
-        
-    }
+        let self_marker = self.attributes.get("section_marker").map(String::as_str);
+        if self_marker == section_marker.as_deref() {
+            return unsafe { self.parent.unwrap().as_mut().push_child(section) };
+        }
+
+        let mut current_ptr = self.parent;
+        while let Some(ptr) = current_ptr {
+            let node = unsafe { ptr.as_ref() };
+            if node.attributes.get("section_marker").map(String::as_str) == section_marker.as_deref() {
+                if let Some(mut parent_of_match) = node.parent {
+                    return unsafe { parent_of_match.as_mut().push_child(section) };
+                }
+                break;
+            }
+            current_ptr = node.parent;
+        }
+
+        let mut closest_section = self.parent;
+        while let Some(mut ptr) = closest_section {
+            let node = unsafe { ptr.as_ref() };
+            if node.kind == ElementKind::Section {
+                return unsafe { ptr.as_mut().push_child(section) };
+            }
+            closest_section = node.parent;
+        }
+
+        let mut root = self.parent.unwrap();
+        unsafe {
+            while let Some(parent) = root.as_ref().parent {
+                root = parent;
+            }
+            root.as_mut().push_child(section)
+        }
     }
 
     pub fn match_section_stack(&self, section_marker: Option<&str>) -> Option<&Node>{
@@ -523,7 +554,7 @@ mod tests {
     }
 
     #[test]
-    fn parent_section_node_returns_root_if_no_matching_marker() {
+    fn parent_section_node_returns_none_if_no_matching_marker() {
         let mut section = Node::new(ElementKind::Section).with_attr("section_marker", "#");
         section.with_child(Node::new(ElementKind::Paragraph).with_text("Body text"));
 
@@ -534,5 +565,87 @@ mod tests {
         let parent = current.match_section_stack(Some("~")).unwrap();
 
         assert!(std::ptr::eq(parent, &tree));
+    }
+
+    #[test]
+    fn push_section_pushes_into_root_when_called_on_root() {
+        let mut tree = Node::new(ElementKind::Document);
+        let section = Node::new(ElementKind::Section).with_attr("section_marker", "#");
+
+        tree.push_section(section).unwrap();
+
+        assert_eq!(tree.children.len(), 1);
+        assert_eq!(tree.children[0].kind, ElementKind::Section);
+    }
+
+    #[test]
+    fn push_section_with_same_marker_pushes_to_parent_of_self() {
+        let mut current = Node::new(ElementKind::Section).with_attr("section_marker", "#");
+        current.with_child(Node::new(ElementKind::Paragraph).with_text("Body text"));
+
+        let mut tree = Node::new(ElementKind::Document);
+        tree.with_child(current);
+
+        {
+            let current_mut = &mut tree.children[0];
+            let section = Node::new(ElementKind::Section).with_attr("section_marker", "#");
+            current_mut.push_section(section).unwrap();
+        }
+
+        assert_eq!(tree.children.len(), 2);
+        assert_eq!(
+            tree.children[1].attributes.get("section_marker").map(String::as_str),
+            Some("#")
+        );
+    }
+
+    #[test]
+    fn push_section_with_ancestor_marker_pushes_to_parent_of_matching_ancestor() {
+        let mut inner = Node::new(ElementKind::Section).with_attr("section_marker", "~");
+        inner.with_child(Node::new(ElementKind::Paragraph).with_text("Body text"));
+
+        let mut outer = Node::new(ElementKind::Section).with_attr("section_marker", "#");
+        outer.with_child(inner);
+
+        let mut tree = Node::new(ElementKind::Document);
+        tree.with_child(outer);
+
+        {
+            let inner_mut = &mut tree.children[0].children[0];
+            let section = Node::new(ElementKind::Section).with_attr("section_marker", "#");
+            inner_mut.push_section(section).unwrap();
+        }
+
+        assert_eq!(tree.children.len(), 2);
+        assert_eq!(
+            tree.children[1].attributes.get("section_marker").map(String::as_str),
+            Some("#")
+        );
+    }
+
+    #[test]
+    fn push_section_without_marker_match_pushes_to_closest_ancestor_section() {
+        let mut inner = Node::new(ElementKind::Section).with_attr("section_marker", "~");
+        inner.with_child(Node::new(ElementKind::Paragraph).with_text("Body text"));
+
+        let mut outer = Node::new(ElementKind::Section).with_attr("section_marker", "#");
+        outer.with_child(inner);
+
+        let mut tree = Node::new(ElementKind::Document);
+        tree.with_child(outer);
+
+        {
+            let paragraph_mut = &mut tree.children[0].children[0].children[0];
+            let section = Node::new(ElementKind::Section).with_attr("section_marker", "^");
+            paragraph_mut.push_section(section).unwrap();
+        }
+
+        let inner_section = &tree.children[0].children[0];
+        assert_eq!(inner_section.children.len(), 2);
+        assert_eq!(inner_section.children[1].kind, ElementKind::Section);
+        assert_eq!(
+            inner_section.children[1].attributes.get("section_marker").map(String::as_str),
+            Some("^")
+        );
     }
 }
