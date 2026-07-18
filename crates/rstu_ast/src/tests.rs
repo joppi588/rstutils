@@ -6,8 +6,7 @@ use serde::Deserialize;
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::Path;
-use std::ptr::NonNull;
-
+use super::relink_parent_pointers;
 use super::{ElementKind, Node};
 
 #[derive(Debug, Deserialize)]
@@ -48,13 +47,6 @@ fn node_from_fixture(src: JsonNode) -> Node {
     }
 }
 
-fn relink_parent_pointers(node: &mut Node) {
-    let self_ptr = Some(NonNull::from(&mut *node));
-    for child in &mut node.children {
-        child.parent = self_ptr;
-        relink_parent_pointers(child);
-    }
-}
 
 fn load_document_fixture(file_name: &str) -> Box<Node> {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
