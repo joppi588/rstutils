@@ -124,10 +124,14 @@ impl Node {
         self.validate_with_parent(None)
     }
 
-    pub fn closest_ancestor_section(&self) -> Option<&Node> {
+    pub fn closest_ancestor_section(&self, section_marker: Option<&str>) -> Option<&Node> {
         let mut current = self.parent();
         while let Some(node) = current {
-            if node.kind == ElementKind::Section {
+            if node.kind == ElementKind::Section
+                && section_marker.is_none_or(|marker| {
+                    node.attributes.get("section_marker").map(String::as_str) == Some(marker)
+                })
+            {
                 return Some(node);
             }
             current = node.parent();
@@ -142,27 +146,42 @@ impl Node {
             section.kind
         );
 
-        match self.closest_ancestor_section() {
-            None => return self.push_child(section),
-            Some(section_node) => {
-                let section_marker = section
-                    .attributes
-                    .get("section_marker")
-                    .map(String::as_str)
-                    .map(str::to_owned);
-                return match section_node.closest_ancestor_section(section_marker) {
-                    Some(node) => {
-                        let mut parent = node.parent.expect("A section always has a parent.");
-                        unsafe { parent.as_mut().push_child(section) }
-                    }
-                    None => unsafe {
-                        (section_node as *const Node as *mut Node)
-                            .as_mut()
-                            .unwrap()
-                            .push_child(section)
-                    },
-                };
+        let section_marker = section
+            .attributes
+            .get("section_marker")
+            .map(String::as_str)
+            .map(str::to_owned);
+
+        if self.parent.is_none() {
+            return self.push_child(section);
+        }
+
+        let self_marker = self.attributes.get("section_marker").map(String::as_str);
+        if self_marker == section_marker.as_deref() {
+            let mut parent = self.parent.expect("A section always has a parent.");
+            return unsafe { parent.as_mut().push_child(section) };
+        }
+
+        if let Some(node) = self.closest_ancestor_section(section_marker.as_deref()) {
+            let mut parent = node.parent.expect("A section always has a parent.");
+            return unsafe { parent.as_mut().push_child(section) };
+        }
+
+        if let Some(closest_section) = self.closest_ancestor_section(None) {
+            return unsafe {
+                (closest_section as *const Node as *mut Node)
+                    .as_mut()
+                    .unwrap()
+                    .push_child(section)
+            };
+        }
+
+        let mut root = self.parent.expect("A section always has a parent.");
+        unsafe {
+            while let Some(parent) = root.as_ref().parent {
+                root = parent;
             }
+            root.as_mut().push_child(section)
         }
     }
 
