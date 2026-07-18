@@ -83,7 +83,7 @@ impl Node {
         self
     }
 
-
+    // TODO: Eventually remove
     pub fn with_child(&mut self, child: Node) -> &mut Self {
         self.children.push(child);
         let self_ptr = Some(NonNull::from(&mut *self));
