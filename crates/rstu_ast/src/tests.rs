@@ -158,7 +158,7 @@ fn closest_ancestor_section_finds_nearest_section_upwards() {
     tree.with_child(outer);
 
     let paragraph = &tree.children[0].children[0].children[0];
-    let closest = paragraph.closest_ancestor_section().unwrap();
+    let closest = paragraph.closest_ancestor_section(None).unwrap();
 
     assert_eq!(closest.kind, ElementKind::Section);
     assert_eq!(
@@ -170,5 +170,26 @@ fn closest_ancestor_section_finds_nearest_section_upwards() {
 #[test]
 fn closest_ancestor_section_returns_none_at_root() {
     let tree = Node::new(ElementKind::Document);
-    assert!(tree.closest_ancestor_section().is_none());
+    assert!(tree.closest_ancestor_section(None).is_none());
+}
+
+#[test]
+fn closest_ancestor_section_matches_requested_marker() {
+    let mut inner = Node::new(ElementKind::Section).with_attr("section_marker", "~");
+    inner.with_child(Node::new(ElementKind::Paragraph).with_text("Body text"));
+
+    let mut outer = Node::new(ElementKind::Section).with_attr("section_marker", "#");
+    outer.with_child(inner);
+
+    let mut tree = Node::new(ElementKind::Document);
+    tree.with_child(outer);
+
+    let paragraph = &tree.children[0].children[0].children[0];
+    let closest = paragraph.closest_ancestor_section(Some("#")).unwrap();
+
+    assert_eq!(closest.kind, ElementKind::Section);
+    assert_eq!(
+        closest.attributes.get("section_marker").map(String::as_str),
+        Some("#")
+    );
 }
