@@ -114,57 +114,37 @@ impl Node {
         self.validate_with_parent(None)
     }
 
-    pub fn parent_section_node<'a>(
-        &'a self,
-        root: &'a Node,
-        section_marker: Option<&str>,
-    ) -> &'a Node {
-        let marker = section_marker.unwrap_or("");
-        let mut path = Vec::new();
 
-        if !Self::find_path_to_target(root, self, &mut path) {
-            return root;
-        }
+    pub fn push_section(&mut self, section: Node)-> Result<(), ValidationError>{
 
-        for idx in (0..path.len()).rev() {
-            let node = path[idx];
-            if node.kind != ElementKind::Section {
-                continue;
-            }
+        let marker =self.attributes.get("section_marker").map(|x| x.as_str());
 
-            let node_marker = node
-                .attributes
-                .get("section_marker")
-                .map(String::as_str)
-                .unwrap_or("");
-
-            if node_marker == marker {
-                return if idx == 0 { root } else { path[idx - 1] };
-            }
-        }
-
-        root
+        match self.parent{
+            None => self.push_child(section),
+            _=>
+            match self.match_section_stack(marker){
+                Some(parent_node) => unsafe { (parent_node as *const Node as *mut Node).as_mut().unwrap().push_child(section) },
+                None => unsafe { self.parent.unwrap().as_mut().push_child(section) }
+            },
+        
+    }
     }
 
-    fn find_path_to_target<'a>(
-        current: &'a Node,
-        target: &Node,
-        path: &mut Vec<&'a Node>,
-    ) -> bool {
-        path.push(current);
-
-        if std::ptr::eq(current, target) {
-            return true;
+    pub fn match_section_stack(&self, section_marker: Option<&str>) -> Option<&Node>{
+        match self.parent{
+            Some(node)=>unsafe {
+                let node_ref = node.as_ref();
+                if node_ref.attributes.get("section_marker").map(|x| x.as_str()) == section_marker {
+                    Some(node_ref)
+                } else {
+                    match node_ref.parent {
+                        Some(parent_node) => parent_node.as_ref().match_section_stack(section_marker),
+                        None => None
+                    }
+                }
+            },
+            None=>None 
         }
-
-        for child in &current.children {
-            if Self::find_path_to_target(child, target, path) {
-                return true;
-            }
-        }
-
-        path.pop();
-        false
     }
 
     fn validate_with_parent(&self, parent: Option<ElementKind>) -> Result<(), ValidationError> {
@@ -516,7 +496,7 @@ mod tests {
         );
 
         let current = &tree.children[0].children[0].children[0];
-        let parent = current.parent_section_node(&tree, Some("~"));
+        let parent = current.match_section_stack(Some("#")).unwrap();
 
         assert_eq!(parent.kind, ElementKind::Section);
         assert_eq!(
@@ -534,7 +514,7 @@ mod tests {
         );
 
         let current = &tree.children[0].children[0];
-        let parent = current.parent_section_node(&tree, Some("###"));
+        let parent = current.match_section_stack(Some("~")).unwrap();
 
         assert!(std::ptr::eq(parent, &tree));
     }
