@@ -3,12 +3,13 @@
 // SPDX-License-Identifier: MIT
 
 mod elements;
-pub use elements::{ElementKind,ElementCategory,ContentModel};
+#[cfg(test)]
+mod tests;
+pub use elements::{ContentModel, ElementCategory, ElementKind};
 use std::collections::BTreeMap;
 use std::error::Error;
 use std::fmt;
 use std::ptr::NonNull;
-
 
 #[derive(Debug)]
 pub struct Node {
@@ -97,11 +98,7 @@ impl Node {
     pub fn push_child(&mut self, child: Node) -> Result<(), ValidationError> {
         if !allows_child(self.kind, child.kind) {
             return Err(ValidationError::new(
-                format!(
-                    "invalid child {:?} inside {:?}",
-                    child.kind,
-                    self.kind
-                ),
+                format!("invalid child {:?} inside {:?}", child.kind, self.kind),
                 Some(self.kind),
                 child.kind,
             ));
@@ -127,8 +124,28 @@ impl Node {
         self.validate_with_parent(None)
     }
 
+    pub fn closest_ancestor_section(&self, section_marker: Option<&str>) -> Option<&Node> {
+        let mut current = self.parent();
+        while let Some(node) = current {
+            if node.kind == ElementKind::Section
+                && section_marker.is_none_or(|marker| {
+                    node.attributes.get("section_marker").map(String::as_str) == Some(marker)
+                })
+            {
+                return Some(node);
+            }
+            current = node.parent();
+        }
+        None
+    }
 
-    pub fn push_section(&mut self, section: Node)-> Result<(), ValidationError>{
+    pub fn push_section(&mut self, section: Node) -> Result<(), ValidationError> {
+        assert!(
+            section.kind.has_category(ElementCategory::Structural),
+            "push_section requires a structural node, got {:?}",
+            section.kind
+        );
+
         let section_marker = section
             .attributes
             .get("section_marker")
@@ -141,31 +158,25 @@ impl Node {
 
         let self_marker = self.attributes.get("section_marker").map(String::as_str);
         if self_marker == section_marker.as_deref() {
-            return unsafe { self.parent.unwrap().as_mut().push_child(section) };
+            let mut parent = self.parent.expect("A section always has a parent.");
+            return unsafe { parent.as_mut().push_child(section) };
         }
 
-        let mut current_ptr = self.parent;
-        while let Some(ptr) = current_ptr {
-            let node = unsafe { ptr.as_ref() };
-            if node.attributes.get("section_marker").map(String::as_str) == section_marker.as_deref() {
-                if let Some(mut parent_of_match) = node.parent {
-                    return unsafe { parent_of_match.as_mut().push_child(section) };
-                }
-                break;
-            }
-            current_ptr = node.parent;
+        if let Some(node) = self.closest_ancestor_section(section_marker.as_deref()) {
+            let mut parent = node.parent.expect("A section always has a parent.");
+            return unsafe { parent.as_mut().push_child(section) };
         }
 
-        let mut closest_section = self.parent;
-        while let Some(mut ptr) = closest_section {
-            let node = unsafe { ptr.as_ref() };
-            if node.kind == ElementKind::Section {
-                return unsafe { ptr.as_mut().push_child(section) };
-            }
-            closest_section = node.parent;
+        if let Some(closest_section) = self.closest_ancestor_section(None) {
+            return unsafe {
+                (closest_section as *const Node as *mut Node)
+                    .as_mut()
+                    .unwrap()
+                    .push_child(section)
+            };
         }
 
-        let mut root = self.parent.unwrap();
+        let mut root = self.parent.expect("A section always has a parent.");
         unsafe {
             while let Some(parent) = root.as_ref().parent {
                 root = parent;
@@ -174,30 +185,11 @@ impl Node {
         }
     }
 
-    pub fn match_section_stack(&self, section_marker: Option<&str>) -> Option<&Node>{
-        let mut current = self.parent();
-        let mut root = None;
-
-        while let Some(node) = current {
-            root = Some(node);
-            if node.attributes.get("section_marker").map(|x| x.as_str()) == section_marker {
-                return Some(node);
-            }
-            current = node.parent();
-        }
-
-        root
-    }
-
     fn validate_with_parent(&self, parent: Option<ElementKind>) -> Result<(), ValidationError> {
         if let Some(parent_kind) = parent {
             if !allows_child(parent_kind, self.kind) {
                 return Err(ValidationError::new(
-                    format!(
-                        "invalid child {:?} inside {:?}",
-                        self.kind,
-                        parent_kind
-                    ),
+                    format!("invalid child {:?} inside {:?}", self.kind, parent_kind),
                     Some(parent_kind),
                     self.kind,
                 ));
@@ -206,7 +198,8 @@ impl Node {
 
         match self.kind.content_model() {
             ContentModel::Empty => {
-                if self.text.as_deref().is_some_and(|t| !t.is_empty()) || !self.children.is_empty() {
+                if self.text.as_deref().is_some_and(|t| !t.is_empty()) || !self.children.is_empty()
+                {
                     return Err(ValidationError::new(
                         "empty element must not contain text or children",
                         parent,
@@ -227,7 +220,10 @@ impl Node {
                 for child in &self.children {
                     if !child.kind.has_category(ElementCategory::Inline) {
                         return Err(ValidationError::new(
-                            format!("non-inline child {:?} in text-or-inline element", child.kind),
+                            format!(
+                                "non-inline child {:?} in text-or-inline element",
+                                child.kind
+                            ),
                             parent,
                             self.kind,
                         ));
@@ -278,9 +274,7 @@ impl fmt::Display for ValidationError {
             write!(
                 f,
                 "{} (node: {:?}, parent: {:?})",
-                self.message,
-                self.node,
-                parent
+                self.message, self.node, parent
             )
         } else {
             write!(f, "{} (node: {:?})", self.message, self.node)
@@ -321,51 +315,20 @@ fn allows_child(parent: ElementKind, child: ElementKind) -> bool {
 
         Authors => is_any_of(child, &[Author, Organization, Address, Contact]),
 
-        Admonition => {
-            is_any_of(child, &[Title]) || child.has_category(ElementCategory::Body)
-        }
+        Admonition => is_any_of(child, &[Title]) || child.has_category(ElementCategory::Body),
 
-        BlockQuote
-        | Compound
-        | Container
-        | Definition
-        | Description
-        | Entry
-        | FieldBody
-        | Footer
-        | Footnote
-        | Header
-        | Hint
-        | Important
-        | Legend
-        | ListItem
-        | Note
-        | SystemMessage
-        | Tip
-        | Warning
-        | Attention
-        | Caution
-        | Danger
-        | Error
-        | Citation => {
+        BlockQuote | Compound | Container | Definition | Description | Entry | FieldBody
+        | Footer | Footnote | Header | Hint | Important | Legend | ListItem | Note
+        | SystemMessage | Tip | Warning | Attention | Caution | Danger | Error | Citation => {
             child.has_category(ElementCategory::Body)
-                || is_any_of(
-                    child,
-                    &[
-                        Attribution,
-                        Label,
-                        Title,
-                    ],
-                )
+                || is_any_of(child, &[Attribution, Label, Title])
         }
 
         BulletList | EnumeratedList => is_any_of(child, &[ListItem]),
 
         DefinitionList => is_any_of(child, &[DefinitionListItem]),
 
-        DefinitionListItem => {
-            is_any_of(child, &[Term, Classifier, Definition])
-        }
+        DefinitionListItem => is_any_of(child, &[Term, Classifier, Definition]),
 
         FieldList => is_any_of(child, &[Field]),
         Field => is_any_of(child, &[FieldName, FieldBody]),
@@ -465,187 +428,4 @@ fn validate_element_shape(node: &Node) -> Result<(), ValidationError> {
     }
 
     Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::{ElementKind, Node};
-
-    #[test]
-    fn validates_minimal_document_with_section_and_paragraph() {
-        let mut section = Node::new(ElementKind::Section);
-        section.with_child(Node::new(ElementKind::Title).with_text("Heading"));
-        section.with_child(Node::new(ElementKind::Paragraph).with_text("Body text"));
-
-        let mut tree = Node::new(ElementKind::Document);
-        tree.with_child(section);
-
-        assert!(tree.validate().is_ok());
-    }
-
-    #[test]
-    fn rejects_invalid_list_child() {
-        let mut bullet_list = Node::new(ElementKind::BulletList);
-        bullet_list.with_child(Node::new(ElementKind::Paragraph).with_text("not a list item"));
-
-        let mut tree = Node::new(ElementKind::Document);
-        tree.with_child(bullet_list);
-
-        assert!(tree.validate().is_err());
-    }
-
-    #[test]
-    fn validates_figure_with_image_and_caption() {
-        let mut figure = Node::new(ElementKind::Figure);
-        figure.with_child(Node::new(ElementKind::Image));
-        figure.with_child(Node::new(ElementKind::Caption).with_text("Figure caption"));
-
-        let mut tree = Node::new(ElementKind::Document);
-        tree.with_child(figure);
-
-        assert!(tree.validate().is_ok());
-    }
-
-    #[test]
-    fn rejects_text_inside_empty_element() {
-        let mut tree = Node::new(ElementKind::Document);
-        tree.with_child(Node::new(ElementKind::Meta).with_text("x"));
-
-        assert!(tree.validate().is_err());
-    }
-
-    #[test]
-    fn rejects_non_inline_child_in_paragraph() {
-        let mut bullet_list = Node::new(ElementKind::BulletList);
-        bullet_list.with_child(Node::new(ElementKind::ListItem));
-
-        let mut paragraph = Node::new(ElementKind::Paragraph);
-        paragraph.with_child(bullet_list);
-
-        let mut tree = Node::new(ElementKind::Document);
-        tree.with_child(paragraph);
-
-        assert!(tree.validate().is_err());
-    }
-
-    #[test]
-    fn parent_section_node_returns_parent_of_matching_section() {
-        // GIVEN: An ast with three levels
-        // WHEN: parent is queried
-        // THEN: The right section is returned
-
-        let mut inner_section = Node::new(ElementKind::Section).with_attr("section_marker", "~");
-        inner_section.with_child(Node::new(ElementKind::Paragraph).with_text("Body text"));
-
-        let mut outer_section = Node::new(ElementKind::Section).with_attr("section_marker", "#");
-        outer_section.with_child(inner_section);
-
-        let mut tree = Node::new(ElementKind::Document);
-        tree.with_child(outer_section);
-
-        let current = &tree.children[0].children[0].children[0];
-        let parent = current.match_section_stack(Some("#")).unwrap();
-
-        assert_eq!(parent.kind, ElementKind::Section);
-        assert_eq!(
-            parent.attributes.get("section_marker").map(String::as_str),
-            Some("#")
-        );
-    }
-
-    #[test]
-    fn parent_section_node_returns_none_if_no_matching_marker() {
-        let mut section = Node::new(ElementKind::Section).with_attr("section_marker", "#");
-        section.with_child(Node::new(ElementKind::Paragraph).with_text("Body text"));
-
-        let mut tree = Node::new(ElementKind::Document);
-        tree.with_child(section);
-
-        let current = &tree.children[0].children[0];
-        let parent = current.match_section_stack(Some("~")).unwrap();
-
-        assert!(std::ptr::eq(parent, &tree));
-    }
-
-    #[test]
-    fn push_section_pushes_into_root_when_called_on_root() {
-        let mut tree = Node::new(ElementKind::Document);
-        let section = Node::new(ElementKind::Section).with_attr("section_marker", "#");
-
-        tree.push_section(section).unwrap();
-
-        assert_eq!(tree.children.len(), 1);
-        assert_eq!(tree.children[0].kind, ElementKind::Section);
-    }
-
-    #[test]
-    fn push_section_with_same_marker_pushes_to_parent_of_self() {
-        let mut current = Node::new(ElementKind::Section).with_attr("section_marker", "#");
-        current.with_child(Node::new(ElementKind::Paragraph).with_text("Body text"));
-
-        let mut tree = Node::new(ElementKind::Document);
-        tree.with_child(current);
-
-        {
-            let current_mut = &mut tree.children[0];
-            let section = Node::new(ElementKind::Section).with_attr("section_marker", "#");
-            current_mut.push_section(section).unwrap();
-        }
-
-        assert_eq!(tree.children.len(), 2);
-        assert_eq!(
-            tree.children[1].attributes.get("section_marker").map(String::as_str),
-            Some("#")
-        );
-    }
-
-    #[test]
-    fn push_section_with_ancestor_marker_pushes_to_parent_of_matching_ancestor() {
-        let mut inner = Node::new(ElementKind::Section).with_attr("section_marker", "~");
-        inner.with_child(Node::new(ElementKind::Paragraph).with_text("Body text"));
-
-        let mut outer = Node::new(ElementKind::Section).with_attr("section_marker", "#");
-        outer.with_child(inner);
-
-        let mut tree = Node::new(ElementKind::Document);
-        tree.with_child(outer);
-
-        {
-            let inner_mut = &mut tree.children[0].children[0];
-            let section = Node::new(ElementKind::Section).with_attr("section_marker", "#");
-            inner_mut.push_section(section).unwrap();
-        }
-
-        assert_eq!(tree.children.len(), 2);
-        assert_eq!(
-            tree.children[1].attributes.get("section_marker").map(String::as_str),
-            Some("#")
-        );
-    }
-
-    #[test]
-    fn push_section_without_marker_match_pushes_to_closest_ancestor_section() {
-        let mut inner = Node::new(ElementKind::Section).with_attr("section_marker", "~");
-        inner.with_child(Node::new(ElementKind::Paragraph).with_text("Body text"));
-
-        let mut outer = Node::new(ElementKind::Section).with_attr("section_marker", "#");
-        outer.with_child(inner);
-
-        let mut tree = Node::new(ElementKind::Document);
-        tree.with_child(outer);
-
-        {
-            let paragraph_mut = &mut tree.children[0].children[0].children[0];
-            let section = Node::new(ElementKind::Section).with_attr("section_marker", "^");
-            paragraph_mut.push_section(section).unwrap();
-        }
-
-        let inner_section = &tree.children[0].children[0];
-        assert_eq!(inner_section.children.len(), 2);
-        assert_eq!(inner_section.children[1].kind, ElementKind::Section);
-        assert_eq!(
-            inner_section.children[1].attributes.get("section_marker").map(String::as_str),
-            Some("^")
-        );
-    }
 }
