@@ -7,16 +7,50 @@ pub use elements::{ElementKind,ElementCategory,ContentModel};
 use std::collections::BTreeMap;
 use std::error::Error;
 use std::fmt;
+use std::ptr::NonNull;
 
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug)]
 pub struct Node {
     pub kind: ElementKind,
-    pub parent: Option<ElementKind>,
+    /// Raw pointer to the parent node.
+    /// Safety: valid only as long as the parent node has not been moved in memory.
+    pub parent: Option<NonNull<Node>>,
     pub attributes: BTreeMap<String, String>,
     pub text: Option<String>,
     pub children: Vec<Node>,
 }
+
+// Safety: Node does not use interior mutability through the raw pointer.
+// The pointer is a back-reference only; ownership follows the tree structure.
+unsafe impl Send for Node {}
+unsafe impl Sync for Node {}
+
+impl Clone for Node {
+    /// Clones the subtree. The clone's `parent` is reset to `None` since it is
+    /// detached from the original tree.
+    fn clone(&self) -> Self {
+        Node {
+            kind: self.kind,
+            parent: None,
+            attributes: self.attributes.clone(),
+            text: self.text.clone(),
+            children: self.children.clone(),
+        }
+    }
+}
+
+impl PartialEq for Node {
+    /// Structural equality; the `parent` pointer is intentionally excluded.
+    fn eq(&self, other: &Self) -> bool {
+        self.kind == other.kind
+            && self.attributes == other.attributes
+            && self.text == other.text
+            && self.children == other.children
+    }
+}
+
+impl Eq for Node {}
 
 impl Node {
     pub fn new(kind: ElementKind) -> Self {
@@ -27,6 +61,16 @@ impl Node {
             text: None,
             children: Vec::new(),
         }
+    }
+
+    /// Returns a shared reference to the parent node, if any.
+    ///
+    /// # Safety
+    /// The reference is valid only as long as the parent node has not been
+    /// moved in memory since the pointer was set.
+    pub fn parent(&self) -> Option<&Node> {
+        // SAFETY: caller upholds the invariant that the parent is still live.
+        self.parent.map(|p| unsafe { p.as_ref() })
     }
 
     pub fn with_text(mut self, text: impl Into<String>) -> Self {
@@ -41,8 +85,8 @@ impl Node {
 
 
     // TODO: eventually remove, used only in tests
-    pub fn with_child(mut self, mut child: Node) -> Self {
-        child.parent = Some(self.kind);
+    // Note: parent pointer is not set here because `self` is moved after the call.
+    pub fn with_child(mut self, child: Node) -> Self {
         self.children.push(child);
         self
     }
@@ -59,7 +103,9 @@ impl Node {
                 child.kind,
             ));
         }
-        child.parent = Some(self.kind);
+        // SAFETY: `self` is a valid mutable reference. The pointer remains
+        // valid as long as the parent node is not moved in memory.
+        child.parent = NonNull::new(self as *mut Node);
         self.children.push(child);
         Ok(())
     }
