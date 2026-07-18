@@ -128,8 +128,27 @@ impl Node {
         self.validate_with_parent(None)
     }
 
+    pub fn closest_ancestor_section(&self) -> Option<&Node> {
+        let mut current = self.parent();
+        while let Some(node) = current {
+            if node.kind == ElementKind::Section {
+                return Some(node);
+            }
+            current = node.parent();
+        }
+        None
+    }
+
+
+
 
     pub fn push_section(&mut self, section: Node)-> Result<(), ValidationError>{
+        assert!(
+            section.kind.has_category(ElementCategory::Structural),
+            "push_section requires a structural node, got {:?}",
+            section.kind
+        );
+
         let section_marker = section
             .attributes
             .get("section_marker")
@@ -142,31 +161,30 @@ impl Node {
 
         let self_marker = self.attributes.get("section_marker").map(String::as_str);
         if self_marker == section_marker.as_deref() {
-            return unsafe { self.parent.unwrap().as_mut().push_child(section) };
+            let mut parent = self.parent.expect("A section always has a parent.");
+            return unsafe { parent.as_mut().push_child(section) };
         }
 
         let mut current_ptr = self.parent;
         while let Some(ptr) = current_ptr {
             let node = unsafe { ptr.as_ref() };
             if node.attributes.get("section_marker").map(String::as_str) == section_marker.as_deref() {
-                if let Some(mut parent_of_match) = node.parent {
-                    return unsafe { parent_of_match.as_mut().push_child(section) };
-                }
-                break;
+                let mut parent_of_match = node.parent.expect("A section always has a parent.");
+                return unsafe { parent_of_match.as_mut().push_child(section) };
             }
             current_ptr = node.parent;
         }
 
-        let mut closest_section = self.parent;
-        while let Some(mut ptr) = closest_section {
-            let node = unsafe { ptr.as_ref() };
-            if node.kind == ElementKind::Section {
-                return unsafe { ptr.as_mut().push_child(section) };
-            }
-            closest_section = node.parent;
+        if let Some(closest_section) = self.closest_ancestor_section() {
+            return unsafe {
+                (closest_section as *const Node as *mut Node)
+                    .as_mut()
+                    .unwrap()
+                    .push_child(section)
+            };
         }
 
-        let mut root = self.parent.unwrap();
+        let mut root = self.parent.expect("A section always has a parent.");
         unsafe {
             while let Some(parent) = root.as_ref().parent {
                 root = parent;
@@ -175,20 +193,7 @@ impl Node {
         }
     }
 
-    pub fn match_section_stack(&self, section_marker: Option<&str>) -> Option<&Node>{
-        let mut current = self.parent();
-        let mut root = None;
-
-        while let Some(node) = current {
-            root = Some(node);
-            if node.attributes.get("section_marker").map(|x| x.as_str()) == section_marker {
-                return Some(node);
-            }
-            current = node.parent();
-        }
-
-        root
-    }
+    
 
     fn validate_with_parent(&self, parent: Option<ElementKind>) -> Result<(), ValidationError> {
         if let Some(parent_kind) = parent {

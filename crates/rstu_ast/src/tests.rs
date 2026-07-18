@@ -62,44 +62,7 @@ fn rejects_non_inline_child_in_paragraph() {
     assert!(tree.validate().is_err());
 }
 
-#[test]
-fn parent_section_node_returns_parent_of_matching_section() {
-    // GIVEN: An ast with three levels
-    // WHEN: parent is queried
-    // THEN: The right section is returned
 
-    let mut inner_section = Node::new(ElementKind::Section).with_attr("section_marker", "~");
-    inner_section.with_child(Node::new(ElementKind::Paragraph).with_text("Body text"));
-
-    let mut outer_section = Node::new(ElementKind::Section).with_attr("section_marker", "#");
-    outer_section.with_child(inner_section);
-
-    let mut tree = Node::new(ElementKind::Document);
-    tree.with_child(outer_section);
-
-    let current = &tree.children[0].children[0].children[0];
-    let parent = current.match_section_stack(Some("#")).unwrap();
-
-    assert_eq!(parent.kind, ElementKind::Section);
-    assert_eq!(
-        parent.attributes.get("section_marker").map(String::as_str),
-        Some("#")
-    );
-}
-
-#[test]
-fn parent_section_node_returns_none_if_no_matching_marker() {
-    let mut section = Node::new(ElementKind::Section).with_attr("section_marker", "#");
-    section.with_child(Node::new(ElementKind::Paragraph).with_text("Body text"));
-
-    let mut tree = Node::new(ElementKind::Document);
-    tree.with_child(section);
-
-    let current = &tree.children[0].children[0];
-    let parent = current.match_section_stack(Some("~")).unwrap();
-
-    assert!(std::ptr::eq(parent, &tree));
-}
 
 #[test]
 fn push_section_pushes_into_root_when_called_on_root() {
@@ -181,4 +144,31 @@ fn push_section_without_marker_match_pushes_to_closest_ancestor_section() {
         inner_section.children[1].attributes.get("section_marker").map(String::as_str),
         Some("^")
     );
+}
+
+#[test]
+fn closest_ancestor_section_finds_nearest_section_upwards() {
+    let mut inner = Node::new(ElementKind::Section).with_attr("section_marker", "~");
+    inner.with_child(Node::new(ElementKind::Paragraph).with_text("Body text"));
+
+    let mut outer = Node::new(ElementKind::Section).with_attr("section_marker", "#");
+    outer.with_child(inner);
+
+    let mut tree = Node::new(ElementKind::Document);
+    tree.with_child(outer);
+
+    let paragraph = &tree.children[0].children[0].children[0];
+    let closest = paragraph.closest_ancestor_section().unwrap();
+
+    assert_eq!(closest.kind, ElementKind::Section);
+    assert_eq!(
+        closest.attributes.get("section_marker").map(String::as_str),
+        Some("~")
+    );
+}
+
+#[test]
+fn closest_ancestor_section_returns_none_at_root() {
+    let tree = Node::new(ElementKind::Document);
+    assert!(tree.closest_ancestor_section().is_none());
 }
