@@ -150,9 +150,17 @@ impl Node {
                     .get("section_marker")
                     .map(String::as_str)
                     .map(str::to_owned);
-                return match section_node.closest_ancestor_section() {
-                    None => section_node.push_child(section),
-                    Some(node) => node.parent().push_child(section),
+                return match section_node.closest_ancestor_section(section_marker) {
+                    Some(node) => {
+                        let mut parent = node.parent.expect("A section always has a parent.");
+                        unsafe { parent.as_mut().push_child(section) }
+                    }
+                    None => unsafe {
+                        (section_node as *const Node as *mut Node)
+                            .as_mut()
+                            .unwrap()
+                            .push_child(section)
+                    },
                 };
             }
         }
