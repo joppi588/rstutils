@@ -84,14 +84,17 @@ impl Node {
     }
 
 
-    // TODO: eventually remove, used only in tests
-    // Note: parent pointer is not set here because `self` is moved after the call.
-    pub fn with_child(mut self, child: Node) -> Self {
+    pub fn with_child(&mut self, child: Node) -> &mut Self {
         self.children.push(child);
+        let self_ptr = Some(NonNull::from(&mut *self));
+        if let Some(inserted) = self.children.last_mut() {
+            inserted.parent = self_ptr;
+            inserted.relink_descendant_parents();
+        }
         self
     }
 
-    pub fn push_child(&mut self, mut child: Node) -> Result<(), ValidationError> {
+    pub fn push_child(&mut self, child: Node) -> Result<(), ValidationError> {
         if !allows_child(self.kind, child.kind) {
             return Err(ValidationError::new(
                 format!(
@@ -103,11 +106,21 @@ impl Node {
                 child.kind,
             ));
         }
-        // SAFETY: `self` is a valid mutable reference. The pointer remains
-        // valid as long as the parent node is not moved in memory.
-        child.parent = NonNull::new(self as *mut Node);
         self.children.push(child);
+        let self_ptr = Some(NonNull::from(&mut *self));
+        if let Some(inserted) = self.children.last_mut() {
+            inserted.parent = self_ptr;
+            inserted.relink_descendant_parents();
+        }
         Ok(())
+    }
+
+    fn relink_descendant_parents(&mut self) {
+        let self_ptr = Some(NonNull::from(&mut *self));
+        for child in &mut self.children {
+            child.parent = self_ptr;
+            child.relink_descendant_parents();
+        }
     }
 
     pub fn validate(&self) -> Result<(), ValidationError> {
@@ -131,20 +144,18 @@ impl Node {
     }
 
     pub fn match_section_stack(&self, section_marker: Option<&str>) -> Option<&Node>{
-        match self.parent{
-            Some(node)=>unsafe {
-                let node_ref = node.as_ref();
-                if node_ref.attributes.get("section_marker").map(|x| x.as_str()) == section_marker {
-                    Some(node_ref)
-                } else {
-                    match node_ref.parent {
-                        Some(parent_node) => parent_node.as_ref().match_section_stack(section_marker),
-                        None => None
-                    }
-                }
-            },
-            None=>None 
+        let mut current = self.parent();
+        let mut root = None;
+
+        while let Some(node) = current {
+            root = Some(node);
+            if node.attributes.get("section_marker").map(|x| x.as_str()) == section_marker {
+                return Some(node);
+            }
+            current = node.parent();
         }
+
+        root
     }
 
     fn validate_with_parent(&self, parent: Option<ElementKind>) -> Result<(), ValidationError> {
@@ -431,50 +442,57 @@ mod tests {
 
     #[test]
     fn validates_minimal_document_with_section_and_paragraph() {
-        let tree = Node::new(ElementKind::Document).with_child(
-            Node::new(ElementKind::Section)
-                .with_child(Node::new(ElementKind::Title).with_text("Heading"))
-                .with_child(Node::new(ElementKind::Paragraph).with_text("Body text")),
-        );
+        let mut section = Node::new(ElementKind::Section);
+        section.with_child(Node::new(ElementKind::Title).with_text("Heading"));
+        section.with_child(Node::new(ElementKind::Paragraph).with_text("Body text"));
+
+        let mut tree = Node::new(ElementKind::Document);
+        tree.with_child(section);
 
         assert!(tree.validate().is_ok());
     }
 
     #[test]
     fn rejects_invalid_list_child() {
-        let tree = Node::new(ElementKind::Document).with_child(
-            Node::new(ElementKind::BulletList)
-                .with_child(Node::new(ElementKind::Paragraph).with_text("not a list item")),
-        );
+        let mut bullet_list = Node::new(ElementKind::BulletList);
+        bullet_list.with_child(Node::new(ElementKind::Paragraph).with_text("not a list item"));
+
+        let mut tree = Node::new(ElementKind::Document);
+        tree.with_child(bullet_list);
 
         assert!(tree.validate().is_err());
     }
 
     #[test]
     fn validates_figure_with_image_and_caption() {
-        let tree = Node::new(ElementKind::Document).with_child(
-            Node::new(ElementKind::Figure)
-                .with_child(Node::new(ElementKind::Image))
-                .with_child(Node::new(ElementKind::Caption).with_text("Figure caption")),
-        );
+        let mut figure = Node::new(ElementKind::Figure);
+        figure.with_child(Node::new(ElementKind::Image));
+        figure.with_child(Node::new(ElementKind::Caption).with_text("Figure caption"));
+
+        let mut tree = Node::new(ElementKind::Document);
+        tree.with_child(figure);
 
         assert!(tree.validate().is_ok());
     }
 
     #[test]
     fn rejects_text_inside_empty_element() {
-        let tree = Node::new(ElementKind::Document)
-            .with_child(Node::new(ElementKind::Meta).with_text("x"));
+        let mut tree = Node::new(ElementKind::Document);
+        tree.with_child(Node::new(ElementKind::Meta).with_text("x"));
 
         assert!(tree.validate().is_err());
     }
 
     #[test]
     fn rejects_non_inline_child_in_paragraph() {
-        let tree = Node::new(ElementKind::Document).with_child(
-            Node::new(ElementKind::Paragraph)
-                .with_child(Node::new(ElementKind::BulletList).with_child(Node::new(ElementKind::ListItem))),
-        );
+        let mut bullet_list = Node::new(ElementKind::BulletList);
+        bullet_list.with_child(Node::new(ElementKind::ListItem));
+
+        let mut paragraph = Node::new(ElementKind::Paragraph);
+        paragraph.with_child(bullet_list);
+
+        let mut tree = Node::new(ElementKind::Document);
+        tree.with_child(paragraph);
 
         assert!(tree.validate().is_err());
     }
@@ -485,15 +503,14 @@ mod tests {
         // WHEN: parent is queried
         // THEN: The right section is returned
 
-        let tree = Node::new(ElementKind::Document).with_child(
-            Node::new(ElementKind::Section)
-                .with_attr("section_marker", "#")
-                .with_child(
-                    Node::new(ElementKind::Section)
-                        .with_attr("section_marker", "~")
-                        .with_child(Node::new(ElementKind::Paragraph).with_text("Body text")),
-                ),
-        );
+        let mut inner_section = Node::new(ElementKind::Section).with_attr("section_marker", "~");
+        inner_section.with_child(Node::new(ElementKind::Paragraph).with_text("Body text"));
+
+        let mut outer_section = Node::new(ElementKind::Section).with_attr("section_marker", "#");
+        outer_section.with_child(inner_section);
+
+        let mut tree = Node::new(ElementKind::Document);
+        tree.with_child(outer_section);
 
         let current = &tree.children[0].children[0].children[0];
         let parent = current.match_section_stack(Some("#")).unwrap();
@@ -507,11 +524,11 @@ mod tests {
 
     #[test]
     fn parent_section_node_returns_root_if_no_matching_marker() {
-        let tree = Node::new(ElementKind::Document).with_child(
-            Node::new(ElementKind::Section)
-                .with_attr("section_marker", "#")
-                .with_child(Node::new(ElementKind::Paragraph).with_text("Body text")),
-        );
+        let mut section = Node::new(ElementKind::Section).with_attr("section_marker", "#");
+        section.with_child(Node::new(ElementKind::Paragraph).with_text("Body text"));
+
+        let mut tree = Node::new(ElementKind::Document);
+        tree.with_child(section);
 
         let current = &tree.children[0].children[0];
         let parent = current.match_section_stack(Some("~")).unwrap();
