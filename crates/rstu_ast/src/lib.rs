@@ -68,6 +68,59 @@ impl Node {
         self.validate_with_parent(None)
     }
 
+    pub fn parent_section_node<'a>(
+        &'a self,
+        root: &'a Node,
+        section_marker: Option<&str>,
+    ) -> &'a Node {
+        let marker = section_marker.unwrap_or("");
+        let mut path = Vec::new();
+
+        if !Self::find_path_to_target(root, self, &mut path) {
+            return root;
+        }
+
+        for idx in (0..path.len()).rev() {
+            let node = path[idx];
+            if node.kind != ElementKind::Section {
+                continue;
+            }
+
+            let node_marker = node
+                .attributes
+                .get("section_marker")
+                .map(String::as_str)
+                .unwrap_or("");
+
+            if node_marker == marker {
+                return if idx == 0 { root } else { path[idx - 1] };
+            }
+        }
+
+        root
+    }
+
+    fn find_path_to_target<'a>(
+        current: &'a Node,
+        target: &Node,
+        path: &mut Vec<&'a Node>,
+    ) -> bool {
+        path.push(current);
+
+        if std::ptr::eq(current, target) {
+            return true;
+        }
+
+        for child in &current.children {
+            if Self::find_path_to_target(child, target, path) {
+                return true;
+            }
+        }
+
+        path.pop();
+        false
+    }
+
     fn validate_with_parent(&self, parent: Option<ElementKind>) -> Result<(), ValidationError> {
         if let Some(parent_kind) = parent {
             if !allows_child(parent_kind, self.kind) {
@@ -398,5 +451,45 @@ mod tests {
         );
 
         assert!(tree.validate().is_err());
+    }
+
+    #[test]
+    fn parent_section_node_returns_parent_of_matching_section() {
+        // GIVEN: An ast with three levels
+        // WHEN: parent is queried
+        // THEN: The right section is returned
+
+        let tree = Node::new(ElementKind::Document).with_child(
+            Node::new(ElementKind::Section)
+                .with_attr("section_marker", "#")
+                .with_child(
+                    Node::new(ElementKind::Section)
+                        .with_attr("section_marker", "~")
+                        .with_child(Node::new(ElementKind::Paragraph).with_text("Body text")),
+                ),
+        );
+
+        let current = &tree.children[0].children[0].children[0];
+        let parent = current.parent_section_node(&tree, Some("~"));
+
+        assert_eq!(parent.kind, ElementKind::Section);
+        assert_eq!(
+            parent.attributes.get("section_marker").map(String::as_str),
+            Some("#")
+        );
+    }
+
+    #[test]
+    fn parent_section_node_returns_root_if_no_matching_marker() {
+        let tree = Node::new(ElementKind::Document).with_child(
+            Node::new(ElementKind::Section)
+                .with_attr("section_marker", "#")
+                .with_child(Node::new(ElementKind::Paragraph).with_text("Body text")),
+        );
+
+        let current = &tree.children[0].children[0];
+        let parent = current.parent_section_node(&tree, Some("###"));
+
+        assert!(std::ptr::eq(parent, &tree));
     }
 }
