@@ -1,0 +1,18 @@
+{
+  "kind": "Document",
+  "children": [
+    {
+      "kind": "Section",
+      "children": [
+        {
+          "kind": "Title",
+          "text": "Heading"
+        },
+        {
+          "kind": "Paragraph",
+          "text": "Body text"
+        }
+      ]
+    }
+  ]
+}
