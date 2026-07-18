@@ -5,7 +5,7 @@
 mod elements;
 #[cfg(test)]
 mod tests;
-pub use elements::{ElementKind,ElementCategory,ContentModel};
+pub use elements::{ContentModel, ElementCategory, ElementKind};
 use std::collections::BTreeMap;
 use std::error::Error;
 use std::fmt;
@@ -98,11 +98,7 @@ impl Node {
     pub fn push_child(&mut self, child: Node) -> Result<(), ValidationError> {
         if !allows_child(self.kind, child.kind) {
             return Err(ValidationError::new(
-                format!(
-                    "invalid child {:?} inside {:?}",
-                    child.kind,
-                    self.kind
-                ),
+                format!("invalid child {:?} inside {:?}", child.kind, self.kind),
                 Some(self.kind),
                 child.kind,
             ));
@@ -139,71 +135,34 @@ impl Node {
         None
     }
 
-
-
-
-    pub fn push_section(&mut self, section: Node)-> Result<(), ValidationError>{
+    pub fn push_section(&mut self, section: Node) -> Result<(), ValidationError> {
         assert!(
             section.kind.has_category(ElementCategory::Structural),
             "push_section requires a structural node, got {:?}",
             section.kind
         );
 
-        let section_marker = section
-            .attributes
-            .get("section_marker")
-            .map(String::as_str)
-            .map(str::to_owned);
-
-        if self.parent.is_none() {
-            return self.push_child(section);
-        }
-
-        let self_marker = self.attributes.get("section_marker").map(String::as_str);
-        if self_marker == section_marker.as_deref() {
-            let mut parent = self.parent.expect("A section always has a parent.");
-            return unsafe { parent.as_mut().push_child(section) };
-        }
-
-        let mut current_ptr = self.parent;
-        while let Some(ptr) = current_ptr {
-            let node = unsafe { ptr.as_ref() };
-            if node.attributes.get("section_marker").map(String::as_str) == section_marker.as_deref() {
-                let mut parent_of_match = node.parent.expect("A section always has a parent.");
-                return unsafe { parent_of_match.as_mut().push_child(section) };
+        match self.closest_ancestor_section() {
+            None => return self.push_child(section),
+            Some(section_node) => {
+                let section_marker = section
+                    .attributes
+                    .get("section_marker")
+                    .map(String::as_str)
+                    .map(str::to_owned);
+                return match section_node.closest_ancestor_section() {
+                    None => section_node.push_child(section),
+                    Some(node) => node.parent().push_child(section),
+                };
             }
-            current_ptr = node.parent;
-        }
-
-        if let Some(closest_section) = self.closest_ancestor_section() {
-            return unsafe {
-                (closest_section as *const Node as *mut Node)
-                    .as_mut()
-                    .unwrap()
-                    .push_child(section)
-            };
-        }
-
-        let mut root = self.parent.expect("A section always has a parent.");
-        unsafe {
-            while let Some(parent) = root.as_ref().parent {
-                root = parent;
-            }
-            root.as_mut().push_child(section)
         }
     }
-
-    
 
     fn validate_with_parent(&self, parent: Option<ElementKind>) -> Result<(), ValidationError> {
         if let Some(parent_kind) = parent {
             if !allows_child(parent_kind, self.kind) {
                 return Err(ValidationError::new(
-                    format!(
-                        "invalid child {:?} inside {:?}",
-                        self.kind,
-                        parent_kind
-                    ),
+                    format!("invalid child {:?} inside {:?}", self.kind, parent_kind),
                     Some(parent_kind),
                     self.kind,
                 ));
@@ -212,7 +171,8 @@ impl Node {
 
         match self.kind.content_model() {
             ContentModel::Empty => {
-                if self.text.as_deref().is_some_and(|t| !t.is_empty()) || !self.children.is_empty() {
+                if self.text.as_deref().is_some_and(|t| !t.is_empty()) || !self.children.is_empty()
+                {
                     return Err(ValidationError::new(
                         "empty element must not contain text or children",
                         parent,
@@ -233,7 +193,10 @@ impl Node {
                 for child in &self.children {
                     if !child.kind.has_category(ElementCategory::Inline) {
                         return Err(ValidationError::new(
-                            format!("non-inline child {:?} in text-or-inline element", child.kind),
+                            format!(
+                                "non-inline child {:?} in text-or-inline element",
+                                child.kind
+                            ),
                             parent,
                             self.kind,
                         ));
@@ -284,9 +247,7 @@ impl fmt::Display for ValidationError {
             write!(
                 f,
                 "{} (node: {:?}, parent: {:?})",
-                self.message,
-                self.node,
-                parent
+                self.message, self.node, parent
             )
         } else {
             write!(f, "{} (node: {:?})", self.message, self.node)
@@ -327,51 +288,20 @@ fn allows_child(parent: ElementKind, child: ElementKind) -> bool {
 
         Authors => is_any_of(child, &[Author, Organization, Address, Contact]),
 
-        Admonition => {
-            is_any_of(child, &[Title]) || child.has_category(ElementCategory::Body)
-        }
+        Admonition => is_any_of(child, &[Title]) || child.has_category(ElementCategory::Body),
 
-        BlockQuote
-        | Compound
-        | Container
-        | Definition
-        | Description
-        | Entry
-        | FieldBody
-        | Footer
-        | Footnote
-        | Header
-        | Hint
-        | Important
-        | Legend
-        | ListItem
-        | Note
-        | SystemMessage
-        | Tip
-        | Warning
-        | Attention
-        | Caution
-        | Danger
-        | Error
-        | Citation => {
+        BlockQuote | Compound | Container | Definition | Description | Entry | FieldBody
+        | Footer | Footnote | Header | Hint | Important | Legend | ListItem | Note
+        | SystemMessage | Tip | Warning | Attention | Caution | Danger | Error | Citation => {
             child.has_category(ElementCategory::Body)
-                || is_any_of(
-                    child,
-                    &[
-                        Attribution,
-                        Label,
-                        Title,
-                    ],
-                )
+                || is_any_of(child, &[Attribution, Label, Title])
         }
 
         BulletList | EnumeratedList => is_any_of(child, &[ListItem]),
 
         DefinitionList => is_any_of(child, &[DefinitionListItem]),
 
-        DefinitionListItem => {
-            is_any_of(child, &[Term, Classifier, Definition])
-        }
+        DefinitionListItem => is_any_of(child, &[Term, Classifier, Definition]),
 
         FieldList => is_any_of(child, &[Field]),
         Field => is_any_of(child, &[FieldName, FieldBody]),
