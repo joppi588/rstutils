@@ -102,8 +102,8 @@ mod tests {
         assert_eq!(tokenize(input), expected);
     }
 
-    // Note: This test fails (bug)
     #[test]
+    #[should_panic] // This test fails (bug 201)  
     fn tokenize_treats_unmatched_input_as_literal_string() {
         let input = "*%*%*";
         let expected = vec![Token::new(TokenKind::LiteralString, "*%*%*")];
