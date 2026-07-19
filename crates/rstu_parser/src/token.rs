@@ -6,9 +6,10 @@ use regex::Regex;
 use std::sync::LazyLock;
 
 macro_rules! token_regex {
-    ($pattern:expr) => {
-        LazyLock::new(|| Regex::new($pattern).unwrap())
-    };
+    ($pattern:expr) => {{
+        static RE: LazyLock<Regex> = LazyLock::new(|| Regex::new($pattern).unwrap());
+        &RE
+    }};
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -47,27 +48,6 @@ pub enum TokenKind {
     LiteralString,
 }
 
-static INDENT_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n)([ \t]+)(?:[^ \t\n])");
-
-static SPACES_RE: LazyLock<Regex> = token_regex!(r"(?:[^ \t\n])([ \t]+)([^ \t]|$)");
-
-static DOUBLE_DOT_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n|\s)(\.\.)(?:\n|$|\s)");
-
-static DOUBLE_COLON_RE: LazyLock<Regex> = token_regex!(r"(?:.|\n)(::)(.|\n)");
-
-static TABLE_HORIZONTAL_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n)(=+(?:\s+=+)+\s*)(?:\n|$)");
-
-static BLANK_LINE_RE: LazyLock<Regex> = token_regex!(r"(?:\n)([ \t]*\n)(?:.|\n)");
-
-static NEW_LINE_RE: LazyLock<Regex> = token_regex!(r"(?:[^\n])(\n)(?:.|\n)");
-
-static WORD_RE: LazyLock<Regex> =
-    token_regex!(r"(?:^|[^A-Za-z0-9_])([A-Za-z0-9_]+)(?:$|[^A-Za-z0-9_])");
-
-static BOLD_RE: LazyLock<Regex> = token_regex!(r"(?:.|\n)(\*\*)(?:.|\n)");
-
-static LITERAL_STRING_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n)(.*)(?:\n|$)");
-
 impl TokenKind {
     pub const ALL: [TokenKind; 13] = [
         TokenKind::Transition,
@@ -85,25 +65,27 @@ impl TokenKind {
         TokenKind::LiteralString,
     ];
 
-    pub fn regex(self) -> Regex {
+    pub fn regex(self) -> &'static Regex {
         // Token regexp have three parts: pre-context, token, post-context. Contexts are non-matching groups.
         // IMPORTANT: The order of the enum matters, as the first matching regexp will be picked.
 
         match self {
-            TokenKind::Transition => Regex::new(r"(?:^|\n)\n([=~#]+)\n(?:\n|$)").unwrap(),
-            TokenKind::SectionTitlePrefix => Regex::new(r"(?:^|\n)\n([=~#]+)(?:\n|$)").unwrap(),
-            TokenKind::SectionTitleSuffix => Regex::new(r"(?:^|\n)([=~#]+)(?:\n|$)").unwrap(),
+            TokenKind::Transition => token_regex!(r"(?:^|\n)\n([=~#]+)\n(?:\n|$)"),
+            TokenKind::SectionTitlePrefix => token_regex!(r"(?:^|\n)\n([=~#]+)(?:\n|$)"),
+            TokenKind::SectionTitleSuffix => token_regex!(r"(?:^|\n)([=~#]+)(?:\n|$)"),
 
-            TokenKind::Indent => INDENT_RE.clone(),
-            TokenKind::Spaces => SPACES_RE.clone(),
-            TokenKind::DoubleDot => DOUBLE_DOT_RE.clone(),
-            TokenKind::DoubleColon => DOUBLE_COLON_RE.clone(),
-            TokenKind::TableHorizontal => TABLE_HORIZONTAL_RE.clone(),
-            TokenKind::BlankLine => BLANK_LINE_RE.clone(),
-            TokenKind::NewLine => NEW_LINE_RE.clone(),
-            TokenKind::Word => WORD_RE.clone(),
-            TokenKind::Bold => BOLD_RE.clone(),
-            TokenKind::LiteralString => LITERAL_STRING_RE.clone(),
+            TokenKind::Indent => token_regex!(r"(?:^|\n)([ \t]+)(?:[^ \t\n])"),
+            TokenKind::Spaces => token_regex!(r"(?:[^ \t\n])([ \t]+)([^ \t]|$)"),
+            TokenKind::DoubleDot => token_regex!(r"(?:^|\n|\s)(\.\.)(?:\n|$|\s)"),
+            TokenKind::DoubleColon => token_regex!(r"(?:.|\n)(::)(.|\n)"),
+            TokenKind::TableHorizontal => token_regex!(r"(?:^|\n)(=+(?:\s+=+)+\s*)(?:\n|$)"),
+            TokenKind::BlankLine => token_regex!(r"(?:\n)([ \t]*\n)(?:.|\n)"),
+            TokenKind::NewLine => token_regex!(r"(?:[^\n])(\n)(?:.|\n)"),
+            TokenKind::Word => {
+                token_regex!(r"(?:^|[^A-Za-z0-9_])([A-Za-z0-9_]+)(?:$|[^A-Za-z0-9_])")
+            }
+            TokenKind::Bold => token_regex!(r"(?:.|\n)(\*\*)(?:.|\n)"),
+            TokenKind::LiteralString => token_regex!(r"(?:^|\n)(.*)(?:\n|$)"),
         }
     }
 
@@ -125,7 +107,7 @@ mod tests {
 
     #[test]
     fn transition_matches() {
-        assert!(TokenKind::Transition.is_match("===="));
+        assert!(TokenKind::Transition.is_match("\n====\n"));
     }
 
     #[test]
