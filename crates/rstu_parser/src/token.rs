@@ -68,32 +68,42 @@ static BOLD_RE: LazyLock<Regex> = token_regex!(r"(?:.|\n)(\*\*)(?:.|\n)");
 
 static LITERAL_STRING_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n)(.*)(?:\n|$)");
 
-static TRANSITION_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n)\n([=~#]+)\n(?:\n|$)");
-
-static SECTION_TITLE_PREFIX_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n)\n([=~#]+)(?:\n|$)");
-
-static SECTION_TITLE_SUFFIX_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n)([=~#]+)(?:\n|$)");
-
 impl TokenKind {
-    pub fn regex(self) -> &'static Regex {
+    pub const ALL: [TokenKind; 13] = [
+        TokenKind::Transition,
+        TokenKind::SectionTitlePrefix,
+        TokenKind::SectionTitleSuffix,
+        TokenKind::Indent,
+        TokenKind::Spaces,
+        TokenKind::DoubleDot,
+        TokenKind::DoubleColon,
+        TokenKind::TableHorizontal,
+        TokenKind::BlankLine,
+        TokenKind::NewLine,
+        TokenKind::Word,
+        TokenKind::Bold,
+        TokenKind::LiteralString,
+    ];
+
+    pub fn regex(self) -> Regex {
         // Token regexp have three parts: pre-context, token, post-context. Contexts are non-matching groups.
         // IMPORTANT: The order of the enum matters, as the first matching regexp will be picked.
 
         match self {
-            TokenKind::Transition => &TRANSITION_RE,
-            TokenKind::SectionTitlePrefix => &SECTION_TITLE_PREFIX_RE,
-            TokenKind::SectionTitleSuffix => &SECTION_TITLE_SUFFIX_RE,
+            TokenKind::Transition => Regex::new(r"(?:^|\n)\n([=~#]+)\n(?:\n|$)").unwrap(),
+            TokenKind::SectionTitlePrefix => Regex::new(r"(?:^|\n)\n([=~#]+)(?:\n|$)").unwrap(),
+            TokenKind::SectionTitleSuffix => Regex::new(r"(?:^|\n)([=~#]+)(?:\n|$)").unwrap(),
 
-            TokenKind::Indent => &INDENT_RE,
-            TokenKind::Spaces => &SPACES_RE,
-            TokenKind::DoubleDot => &DOUBLE_DOT_RE,
-            TokenKind::DoubleColon => &DOUBLE_COLON_RE,
-            TokenKind::TableHorizontal => &TABLE_HORIZONTAL_RE,
-            TokenKind::BlankLine => &BLANK_LINE_RE,
-            TokenKind::NewLine => &NEW_LINE_RE,
-            TokenKind::Word => &WORD_RE,
-            TokenKind::Bold => &BOLD_RE,
-            TokenKind::LiteralString => &LITERAL_STRING_RE,
+            TokenKind::Indent => INDENT_RE.clone(),
+            TokenKind::Spaces => SPACES_RE.clone(),
+            TokenKind::DoubleDot => DOUBLE_DOT_RE.clone(),
+            TokenKind::DoubleColon => DOUBLE_COLON_RE.clone(),
+            TokenKind::TableHorizontal => TABLE_HORIZONTAL_RE.clone(),
+            TokenKind::BlankLine => BLANK_LINE_RE.clone(),
+            TokenKind::NewLine => NEW_LINE_RE.clone(),
+            TokenKind::Word => WORD_RE.clone(),
+            TokenKind::Bold => BOLD_RE.clone(),
+            TokenKind::LiteralString => LITERAL_STRING_RE.clone(),
         }
     }
 
