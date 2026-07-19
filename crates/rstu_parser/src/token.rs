@@ -5,10 +5,7 @@
 use regex::Regex;
 use std::sync::LazyLock;
 
-static RECOMMENDED_SECTION_CHARS: &str = "=-`:.'\"~^_*+#";
-fn section_chars_class() -> String {
-    regex::escape(RECOMMENDED_SECTION_CHARS)
-}
+static RECOMMENDED_SECTION_CHARS: &str = "=\\-`:.'\"~\\^_\\*\\+#"; // escaped =-`:.'"~^_*+#
 
 macro_rules! token_regex {
     ($pattern:expr) => {{
@@ -82,15 +79,15 @@ impl TokenKind {
         // Token regexp have three parts: pre-context, token, post-context. Contexts are non-matching groups.
         (
             Transition,
-            format!(r"(?:\n\n)([{0}]{{4,}})(?:\n\n)", section_chars_class())
+            format!(r"(?:\n\n)([{0}]{{4,}})(?:\n\n)", RECOMMENDED_SECTION_CHARS)
         ),
         (
             SectionTitlePrefix,
-            format!(r"(?:\n\n)([{0}]+)(?:\n)", section_chars_class())
+            format!(r"(?:\n\n)([{0}]+)(?:\n)", RECOMMENDED_SECTION_CHARS)
         ),
         (
             SectionTitleSuffix,
-            format!(r"(?:^|\n)([{0}]+)(?:\n|$)", section_chars_class())
+            format!(r"(?:^|\n)([{0}]+)(?:\n|$)", RECOMMENDED_SECTION_CHARS)
         ),
         (Indent, r"(?:^|\n)([ \t]+)(?:[^ \t\n])"),
         (Spaces, r"(?:[^ \t\n])([ \t]+)([^ \t]|$)"),
