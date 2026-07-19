@@ -1,0 +1,8 @@
+kind: Document
+children:
+  - kind: Section
+    attributes:
+      section_marker: "#"
+    children:
+      - kind: Paragraph
+        text: Body text

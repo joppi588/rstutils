@@ -1,0 +1,5 @@
+kind: Document
+children:
+  - kind: Section
+    attributes:
+      section_marker: "^"

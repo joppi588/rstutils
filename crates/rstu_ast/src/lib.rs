@@ -90,7 +90,7 @@ impl Node {
         let self_ptr = Some(NonNull::from(&mut *self));
         if let Some(inserted) = self.children.last_mut() {
             inserted.parent = self_ptr;
-            inserted.relink_descendant_parents();
+            relink_parent_pointers(inserted);
         }
         self
     }
@@ -107,17 +107,9 @@ impl Node {
         let self_ptr = Some(NonNull::from(&mut *self));
         if let Some(inserted) = self.children.last_mut() {
             inserted.parent = self_ptr;
-            inserted.relink_descendant_parents();
+            relink_parent_pointers(inserted);
         }
         Ok(())
-    }
-
-    fn relink_descendant_parents(&mut self) {
-        let self_ptr = Some(NonNull::from(&mut *self));
-        for child in &mut self.children {
-            child.parent = self_ptr;
-            child.relink_descendant_parents();
-        }
     }
 
     pub fn validate(&self) -> Result<(), ValidationError> {
@@ -428,4 +420,12 @@ fn validate_element_shape(node: &Node) -> Result<(), ValidationError> {
     }
 
     Ok(())
+}
+
+pub(crate) fn relink_parent_pointers(node: &mut Node) {
+    let self_ptr = Some(NonNull::from(&mut *node));
+    for child in &mut node.children {
+        child.parent = self_ptr;
+        relink_parent_pointers(child);
+    }
 }

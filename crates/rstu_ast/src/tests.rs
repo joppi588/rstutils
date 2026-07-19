@@ -2,62 +2,85 @@
 //
 // SPDX-License-Identifier: MIT
 
-
+use serde::Deserialize;
+use std::collections::BTreeMap;
+use std::fs;
+use std::path::Path;
+use super::relink_parent_pointers;
 use super::{ElementKind, Node};
+
+#[derive(Debug, Deserialize)]
+struct FixtureNode {
+    kind: ElementKind,
+    #[serde(default)]
+    attributes: BTreeMap<String, String>,
+    #[serde(default)]
+    text: Option<String>,
+    #[serde(default)]
+    children: Vec<FixtureNode>,
+}
+
+fn node_from_fixture(src: FixtureNode) -> Node {
+    let children = src.children.into_iter().map(node_from_fixture).collect();
+    Node {
+        kind: src.kind,
+        parent: None,
+        attributes: src.attributes,
+        text: src.text,
+        children,
+    }
+}
+
+
+fn load_document_fixture(file_name: &str) -> Box<Node> {
+    let path = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("tests")
+        .join("data")
+        .join(file_name);
+    let raw = fs::read_to_string(&path)
+        .unwrap_or_else(|e| panic!("Failed to read fixture {}: {}", path.display(), e));
+    let fixture: FixtureNode =
+        serde_yaml::from_str(&raw).unwrap_or_else(|e| panic!("Invalid fixture YAML: {}", e));
+    let mut root = Box::new(node_from_fixture(fixture));
+    relink_parent_pointers(root.as_mut());
+    root
+}
+
+fn section_with_marker(section_marker: &str) -> Node {
+    Node::new(ElementKind::Section).with_attr("section_marker", section_marker)
+}
 
 #[test]
 fn validates_minimal_document_with_section_and_paragraph() {
-    let mut section = Node::new(ElementKind::Section);
-    section.with_child(Node::new(ElementKind::Title).with_text("Heading"));
-    section.with_child(Node::new(ElementKind::Paragraph).with_text("Body text"));
-
-    let mut tree = Node::new(ElementKind::Document);
-    tree.with_child(section);
+    let tree = load_document_fixture("valid_document_section_paragraph.yaml");
 
     assert!(tree.validate().is_ok());
 }
 
 #[test]
 fn rejects_invalid_list_child() {
-    let mut bullet_list = Node::new(ElementKind::BulletList);
-    bullet_list.with_child(Node::new(ElementKind::Paragraph).with_text("not a list item"));
-
-    let mut tree = Node::new(ElementKind::Document);
-    tree.with_child(bullet_list);
+    let tree = load_document_fixture("invalid_list_child.yaml");
 
     assert!(tree.validate().is_err());
 }
 
 #[test]
 fn validates_figure_with_image_and_caption() {
-    let mut figure = Node::new(ElementKind::Figure);
-    figure.with_child(Node::new(ElementKind::Image));
-    figure.with_child(Node::new(ElementKind::Caption).with_text("Figure caption"));
-
-    let mut tree = Node::new(ElementKind::Document);
-    tree.with_child(figure);
+    let tree = load_document_fixture("valid_figure_with_image_caption.yaml");
 
     assert!(tree.validate().is_ok());
 }
 
 #[test]
 fn rejects_text_inside_empty_element() {
-    let mut tree = Node::new(ElementKind::Document);
-    tree.with_child(Node::new(ElementKind::Meta).with_text("x"));
+    let tree = load_document_fixture("invalid_meta_text.yaml");
 
     assert!(tree.validate().is_err());
 }
 
 #[test]
 fn rejects_non_inline_child_in_paragraph() {
-    let mut bullet_list = Node::new(ElementKind::BulletList);
-    bullet_list.with_child(Node::new(ElementKind::ListItem));
-
-    let mut paragraph = Node::new(ElementKind::Paragraph);
-    paragraph.with_child(bullet_list);
-
-    let mut tree = Node::new(ElementKind::Document);
-    tree.with_child(paragraph);
+    let tree = load_document_fixture("invalid_non_inline_child.yaml");
 
     assert!(tree.validate().is_err());
 }
@@ -66,8 +89,8 @@ fn rejects_non_inline_child_in_paragraph() {
 
 #[test]
 fn push_section_pushes_into_root_when_called_on_root() {
-    let mut tree = Node::new(ElementKind::Document);
-    let section = Node::new(ElementKind::Section).with_attr("section_marker", "#");
+    let mut tree = load_document_fixture("document_root.yaml");
+    let section = section_with_marker("#");
 
     tree.push_section(section).unwrap();
 
@@ -77,15 +100,11 @@ fn push_section_pushes_into_root_when_called_on_root() {
 
 #[test]
 fn push_section_with_same_marker_pushes_to_parent_of_self() {
-    let mut current = Node::new(ElementKind::Section).with_attr("section_marker", "#");
-    current.with_child(Node::new(ElementKind::Paragraph).with_text("Body text"));
-
-    let mut tree = Node::new(ElementKind::Document);
-    tree.with_child(current);
+    let mut tree = load_document_fixture("section_single_hash.yaml");
 
     {
         let current_mut = &mut tree.children[0];
-        let section = Node::new(ElementKind::Section).with_attr("section_marker", "#");
+        let section = section_with_marker("#");
         current_mut.push_section(section).unwrap();
     }
 
@@ -98,18 +117,11 @@ fn push_section_with_same_marker_pushes_to_parent_of_self() {
 
 #[test]
 fn push_section_with_ancestor_marker_pushes_to_parent_of_matching_ancestor() {
-    let mut inner = Node::new(ElementKind::Section).with_attr("section_marker", "~");
-    inner.with_child(Node::new(ElementKind::Paragraph).with_text("Body text"));
-
-    let mut outer = Node::new(ElementKind::Section).with_attr("section_marker", "#");
-    outer.with_child(inner);
-
-    let mut tree = Node::new(ElementKind::Document);
-    tree.with_child(outer);
+    let mut tree = load_document_fixture("section_nested_hash_tilde.yaml");
 
     {
         let inner_mut = &mut tree.children[0].children[0];
-        let section = Node::new(ElementKind::Section).with_attr("section_marker", "#");
+        let section = section_with_marker("#");
         inner_mut.push_section(section).unwrap();
     }
 
@@ -122,18 +134,11 @@ fn push_section_with_ancestor_marker_pushes_to_parent_of_matching_ancestor() {
 
 #[test]
 fn push_section_without_marker_match_pushes_to_closest_ancestor_section() {
-    let mut inner = Node::new(ElementKind::Section).with_attr("section_marker", "~");
-    inner.with_child(Node::new(ElementKind::Paragraph).with_text("Body text"));
-
-    let mut outer = Node::new(ElementKind::Section).with_attr("section_marker", "#");
-    outer.with_child(inner);
-
-    let mut tree = Node::new(ElementKind::Document);
-    tree.with_child(outer);
+    let mut tree = load_document_fixture("section_nested_hash_tilde.yaml");
 
     {
         let paragraph_mut = &mut tree.children[0].children[0].children[0];
-        let section = Node::new(ElementKind::Section).with_attr("section_marker", "^");
+        let section = section_with_marker("^");
         paragraph_mut.push_section(section).unwrap();
     }
 
@@ -148,14 +153,7 @@ fn push_section_without_marker_match_pushes_to_closest_ancestor_section() {
 
 #[test]
 fn closest_ancestor_section_finds_nearest_section_upwards() {
-    let mut inner = Node::new(ElementKind::Section).with_attr("section_marker", "~");
-    inner.with_child(Node::new(ElementKind::Paragraph).with_text("Body text"));
-
-    let mut outer = Node::new(ElementKind::Section).with_attr("section_marker", "#");
-    outer.with_child(inner);
-
-    let mut tree = Node::new(ElementKind::Document);
-    tree.with_child(outer);
+    let tree = load_document_fixture("section_nested_hash_tilde.yaml");
 
     let paragraph = &tree.children[0].children[0].children[0];
     let closest = paragraph.closest_ancestor_section(None).unwrap();
@@ -169,20 +167,13 @@ fn closest_ancestor_section_finds_nearest_section_upwards() {
 
 #[test]
 fn closest_ancestor_section_returns_none_at_root() {
-    let tree = Node::new(ElementKind::Document);
+    let tree = load_document_fixture("document_root.yaml");
     assert!(tree.closest_ancestor_section(None).is_none());
 }
 
 #[test]
 fn closest_ancestor_section_matches_requested_marker() {
-    let mut inner = Node::new(ElementKind::Section).with_attr("section_marker", "~");
-    inner.with_child(Node::new(ElementKind::Paragraph).with_text("Body text"));
-
-    let mut outer = Node::new(ElementKind::Section).with_attr("section_marker", "#");
-    outer.with_child(inner);
-
-    let mut tree = Node::new(ElementKind::Document);
-    tree.with_child(outer);
+    let tree = load_document_fixture("section_nested_hash_tilde.yaml");
 
     let paragraph = &tree.children[0].children[0].children[0];
     let closest = paragraph.closest_ancestor_section(Some("#")).unwrap();
