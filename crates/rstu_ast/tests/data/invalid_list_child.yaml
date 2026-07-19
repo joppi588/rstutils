@@ -1,0 +1,6 @@
+kind: Document
+children:
+  - kind: BulletList
+    children:
+      - kind: Paragraph
+        text: not a list item
