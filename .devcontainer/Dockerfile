@@ -2,8 +2,10 @@ FROM mcr.microsoft.com/devcontainers/rust:1
 
 # Install REUSE CLI for SPDX/license compliance workflows.
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends reuse \
+    && apt-get install -y --no-install-recommends python3-pip reuse \
     && rm -rf /var/lib/apt/lists/*
+
+RUN python3 -m pip install --break-system-packages --no-cache-dir pre-commit
 
 
 # Pin Rust toolchain and include rustfmt so cargo fmt is available by default.
