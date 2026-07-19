@@ -14,7 +14,7 @@ repos:
         name: add copyright header
         entry: python3 scripts/add_copyright.py
         language: system
-        files: '\.rs$'
+        files: '\.(rs|py)$'
 
       - id: cargo-fmt
         name: cargo fmt

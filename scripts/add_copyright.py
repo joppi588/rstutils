@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Jochen Schmaehling <tostmann1@web.de>
+# 
+# SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import sys
