@@ -11,7 +11,7 @@ use super::{ElementKind, Node};
 
 #[derive(Debug, Deserialize)]
 struct FixtureNode {
-    kind: String,
+    kind: ElementKind,
     #[serde(default)]
     attributes: BTreeMap<String, String>,
     #[serde(default)]
@@ -20,26 +20,10 @@ struct FixtureNode {
     children: Vec<FixtureNode>,
 }
 
-fn kind_from_str(kind: &str) -> ElementKind {
-    match kind {
-        "Document" => ElementKind::Document,
-        "Section" => ElementKind::Section,
-        "Title" => ElementKind::Title,
-        "Paragraph" => ElementKind::Paragraph,
-        "BulletList" => ElementKind::BulletList,
-        "ListItem" => ElementKind::ListItem,
-        "Figure" => ElementKind::Figure,
-        "Image" => ElementKind::Image,
-        "Caption" => ElementKind::Caption,
-        "Meta" => ElementKind::Meta,
-        other => panic!("Unsupported ElementKind in fixture: {}", other),
-    }
-}
-
 fn node_from_fixture(src: FixtureNode) -> Node {
     let children = src.children.into_iter().map(node_from_fixture).collect();
     Node {
-        kind: kind_from_str(&src.kind),
+        kind: src.kind,
         parent: None,
         attributes: src.attributes,
         text: src.text,
