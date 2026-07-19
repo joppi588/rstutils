@@ -21,7 +21,7 @@ fn tokenize_ok_mixed_lorem_ipsum_file() {
         (TokenKind::Spaces, " "),
         (TokenKind::Word, "Heading"),
         (TokenKind::NewLine, "\n"),
-        (TokenKind::HeadingUnderline, "==================="),
+        (TokenKind::SectionTitleSuffix, "==================="),
         (TokenKind::NewLine, "\n"),
         (TokenKind::BlankLine, "\n"),
         (TokenKind::DoubleDot, ".."),
