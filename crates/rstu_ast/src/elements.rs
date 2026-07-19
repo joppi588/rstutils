@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: MIT
 use serde::Deserialize;
-    
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ContentModel {
@@ -11,7 +10,6 @@ pub enum ContentModel {
     TextOrInline,
     ChildrenOnly,
 }
-
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ElementCategory {
@@ -179,8 +177,7 @@ impl ElementKind {
             | ElementKind::Tbody
             | ElementKind::Term
             | ElementKind::Tgroup
-            | ElementKind::Thead
-            => vec![BodySub],
+            | ElementKind::Thead => vec![BodySub],
             ElementKind::Abbreviation
             | ElementKind::Acronym
             | ElementKind::CitationReference

@@ -7,7 +7,9 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 fn test_data_path(filename: &str) -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/data").join(filename)
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("tests/data")
+        .join(filename)
 }
 
 #[test]
@@ -18,9 +20,9 @@ fn test_failure_short_underline() {
     // THEN Parsing fails with an error
     let contents = fs::read_to_string(test_data_path("nok_short_title_underline.rst"))
         .expect("failed to read nok rst file");
-    
+
     let result = parse(&contents);
-    
+
     assert!(result.is_err(), "short underline");
 }
 
