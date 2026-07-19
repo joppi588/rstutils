@@ -47,38 +47,28 @@ pub enum TokenKind {
 
 // Token regexp have three parts: pre-context, token, post-context. Contexts are non-matching groups.
 
-static HEADING_UNDERLINE_RE: LazyLock<Regex> =
-    token_regex!(r"(?:^|\n)(=+)(?:\n|$)");
+static HEADING_UNDERLINE_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n)(=+)(?:\n|$)");
 
-static INDENT_RE: LazyLock<Regex> =
-    token_regex!(r"(?:^|\n)([ \t]+)(?:[^ \t\n])");
+static INDENT_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n)([ \t]+)(?:[^ \t\n])");
 
-static SPACES_RE: LazyLock<Regex> =
-    token_regex!(r"(?:[^ \t\n])([ \t]+)([^ \t]|$)");
+static SPACES_RE: LazyLock<Regex> = token_regex!(r"(?:[^ \t\n])([ \t]+)([^ \t]|$)");
 
-static DOUBLE_DOT_RE: LazyLock<Regex> =
-    token_regex!(r"(?:^|\n|\s)(\.\.)(?:\n|$|\s)");
+static DOUBLE_DOT_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n|\s)(\.\.)(?:\n|$|\s)");
 
-static DOUBLE_COLON_RE: LazyLock<Regex> =
-    token_regex!(r"(?:.|\n)(::)(.|\n)");
+static DOUBLE_COLON_RE: LazyLock<Regex> = token_regex!(r"(?:.|\n)(::)(.|\n)");
 
-static TABLE_HORIZONTAL_RE: LazyLock<Regex> =
-    token_regex!(r"(?:^|\n)(=+(?:\s+=+)+\s*)(?:\n|$)");
+static TABLE_HORIZONTAL_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n)(=+(?:\s+=+)+\s*)(?:\n|$)");
 
-static BLANK_LINE_RE: LazyLock<Regex> =
-    token_regex!(r"(?:\n)([ \t]*\n)(?:.|\n)");
+static BLANK_LINE_RE: LazyLock<Regex> = token_regex!(r"(?:\n)([ \t]*\n)(?:.|\n)");
 
-static NEW_LINE_RE: LazyLock<Regex> =
-    token_regex!(r"(?:[^\n])(\n)(?:.|\n)");
+static NEW_LINE_RE: LazyLock<Regex> = token_regex!(r"(?:[^\n])(\n)(?:.|\n)");
 
 static WORD_RE: LazyLock<Regex> =
     token_regex!(r"(?:^|[^A-Za-z0-9_])([A-Za-z0-9_]+)(?:$|[^A-Za-z0-9_])");
 
-static BOLD_RE: LazyLock<Regex> =
-    token_regex!(r"(?:.|\n)(\*\*)(?:.|\n)");
+static BOLD_RE: LazyLock<Regex> = token_regex!(r"(?:.|\n)(\*\*)(?:.|\n)");
 
-static LITERAL_STRING_RE: LazyLock<Regex> =
-    token_regex!(r"(?:^|\n)(.*)(?:\n|$)");
+static LITERAL_STRING_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n)(.*)(?:\n|$)");
 
 impl TokenKind {
     pub const ALL: [TokenKind; 11] = [
@@ -184,7 +174,6 @@ mod tests {
         assert!(!TokenKind::Bold.is_match("*"));
     }
 
-
     #[test]
     fn doublecolon_matches() {
         assert!(TokenKind::DoubleColon.is_match("\n.. note::\n"));
@@ -235,7 +224,6 @@ mod tests {
         assert!(TokenKind::LiteralString.is_match("Hello world"));
     }
 
-
     #[test]
     fn word_matches_alphanumeric_and_underscore() {
         assert!(TokenKind::Word.is_match("alpha_123"));
@@ -250,6 +238,4 @@ mod tests {
     fn word_non_matching_without_word_chars() {
         assert!(!TokenKind::Word.is_match("---\n***"));
     }
-
 }
-

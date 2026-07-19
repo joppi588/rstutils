@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Jochen Schmaehling <tostmann1@web.de>
+//
+// SPDX-License-Identifier: MIT
+
 use std::process::Command;
 
 fn run_rstu(args: &[&str]) -> String {

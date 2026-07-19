@@ -1,6 +1,6 @@
 # rstutils docs
 
-Call using 
+Call using
 
 ```bash
 rstu <command> <file>
