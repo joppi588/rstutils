@@ -32,7 +32,9 @@ impl Token {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TokenKind {
-    HeadingUnderline,
+    Transition,
+    SectionTitlePrefix,
+    SectionTitleSuffix,
     Indent,
     Spaces,
     DoubleDot,
@@ -44,10 +46,6 @@ pub enum TokenKind {
     Bold,
     LiteralString,
 }
-
-// Token regexp have three parts: pre-context, token, post-context. Contexts are non-matching groups.
-
-static HEADING_UNDERLINE_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n)(=+)(?:\n|$)");
 
 static INDENT_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n)([ \t]+)(?:[^ \t\n])");
 
@@ -70,41 +68,22 @@ static BOLD_RE: LazyLock<Regex> = token_regex!(r"(?:.|\n)(\*\*)(?:.|\n)");
 
 static LITERAL_STRING_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n)(.*)(?:\n|$)");
 
+static TRANSITION_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n)\n([=~#]+)\n(?:\n|$)");
+
+static SECTION_TITLE_PREFIX_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n)\n([=~#]+)(?:\n|$)");
+
+static SECTION_TITLE_SUFFIX_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n)([=~#]+)(?:\n|$)");
+
 impl TokenKind {
-    pub const ALL: [TokenKind; 11] = [
-        TokenKind::HeadingUnderline,
-        TokenKind::Indent,
-        TokenKind::Spaces,
-        TokenKind::DoubleDot,
-        TokenKind::DoubleColon,
-        TokenKind::TableHorizontal,
-        TokenKind::BlankLine,
-        TokenKind::NewLine,
-        TokenKind::Word,
-        TokenKind::Bold,
-        TokenKind::LiteralString,
-        // LiteralString is the Fallback (always matching), don't add tokens below!
-    ];
-
-    pub fn name(self) -> &'static str {
-        match self {
-            TokenKind::HeadingUnderline => "heading_underline",
-            TokenKind::Indent => "indent",
-            TokenKind::Spaces => "spaces",
-            TokenKind::DoubleDot => "double_dot",
-            TokenKind::DoubleColon => "double_colon",
-            TokenKind::TableHorizontal => "table_horizontal",
-            TokenKind::BlankLine => "blank_line",
-            TokenKind::NewLine => "new_line",
-            TokenKind::Word => "word",
-            TokenKind::Bold => "bold",
-            TokenKind::LiteralString => "literal_string",
-        }
-    }
-
     pub fn regex(self) -> &'static Regex {
+        // Token regexp have three parts: pre-context, token, post-context. Contexts are non-matching groups.
+        // IMPORTANT: The order of the enum matters, as the first matching regexp will be picked.
+
         match self {
-            TokenKind::HeadingUnderline => &HEADING_UNDERLINE_RE,
+            TokenKind::Transition => &TRANSITION_RE,
+            TokenKind::SectionTitlePrefix => &SECTION_TITLE_PREFIX_RE,
+            TokenKind::SectionTitleSuffix => &SECTION_TITLE_SUFFIX_RE,
+
             TokenKind::Indent => &INDENT_RE,
             TokenKind::Spaces => &SPACES_RE,
             TokenKind::DoubleDot => &DOUBLE_DOT_RE,
@@ -135,13 +114,13 @@ mod tests {
     use super::TokenKind;
 
     #[test]
-    fn heading_underline_matches() {
-        assert!(TokenKind::HeadingUnderline.is_match("===="));
+    fn transition_matches() {
+        assert!(TokenKind::Transition.is_match("===="));
     }
 
     #[test]
-    fn heading_underline_non_matching() {
-        assert!(!TokenKind::HeadingUnderline.is_match("==a="));
+    fn transition_non_matching() {
+        assert!(!TokenKind::Transition.is_match("==a="));
     }
 
     #[test]
