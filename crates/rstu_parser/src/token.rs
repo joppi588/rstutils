@@ -24,12 +24,10 @@ macro_rules! count_idents {
 macro_rules! token_kinds {
     ($(($kind:ident, $pattern:expr)),+ $(,)?) => {
         pub const ALL: [TokenKind; count_idents!($($kind),+)] = [
-            // IMPORTANT: The order of the enum matters, as the first matching token will be picked.
             $(TokenKind::$kind),+
         ];
 
         pub fn regex(self) -> &'static Regex {
-            // Token regexp have three parts: pre-context, token, post-context. Contexts are non-matching groups.
             match self {
                 $(TokenKind::$kind => token_regex!($pattern),)+
             }
@@ -75,8 +73,10 @@ pub enum TokenKind {
 
 impl TokenKind {
     token_kinds!(
-        (Transition, r"(?:^|\n)\n([=~#]+)\n(?:\n|$)"),
-        (SectionTitlePrefix, r"(?:^|\n)\n([=~#]+)(?:\n|$)"),
+        // IMPORTANT: The order of the enum matters, as the first matching token will be picked.
+        // Token regexp have three parts: pre-context, token, post-context. Contexts are non-matching groups.
+        (Transition, r"(?:\n\n)([=~#]{4,})(?:\n\n)"),
+        (SectionTitlePrefix, r"(?:\n\n)([=~#]+)(?:\n)"),
         (SectionTitleSuffix, r"(?:^|\n)([=~#]+)(?:\n|$)"),
         (Indent, r"(?:^|\n)([ \t]+)(?:[^ \t\n])"),
         (Spaces, r"(?:[^ \t\n])([ \t]+)([^ \t]|$)"),
@@ -111,12 +111,9 @@ mod tests {
 
     #[test]
     fn transition_matches() {
-        assert!(TokenKind::Transition.is_match("\n====\n"));
-    }
-
-    #[test]
-    fn transition_non_matching() {
-        assert!(!TokenKind::Transition.is_match("==a="));
+        assert!(TokenKind::Transition.is_match("\n\n====\n\n"));
+        assert!(!TokenKind::Transition.is_match("\n\n==a=\n\n"));
+        assert!(!TokenKind::Transition.is_match("\n\n===\n\n"));
     }
 
     #[test]
