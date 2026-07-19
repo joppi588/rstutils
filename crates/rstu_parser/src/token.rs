@@ -50,6 +50,7 @@ pub enum TokenKind {
 
 impl TokenKind {
     pub const ALL: [TokenKind; 13] = [
+        // IMPORTANT: The order of the enum matters, as the first matching token will be picked.
         TokenKind::Transition,
         TokenKind::SectionTitlePrefix,
         TokenKind::SectionTitleSuffix,
@@ -67,7 +68,6 @@ impl TokenKind {
 
     pub fn regex(self) -> &'static Regex {
         // Token regexp have three parts: pre-context, token, post-context. Contexts are non-matching groups.
-        // IMPORTANT: The order of the enum matters, as the first matching regexp will be picked.
 
         match self {
             TokenKind::Transition => token_regex!(r"(?:^|\n)\n([=~#]+)\n(?:\n|$)"),
