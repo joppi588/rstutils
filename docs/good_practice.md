@@ -7,6 +7,8 @@ Programs are meant to be read by humans and only incidentally for computers to e
 
 Red-green-(refactor){5,}
 
+Show me your flowcharts and conceal your tables, and I shall continue to be mystified. Show me your tables, and I won’t usually need your flowcharts; they’ll be obvious. (Fred Brooks)
+
 # Use of AI tools
 
 I am not afraid of computers thinking like humans. What worries me is humans thinking like computers. (Peter Naur)

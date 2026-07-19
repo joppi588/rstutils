@@ -5,9 +5,14 @@
 use regex::Regex;
 use std::sync::LazyLock;
 
+static RECOMMENDED_SECTION_CHARS: &str = "=-`:.'\"~^_*+#";
+fn section_chars_class() -> String {
+    regex::escape(RECOMMENDED_SECTION_CHARS)
+}
+
 macro_rules! token_regex {
     ($pattern:expr) => {{
-        static RE: LazyLock<Regex> = LazyLock::new(|| Regex::new($pattern).unwrap());
+        static RE: LazyLock<Regex> = LazyLock::new(|| Regex::new($pattern.as_ref()).unwrap());
         &RE
     }};
 }
@@ -75,9 +80,18 @@ impl TokenKind {
     token_kinds!(
         // IMPORTANT: The order of the enum matters, as the first matching token will be picked.
         // Token regexp have three parts: pre-context, token, post-context. Contexts are non-matching groups.
-        (Transition, r"(?:\n\n)([=~#]{4,})(?:\n\n)"),
-        (SectionTitlePrefix, r"(?:\n\n)([=~#]+)(?:\n)"),
-        (SectionTitleSuffix, r"(?:^|\n)([=~#]+)(?:\n|$)"),
+        (
+            Transition,
+            format!(r"(?:\n\n)([{0}]{{4,}})(?:\n\n)", section_chars_class())
+        ),
+        (
+            SectionTitlePrefix,
+            format!(r"(?:\n\n)([{0}]+)(?:\n)", section_chars_class())
+        ),
+        (
+            SectionTitleSuffix,
+            format!(r"(?:^|\n)([{0}]+)(?:\n|$)", section_chars_class())
+        ),
         (Indent, r"(?:^|\n)([ \t]+)(?:[^ \t\n])"),
         (Spaces, r"(?:[^ \t\n])([ \t]+)([^ \t]|$)"),
         (DoubleDot, r"(?:^|\n|\s)(\.\.)(?:\n|$|\s)"),
