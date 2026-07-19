@@ -12,6 +12,31 @@ macro_rules! token_regex {
     }};
 }
 
+macro_rules! count_idents {
+    ($($ident:ident),* $(,)?) => {
+        <[()]>::len(&[$(count_idents!(@sub $ident)),*])
+    };
+    (@sub $ident:ident) => {
+        ()
+    };
+}
+
+macro_rules! token_kinds {
+    ($(($kind:ident, $pattern:expr)),+ $(,)?) => {
+        pub const ALL: [TokenKind; count_idents!($($kind),+)] = [
+            // IMPORTANT: The order of the enum matters, as the first matching token will be picked.
+            $(TokenKind::$kind),+
+        ];
+
+        pub fn regex(self) -> &'static Regex {
+            // Token regexp have three parts: pre-context, token, post-context. Contexts are non-matching groups.
+            match self {
+                $(TokenKind::$kind => token_regex!($pattern),)+
+            }
+        }
+    };
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Token {
     pub kind: TokenKind,
@@ -49,45 +74,24 @@ pub enum TokenKind {
 }
 
 impl TokenKind {
-    pub const ALL: [TokenKind; 13] = [
-        // IMPORTANT: The order of the enum matters, as the first matching token will be picked.
-        TokenKind::Transition,
-        TokenKind::SectionTitlePrefix,
-        TokenKind::SectionTitleSuffix,
-        TokenKind::Indent,
-        TokenKind::Spaces,
-        TokenKind::DoubleDot,
-        TokenKind::DoubleColon,
-        TokenKind::TableHorizontal,
-        TokenKind::BlankLine,
-        TokenKind::NewLine,
-        TokenKind::Word,
-        TokenKind::Bold,
-        TokenKind::LiteralString,
-    ];
-
-    pub fn regex(self) -> &'static Regex {
-        // Token regexp have three parts: pre-context, token, post-context. Contexts are non-matching groups.
-
-        match self {
-            TokenKind::Transition => token_regex!(r"(?:^|\n)\n([=~#]+)\n(?:\n|$)"),
-            TokenKind::SectionTitlePrefix => token_regex!(r"(?:^|\n)\n([=~#]+)(?:\n|$)"),
-            TokenKind::SectionTitleSuffix => token_regex!(r"(?:^|\n)([=~#]+)(?:\n|$)"),
-
-            TokenKind::Indent => token_regex!(r"(?:^|\n)([ \t]+)(?:[^ \t\n])"),
-            TokenKind::Spaces => token_regex!(r"(?:[^ \t\n])([ \t]+)([^ \t]|$)"),
-            TokenKind::DoubleDot => token_regex!(r"(?:^|\n|\s)(\.\.)(?:\n|$|\s)"),
-            TokenKind::DoubleColon => token_regex!(r"(?:.|\n)(::)(.|\n)"),
-            TokenKind::TableHorizontal => token_regex!(r"(?:^|\n)(=+(?:\s+=+)+\s*)(?:\n|$)"),
-            TokenKind::BlankLine => token_regex!(r"(?:\n)([ \t]*\n)(?:.|\n)"),
-            TokenKind::NewLine => token_regex!(r"(?:[^\n])(\n)(?:.|\n)"),
-            TokenKind::Word => {
-                token_regex!(r"(?:^|[^A-Za-z0-9_])([A-Za-z0-9_]+)(?:$|[^A-Za-z0-9_])")
-            }
-            TokenKind::Bold => token_regex!(r"(?:.|\n)(\*\*)(?:.|\n)"),
-            TokenKind::LiteralString => token_regex!(r"(?:^|\n)(.*)(?:\n|$)"),
-        }
-    }
+    token_kinds!(
+        (Transition, r"(?:^|\n)\n([=~#]+)\n(?:\n|$)"),
+        (SectionTitlePrefix, r"(?:^|\n)\n([=~#]+)(?:\n|$)"),
+        (SectionTitleSuffix, r"(?:^|\n)([=~#]+)(?:\n|$)"),
+        (Indent, r"(?:^|\n)([ \t]+)(?:[^ \t\n])"),
+        (Spaces, r"(?:[^ \t\n])([ \t]+)([^ \t]|$)"),
+        (DoubleDot, r"(?:^|\n|\s)(\.\.)(?:\n|$|\s)"),
+        (DoubleColon, r"(?:.|\n)(::)(.|\n)"),
+        (TableHorizontal, r"(?:^|\n)(=+(?:\s+=+)+\s*)(?:\n|$)"),
+        (BlankLine, r"(?:\n)([ \t]*\n)(?:.|\n)"),
+        (NewLine, r"(?:[^\n])(\n)(?:.|\n)"),
+        (
+            Word,
+            r"(?:^|[^A-Za-z0-9_])([A-Za-z0-9_]+)(?:$|[^A-Za-z0-9_])"
+        ),
+        (Bold, r"(?:.|\n)(\*\*)(?:.|\n)"),
+        (LiteralString, r"(?:^|\n)(.*)(?:\n|$)")
+    );
 
     // TODO: Delete
     pub fn inner_match<'a>(self, input: &'a str) -> Option<&'a str> {
