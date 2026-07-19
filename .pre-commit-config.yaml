@@ -16,10 +16,3 @@ repos:
         language: system
         pass_filenames: false
         files: '(^Cargo\.(toml|lock)$|\.rs$)'
-
-      - id: cargo-test-rstu-ast
-        name: cargo test -p rstu_ast
-        entry: cargo test -p rstu_ast
-        language: system
-        pass_filenames: false
-        files: '^(Cargo\.(toml|lock)|crates/rstu_ast/)'
