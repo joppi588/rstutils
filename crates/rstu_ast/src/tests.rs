@@ -46,13 +46,8 @@ fn load_document_fixture(file_name: &str) -> Box<Node> {
     root
 }
 
-fn load_first_child_section(file_name: &str) -> Node {
-    let root = load_document_fixture(file_name);
-    assert_eq!(root.kind, ElementKind::Document);
-    assert!(!root.children.is_empty(), "Fixture must contain one section child");
-    let section = root.children[0].clone();
-    assert_eq!(section.kind, ElementKind::Section);
-    section
+fn section_with_marker(section_marker: &str) -> Node {
+    Node::new(ElementKind::Section).with_attr("section_marker", section_marker)
 }
 
 #[test]
@@ -95,7 +90,7 @@ fn rejects_non_inline_child_in_paragraph() {
 #[test]
 fn push_section_pushes_into_root_when_called_on_root() {
     let mut tree = load_document_fixture("document_root.yaml");
-    let section = load_first_child_section("section_marker_hash_document.yaml");
+    let section = section_with_marker("#");
 
     tree.push_section(section).unwrap();
 
@@ -109,7 +104,7 @@ fn push_section_with_same_marker_pushes_to_parent_of_self() {
 
     {
         let current_mut = &mut tree.children[0];
-        let section = load_first_child_section("section_marker_hash_document.yaml");
+        let section = section_with_marker("#");
         current_mut.push_section(section).unwrap();
     }
 
@@ -126,7 +121,7 @@ fn push_section_with_ancestor_marker_pushes_to_parent_of_matching_ancestor() {
 
     {
         let inner_mut = &mut tree.children[0].children[0];
-        let section = load_first_child_section("section_marker_hash_document.yaml");
+        let section = section_with_marker("#");
         inner_mut.push_section(section).unwrap();
     }
 
@@ -143,7 +138,7 @@ fn push_section_without_marker_match_pushes_to_closest_ancestor_section() {
 
     {
         let paragraph_mut = &mut tree.children[0].children[0].children[0];
-        let section = load_first_child_section("section_marker_caret_document.yaml");
+        let section = section_with_marker("^");
         paragraph_mut.push_section(section).unwrap();
     }
 
