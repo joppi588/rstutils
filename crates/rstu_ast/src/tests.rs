@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: MIT
 
+use super::relink_parent_pointers;
+use super::{ElementKind, Node};
 use serde::Deserialize;
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::Path;
-use super::relink_parent_pointers;
-use super::{ElementKind, Node};
 
 #[derive(Debug, Deserialize)]
 struct FixtureNode {
@@ -30,7 +30,6 @@ fn node_from_fixture(src: FixtureNode) -> Node {
         children,
     }
 }
-
 
 fn load_document_fixture(file_name: &str) -> Box<Node> {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -85,8 +84,6 @@ fn rejects_non_inline_child_in_paragraph() {
     assert!(tree.validate().is_err());
 }
 
-
-
 #[test]
 fn push_section_pushes_into_root_when_called_on_root() {
     let mut tree = load_document_fixture("document_root.yaml");
@@ -110,7 +107,10 @@ fn push_section_with_same_marker_pushes_to_parent_of_self() {
 
     assert_eq!(tree.children.len(), 2);
     assert_eq!(
-        tree.children[1].attributes.get("section_marker").map(String::as_str),
+        tree.children[1]
+            .attributes
+            .get("section_marker")
+            .map(String::as_str),
         Some("#")
     );
 }
@@ -127,7 +127,10 @@ fn push_section_with_ancestor_marker_pushes_to_parent_of_matching_ancestor() {
 
     assert_eq!(tree.children.len(), 2);
     assert_eq!(
-        tree.children[1].attributes.get("section_marker").map(String::as_str),
+        tree.children[1]
+            .attributes
+            .get("section_marker")
+            .map(String::as_str),
         Some("#")
     );
 }
@@ -146,7 +149,10 @@ fn push_section_without_marker_match_pushes_to_closest_ancestor_section() {
     assert_eq!(inner_section.children.len(), 2);
     assert_eq!(inner_section.children[1].kind, ElementKind::Section);
     assert_eq!(
-        inner_section.children[1].attributes.get("section_marker").map(String::as_str),
+        inner_section.children[1]
+            .attributes
+            .get("section_marker")
+            .map(String::as_str),
         Some("^")
     );
 }
