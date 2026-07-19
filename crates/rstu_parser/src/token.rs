@@ -5,9 +5,35 @@
 use regex::Regex;
 use std::sync::LazyLock;
 
+static RECOMMENDED_SECTION_CHARS: &str = "=\\-`:.'\"~\\^_\\*\\+#"; // escaped =-`:.'"~^_*+#
+
 macro_rules! token_regex {
-    ($pattern:expr) => {
-        LazyLock::new(|| Regex::new($pattern).unwrap())
+    ($pattern:expr) => {{
+        static RE: LazyLock<Regex> = LazyLock::new(|| Regex::new($pattern.as_ref()).unwrap());
+        &RE
+    }};
+}
+
+macro_rules! count_idents {
+    ($($ident:ident),* $(,)?) => {
+        <[()]>::len(&[$(count_idents!(@sub $ident)),*])
+    };
+    (@sub $ident:ident) => {
+        ()
+    };
+}
+
+macro_rules! token_kinds {
+    ($(($kind:ident, $pattern:expr)),+ $(,)?) => {
+        pub const ALL: [TokenKind; count_idents!($($kind),+)] = [
+            $(TokenKind::$kind),+
+        ];
+
+        pub fn regex(self) -> &'static Regex {
+            match self {
+                $(TokenKind::$kind => token_regex!($pattern),)+
+            }
+        }
     };
 }
 
@@ -32,7 +58,9 @@ impl Token {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TokenKind {
-    HeadingUnderline,
+    Transition,
+    SectionTitlePrefix,
+    SectionTitleSuffix,
     Indent,
     Spaces,
     DoubleDot,
@@ -45,78 +73,36 @@ pub enum TokenKind {
     LiteralString,
 }
 
-// Token regexp have three parts: pre-context, token, post-context. Contexts are non-matching groups.
-
-static HEADING_UNDERLINE_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n)(=+)(?:\n|$)");
-
-static INDENT_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n)([ \t]+)(?:[^ \t\n])");
-
-static SPACES_RE: LazyLock<Regex> = token_regex!(r"(?:[^ \t\n])([ \t]+)([^ \t]|$)");
-
-static DOUBLE_DOT_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n|\s)(\.\.)(?:\n|$|\s)");
-
-static DOUBLE_COLON_RE: LazyLock<Regex> = token_regex!(r"(?:.|\n)(::)(.|\n)");
-
-static TABLE_HORIZONTAL_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n)(=+(?:\s+=+)+\s*)(?:\n|$)");
-
-static BLANK_LINE_RE: LazyLock<Regex> = token_regex!(r"(?:\n)([ \t]*\n)(?:.|\n)");
-
-static NEW_LINE_RE: LazyLock<Regex> = token_regex!(r"(?:[^\n])(\n)(?:.|\n)");
-
-static WORD_RE: LazyLock<Regex> =
-    token_regex!(r"(?:^|[^A-Za-z0-9_])([A-Za-z0-9_]+)(?:$|[^A-Za-z0-9_])");
-
-static BOLD_RE: LazyLock<Regex> = token_regex!(r"(?:.|\n)(\*\*)(?:.|\n)");
-
-static LITERAL_STRING_RE: LazyLock<Regex> = token_regex!(r"(?:^|\n)(.*)(?:\n|$)");
-
 impl TokenKind {
-    pub const ALL: [TokenKind; 11] = [
-        TokenKind::HeadingUnderline,
-        TokenKind::Indent,
-        TokenKind::Spaces,
-        TokenKind::DoubleDot,
-        TokenKind::DoubleColon,
-        TokenKind::TableHorizontal,
-        TokenKind::BlankLine,
-        TokenKind::NewLine,
-        TokenKind::Word,
-        TokenKind::Bold,
-        TokenKind::LiteralString,
-        // LiteralString is the Fallback (always matching), don't add tokens below!
-    ];
-
-    pub fn name(self) -> &'static str {
-        match self {
-            TokenKind::HeadingUnderline => "heading_underline",
-            TokenKind::Indent => "indent",
-            TokenKind::Spaces => "spaces",
-            TokenKind::DoubleDot => "double_dot",
-            TokenKind::DoubleColon => "double_colon",
-            TokenKind::TableHorizontal => "table_horizontal",
-            TokenKind::BlankLine => "blank_line",
-            TokenKind::NewLine => "new_line",
-            TokenKind::Word => "word",
-            TokenKind::Bold => "bold",
-            TokenKind::LiteralString => "literal_string",
-        }
-    }
-
-    pub fn regex(self) -> &'static Regex {
-        match self {
-            TokenKind::HeadingUnderline => &HEADING_UNDERLINE_RE,
-            TokenKind::Indent => &INDENT_RE,
-            TokenKind::Spaces => &SPACES_RE,
-            TokenKind::DoubleDot => &DOUBLE_DOT_RE,
-            TokenKind::DoubleColon => &DOUBLE_COLON_RE,
-            TokenKind::TableHorizontal => &TABLE_HORIZONTAL_RE,
-            TokenKind::BlankLine => &BLANK_LINE_RE,
-            TokenKind::NewLine => &NEW_LINE_RE,
-            TokenKind::Word => &WORD_RE,
-            TokenKind::Bold => &BOLD_RE,
-            TokenKind::LiteralString => &LITERAL_STRING_RE,
-        }
-    }
+    token_kinds!(
+        // IMPORTANT: The order of the enum matters, as the first matching token will be picked.
+        // Token regexp have three parts: pre-context, token, post-context. Contexts are non-matching groups.
+        (
+            Transition,
+            format!(r"(?:\n\n)([{0}]{{4,}})(?:\n\n)", RECOMMENDED_SECTION_CHARS)
+        ),
+        (
+            SectionTitlePrefix,
+            format!(r"(?:\n\n)([{0}]+)(?:\n)", RECOMMENDED_SECTION_CHARS)
+        ),
+        (
+            SectionTitleSuffix,
+            format!(r"(?:^|\n)([{0}]+)(?:\n|$)", RECOMMENDED_SECTION_CHARS)
+        ),
+        (Indent, r"(?:^|\n)([ \t]+)(?:[^ \t\n])"),
+        (Spaces, r"(?:[^ \t\n])([ \t]+)([^ \t]|$)"),
+        (DoubleDot, r"(?:^|\n|\s)(\.\.)(?:\n|$|\s)"),
+        (DoubleColon, r"(?:.|\n)(::)(.|\n)"),
+        (TableHorizontal, r"(?:^|\n)(=+(?:\s+=+)+\s*)(?:\n|$)"),
+        (BlankLine, r"(?:\n)([ \t]*\n)(?:.|\n)"),
+        (NewLine, r"(?:[^\n])(\n)(?:.|\n)"),
+        (
+            Word,
+            r"(?:^|[^A-Za-z0-9_])([A-Za-z0-9_]+)(?:$|[^A-Za-z0-9_])"
+        ),
+        (Bold, r"(?:.|\n)(\*\*)(?:.|\n)"),
+        (LiteralString, r"(?:^|\n)(.*)(?:\n|$)")
+    );
 
     // TODO: Delete
     pub fn inner_match<'a>(self, input: &'a str) -> Option<&'a str> {
@@ -135,13 +121,10 @@ mod tests {
     use super::TokenKind;
 
     #[test]
-    fn heading_underline_matches() {
-        assert!(TokenKind::HeadingUnderline.is_match("===="));
-    }
-
-    #[test]
-    fn heading_underline_non_matching() {
-        assert!(!TokenKind::HeadingUnderline.is_match("==a="));
+    fn transition_matches() {
+        assert!(TokenKind::Transition.is_match("\n\n====\n\n"));
+        assert!(!TokenKind::Transition.is_match("\n\n==a=\n\n"));
+        assert!(!TokenKind::Transition.is_match("\n\n===\n\n"));
     }
 
     #[test]
