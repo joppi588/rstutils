@@ -14,7 +14,6 @@ pub fn tokenize(input: &str) -> Vec<Token> {
         let mut literal_match: Option<(usize, usize)> = None;
 
         // Optimizations
-        // Don't use capture groups, as we know that the context is 1char
         // use find_at
         for kind in TokenKind::ALL {
             let token_match = match kind.regex().captures_iter(&remaining).find_map(|captures| {
@@ -28,7 +27,7 @@ pub fn tokenize(input: &str) -> Vec<Token> {
 
             let candidate = (kind, token_match.start(), token_match.end());
 
-            // Not needed?
+            // TODO: Not needed?
             if kind == TokenKind::LiteralString {
                 literal_match = Some((candidate.1, candidate.2));
                 continue;
@@ -99,7 +98,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic] // This test fails (bug 201)
     fn tokenize_treats_unmatched_input_as_literal_string() {
         let input = "*%*%*";
         let expected = vec![Token::new(TokenKind::LiteralString, "*%*%*")];
