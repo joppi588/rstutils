@@ -7,13 +7,6 @@ use std::sync::LazyLock;
 
 static RECOMMENDED_SECTION_CHARS: &str = "=\\-`:.'\"~\\^_\\*\\+#"; // escaped =-`:.'"~^_*+#
 
-macro_rules! token_regex {
-    ($pattern:expr) => {{
-        static RE: LazyLock<Regex> = LazyLock::new(|| Regex::new($pattern.as_ref()).unwrap());
-        &RE
-    }};
-}
-
 macro_rules! count_idents {
     ($($ident:ident),* $(,)?) => {
         <[()]>::len(&[$(count_idents!(@sub $ident)),*])
@@ -22,16 +15,21 @@ macro_rules! count_idents {
         ()
     };
 }
-
+macro_rules! token_regex {
+    ($pattern:expr) => {{
+        static RE: LazyLock<Regex> = LazyLock::new(|| Regex::new($pattern.as_ref()).unwrap());
+        &RE
+    }};
+}
 macro_rules! token_kinds {
-    ($(($kind:ident, $pattern:expr)),+ $(,)?) => {
+    ($(($kind:ident, $leading:expr, $pattern:expr, $trailing:expr)),+ $(,)?) => {
         pub const ALL: [TokenKind; count_idents!($($kind),+)] = [
             $(TokenKind::$kind),+
         ];
 
         pub fn regex(self) -> &'static Regex {
             match self {
-                $(TokenKind::$kind => token_regex!($pattern),)+
+                $(TokenKind::$kind => token_regex!(format!(r"{}({}){}", $leading, $pattern, $trailing)),)+
             }
         }
     };
@@ -75,36 +73,39 @@ pub enum TokenKind {
 
 impl TokenKind {
     token_kinds!(
-        // IMPORTANT: The order of the enum matters, as the first matching token will be picked.
-        // Token regexp have three parts: pre-context, token, post-context. Contexts are non-matching groups.
+        // IMPORTANT:
+        // The order of the enum matters, as the first matching token will be picked.
+        // When using capture groups, use the non-matching style (?:___)
         (
             Transition,
-            format!(r"(?:\n\n)([{0}]{{4,}})(?:\n\n)", RECOMMENDED_SECTION_CHARS)
+            r"\n\n",
+            format!(r"[{0}]{{4,}}", RECOMMENDED_SECTION_CHARS),
+            r"\n\n"
         ),
         (
             SectionTitlePrefix,
-            format!(r"(?:\n\n)([{0}]+)(?:\n)", RECOMMENDED_SECTION_CHARS)
+            r"\n\n",
+            format!(r"[{0}]+", RECOMMENDED_SECTION_CHARS),
+            r"\n"
         ),
         (
             SectionTitleSuffix,
-            format!(r"(?:^|\n)([{0}]+)(?:\n|$)", RECOMMENDED_SECTION_CHARS)
+            r"\n",
+            format!(r"[{0}]+", RECOMMENDED_SECTION_CHARS),
+            r"\n"
         ),
-        (Indent, r"(?:^|\n)([ \t]+)(?:[^ \t\n])"),
-        (Spaces, r"(?:[^ \t\n])([ \t]+)([^ \t]|$)"),
-        (DoubleDot, r"(?:^|\n|\s)(\.\.)(?:\n|$|\s)"),
-        (DoubleColon, r"(?:.|\n)(::)(.|\n)"),
-        (TableHorizontal, r"(?:^|\n)(=+(?:\s+=+)+\s*)(?:\n|$)"),
-        (BlankLine, r"(?:\n)([ \t]*\n)(?:.|\n)"),
-        (NewLine, r"(?:[^\n])(\n)(?:.|\n)"),
-        (
-            Word,
-            r"(?:^|[^A-Za-z0-9_])([A-Za-z0-9_]+)(?:$|[^A-Za-z0-9_])"
-        ),
-        (Bold, r"(?:.|\n)(\*\*)(?:.|\n)"),
-        (LiteralString, r"(?:^|\n)(.*)(?:\n|$)")
+        (Indent, r"\n", r"[ \t]+", r"[^ \t\n]"),
+        (Spaces, r"[^ \t\n]", r"[ \t]+", r"[^ \t]"),
+        (DoubleDot, r"[\n\s]", r"\.\.", r"[\n\s]"),
+        (DoubleColon, r"(?:.|\n)", r"::", r"(?:.|\n)"),
+        (TableHorizontal, r"\n", r"=+(?:\s+=+)+\s*", r"\n"),
+        (BlankLine, r"\n", r"[ \t]*\n", r"(?:.|\n)"),
+        (NewLine, r"[^\n]", r"\n", r"(?:.|\n)"),
+        (Word, r"[^A-Za-z0-9_]", r"[A-Za-z0-9_]+", r"[^A-Za-z0-9_]"),
+        (Bold, r"(?:.|\n)", r"\*\*", r"(?:.|\n)"),
+        (LiteralString, r"\n", r".*", r"\n")
     );
 
-    // TODO: Delete
     pub fn inner_match<'a>(self, input: &'a str) -> Option<&'a str> {
         self.regex()
             .captures(input)
@@ -112,7 +113,8 @@ impl TokenKind {
     }
 
     pub fn is_match(self, input: &str) -> bool {
-        self.inner_match(input).is_some()
+        let result = self.inner_match(input);
+        result.is_some()
     }
 }
 
@@ -164,27 +166,27 @@ mod tests {
 
     #[test]
     fn doublecolon_non_matching() {
-        assert!(!TokenKind::DoubleColon.is_match(".. note:"));
+        assert!(!TokenKind::DoubleColon.is_match("\n.. note:\n"));
     }
 
     #[test]
     fn doubledot_matches() {
-        assert!(TokenKind::DoubleDot.is_match(".. this is a comment"));
+        assert!(TokenKind::DoubleDot.is_match("\n.. this is a comment\n"));
     }
 
     #[test]
     fn doubledot_non_matching() {
-        assert!(!TokenKind::DoubleDot.is_match("warning..."));
+        assert!(!TokenKind::DoubleDot.is_match("\nwarning...\n"));
     }
 
     #[test]
     fn table_horizontal_matches() {
-        assert!(TokenKind::TableHorizontal.is_match("==== ====="));
+        assert!(TokenKind::TableHorizontal.is_match("\n==== =====\n"));
     }
 
     #[test]
     fn table_horizontal_non_matching() {
-        assert!(!TokenKind::TableHorizontal.is_match("========"));
+        assert!(!TokenKind::TableHorizontal.is_match("\n========\n"));
     }
 
     #[test]
@@ -204,12 +206,12 @@ mod tests {
 
     #[test]
     fn literal_string_matches() {
-        assert!(TokenKind::LiteralString.is_match("Hello world"));
+        assert!(TokenKind::LiteralString.is_match("\nHello world\n"));
     }
 
     #[test]
     fn word_matches_alphanumeric_and_underscore() {
-        assert!(TokenKind::Word.is_match("alpha_123"));
+        assert!(TokenKind::Word.is_match(" alpha_123 "));
     }
 
     #[test]
