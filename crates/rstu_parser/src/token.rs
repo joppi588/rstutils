@@ -22,7 +22,7 @@ macro_rules! token_regex {
     }};
 }
 macro_rules! token_kinds {
-    ($(($kind:ident, $leading:expr, $trailing:expr, $pattern:expr)),+ $(,)?) => {
+    ($(($kind:ident, $leading:expr, $pattern:expr, $trailing:expr)),+ $(,)?) => {
         pub const ALL: [TokenKind; count_idents!($($kind),+)] = [
             $(TokenKind::$kind),+
         ];
@@ -77,31 +77,31 @@ impl TokenKind {
         (
             Transition,
             r"\n\n",
-            r"\n\n",
-            format!(r"[{0}]{{4,}}", RECOMMENDED_SECTION_CHARS)
+            format!(r"[{0}]{{4,}}", RECOMMENDED_SECTION_CHARS),
+            r"\n\n"
         ),
         (
             SectionTitlePrefix,
             r"\n\n",
-            r"\n",
-            format!(r"[{0}]+", RECOMMENDED_SECTION_CHARS)
+            format!(r"[{0}]+", RECOMMENDED_SECTION_CHARS),
+            r"\n"
         ),
         (
             SectionTitleSuffix,
             r"\n",
-            r"\n",
-            format!(r"[{0}]+", RECOMMENDED_SECTION_CHARS)
+            format!(r"[{0}]+", RECOMMENDED_SECTION_CHARS),
+            r"\n"
         ),
-        (Indent, r"\n", r"[^ \t\n]", r"[ \t]+"),
-        (Spaces, r"[^ \t\n]", r"[^ \t]", r"[ \t]+"),
-        (DoubleDot, r"[\n\s]", r"[\n\s]", r"\.\."),
-        (DoubleColon, r"(?:.|\n)", r"(?:.|\n)", r"::"),
-        (TableHorizontal, r"\n", r"\n", r"=+(?:\s+=+)+\s*"),
-        (BlankLine, r"\n", r"(?:.|\n)", r"[ \t]*\n"),
-        (NewLine, r"[^\n]", r"(?:.|\n)", r"\n"),
-        (Word, r"[^A-Za-z0-9_]", r"[^A-Za-z0-9_]", r"[A-Za-z0-9_]+"),
-        (Bold, r"(?:.|\n)", r"(?:.|\n)", r"\*\*"),
-        (LiteralString, r"\n", r"\n", r".*")
+        (Indent, r"\n", r"[ \t]+", r"[^ \t\n]"),
+        (Spaces, r"[^ \t\n]", r"[ \t]+", r"[^ \t]"),
+        (DoubleDot, r"[\n\s]", r"\.\.", r"[\n\s]"),
+        (DoubleColon, r"(?:.|\n)", r"::", r"(?:.|\n)"),
+        (TableHorizontal, r"\n", r"=+(?:\s+=+)+\s*", r"\n"),
+        (BlankLine, r"\n", r"[ \t]*\n", r"(?:.|\n)"),
+        (NewLine, r"[^\n]", r"\n", r"(?:.|\n)"),
+        (Word, r"[^A-Za-z0-9_]", r"[A-Za-z0-9_]+", r"[^A-Za-z0-9_]"),
+        (Bold, r"(?:.|\n)", r"\*\*", r"(?:.|\n)"),
+        (LiteralString, r"\n", r".*", r"\n")
     );
 
     pub fn inner_match<'a>(self, input: &'a str) -> Option<&'a str> {
