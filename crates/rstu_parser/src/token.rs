@@ -7,13 +7,6 @@ use std::sync::LazyLock;
 
 static RECOMMENDED_SECTION_CHARS: &str = "=\\-`:.'\"~\\^_\\*\\+#"; // escaped =-`:.'"~^_*+#
 
-macro_rules! token_regex {
-    ($pattern:expr) => {{
-        static RE: LazyLock<Regex> = LazyLock::new(|| Regex::new($pattern.as_ref()).unwrap());
-        &RE
-    }};
-}
-
 macro_rules! count_idents {
     ($($ident:ident),* $(,)?) => {
         <[()]>::len(&[$(count_idents!(@sub $ident)),*])
@@ -22,7 +15,12 @@ macro_rules! count_idents {
         ()
     };
 }
-
+macro_rules! token_regex {
+    ($pattern:expr) => {{
+        static RE: LazyLock<Regex> = LazyLock::new(|| Regex::new($pattern.as_ref()).unwrap());
+        &RE
+    }};
+}
 macro_rules! token_kinds {
     ($(($kind:ident, $leading:expr, $trailing:expr, $pattern:expr)),+ $(,)?) => {
         pub const ALL: [TokenKind; count_idents!($($kind),+)] = [
@@ -113,7 +111,8 @@ impl TokenKind {
     }
 
     pub fn is_match(self, input: &str) -> bool {
-        self.inner_match(input).is_some()
+        let result = self.inner_match(input);
+        result.is_some()
     }
 }
 
