@@ -14,7 +14,6 @@ pub fn tokenize(input: &str) -> Vec<Token> {
         let mut literal_match: Option<(usize, usize)> = None;
 
         // Optimizations
-        // Don't use capture groups, as we know that the context is 1char
         // use find_at
         for kind in TokenKind::ALL {
             let token_match = match kind.regex().captures_iter(&remaining).find_map(|captures| {
