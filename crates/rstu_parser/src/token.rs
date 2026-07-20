@@ -73,7 +73,9 @@ pub enum TokenKind {
 
 impl TokenKind {
     token_kinds!(
-        // IMPORTANT: The order of the enum matters, as the first matching token will be picked.
+        // IMPORTANT:
+        // The order of the enum matters, as the first matching token will be picked.
+        // When using capture groups, use the non-matching style (?:___)
         (
             Transition,
             r"\n\n",
