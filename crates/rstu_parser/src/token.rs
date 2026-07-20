@@ -29,7 +29,7 @@ macro_rules! token_kinds {
 
         pub fn regex(self) -> &'static Regex {
             match self {
-                $(TokenKind::$kind => token_regex!(format!(r"{}(?:{}){}", $leading, $pattern, $trailing)),)+
+                $(TokenKind::$kind => token_regex!(format!(r"{}({}){}", $leading, $pattern, $trailing)),)+
             }
         }
     };
