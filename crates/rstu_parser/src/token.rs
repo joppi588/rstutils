@@ -24,14 +24,14 @@ macro_rules! count_idents {
 }
 
 macro_rules! token_kinds {
-    ($(($kind:ident, $pattern:expr)),+ $(,)?) => {
+    ($(($kind:ident, $leading:expr, $trailing:expr, $pattern:expr)),+ $(,)?) => {
         pub const ALL: [TokenKind; count_idents!($($kind),+)] = [
             $(TokenKind::$kind),+
         ];
 
         pub fn regex(self) -> &'static Regex {
             match self {
-                $(TokenKind::$kind => token_regex!($pattern),)+
+                $(TokenKind::$kind => token_regex!(format!(r"{}(?:{}){}", $leading, $pattern, $trailing)),)+
             }
         }
     };
@@ -76,35 +76,36 @@ pub enum TokenKind {
 impl TokenKind {
     token_kinds!(
         // IMPORTANT: The order of the enum matters, as the first matching token will be picked.
-        // Token regexp have three parts: pre-context, token, post-context. Contexts are non-matching groups.
         (
             Transition,
-            format!(r"(?:\n\n)([{0}]{{4,}})(?:\n\n)", RECOMMENDED_SECTION_CHARS)
+            r"\n\n",
+            r"\n\n",
+            format!(r"[{0}]{{4,}}", RECOMMENDED_SECTION_CHARS)
         ),
         (
             SectionTitlePrefix,
-            format!(r"(?:\n\n)([{0}]+)(?:\n)", RECOMMENDED_SECTION_CHARS)
+            r"\n\n",
+            r"\n",
+            format!(r"[{0}]+", RECOMMENDED_SECTION_CHARS)
         ),
         (
             SectionTitleSuffix,
-            format!(r"(?:^|\n)([{0}]+)(?:\n|$)", RECOMMENDED_SECTION_CHARS)
+            r"\n",
+            r"\n",
+            format!(r"[{0}]+", RECOMMENDED_SECTION_CHARS)
         ),
-        (Indent, r"(?:^|\n)([ \t]+)(?:[^ \t\n])"),
-        (Spaces, r"(?:[^ \t\n])([ \t]+)([^ \t]|$)"),
-        (DoubleDot, r"(?:^|\n|\s)(\.\.)(?:\n|$|\s)"),
-        (DoubleColon, r"(?:.|\n)(::)(.|\n)"),
-        (TableHorizontal, r"(?:^|\n)(=+(?:\s+=+)+\s*)(?:\n|$)"),
-        (BlankLine, r"(?:\n)([ \t]*\n)(?:.|\n)"),
-        (NewLine, r"(?:[^\n])(\n)(?:.|\n)"),
-        (
-            Word,
-            r"(?:^|[^A-Za-z0-9_])([A-Za-z0-9_]+)(?:$|[^A-Za-z0-9_])"
-        ),
-        (Bold, r"(?:.|\n)(\*\*)(?:.|\n)"),
-        (LiteralString, r"(?:^|\n)(.*)(?:\n|$)")
+        (Indent, r"\n", r"[^ \t\n]", r"[ \t]+"),
+        (Spaces, r"[^ \t\n]", r"[^ \t]", r"[ \t]+"),
+        (DoubleDot, r"[\n\s]", r"[\n\s]", r"\.\."),
+        (DoubleColon, r"(?:.|\n)", r"(?:.|\n)", r"::"),
+        (TableHorizontal, r"\n", r"\n", r"=+(?:\s+=+)+\s*"),
+        (BlankLine, r"\n", r"(?:.|\n)", r"[ \t]*\n"),
+        (NewLine, r"[^\n]", r"(?:.|\n)", r"\n"),
+        (Word, r"[^A-Za-z0-9_]", r"[^A-Za-z0-9_]", r"[A-Za-z0-9_]+"),
+        (Bold, r"(?:.|\n)", r"(?:.|\n)", r"\*\*"),
+        (LiteralString, r"\n", r"\n", r".*")
     );
 
-    // TODO: Delete
     pub fn inner_match<'a>(self, input: &'a str) -> Option<&'a str> {
         self.regex()
             .captures(input)

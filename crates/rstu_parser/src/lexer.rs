@@ -28,7 +28,7 @@ pub fn tokenize(input: &str) -> Vec<Token> {
 
             let candidate = (kind, token_match.start(), token_match.end());
 
-            // Not needed?
+            // TODO: Not needed?
             if kind == TokenKind::LiteralString {
                 literal_match = Some((candidate.1, candidate.2));
                 continue;
@@ -99,7 +99,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic] // This test fails (bug 201)
     fn tokenize_treats_unmatched_input_as_literal_string() {
         let input = "*%*%*";
         let expected = vec![Token::new(TokenKind::LiteralString, "*%*%*")];
