@@ -164,27 +164,27 @@ mod tests {
 
     #[test]
     fn doublecolon_non_matching() {
-        assert!(!TokenKind::DoubleColon.is_match(".. note:"));
+        assert!(!TokenKind::DoubleColon.is_match("\n.. note:\n"));
     }
 
     #[test]
     fn doubledot_matches() {
-        assert!(TokenKind::DoubleDot.is_match(".. this is a comment"));
+        assert!(TokenKind::DoubleDot.is_match("\n.. this is a comment\n"));
     }
 
     #[test]
     fn doubledot_non_matching() {
-        assert!(!TokenKind::DoubleDot.is_match("warning..."));
+        assert!(!TokenKind::DoubleDot.is_match("\nwarning...\n"));
     }
 
     #[test]
     fn table_horizontal_matches() {
-        assert!(TokenKind::TableHorizontal.is_match("==== ====="));
+        assert!(TokenKind::TableHorizontal.is_match("\n==== =====\n"));
     }
 
     #[test]
     fn table_horizontal_non_matching() {
-        assert!(!TokenKind::TableHorizontal.is_match("========"));
+        assert!(!TokenKind::TableHorizontal.is_match("\n========\n"));
     }
 
     #[test]
@@ -204,12 +204,12 @@ mod tests {
 
     #[test]
     fn literal_string_matches() {
-        assert!(TokenKind::LiteralString.is_match("Hello world"));
+        assert!(TokenKind::LiteralString.is_match("\nHello world\n"));
     }
 
     #[test]
     fn word_matches_alphanumeric_and_underscore() {
-        assert!(TokenKind::Word.is_match("alpha_123"));
+        assert!(TokenKind::Word.is_match(" alpha_123 "));
     }
 
     #[test]
