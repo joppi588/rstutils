@@ -140,7 +140,10 @@ mod tests {
     fn section_title_suffix_matches() {
         assert!(TokenKind::SectionTitleSuffix.is_match("Title\n=====\nParagraph"));
         assert!(!TokenKind::SectionTitleSuffix.is_match("Title\n==a=\n\n"));
-        assert!(!TokenKind::SectionTitleSuffix.is_match("\n====\nTitle"));
+        assert!(
+            TokenKind::SectionTitlePrefix.is_match("\n\n====\nTitle")
+                && TokenKind::SectionTitleSuffix.is_match("\n\n====\nTitle")
+        ); // but Prefix is catched first!
     }
 
     #[test]
