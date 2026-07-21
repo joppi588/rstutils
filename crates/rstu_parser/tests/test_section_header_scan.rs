@@ -10,7 +10,8 @@ use std::path::Path;
 
 #[test]
 fn finds_all_section_headers_in_ok_three_sections() {
-    let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/data/ok_three_sections.rst");
+    let path =
+        Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/data/sections/ok_three_sections.rst");
     let contents = fs::read_to_string(path).expect("failed to read three sections test file");
 
     let tokens = tokenize(&contents);

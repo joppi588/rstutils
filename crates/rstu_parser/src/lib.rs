@@ -86,9 +86,9 @@ fn find_previous_line_start(tokens: &[Token], closing_index: usize) -> Option<us
     Some(cursor)
 }
 
-pub fn parse(input: &str) -> &Node {
+pub fn parse(input: &str) -> Node {
     let tokens = tokenize(input);
-    let doc: &Node = Node::new(ElementKind::root);
+    let doc: Node = Node::new(ElementKind::Document);
 
     doc
 }

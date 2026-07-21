@@ -7,4 +7,4 @@ edition = "2024"
 document_tree = "0.4.2"
 rst_parser = "0.4.2"
 regex = "1"
-rstu_ast = "0"
+rstu_ast = { version = "0.1.0", path = "../rstu_ast" }
