@@ -89,9 +89,11 @@ mod tests {
     fn tokenize_spaces_words() {
         let input = "Hello World";
         let expected = vec![
+            Token::new(TokenKind::BlankLine, "\n"),
             Token::new(TokenKind::Word, "Hello"),
             Token::new(TokenKind::Spaces, " "),
             Token::new(TokenKind::Word, "World"),
+            Token::new(TokenKind::BlankLine, "\n"),
         ];
 
         assert_eq!(tokenize(input), expected);
