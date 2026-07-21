@@ -2,17 +2,21 @@
 //
 // SPDX-License-Identifier: MIT
 
+use rstest::rstest;
 use rstu_parser::lexer::tokenize;
-use rstu_parser::token::TokenKind;
 use rstu_parser::try_find_section_header;
 use std::fs;
 use std::path::Path;
 
-#[test]
-fn finds_all_section_headers_in_ok_three_sections() {
-    let path =
-        Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/data/sections/ok_three_sections.rst");
-    let contents = fs::read_to_string(path).expect("failed to read three sections test file");
+#[rstest]
+#[case("ok_three_sections.rst")]
+#[case("ok_sections_style.rst")]
+fn finds_all_section_headers(#[case] filename: &str) {
+    let path = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("tests/data/sections")
+        .join(filename);
+    let contents = fs::read_to_string(path)
+        .unwrap_or_else(|_| panic!("failed to read sections test file: {filename}"));
 
     let tokens = tokenize(&contents);
     let mut start_at = 0;
@@ -25,7 +29,11 @@ fn finds_all_section_headers_in_ok_three_sections() {
         start_at = end + 1;
     }
 
-    assert_eq!(spans.len(), 3, "expected three section headers");
+    assert_eq!(
+        spans.len(),
+        3,
+        "expected three section headers in {filename}"
+    );
 
     let titles: Vec<String> = spans
         .iter()
@@ -38,5 +46,9 @@ fn finds_all_section_headers_in_ok_three_sections() {
         })
         .collect();
 
-    assert_eq!(titles, vec!["Heading 1\n", "Heading 2\n", "Heading 3\n"]);
+    assert_eq!(
+        titles,
+        vec!["Heading 1\n", "Heading 2\n", "Heading 3\n"],
+        "unexpected extracted titles in {filename}"
+    );
 }

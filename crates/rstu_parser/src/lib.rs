@@ -15,7 +15,6 @@ pub enum FindElementError {
     StartAtOutOfBounds { start_at: usize, token_count: usize },
     SectionTitleMissingNextLineAfterOpening { opening_index: usize },
     SectionTitleMissingClosingAfterOpening { opening_index: usize },
-    SectionTitleMissingPreviousLineBeforeClosing { closing_index: usize },
 }
 
 pub fn parse(input: &str) -> Node {
