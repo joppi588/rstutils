@@ -18,6 +18,13 @@ pub enum FindSectionHeaderError {
     MissingPreviousLineBeforeClosing { closing_index: usize },
 }
 
+pub fn parse(input: &str) -> Node {
+    let tokens = tokenize(input);
+    let doc: Node = Node::new(ElementKind::Document);
+
+    doc
+}
+
 pub fn try_find_section_header(
     tokens: &[Token],
     start_at: usize,
@@ -84,11 +91,4 @@ fn find_previous_line_start(tokens: &[Token], closing_index: usize) -> Option<us
     }
 
     Some(cursor)
-}
-
-pub fn parse(input: &str) -> Node {
-    let tokens = tokenize(input);
-    let doc: Node = Node::new(ElementKind::Document);
-
-    doc
 }
