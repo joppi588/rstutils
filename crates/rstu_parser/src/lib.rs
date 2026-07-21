@@ -90,5 +90,12 @@ fn find_previous_line_start(tokens: &[Token], closing_index: usize) -> Option<us
         cursor -= 1;
     }
 
+    while matches!(
+        tokens[cursor].kind,
+        TokenKind::NewLine | TokenKind::BlankLine
+    ) {
+        cursor += 1;
+    }
+
     Some(cursor)
 }
