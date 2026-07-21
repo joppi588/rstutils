@@ -32,14 +32,11 @@ fn finds_all_section_headers_in_ok_three_sections() {
         .map(|(start, end)| {
             let mut title = String::new();
             for token in &tokens[*start..*end] {
-                if token.kind == TokenKind::NewLine {
-                    break;
-                }
                 title.push_str(&token.lexeme);
             }
             title
         })
         .collect();
 
-    assert_eq!(titles, vec!["Heading 1", "Heading 2", "Heading 3"]);
+    assert_eq!(titles, vec!["Heading 1\n", "Heading 2\n", "Heading 3\n"]);
 }
