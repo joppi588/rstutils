@@ -85,8 +85,7 @@ fn tokenize_ok_mixed_lorem_ipsum_file() {
         (TokenKind::Spaces, " "),
         (TokenKind::Word, "file"),
         (TokenKind::Bold, "**"),
-        (TokenKind::NewLine, "\n"),
-        (TokenKind::LiteralString, ""),
+        (TokenKind::BlankLine, "\n"),
     ];
 
     assert_eq!(kinds, expected_kinds);

@@ -6,7 +6,7 @@ use crate::token::{Token, TokenKind};
 
 pub fn tokenize(input: &str) -> Vec<Token> {
     let mut tokens = Vec::new();
-    let input = format!("\n{input}\n");
+    let input = format!("\n\n{input}\n\n"); // leading and trailing blank line
     let mut remaining = input.as_str();
 
     while remaining.len() > 1 {
