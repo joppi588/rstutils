@@ -21,4 +21,4 @@ repos:
         entry: rustfmt
         language: system
         pass_filenames: true
-        files: '(^Cargo\.(toml|lock)$|\.rs$)'
+        files: '\.rs$'

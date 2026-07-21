@@ -445,6 +445,7 @@ dependencies = [
  "document_tree",
  "regex",
  "rst_parser",
+ "rstu_ast",
 ]
 
 [[package]]
