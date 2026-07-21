@@ -49,14 +49,7 @@ pub fn try_find_section_header(
                 return Ok(Some((index, next_line_end + 1)));
             }
             TokenKind::SectionTitleSuffix => {
-                let Some(previous_line_start) = move_back_one_line(tokens, index) else {
-                    return Err(
-                        FindElementError::SectionTitleMissingPreviousLineBeforeClosing {
-                            closing_index: index,
-                        },
-                    );
-                };
-
+                let previous_line_start = move_back_one_line(tokens, index).unwrap_or(0);
                 return Ok(Some((previous_line_start, index)));
             }
             _ => {}
@@ -75,17 +68,13 @@ fn find_next_newline(tokens: &[Token], start_at: usize) -> Option<usize> {
 }
 
 fn move_back_one_line(tokens: &[Token], index: usize) -> Option<usize> {
+    // Move to the first token of the line ending before index
     let mut cursor = index.checked_sub(2)?;
-    while cursor > 0 && tokens[cursor - 1].kind != TokenKind::NewLine {
-        cursor -= 1;
-    }
-
-    while matches!(
+    while !matches!(
         tokens[cursor].kind,
         TokenKind::NewLine | TokenKind::BlankLine
     ) {
-        cursor += 1;
+        cursor = cursor.checked_sub(1)?;
     }
-
-    Some(cursor)
+    Some(cursor + 1)
 }
