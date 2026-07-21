@@ -132,15 +132,15 @@ mod tests {
     #[test]
     fn section_title_prefix_matches() {
         assert!(TokenKind::SectionTitlePrefix.is_match("\n\n====\nTitle"));
-        assert!(!TokenKind::Transition.is_match("\n\n==a=\nTitle"));
-        assert!(!TokenKind::Transition.is_match("Title\n====\n"));
+        assert!(!TokenKind::SectionTitlePrefix.is_match("\n\n==a=\nTitle"));
+        assert!(!TokenKind::SectionTitlePrefix.is_match("Title\n====\n"));
     }
 
     #[test]
     fn section_title_suffix_matches() {
-        assert!(TokenKind::Transition.is_match("Title\n=====\nParagraph"));
-        assert!(!TokenKind::Transition.is_match("Title\n==a=\n\n"));
-        assert!(!TokenKind::Transition.is_match("\n====\nTitle"));
+        assert!(TokenKind::SectionTitleSuffix.is_match("Title\n=====\nParagraph"));
+        assert!(!TokenKind::SectionTitleSuffix.is_match("Title\n==a=\n\n"));
+        assert!(!TokenKind::SectionTitleSuffix.is_match("\n====\nTitle"));
     }
 
     #[test]
