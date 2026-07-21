@@ -13,7 +13,6 @@ use crate::token::{Token, TokenKind};
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum FindElementError {
     StartAtOutOfBounds { start_at: usize, token_count: usize },
-    SectionTitleMissingNextLineAfterOpening { opening_index: usize },
     SectionTitleMissingClosingAfterOpening { opening_index: usize },
 }
 
@@ -32,7 +31,7 @@ pub fn try_find_section_header(
         match tokens[index].kind {
             TokenKind::SectionTitlePrefix => {
                 let next_line_end = find_next_newline(tokens, index + 1).ok_or(
-                    FindElementError::SectionTitleMissingNextLineAfterOpening {
+                    FindElementError::SectionTitleMissingClosingAfterOpening {
                         opening_index: index,
                     },
                 )?;
