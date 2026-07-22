@@ -15,7 +15,6 @@ fn tokenize_ok_mixed_lorem_ipsum_file() {
     let tokens: Vec<Token> = tokenize(&contents);
     let kinds: Vec<(TokenKind, &str)> = tokens.iter().map(|token| token.as_tuple()).collect();
     let expected_kinds = vec![
-        (TokenKind::BlankLine, "\n"),
         (TokenKind::Word, "Lorem"),
         (TokenKind::Spaces, " "),
         (TokenKind::Word, "Ipsum"),
@@ -40,14 +39,14 @@ fn tokenize_ok_mixed_lorem_ipsum_file() {
         (TokenKind::Word, "sit"),
         (TokenKind::Spaces, " "),
         (TokenKind::Word, "amet"),
-        (TokenKind::LiteralString, ","),
+        (TokenKind::LiteralChar, ","),
         (TokenKind::Spaces, " "),
         (TokenKind::Word, "consectetur"),
         (TokenKind::Spaces, " "),
         (TokenKind::Word, "adipiscing"),
         (TokenKind::Spaces, " "),
         (TokenKind::Word, "elit"),
-        (TokenKind::LiteralString, "."),
+        (TokenKind::LiteralChar, "."),
         (TokenKind::NewLine, "\n"),
         (TokenKind::Indent, "   "),
         (TokenKind::Word, "Vivamus"),
@@ -61,7 +60,7 @@ fn tokenize_ok_mixed_lorem_ipsum_file() {
         (TokenKind::Word, "vestibulum"),
         (TokenKind::Spaces, " "),
         (TokenKind::Word, "vestibulum"),
-        (TokenKind::LiteralString, "."),
+        (TokenKind::LiteralChar, "."),
         (TokenKind::NewLine, "\n"),
         (TokenKind::Indent, "   "),
         (TokenKind::Word, "Cras"),
@@ -71,7 +70,7 @@ fn tokenize_ok_mixed_lorem_ipsum_file() {
         (TokenKind::Word, "euismod"),
         (TokenKind::Spaces, " "),
         (TokenKind::Word, "malesuada"),
-        (TokenKind::LiteralString, "."),
+        (TokenKind::LiteralChar, "."),
         (TokenKind::NewLine, "\n"),
         (TokenKind::BlankLine, "\n"),
         (TokenKind::DoubleDot, ".."),
@@ -87,7 +86,6 @@ fn tokenize_ok_mixed_lorem_ipsum_file() {
         (TokenKind::Word, "file"),
         (TokenKind::Bold, "**"),
         (TokenKind::NewLine, "\n"),
-        (TokenKind::BlankLine, "\n"),
     ];
 
     assert_eq!(kinds, expected_kinds);

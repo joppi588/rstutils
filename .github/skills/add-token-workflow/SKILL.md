@@ -18,7 +18,7 @@ Use this skill when adding a new token backed by a regular expression in `rstu_p
    - Use three matching groups: pre-context, real match, and post-context.
    - Keep the captured token in group 1.
    - Make the pre-context and post-context exactly one character wide when the token model expects one-character context.
-   - Put the new token kind before the fallback `LiteralString` entry if it should win over fallback matching.
+   - Put the new token kind before the fallback `LiteralChar` entry if it should win over fallback matching.
 
 3. Add the token kind.
    - Add the new variant to `TokenKind`.
