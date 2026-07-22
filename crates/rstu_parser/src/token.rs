@@ -28,19 +28,11 @@ macro_rules! token_kinds {
             $(TokenKind::$kind),+
         ];
 
-        pub fn token_regex(self) -> &'static Regex {
+        pub fn regex(self) -> &'static Regex {
             match self {
-                $(TokenKind::$kind => compiled_regex!($pattern),)+
+                $(TokenKind::$kind => compiled_regex!(format!(r"^{}{}{}", $context.0, $pattern, $context.1)),)+
             }
         }
-
-        pub fn context_regex(self) -> (&'static Regex, &'static Regex) {
-            match self {
-                $(TokenKind::$kind => (compiled_regex!($context.0),compiled_regex!($context.1)),)+
-            }
-        }
-        // Refactor: Make the context separate regexes
-
         pub fn context_len(self) -> (usize, usize) {
             match self {
                 $(TokenKind::$kind => $len_context,)+
@@ -125,14 +117,12 @@ impl TokenKind {
         (LiteralChar, (0, 0), ("", ""), r"[\s\S]")
     );
 
-    pub fn inner_match<'a>(self, input: &'a str) -> Option<&'a str> {
-        self.token_regex()
-            .captures(input)
-            .and_then(|captures| captures.get(1).map(|m| m.as_str()))
+    pub fn find(self, input: &str) -> Option<&str> {
+        self.regex().find(input).map(|m| m.as_str())
     }
 
     pub fn is_match(self, input: &str) -> bool {
-        let result = self.inner_match(input);
+        let result = self.find(input);
         result.is_some()
     }
 }

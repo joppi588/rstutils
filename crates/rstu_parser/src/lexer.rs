@@ -11,21 +11,16 @@ pub fn tokenize(input: &str) -> Vec<Token> {
     let input = format!("\n\n{input}\n\n"); // leading and trailing blank line
     let mut index: usize = 2;
     while index < input.len() - 2 {
-        let sub_str = &input[index..];
         let mut lexeme_len = 0;
         for kind in TokenKind::ALL {
-            let prefix_str = &input[index - kind.context_len().0..];
-            if let Some(prefix_match) = kind.context_regex().0.find(prefix_str) {
-            } else {
-                continue;
-            };
-            if let Some(token_match) = kind.token_regex().find(sub_str) {
-                lexeme_len = token_match.len();
-                let suffix_str = &input[index + lexeme_len..];
-                if let Some(suffix_match) = kind.context_regex().1.find(suffix_str) {
-                    tokens.push(Token::new(kind, &sub_str[0..lexeme_len]));
-                    break;
-                }
+            let sub_str = &input[index - kind.context_len().0..];
+            if let Some(token_match) = kind.find(sub_str) {
+                lexeme_len = token_match.len() - kind.context_len().0 - kind.context_len().1 + 1;
+                tokens.push(Token::new(
+                    kind,
+                    &sub_str[(kind.context_len().0)..lexeme_len],
+                ));
+                break;
             }
         }
         index += lexeme_len;
