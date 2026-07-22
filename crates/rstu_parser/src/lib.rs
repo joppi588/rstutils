@@ -30,7 +30,7 @@ pub fn try_find_section_header(
     for index in start_at..tokens.len() {
         match tokens[index].kind {
             TokenKind::SectionTitlePrefix => {
-                let next_line_end = find_next_newline(tokens, index + 1).ok_or(
+                let next_line_end = find_next_newline(tokens, index + 2).ok_or(
                     FindElementError::SectionTitleMissingClosingAfterOpening {
                         opening_index: index,
                     },
@@ -44,7 +44,7 @@ pub fn try_find_section_header(
                     });
                 }
 
-                return Ok(Some((index, next_line_end + 1)));
+                return Ok(Some((index + 2, next_line_end + 1)));
             }
             TokenKind::SectionTitleSuffix => {
                 let previous_line_start = move_back_one_line(tokens, index).unwrap_or(0);
