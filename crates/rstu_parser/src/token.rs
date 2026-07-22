@@ -33,6 +33,8 @@ macro_rules! token_kinds {
             }
         }
 
+        // Refactor: Make the context separate regexes
+
         pub fn context_length(self) -> (usize, usize) {
             match self {
                 $(TokenKind::$kind => ($len_leading, $len_trailing),)+
@@ -74,7 +76,7 @@ pub enum TokenKind {
     NewLine,
     Word,
     Bold,
-    LiteralString,
+    LiteralChar,
 }
 
 impl TokenKind {
@@ -114,7 +116,7 @@ impl TokenKind {
             r"[A-Za-z0-9_]+"
         ),
         (Bold, (1, 1), (r"(?:.|\n)", r"(?:.|\n)"), r"\*\*"),
-        (LiteralString, (1, 1), (r"\n", r"\n"), r".*")
+        (LiteralChar, (0, 0), ("", ""), r".")
     );
 
     pub fn inner_match<'a>(self, input: &'a str) -> Option<&'a str> {
@@ -230,11 +232,6 @@ mod tests {
     #[test]
     fn blank_line_non_matching_text() {
         assert!(!TokenKind::BlankLine.is_match("text"));
-    }
-
-    #[test]
-    fn literal_string_matches() {
-        assert!(TokenKind::LiteralString.is_match("\nHello world\n"));
     }
 
     #[test]

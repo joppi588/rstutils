@@ -14,7 +14,12 @@ pub fn tokenize(input: &str) -> Vec<Token> {
         let mut literal_match: Option<(usize, usize)> = None;
 
         // Optimizations
-        // use find_at
+        // Refactor: Keep a pointer to the current position
+        // Try to match the trailing context against the slice index-2 .. index
+        // try to match the core against  slice index..
+        // try to match the leading context at the remaining
+        // if found, advance by the matched length.
+        // if not found, advance by one character, and return a single-char token LiteralChar
         for kind in TokenKind::ALL {
             let token_match = match kind.regex().captures_iter(&remaining).find_map(|captures| {
                 captures
