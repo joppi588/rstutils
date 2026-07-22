@@ -15,21 +15,27 @@ macro_rules! count_idents {
         ()
     };
 }
-macro_rules! token_regex {
+macro_rules! compiled_regex {
     ($pattern:expr) => {{
-        static RE: LazyLock<Regex> = LazyLock::new(|| Regex::new($pattern.as_ref()).unwrap());
+        static RE: LazyLock<Regex> =
+            LazyLock::new(|| Regex::new(format!(r"^{}", $pattern).as_ref()).unwrap());
         &RE
     }};
 }
 macro_rules! token_kinds {
-    ($(($kind:ident, $leading:expr, $pattern:expr, $trailing:expr)),+ $(,)?) => {
+    ($(($kind:ident, $len_context:expr, $context:expr, $pattern:expr)),+ $(,)?) => {
         pub const ALL: [TokenKind; count_idents!($($kind),+)] = [
             $(TokenKind::$kind),+
         ];
 
         pub fn regex(self) -> &'static Regex {
             match self {
-                $(TokenKind::$kind => token_regex!(format!(r"{}({}){}", $leading, $pattern, $trailing)),)+
+                $(TokenKind::$kind => compiled_regex!(format!(r"^{}{}{}", $context.0, $pattern, $context.1)),)+
+            }
+        }
+        pub fn context_len(self) -> (usize, usize) {
+            match self {
+                $(TokenKind::$kind => $len_context,)+
             }
         }
     };
@@ -68,52 +74,55 @@ pub enum TokenKind {
     NewLine,
     Word,
     Bold,
-    LiteralString,
+    LiteralChar,
 }
 
 impl TokenKind {
     token_kinds!(
         // IMPORTANT:
         // The order of the enum matters, as the first matching token will be picked.
-        // When using capture groups, use the non-matching style (?:___)
+        // Format (name, context length, context regex, token regex)
         (
             Transition,
-            r"\n\n",
-            format!(r"[{0}]{{4,}}", RECOMMENDED_SECTION_CHARS),
-            r"\n\n"
+            (2, 2),
+            (r"\n\n", r"\n\n"),
+            format!(r"[{0}]{{4,}}", RECOMMENDED_SECTION_CHARS)
         ),
         (
             SectionTitlePrefix,
-            r"\n\n",
-            format!(r"[{0}]+", RECOMMENDED_SECTION_CHARS),
-            r"\n"
+            (2, 1),
+            (r"\n\n", r"\n"),
+            format!(r"[{0}]+", RECOMMENDED_SECTION_CHARS)
         ),
         (
             SectionTitleSuffix,
-            r"\n",
-            format!(r"[{0}]+", RECOMMENDED_SECTION_CHARS),
-            r"\n"
+            (1, 1),
+            (r"\n", r"\n"),
+            format!(r"[{0}]+", RECOMMENDED_SECTION_CHARS)
         ),
-        (Indent, r"\n", r"[ \t]+", r"[^ \t\n]"),
-        (Spaces, r"[^ \t\n]", r"[ \t]+", r"[^ \t]"),
-        (DoubleDot, r"[\n\s]", r"\.\.", r"[\n\s]"),
-        (DoubleColon, r"(?:.|\n)", r"::", r"(?:.|\n)"),
-        (TableHorizontal, r"\n", r"=+(?:\s+=+)+\s*", r"\n"),
-        (BlankLine, r"\n", r"[ \t]*\n", r"(?:.|\n)"),
-        (NewLine, r"[^\n]", r"\n", r"(?:.|\n)"),
-        (Word, r"[^A-Za-z0-9_]", r"[A-Za-z0-9_]+", r"[^A-Za-z0-9_]"),
-        (Bold, r"(?:.|\n)", r"\*\*", r"(?:.|\n)"),
-        (LiteralString, r"\n", r".*", r"\n")
+        (Indent, (1, 1), (r"\n", r"[^ \t\n]"), r"[ \t]+"),
+        (Spaces, (1, 1), (r"[^ \t\n]", r"[^ \t]"), r"[ \t]+"),
+        (DoubleDot, (1, 1), (r"[\n\s]", r"[\n\s]"), r"\.\."),
+        (DoubleColon, (1, 1), (r"(?:.|\n)", r"(?:.|\n)"), r"::"),
+        (TableHorizontal, (1, 1), (r"\n", r"\n"), r"=+(?:\s+=+)+\s*"),
+        (BlankLine, (1, 1), (r"\n", r"(?:.|\n)"), r"[ \t]*\n"),
+        (NewLine, (1, 1), (r"[^\n]", r"(?:.|\n)"), r"\n"),
+        (
+            Word,
+            (1, 1),
+            (r"[^A-Za-z0-9_]", r"[^A-Za-z0-9_]"),
+            r"[A-Za-z0-9_]+"
+        ),
+        (Bold, (1, 1), (r"(?:.|\n)", r"(?:.|\n)"), r"\*\*"),
+        (LiteralChar, (0, 0), ("", ""), r"[\s\S]")
     );
 
-    pub fn inner_match<'a>(self, input: &'a str) -> Option<&'a str> {
-        self.regex()
-            .captures(input)
-            .and_then(|captures| captures.get(1).map(|m| m.as_str()))
+    pub fn find(self, input: &str) -> Option<&str> {
+        self.regex().find(input).map(|m| m.as_str())
     }
 
     pub fn is_match(self, input: &str) -> bool {
-        let result = self.inner_match(input);
+        let result = self.find(input);
         result.is_some()
     }
 }
@@ -133,17 +142,17 @@ mod tests {
     fn section_title_prefix_matches() {
         assert!(TokenKind::SectionTitlePrefix.is_match("\n\n====\nTitle"));
         assert!(!TokenKind::SectionTitlePrefix.is_match("\n\n==a=\nTitle"));
-        assert!(!TokenKind::SectionTitlePrefix.is_match("Title\n====\n"));
+        assert!(!TokenKind::SectionTitlePrefix.is_match("e\n====\n"));
     }
 
     #[test]
     fn section_title_suffix_matches() {
-        assert!(TokenKind::SectionTitleSuffix.is_match("Title\n=====\nParagraph"));
-        assert!(!TokenKind::SectionTitleSuffix.is_match("Title\n==a=\n\n"));
+        assert!(TokenKind::SectionTitleSuffix.is_match("\n=====\nParagraph"));
+        assert!(!TokenKind::SectionTitleSuffix.is_match("\n==a=\n\n"));
         assert!(
             TokenKind::SectionTitlePrefix.is_match("\n\n====\nTitle")
-                && TokenKind::SectionTitleSuffix.is_match("\n\n====\nTitle")
-        ); // but Prefix is catched first!
+                && TokenKind::SectionTitleSuffix.is_match("\n====\nTitle")
+        ); // Prefix is catched first!
     }
 
     #[test]
@@ -178,12 +187,12 @@ mod tests {
 
     #[test]
     fn doublecolon_matches() {
-        assert!(TokenKind::DoubleColon.is_match("\n.. note::\n"));
+        assert!(TokenKind::DoubleColon.is_match("e::\n"));
     }
 
     #[test]
     fn doublecolon_non_matching() {
-        assert!(!TokenKind::DoubleColon.is_match("\n.. note:\n"));
+        assert!(!TokenKind::DoubleColon.is_match("e:\n"));
     }
 
     #[test]
@@ -222,11 +231,6 @@ mod tests {
     }
 
     #[test]
-    fn literal_string_matches() {
-        assert!(TokenKind::LiteralString.is_match("\nHello world\n"));
-    }
-
-    #[test]
     fn word_matches_alphanumeric_and_underscore() {
         assert!(TokenKind::Word.is_match(" alpha_123 "));
     }
@@ -239,5 +243,12 @@ mod tests {
     #[test]
     fn word_non_matching_without_word_chars() {
         assert!(!TokenKind::Word.is_match("---\n***"));
+    }
+
+    #[test]
+    fn context_length_matches_declared_values() {
+        assert_eq!(TokenKind::Transition.context_len(), (2, 2));
+        assert_eq!(TokenKind::SectionTitlePrefix.context_len(), (2, 1));
+        assert_eq!(TokenKind::Word.context_len(), (1, 1));
     }
 }
