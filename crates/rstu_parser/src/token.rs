@@ -15,29 +15,35 @@ macro_rules! count_idents {
         ()
     };
 }
-macro_rules! token_regex {
+macro_rules! compiled_regex {
     ($pattern:expr) => {{
-        static RE: LazyLock<Regex> = LazyLock::new(|| Regex::new($pattern.as_ref()).unwrap());
+        static RE: LazyLock<Regex> =
+            LazyLock::new(|| Regex::new(format!(r"^{}", $pattern).as_ref()).unwrap());
         &RE
     }};
 }
 macro_rules! token_kinds {
-    ($(($kind:ident, ($len_leading:expr, $len_trailing:expr), ($leading:expr, $trailing:expr), $pattern:expr)),+ $(,)?) => {
+    ($(($kind:ident, $len_context:expr, $context:expr, $pattern:expr)),+ $(,)?) => {
         pub const ALL: [TokenKind; count_idents!($($kind),+)] = [
             $(TokenKind::$kind),+
         ];
 
-        pub fn regex(self) -> &'static Regex {
+        pub fn token_regex(self) -> &'static Regex {
             match self {
-                $(TokenKind::$kind => token_regex!(format!(r"{}({}){}", $leading, $pattern, $trailing)),)+
+                $(TokenKind::$kind => compiled_regex!($pattern),)+
             }
         }
 
+        pub fn context_regex(self) -> (&'static Regex, &'static Regex) {
+            match self {
+                $(TokenKind::$kind => (compiled_regex!($context.0),compiled_regex!($context.1)),)+
+            }
+        }
         // Refactor: Make the context separate regexes
 
-        pub fn context_length(self) -> (usize, usize) {
+        pub fn context_len(self) -> (usize, usize) {
             match self {
-                $(TokenKind::$kind => ($len_leading, $len_trailing),)+
+                $(TokenKind::$kind => $len_context,)+
             }
         }
     };
@@ -116,11 +122,11 @@ impl TokenKind {
             r"[A-Za-z0-9_]+"
         ),
         (Bold, (1, 1), (r"(?:.|\n)", r"(?:.|\n)"), r"\*\*"),
-        (LiteralChar, (0, 0), ("", ""), r".")
+        (LiteralChar, (0, 0), ("", ""), r"[\s\S]")
     );
 
     pub fn inner_match<'a>(self, input: &'a str) -> Option<&'a str> {
-        self.regex()
+        self.token_regex()
             .captures(input)
             .and_then(|captures| captures.get(1).map(|m| m.as_str()))
     }
@@ -251,8 +257,8 @@ mod tests {
 
     #[test]
     fn context_length_matches_declared_values() {
-        assert_eq!(TokenKind::Transition.context_length(), (2, 2));
-        assert_eq!(TokenKind::SectionTitlePrefix.context_length(), (2, 1));
-        assert_eq!(TokenKind::Word.context_length(), (1, 1));
+        assert_eq!(TokenKind::Transition.context_len(), (2, 2));
+        assert_eq!(TokenKind::SectionTitlePrefix.context_len(), (2, 1));
+        assert_eq!(TokenKind::Word.context_len(), (1, 1));
     }
 }
