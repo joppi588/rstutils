@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: MIT
 
-use rst_parser::token;
-
 use crate::token::{Token, TokenKind};
 
 pub fn tokenize(input: &str) -> Vec<Token> {

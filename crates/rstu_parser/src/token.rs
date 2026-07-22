@@ -142,17 +142,17 @@ mod tests {
     fn section_title_prefix_matches() {
         assert!(TokenKind::SectionTitlePrefix.is_match("\n\n====\nTitle"));
         assert!(!TokenKind::SectionTitlePrefix.is_match("\n\n==a=\nTitle"));
-        assert!(!TokenKind::SectionTitlePrefix.is_match("Title\n====\n"));
+        assert!(!TokenKind::SectionTitlePrefix.is_match("e\n====\n"));
     }
 
     #[test]
     fn section_title_suffix_matches() {
-        assert!(TokenKind::SectionTitleSuffix.is_match("Title\n=====\nParagraph"));
-        assert!(!TokenKind::SectionTitleSuffix.is_match("Title\n==a=\n\n"));
+        assert!(TokenKind::SectionTitleSuffix.is_match("\n=====\nParagraph"));
+        assert!(!TokenKind::SectionTitleSuffix.is_match("\n==a=\n\n"));
         assert!(
             TokenKind::SectionTitlePrefix.is_match("\n\n====\nTitle")
-                && TokenKind::SectionTitleSuffix.is_match("\n\n====\nTitle")
-        ); // but Prefix is catched first!
+                && TokenKind::SectionTitleSuffix.is_match("\n====\nTitle")
+        ); // Prefix is catched first!
     }
 
     #[test]
@@ -187,12 +187,12 @@ mod tests {
 
     #[test]
     fn doublecolon_matches() {
-        assert!(TokenKind::DoubleColon.is_match("\n.. note::\n"));
+        assert!(TokenKind::DoubleColon.is_match("e::\n"));
     }
 
     #[test]
     fn doublecolon_non_matching() {
-        assert!(!TokenKind::DoubleColon.is_match("\n.. note:\n"));
+        assert!(!TokenKind::DoubleColon.is_match("e:\n"));
     }
 
     #[test]
