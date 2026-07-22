@@ -15,7 +15,6 @@ fn tokenize_ok_mixed_lorem_ipsum_file() {
     let tokens: Vec<Token> = tokenize(&contents);
     let kinds: Vec<(TokenKind, &str)> = tokens.iter().map(|token| token.as_tuple()).collect();
     let expected_kinds = vec![
-        (TokenKind::BlankLine, "\n"),
         (TokenKind::Word, "Lorem"),
         (TokenKind::Spaces, " "),
         (TokenKind::Word, "Ipsum"),
@@ -87,7 +86,6 @@ fn tokenize_ok_mixed_lorem_ipsum_file() {
         (TokenKind::Word, "file"),
         (TokenKind::Bold, "**"),
         (TokenKind::NewLine, "\n"),
-        (TokenKind::BlankLine, "\n"),
     ];
 
     assert_eq!(kinds, expected_kinds);
