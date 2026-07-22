@@ -22,7 +22,7 @@ macro_rules! token_regex {
     }};
 }
 macro_rules! token_kinds {
-    ($(($kind:ident, $leading:expr, $pattern:expr, $trailing:expr)),+ $(,)?) => {
+    ($(($kind:ident, ($len_leading:expr, $len_trailing:expr), ($leading:expr, $trailing:expr), $pattern:expr)),+ $(,)?) => {
         pub const ALL: [TokenKind; count_idents!($($kind),+)] = [
             $(TokenKind::$kind),+
         ];
@@ -30,6 +30,12 @@ macro_rules! token_kinds {
         pub fn regex(self) -> &'static Regex {
             match self {
                 $(TokenKind::$kind => token_regex!(format!(r"{}({}){}", $leading, $pattern, $trailing)),)+
+            }
+        }
+
+        pub fn context_length(self) -> (usize, usize) {
+            match self {
+                $(TokenKind::$kind => ($len_leading, $len_trailing),)+
             }
         }
     };
@@ -75,35 +81,40 @@ impl TokenKind {
     token_kinds!(
         // IMPORTANT:
         // The order of the enum matters, as the first matching token will be picked.
-        // When using capture groups, use the non-matching style (?:___)
+        // Format (name, context length, context regex, token regex)
         (
             Transition,
-            r"\n\n",
-            format!(r"[{0}]{{4,}}", RECOMMENDED_SECTION_CHARS),
-            r"\n\n"
+            (2, 2),
+            (r"\n\n", r"\n\n"),
+            format!(r"[{0}]{{4,}}", RECOMMENDED_SECTION_CHARS)
         ),
         (
             SectionTitlePrefix,
-            r"\n\n",
-            format!(r"[{0}]+", RECOMMENDED_SECTION_CHARS),
-            r"\n"
+            (2, 1),
+            (r"\n\n", r"\n"),
+            format!(r"[{0}]+", RECOMMENDED_SECTION_CHARS)
         ),
         (
             SectionTitleSuffix,
-            r"\n",
-            format!(r"[{0}]+", RECOMMENDED_SECTION_CHARS),
-            r"\n"
+            (1, 1),
+            (r"\n", r"\n"),
+            format!(r"[{0}]+", RECOMMENDED_SECTION_CHARS)
         ),
-        (Indent, r"\n", r"[ \t]+", r"[^ \t\n]"),
-        (Spaces, r"[^ \t\n]", r"[ \t]+", r"[^ \t]"),
-        (DoubleDot, r"[\n\s]", r"\.\.", r"[\n\s]"),
-        (DoubleColon, r"(?:.|\n)", r"::", r"(?:.|\n)"),
-        (TableHorizontal, r"\n", r"=+(?:\s+=+)+\s*", r"\n"),
-        (BlankLine, r"\n", r"[ \t]*\n", r"(?:.|\n)"),
-        (NewLine, r"[^\n]", r"\n", r"(?:.|\n)"),
-        (Word, r"[^A-Za-z0-9_]", r"[A-Za-z0-9_]+", r"[^A-Za-z0-9_]"),
-        (Bold, r"(?:.|\n)", r"\*\*", r"(?:.|\n)"),
-        (LiteralString, r"\n", r".*", r"\n")
+        (Indent, (1, 1), (r"\n", r"[^ \t\n]"), r"[ \t]+"),
+        (Spaces, (1, 1), (r"[^ \t\n]", r"[^ \t]"), r"[ \t]+"),
+        (DoubleDot, (1, 1), (r"[\n\s]", r"[\n\s]"), r"\.\."),
+        (DoubleColon, (1, 1), (r"(?:.|\n)", r"(?:.|\n)"), r"::"),
+        (TableHorizontal, (1, 1), (r"\n", r"\n"), r"=+(?:\s+=+)+\s*"),
+        (BlankLine, (1, 1), (r"\n", r"(?:.|\n)"), r"[ \t]*\n"),
+        (NewLine, (1, 1), (r"[^\n]", r"(?:.|\n)"), r"\n"),
+        (
+            Word,
+            (1, 1),
+            (r"[^A-Za-z0-9_]", r"[^A-Za-z0-9_]"),
+            r"[A-Za-z0-9_]+"
+        ),
+        (Bold, (1, 1), (r"(?:.|\n)", r"(?:.|\n)"), r"\*\*"),
+        (LiteralString, (1, 1), (r"\n", r"\n"), r".*")
     );
 
     pub fn inner_match<'a>(self, input: &'a str) -> Option<&'a str> {
@@ -239,5 +250,12 @@ mod tests {
     #[test]
     fn word_non_matching_without_word_chars() {
         assert!(!TokenKind::Word.is_match("---\n***"));
+    }
+
+    #[test]
+    fn context_length_matches_declared_values() {
+        assert_eq!(TokenKind::Transition.context_length(), (2, 2));
+        assert_eq!(TokenKind::SectionTitlePrefix.context_length(), (2, 1));
+        assert_eq!(TokenKind::Word.context_length(), (1, 1));
     }
 }
