@@ -16,9 +16,9 @@ repos:
         language: system
         files: '\.(rs|py)$'
 
-      - id: cargo-fmt
-        name: cargo fmt
-        entry: cargo fmt --all -- --check
+      - id: rust-format
+        name: format rust files
+        entry: rustfmt
         language: system
-        pass_filenames: false
-        files: '(^Cargo\.(toml|lock)$|\.rs$)'
+        pass_filenames: true
+        files: '\.rs$'
