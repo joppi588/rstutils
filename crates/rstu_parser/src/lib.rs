@@ -12,8 +12,18 @@ use crate::token::{Token, TokenKind};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum FindElementError {
-    StartAtOutOfBounds { start_at: usize, token_count: usize },
-    SectionTitleMissingClosingAfterOpening { opening_index: usize },
+    StartAtOutOfBounds {
+        start_at: usize,
+        token_count: usize,
+    },
+    SectionTitleMissingClosingAfterOpening {
+        opening_index: usize,
+    },
+    SectionTitleUnbalancedStyle {
+        opening_index: usize,
+        opening_style: String,
+        closing_style: String,
+    },
 }
 
 pub fn parse(input: &str) -> Node {
@@ -36,11 +46,24 @@ pub fn try_find_section_header(
                     },
                 )?;
 
-                if next_line_end + 1 >= tokens.len()
-                    || tokens[next_line_end + 1].kind != TokenKind::SectionTitleSuffix
-                {
+                if next_line_end + 1 >= tokens.len() {
                     return Err(FindElementError::SectionTitleMissingClosingAfterOpening {
                         opening_index: index,
+                    });
+                }
+
+                let closing_index = next_line_end + 1;
+                if tokens[closing_index].kind != TokenKind::SectionTitleSuffix {
+                    return Err(FindElementError::SectionTitleMissingClosingAfterOpening {
+                        opening_index: index,
+                    });
+                }
+
+                if tokens[index].lexeme != tokens[closing_index].lexeme {
+                    return Err(FindElementError::SectionTitleUnbalancedStyle {
+                        opening_index: index,
+                        opening_style: tokens[index].lexeme.clone(),
+                        closing_style: tokens[closing_index].lexeme.clone(),
                     });
                 }
 
