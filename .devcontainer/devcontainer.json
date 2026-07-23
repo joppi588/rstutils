@@ -3,6 +3,9 @@
   "build": {
     "dockerfile": "Dockerfile"
   },
+  "mounts": [
+    "source=rstutils-zsh-history,target=/commandhistory,type=volume"
+  ],
   "forwardPorts": [],
   "customizations": {
     "vscode": {
