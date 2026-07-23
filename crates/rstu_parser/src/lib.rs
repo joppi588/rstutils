@@ -46,14 +46,10 @@ pub fn try_find_section_header(
                     },
                 )?;
 
-                if next_line_end + 1 >= tokens.len() {
-                    return Err(FindElementError::SectionTitleMissingClosingAfterOpening {
-                        opening_index: index,
-                    });
-                }
-
                 let closing_index = next_line_end + 1;
-                if tokens[closing_index].kind != TokenKind::SectionTitleSuffix {
+                if (closing_index >= tokens.len())
+                    || (tokens[closing_index].kind != TokenKind::SectionTitleSuffix)
+                {
                     return Err(FindElementError::SectionTitleMissingClosingAfterOpening {
                         opening_index: index,
                     });
