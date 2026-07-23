@@ -5,6 +5,9 @@
 pub mod lexer;
 pub mod token;
 
+use std::collections::BTreeMap;
+use std::thread::current;
+
 use rstu_ast::{ElementKind, Node};
 
 use crate::lexer::tokenize;
@@ -27,22 +30,28 @@ pub enum FindElementError {
 }
 
 pub fn parse(input: &str) -> Node {
-    let _tokens = tokenize(input);
+    let tokens = tokenize(input);
     let doc: Node = Node::new(ElementKind::Document);
+    let mut current_node = &doc;
+
+    for index in tokens {
+        if Some(section_header) = try_match_section_header(tokens,index) {
+            current_node.push_section(section_header)
+        }
+    }
 
     doc
 }
 
-pub fn try_find_section_header(
+pub fn try_match_section_header(
     tokens: &[Token],
     start_at: usize,
-) -> Result<Option<(usize, usize)>, FindElementError> {
-    for index in start_at..tokens.len() {
-        match tokens[index].kind {
+) -> Result<Option<&Node>, FindElementError> {
+        match tokens[0].kind {
             TokenKind::SectionTitlePrefix => {
-                let next_line_end = find_next_newline(tokens, index + 2).ok_or(
+                let next_line_end = find_next_newline(tokens, start_at+2).ok_or(
                     FindElementError::SectionTitleMissingClosingAfterOpening {
-                        opening_index: index,
+                        opening_index: start_at,
                     },
                 )?;
 
@@ -51,23 +60,36 @@ pub fn try_find_section_header(
                     || (tokens[closing_index].kind != TokenKind::SectionTitleSuffix)
                 {
                     return Err(FindElementError::SectionTitleMissingClosingAfterOpening {
-                        opening_index: index,
+                        opening_index: start_at,
                     });
                 }
 
+                let opening_style =tokens[start_at].lexeme.clone(); // TODO: single char + length
+                let closing_style = tokens[closing_index].lexeme.clone();
                 if tokens[index].lexeme != tokens[closing_index].lexeme {
                     return Err(FindElementError::SectionTitleUnbalancedStyle {
-                        opening_index: index,
-                        opening_style: tokens[index].lexeme.clone(),
-                        closing_style: tokens[closing_index].lexeme.clone(),
+                        opening_index: start_at,
+                        opening_style: opening_style,
+                        closing_style: closing_style,
                     });
                 }
+                let section_marker = Node::new(ElementKind::Section)
+                    .with_attr("opening_style", opening_style)
+                    .with_attr("closing_style",closing_style )
+                    .with_child(Node::new(ElementKind::Title)
+                        .with_text(tokens_to_text(&tokens[start_index+1..closing_index])));
 
-                return Ok(Some((index + 2, next_line_end + 1)));
+                return Ok(Some(section_marker));
             }
             TokenKind::SectionTitleSuffix => {
                 let previous_line_start = move_back_one_line(tokens, index).unwrap_or(0);
-                return Ok(Some((previous_line_start, index)));
+                let section_marker = Node::new(ElementKind::Section)
+                    .with_attr("opening_style", "")
+                    .with_attr("closing_style",closing_style )
+                    .with_child(Node::new(ElementKind::Title)
+                        .with_text(tokens_to_text(&tokens[previous_line_start..closing_index])));
+
+                return Ok(Some(section_marker));
             }
             _ => {}
         }
@@ -94,4 +116,13 @@ fn move_back_one_line(tokens: &[Token], index: usize) -> Option<usize> {
         cursor = cursor.checked_sub(1)?;
     }
     Some(cursor + 1)
+}
+
+
+fn tokens_to_text(tokens: &[Token]) -> String {
+    let mut text = String::new();
+    for token in tokens {
+        text.push_str(&token.lexeme);
+    }
+    text
 }
