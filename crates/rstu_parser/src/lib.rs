@@ -5,10 +5,24 @@
 pub mod lexer;
 pub mod token;
 
+use std::cell::RefCell;
+use std::collections::BTreeMap;
+use std::rc::Rc;
+
 use rstu_ast::{ElementKind, Node};
 
 use crate::lexer::tokenize;
 use crate::token::{Token, TokenKind};
+
+type ParseNodeRef = Rc<RefCell<ParseNode>>;
+
+#[derive(Debug, Clone)]
+struct ParseNode {
+    kind: ElementKind,
+    attributes: BTreeMap<String, String>,
+    text: Option<String>,
+    children: Vec<ParseNodeRef>,
+}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum FindElementError {
@@ -28,31 +42,83 @@ pub enum FindElementError {
 
 pub fn parse(input: &str) -> Result<Node, FindElementError> {
     let tokens = tokenize(input);
-    let doc: Node = Node::new(ElementKind::Document);
+    let doc = Rc::new(RefCell::new(ParseNode {
+        kind: ElementKind::Document,
+        attributes: BTreeMap::new(),
+        text: None,
+        children: Vec::new(),
+    }));
     let mut index: usize = 0;
+    let mut section_styles: Vec<String> = Vec::new();
+    let mut section_stack: Vec<ParseNodeRef> = Vec::new();
 
-    let mut current_node = &doc;
     while index < tokens.len() {
-        match tokens[index].kind {
-            TokenKind::SectionTitlePrefix => {
-                let (section_header, next_start) = try_match_section_header_prefix(&tokens, index)?;
-                let _ = current_node.push_section(section_header);
-                current_node = section_header;
-                index = next_start;
+        let parsed = match tokens[index].kind {
+            TokenKind::SectionTitlePrefix => Some(try_match_section_header_prefix(&tokens, index)?),
+            TokenKind::SectionTitleSuffix => Some(try_match_section_header_suffix(&tokens, index)?),
+            _ => None,
+        };
+
+        let Some((section_header, next_start)) = parsed else {
+            index += 1;
+            continue;
+        };
+
+        let style = section_header
+            .attributes
+            .get("opening_style")
+            .filter(|value| !value.is_empty())
+            .cloned()
+            .or_else(|| section_header.attributes.get("closing_style").cloned())
+            .unwrap_or_default();
+
+        let level = match section_styles.iter().position(|known| known == &style) {
+            Some(existing) => existing,
+            None => {
+                section_styles.push(style);
+                section_styles.len() - 1
             }
-            TokenKind::SectionTitleSuffix => {
-                let (section_header, next_start) = try_match_section_header_suffix(&tokens, index)?;
-                let _ = current_node.push_section(section_header);
-                current_node = section_header;
-                index = next_start;
-            }
-            _ => {
-                index += 1;
-            }
-        }
+        };
+
+        section_stack.truncate(level);
+        let parent = if level == 0 {
+            doc.clone()
+        } else {
+            section_stack[level - 1].clone()
+        };
+
+        let inserted = Rc::new(RefCell::new(parse_node_from_ast(section_header)));
+        parent.borrow_mut().children.push(inserted.clone());
+        section_stack.push(inserted);
+        index = next_start;
     }
 
-    Ok(doc)
+    Ok(parse_node_to_ast(&doc.borrow()))
+}
+
+fn parse_node_from_ast(node: Node) -> ParseNode {
+    ParseNode {
+        kind: node.kind,
+        attributes: node.attributes,
+        text: node.text,
+        children: node
+            .children
+            .into_iter()
+            .map(|child| Rc::new(RefCell::new(parse_node_from_ast(child))))
+            .collect(),
+    }
+}
+
+fn parse_node_to_ast(node: &ParseNode) -> Node {
+    let mut ast = Node::new(node.kind);
+    ast.attributes = node.attributes.clone();
+    ast.text = node.text.clone();
+
+    for child in &node.children {
+        ast.with_child(parse_node_to_ast(&child.borrow()));
+    }
+
+    ast
 }
 
 pub fn try_match_section_header_prefix(
