@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 use super::relink_parent_pointers;
-use super::{ElementKind, Node};
+use super::{AstNode, ElementKind, Node};
 use serde::Deserialize;
 use serde_json::json;
 use std::collections::BTreeMap;
@@ -266,4 +266,50 @@ children:
     .expect("failed to parse expected yaml");
 
     assert_eq!(actual, expected);
+}
+
+#[test]
+fn ast_node_ref_roundtrip_matches_owned_node_json() {
+    let mut root = Node::new(ElementKind::Document).with_attr("lang", "rst");
+    let mut section = Node::new(ElementKind::Section)
+        .with_attr("opening_style", "=========")
+        .with_attr("closing_style", "=========");
+    section.with_child(Node::new(ElementKind::Title).with_text("Heading 1\n"));
+    root.with_child(section);
+
+    let root_ref = AstNode::from_node(root.clone());
+    let roundtrip = AstNode::to_node(&root_ref);
+
+    assert_eq!(roundtrip.to_json(), root.to_json());
+}
+
+#[test]
+fn push_section_ref_returns_inserted_current_node() {
+    let document = AstNode::new_ref(ElementKind::Document);
+
+    let section_one = AstNode::new_ref(ElementKind::Section);
+    AstNode::with_attr(&section_one, "section_marker", "#");
+    let title_one = AstNode::new_ref(ElementKind::Title);
+    AstNode::with_text(&title_one, "Heading 1\n");
+    AstNode::push_child(&section_one, title_one).unwrap();
+
+    let mut current = AstNode::push_section_ref(&document, section_one).unwrap();
+
+    let section_two = AstNode::new_ref(ElementKind::Section);
+    AstNode::with_attr(&section_two, "section_marker", "~");
+    let title_two = AstNode::new_ref(ElementKind::Title);
+    AstNode::with_text(&title_two, "Heading 2\n");
+    AstNode::push_child(&section_two, title_two).unwrap();
+
+    current = AstNode::push_section_ref(&current, section_two).unwrap();
+
+    let borrowed = current.borrow();
+    assert_eq!(borrowed.kind, ElementKind::Section);
+    assert_eq!(
+        borrowed
+            .attributes
+            .get("section_marker")
+            .map(String::as_str),
+        Some("~")
+    );
 }
