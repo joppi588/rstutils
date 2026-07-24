@@ -5,8 +5,8 @@
 use rstest::rstest;
 use rstu_parser::lexer::tokenize;
 use rstu_parser::token::{Token, TokenKind};
-use rstu_parser::try_match_section_header;
 use rstu_parser::FindElementError;
+use rstu_parser::{try_match_section_header_prefix, try_match_section_header_suffix};
 use std::fs;
 use std::path::Path;
 
@@ -64,13 +64,20 @@ fn finds_all_section_headers(#[case] filename: &str) {
     let mut sections = Vec::new();
 
     while start_at < tokens.len() {
-        let scan_tokens = tokens[start_at..].to_vec();
-        match try_match_section_header(&scan_tokens, 0).expect("failed to scan section header") {
-            Some((section, next_start)) => {
+        match tokens[start_at].kind {
+            TokenKind::SectionTitlePrefix => {
+                let (section, next_start) = try_match_section_header_prefix(&tokens, start_at)
+                    .expect("failed to scan section header prefix");
                 sections.push((start_at, section));
-                start_at += next_start.max(1);
+                start_at = next_start;
             }
-            None => {
+            TokenKind::SectionTitleSuffix => {
+                let (section, next_start) = try_match_section_header_suffix(&tokens, start_at)
+                    .expect("failed to scan section header suffix");
+                sections.push((start_at, section));
+                start_at = next_start;
+            }
+            _ => {
                 start_at += 1;
             }
         }
@@ -115,32 +122,23 @@ fn test_missing_closing() {
         fs::read_to_string(path).unwrap_or_else(|_| panic!("failed to read sections test file"));
 
     let tokens = tokenize(&contents);
-    let mut result = Ok(None);
+    let mut captured_error: Option<FindElementError> = None;
     for (index, token) in tokens.iter().enumerate() {
-        if !matches!(
-            token.kind,
-            TokenKind::SectionTitlePrefix | TokenKind::SectionTitleSuffix
-        ) {
-            continue;
-        }
+        let result = match token.kind {
+            TokenKind::SectionTitlePrefix => try_match_section_header_prefix(&tokens, index),
+            TokenKind::SectionTitleSuffix => try_match_section_header_suffix(&tokens, index),
+            _ => continue,
+        };
 
-        result = try_match_section_header(&tokens, index);
-        if result.is_err() {
+        if let Err(err) = result {
+            captured_error = Some(err);
             break;
         }
     }
 
-    assert!(
-        result.is_err(),
-        "expected FindElementError::SectionTitleMissingClosingAfterOpening error"
-    );
-
-    if let Err(err) = result {
-        let err_string = format!("{:?}", err);
-        assert!(
-            err_string.contains("SectionTitleMissingClosingAfterOpening"),
-            "expected SectionTitleMissingClosingAfterOpening error, got: {err_string}"
-        );
+    match captured_error {
+        Some(FindElementError::SectionTitleMissingClosingAfterOpening { .. }) => {}
+        other => panic!("expected SectionTitleMissingClosingAfterOpening error, got: {other:?}"),
     }
 }
 
@@ -152,9 +150,8 @@ fn test_unbalanced_section_style() {
         fs::read_to_string(path).unwrap_or_else(|_| panic!("failed to read sections test file"));
 
     let tokens = tokenize(&contents);
-    let (first_section, next_start) = try_match_section_header(&tokens, 0)
-        .expect("failed to scan section header")
-        .unwrap();
+    let (first_section, mut start_at) = try_match_section_header_prefix(&tokens, 0)
+        .expect("failed to scan first section header prefix");
     assert_eq!(
         first_section
             .children
@@ -164,20 +161,28 @@ fn test_unbalanced_section_style() {
         "expected first section to be parsed before mismatch"
     );
 
-    let mut start_at = next_start;
-    let mut result = Ok(None);
+    let mut captured_error: Option<FindElementError> = None;
     while start_at < tokens.len() {
-        let scan_tokens = tokens[start_at..].to_vec();
-        result = try_match_section_header(&scan_tokens, 0);
-        match &result {
-            Err(_) => break,
-            Ok(Some((_, advance_by))) => start_at += (*advance_by).max(1),
-            Ok(None) => start_at += 1,
+        let result = match tokens[start_at].kind {
+            TokenKind::SectionTitlePrefix => try_match_section_header_prefix(&tokens, start_at),
+            TokenKind::SectionTitleSuffix => try_match_section_header_suffix(&tokens, start_at),
+            _ => {
+                start_at += 1;
+                continue;
+            }
+        };
+
+        match result {
+            Ok((_, next_start)) => start_at = next_start,
+            Err(err) => {
+                captured_error = Some(err);
+                break;
+            }
         }
     }
 
-    match result {
-        Err(FindElementError::SectionTitleUnbalancedStyle {
+    match captured_error {
+        Some(FindElementError::SectionTitleUnbalancedStyle {
             opening_style,
             closing_style,
             ..

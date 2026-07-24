@@ -33,16 +33,15 @@ pub fn parse(input: &str) -> Result<Node, FindElementError> {
 
     while index < tokens.len() {
         match tokens[index].kind {
-            TokenKind::SectionTitlePrefix | TokenKind::SectionTitleSuffix => {
-                match try_match_section_header(&tokens, index)? {
-                    Some((section_header, next_start)) => {
-                        let _ = doc.push_section(section_header);
-                        index = next_start;
-                    }
-                    None => {
-                        index += 1;
-                    }
-                }
+            TokenKind::SectionTitlePrefix => {
+                let (section_header, next_start) = try_match_section_header_prefix(&tokens, index)?;
+                let _ = doc.push_section(section_header);
+                index = next_start;
+            }
+            TokenKind::SectionTitleSuffix => {
+                let (section_header, next_start) = try_match_section_header_suffix(&tokens, index)?;
+                let _ = doc.push_section(section_header);
+                index = next_start;
             }
             _ => {
                 index += 1;
@@ -53,71 +52,61 @@ pub fn parse(input: &str) -> Result<Node, FindElementError> {
     Ok(doc)
 }
 
-pub fn try_match_section_header(
+pub fn try_match_section_header_prefix(
     tokens: &Vec<Token>,
     start_at: usize,
-) -> Result<Option<(Node, usize)>, FindElementError> {
-    if start_at >= tokens.len() {
-        return Err(FindElementError::StartAtOutOfBounds {
-            start_at,
-            token_count: tokens.len(),
+) -> Result<(Node, usize), FindElementError> {
+    let next_line_end = find_next_newline(tokens, start_at + 2).ok_or(
+        FindElementError::SectionTitleMissingClosingAfterOpening {
+            opening_index: start_at,
+        },
+    )?;
+
+    let closing_index = next_line_end + 1;
+    if (closing_index >= tokens.len())
+        || (tokens[closing_index].kind != TokenKind::SectionTitleSuffix)
+    {
+        return Err(FindElementError::SectionTitleMissingClosingAfterOpening {
+            opening_index: start_at,
         });
     }
 
-    match tokens[start_at].kind {
-        TokenKind::SectionTitlePrefix => {
-            let next_line_end = find_next_newline(tokens, start_at + 2).ok_or(
-                FindElementError::SectionTitleMissingClosingAfterOpening {
-                    opening_index: start_at,
-                },
-            )?;
-
-            let closing_index = next_line_end + 1;
-            if (closing_index >= tokens.len())
-                || (tokens[closing_index].kind != TokenKind::SectionTitleSuffix)
-            {
-                return Err(FindElementError::SectionTitleMissingClosingAfterOpening {
-                    opening_index: start_at,
-                });
-            }
-
-            let opening_style = tokens[start_at].lexeme.clone(); // TODO: single char + opening/closing length
-            let closing_style = tokens[closing_index].lexeme.clone();
-            if tokens[start_at].lexeme != tokens[closing_index].lexeme {
-                return Err(FindElementError::SectionTitleUnbalancedStyle {
-                    opening_index: start_at,
-                    opening_style: opening_style,
-                    closing_style: closing_style,
-                });
-            }
-            let mut section_marker = Node::new(ElementKind::Section)
-                .with_attr("opening_style", opening_style)
-                .with_attr("closing_style", closing_style);
-            section_marker.with_child(
-                Node::new(ElementKind::Title)
-                    .with_text(tokens_to_text(&tokens[start_at + 1..closing_index])),
-            );
-
-            return Ok(Some((section_marker, closing_index + 1)));
-        }
-        TokenKind::SectionTitleSuffix => {
-            let previous_line_start = move_back_one_line(tokens, start_at).unwrap_or(0);
-            let closing_style = tokens[start_at].lexeme.clone();
-
-            let mut section_marker = Node::new(ElementKind::Section)
-                .with_attr("opening_style", "")
-                .with_attr("closing_style", closing_style);
-            section_marker.with_child(
-                Node::new(ElementKind::Title)
-                    .with_text(tokens_to_text(&tokens[previous_line_start..start_at])),
-            );
-
-            return Ok(Some((section_marker, start_at + 1)));
-        }
-        _ => {}
+    let opening_style = tokens[start_at].lexeme.clone(); // TODO: single char + opening/closing length
+    let closing_style = tokens[closing_index].lexeme.clone();
+    if tokens[start_at].lexeme != tokens[closing_index].lexeme {
+        return Err(FindElementError::SectionTitleUnbalancedStyle {
+            opening_index: start_at,
+            opening_style: opening_style,
+            closing_style: closing_style,
+        });
     }
+    let mut section_marker = Node::new(ElementKind::Section)
+        .with_attr("opening_style", opening_style)
+        .with_attr("closing_style", closing_style);
+    section_marker.with_child(
+        Node::new(ElementKind::Title)
+            .with_text(tokens_to_text(&tokens[start_at + 1..closing_index])),
+    );
 
-    Ok(None)
+    Ok((section_marker, closing_index + 1))
+}
+
+pub fn try_match_section_header_suffix(
+    tokens: &Vec<Token>,
+    start_at: usize,
+) -> Result<(Node, usize), FindElementError> {
+    let previous_line_start = move_back_one_line(tokens, start_at).unwrap_or(0);
+    let closing_style = tokens[start_at].lexeme.clone();
+
+    let mut section_marker = Node::new(ElementKind::Section)
+        .with_attr("opening_style", "")
+        .with_attr("closing_style", closing_style);
+    section_marker.with_child(
+        Node::new(ElementKind::Title)
+            .with_text(tokens_to_text(&tokens[previous_line_start..start_at])),
+    );
+
+    Ok((section_marker, start_at + 1))
 }
 
 fn find_next_newline(tokens: &[Token], start_at: usize) -> Option<usize> {
