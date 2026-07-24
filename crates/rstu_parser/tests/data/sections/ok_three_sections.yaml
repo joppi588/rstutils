@@ -1,0 +1,34 @@
+kind: Document
+attributes: {}
+text: null
+children:
+  - kind: Section
+    attributes:
+      closing_style: =========
+      opening_style: ""
+    text: null
+    children:
+      - kind: Title
+        attributes: {}
+        text: "Heading 1\n"
+        children: []
+  - kind: Section
+    attributes:
+      closing_style: ---------
+      opening_style: ""
+    text: null
+    children:
+      - kind: Title
+        attributes: {}
+        text: "Heading 2\n"
+        children: []
+  - kind: Section
+    attributes:
+      closing_style: =========
+      opening_style: ""
+    text: null
+    children:
+      - kind: Title
+        attributes: {}
+        text: "Heading 3\n"
+        children: []
