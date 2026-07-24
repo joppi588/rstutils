@@ -5,8 +5,6 @@
 pub mod lexer;
 pub mod token;
 
-use std::thread::current;
-
 use rstu_ast::{ElementKind, Node};
 
 use crate::lexer::tokenize;
@@ -33,7 +31,7 @@ pub fn parse(input: &str) -> Result<Node, FindElementError> {
     let doc: Node = Node::new(ElementKind::Document);
     let mut index: usize = 0;
 
-    let mut current_node = doc;
+    let mut current_node = &doc;
     while index < tokens.len() {
         match tokens[index].kind {
             TokenKind::SectionTitlePrefix => {
