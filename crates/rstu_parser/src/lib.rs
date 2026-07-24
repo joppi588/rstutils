@@ -32,13 +32,11 @@ pub fn parse(input: &str) -> Node {
     let mut index: usize = 0;
 
     while index < tokens.len() {
-        // TODO Skip until next section content
-
         if let Ok(Some((section_header, next_start))) = try_match_section_header(&tokens, index) {
             let _ = doc.push_section(section_header);
             index = next_start;
         } else {
-            break;
+            index += 1;
         }
     }
 
