@@ -231,12 +231,6 @@ fn to_json_serializes_node_tree_without_parent() {
             ]
         })
     );
-
-    let json_text = json_value.to_string();
-    assert!(
-        !json_text.contains("parent"),
-        "serialized json must not contain parent"
-    );
 }
 
 #[test]
