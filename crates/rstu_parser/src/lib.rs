@@ -5,7 +5,7 @@
 pub mod lexer;
 pub mod token;
 
-use rstu_ast::{ElementKind, Node};
+use rstu_ast::{AstNode, ElementKind, NodeRef};
 
 use crate::lexer::tokenize;
 use crate::token::{Token, TokenKind};
@@ -26,27 +26,55 @@ pub enum FindElementError {
     },
 }
 
-pub fn parse(input: &str) -> Result<Node, FindElementError> {
+pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
     let tokens = tokenize(input);
-    let mut doc: Node = Node::new(ElementKind::Document);
+    let doc = AstNode::new_ref(ElementKind::Document);
     let mut index: usize = 0;
+    let mut section_styles: Vec<String> = Vec::new();
+    let mut section_stack: Vec<NodeRef> = Vec::new();
 
     while index < tokens.len() {
-        match tokens[index].kind {
-            TokenKind::SectionTitlePrefix => {
-                let (section_header, next_start) = try_match_section_header_prefix(&tokens, index)?;
-                let _ = doc.push_section(section_header);
-                index = next_start;
+        let parsed = match tokens[index].kind {
+            TokenKind::SectionTitlePrefix => Some(try_match_section_header_prefix(&tokens, index)?),
+            TokenKind::SectionTitleSuffix => Some(try_match_section_header_suffix(&tokens, index)?),
+            _ => None,
+        };
+
+        let Some((section_header, next_start)) = parsed else {
+            index += 1;
+            continue;
+        };
+
+        let style = {
+            let borrowed = section_header.borrow();
+            borrowed
+                .attributes
+                .get("opening_style")
+                .filter(|value| !value.is_empty())
+                .cloned()
+                .or_else(|| borrowed.attributes.get("closing_style").cloned())
+                .unwrap_or_default()
+        };
+
+        let level = match section_styles.iter().position(|known| known == &style) {
+            Some(existing) => existing,
+            None => {
+                section_styles.push(style);
+                section_styles.len() - 1
             }
-            TokenKind::SectionTitleSuffix => {
-                let (section_header, next_start) = try_match_section_header_suffix(&tokens, index)?;
-                let _ = doc.push_section(section_header);
-                index = next_start;
-            }
-            _ => {
-                index += 1;
-            }
-        }
+        };
+
+        section_stack.truncate(level);
+        let parent = if level == 0 {
+            doc.clone()
+        } else {
+            section_stack[level - 1].clone()
+        };
+
+        AstNode::push_child(&parent, section_header.clone())
+            .expect("section placement should produce a valid AST");
+        section_stack.push(section_header);
+        index = next_start;
     }
 
     Ok(doc)
@@ -55,7 +83,7 @@ pub fn parse(input: &str) -> Result<Node, FindElementError> {
 pub fn try_match_section_header_prefix(
     tokens: &Vec<Token>,
     start_at: usize,
-) -> Result<(Node, usize), FindElementError> {
+) -> Result<(NodeRef, usize), FindElementError> {
     let next_line_end = find_next_newline(tokens, start_at + 2).ok_or(
         FindElementError::SectionTitleMissingClosingAfterOpening {
             opening_index: start_at,
@@ -80,13 +108,14 @@ pub fn try_match_section_header_prefix(
             closing_style: closing_style,
         });
     }
-    let mut section_marker = Node::new(ElementKind::Section)
-        .with_attr("opening_style", opening_style)
-        .with_attr("closing_style", closing_style);
-    section_marker.with_child(
-        Node::new(ElementKind::Title)
-            .with_text(tokens_to_text(&tokens[start_at + 1..closing_index])),
-    );
+    let section_marker = AstNode::new_ref(ElementKind::Section);
+    AstNode::with_attr(&section_marker, "opening_style", opening_style);
+    AstNode::with_attr(&section_marker, "closing_style", closing_style);
+
+    let title = AstNode::new_ref(ElementKind::Title);
+    AstNode::with_text(&title, tokens_to_text(&tokens[start_at + 1..closing_index]));
+    AstNode::push_child(&section_marker, title)
+        .expect("section title should always be a valid section child");
 
     Ok((section_marker, closing_index + 1))
 }
@@ -94,17 +123,21 @@ pub fn try_match_section_header_prefix(
 pub fn try_match_section_header_suffix(
     tokens: &Vec<Token>,
     start_at: usize,
-) -> Result<(Node, usize), FindElementError> {
+) -> Result<(NodeRef, usize), FindElementError> {
     let previous_line_start = move_back_one_line(tokens, start_at).unwrap_or(0);
     let closing_style = tokens[start_at].lexeme.clone();
 
-    let mut section_marker = Node::new(ElementKind::Section)
-        .with_attr("opening_style", "")
-        .with_attr("closing_style", closing_style);
-    section_marker.with_child(
-        Node::new(ElementKind::Title)
-            .with_text(tokens_to_text(&tokens[previous_line_start..start_at])),
+    let section_marker = AstNode::new_ref(ElementKind::Section);
+    AstNode::with_attr(&section_marker, "opening_style", "");
+    AstNode::with_attr(&section_marker, "closing_style", closing_style);
+
+    let title = AstNode::new_ref(ElementKind::Title);
+    AstNode::with_text(
+        &title,
+        tokens_to_text(&tokens[previous_line_start..start_at]),
     );
+    AstNode::push_child(&section_marker, title)
+        .expect("section title should always be a valid section child");
 
     Ok((section_marker, start_at + 1))
 }
