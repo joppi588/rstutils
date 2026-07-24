@@ -26,28 +26,45 @@ pub enum FindElementError {
     },
 }
 
-pub fn parse(input: &str) -> Node {
+pub fn parse(input: &str) -> Result<Node, FindElementError> {
     let tokens = tokenize(input);
     let mut doc: Node = Node::new(ElementKind::Document);
     let mut index: usize = 0;
 
     while index < tokens.len() {
-        if let Ok(Some((section_header, next_start))) = try_match_section_header(&tokens, index) {
-            let _ = doc.push_section(section_header);
-            index = next_start;
-        } else {
-            index += 1;
+        match tokens[index].kind {
+            TokenKind::SectionTitlePrefix | TokenKind::SectionTitleSuffix => {
+                match try_match_section_header(&tokens, index)? {
+                    Some((section_header, next_start)) => {
+                        let _ = doc.push_section(section_header);
+                        index = next_start;
+                    }
+                    None => {
+                        index += 1;
+                    }
+                }
+            }
+            _ => {
+                index += 1;
+            }
         }
     }
 
-    doc
+    Ok(doc)
 }
 
 pub fn try_match_section_header(
     tokens: &Vec<Token>,
     start_at: usize,
 ) -> Result<Option<(Node, usize)>, FindElementError> {
-    match tokens[0].kind {
+    if start_at >= tokens.len() {
+        return Err(FindElementError::StartAtOutOfBounds {
+            start_at,
+            token_count: tokens.len(),
+        });
+    }
+
+    match tokens[start_at].kind {
         TokenKind::SectionTitlePrefix => {
             let next_line_end = find_next_newline(tokens, start_at + 2).ok_or(
                 FindElementError::SectionTitleMissingClosingAfterOpening {

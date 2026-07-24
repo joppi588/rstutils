@@ -115,7 +115,20 @@ fn test_missing_closing() {
         fs::read_to_string(path).unwrap_or_else(|_| panic!("failed to read sections test file"));
 
     let tokens = tokenize(&contents);
-    let result = try_match_section_header(&tokens, 10);
+    let mut result = Ok(None);
+    for (index, token) in tokens.iter().enumerate() {
+        if !matches!(
+            token.kind,
+            TokenKind::SectionTitlePrefix | TokenKind::SectionTitleSuffix
+        ) {
+            continue;
+        }
+
+        result = try_match_section_header(&tokens, index);
+        if result.is_err() {
+            break;
+        }
+    }
 
     assert!(
         result.is_err(),
