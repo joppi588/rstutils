@@ -33,10 +33,15 @@ pub fn parse(input: &str) -> Node {
     let tokens = tokenize(input);
     let doc: Node = Node::new(ElementKind::Document);
     let mut current_node = &doc;
+    let mut index: usize = 0;
 
-    for index in tokens {
-        if Some(section_header) = try_match_section_header(tokens, index) {
-            current_node.push_section(section_header)
+    while index < tokens.len() {
+        // TODO Skip until next section content
+
+        if let Some(section_header, next_start) = try_match_section_header(tokens, index) {
+            current_node.push_section(section_header);
+            current_node = section_header;
+            index = next_start;
         }
     }
 
@@ -46,7 +51,7 @@ pub fn parse(input: &str) -> Node {
 pub fn try_match_section_header(
     tokens: &[Token],
     start_at: usize,
-) -> Result<Option<Node>, FindElementError> {
+) -> Result<Option<(Node, usize)>, FindElementError> {
     match tokens[0].kind {
         TokenKind::SectionTitlePrefix => {
             let next_line_end = find_next_newline(tokens, start_at + 2).ok_or(
@@ -81,7 +86,7 @@ pub fn try_match_section_header(
                         .with_text(tokens_to_text(&tokens[start_at + 1..closing_index])),
                 );
 
-            return Ok(Some(section_marker));
+            return Ok(Some((section_marker, closing_index + 1)));
         }
         TokenKind::SectionTitleSuffix => {
             let previous_line_start = move_back_one_line(tokens, start_at).unwrap_or(0);
@@ -95,7 +100,7 @@ pub fn try_match_section_header(
                         .with_text(tokens_to_text(&tokens[previous_line_start..start_at])),
                 );
 
-            return Ok(Some(section_marker));
+            return Ok(Some((section_marker, start_at + 1)));
         }
         _ => {}
     }
