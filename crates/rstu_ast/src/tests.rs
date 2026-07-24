@@ -258,41 +258,12 @@ children:
     text: null
     children:
       - kind: Title
+        attributes: {}
         text: "Heading 1\n"
         children: []
 "#,
     )
     .expect("failed to parse expected yaml");
 
-    assert_eq!(actual["kind"], expected["kind"]);
-    assert_eq!(actual["attributes"], expected["attributes"]);
-    assert_eq!(actual["text"], expected["text"]);
-    assert_eq!(
-        actual["children"][0]["kind"],
-        expected["children"][0]["kind"]
-    );
-    assert_eq!(
-        actual["children"][0]["attributes"],
-        expected["children"][0]["attributes"]
-    );
-    assert_eq!(
-        actual["children"][0]["children"][0]["kind"],
-        expected["children"][0]["children"][0]["kind"]
-    );
-    assert_eq!(
-        actual["children"][0]["children"][0]["text"],
-        expected["children"][0]["children"][0]["text"]
-    );
-    assert_eq!(
-        actual["children"][0]["children"][0]["children"],
-        expected["children"][0]["children"][0]["children"]
-    );
-    assert_eq!(
-        actual["children"][0]["children"][0]["attributes"],
-        serde_yaml::Value::Mapping(serde_yaml::Mapping::new())
-    );
-    assert!(
-        !yaml_text.contains("parent:"),
-        "serialized yaml must not contain parent"
-    );
+    assert_eq!(actual, expected);
 }
