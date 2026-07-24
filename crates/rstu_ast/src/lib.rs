@@ -6,6 +6,7 @@ mod elements;
 #[cfg(test)]
 mod tests;
 pub use elements::{ContentModel, ElementCategory, ElementKind};
+use serde_json::{Map, Value};
 use std::collections::BTreeMap;
 use std::error::Error;
 use std::fmt;
@@ -82,6 +83,37 @@ impl Node {
     pub fn with_attr(mut self, key: impl Into<String>, value: impl Into<String>) -> Self {
         self.attributes.insert(key.into(), value.into());
         self
+    }
+
+    pub fn to_json(&self) -> Value {
+        let mut attributes = Map::new();
+        for (key, value) in &self.attributes {
+            attributes.insert(key.clone(), Value::String(value.clone()));
+        }
+
+        let children = self
+            .children
+            .iter()
+            .map(Node::to_json)
+            .collect::<Vec<Value>>();
+
+        let mut obj = Map::new();
+        obj.insert(
+            "kind".to_string(),
+            Value::String(format!("{:?}", self.kind)),
+        );
+        obj.insert("attributes".to_string(), Value::Object(attributes));
+        obj.insert(
+            "text".to_string(),
+            self.text.clone().map(Value::String).unwrap_or(Value::Null),
+        );
+        obj.insert("children".to_string(), Value::Array(children));
+
+        Value::Object(obj)
+    }
+
+    pub fn to_yaml(&self) -> Result<String, serde_yaml::Error> {
+        serde_yaml::to_string(&self.to_json())
     }
 
     // TODO: Eventually remove
