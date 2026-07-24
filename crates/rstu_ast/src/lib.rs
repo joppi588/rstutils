@@ -11,271 +11,7 @@ use std::cell::RefCell;
 use std::collections::BTreeMap;
 use std::error::Error;
 use std::fmt;
-use std::ptr::NonNull;
 use std::rc::{Rc, Weak};
-
-#[derive(Debug)]
-pub struct Node {
-    pub kind: ElementKind,
-    /// Raw pointer to the parent node.
-    /// Safety: valid only as long as the parent node has not been moved in memory.
-    pub parent: Option<NonNull<Node>>,
-    pub attributes: BTreeMap<String, String>,
-    pub text: Option<String>,
-    pub children: Vec<Node>,
-}
-
-// Safety: Node does not use interior mutability through the raw pointer.
-// The pointer is a back-reference only; ownership follows the tree structure.
-unsafe impl Send for Node {}
-unsafe impl Sync for Node {}
-
-impl Clone for Node {
-    /// Clones the subtree. The clone's `parent` is reset to `None` since it is
-    /// detached from the original tree.
-    fn clone(&self) -> Self {
-        Node {
-            kind: self.kind,
-            parent: None,
-            attributes: self.attributes.clone(),
-            text: self.text.clone(),
-            children: self.children.clone(),
-        }
-    }
-}
-
-impl PartialEq for Node {
-    /// Structural equality; the `parent` pointer is intentionally excluded.
-    fn eq(&self, other: &Self) -> bool {
-        self.kind == other.kind
-            && self.attributes == other.attributes
-            && self.text == other.text
-            && self.children == other.children
-    }
-}
-
-impl Eq for Node {}
-
-impl Node {
-    pub fn new(kind: ElementKind) -> Self {
-        Self {
-            kind,
-            parent: None,
-            attributes: BTreeMap::new(),
-            text: None,
-            children: Vec::new(),
-        }
-    }
-
-    /// Returns a shared reference to the parent node, if any.
-    ///
-    /// # Safety
-    /// The reference is valid only as long as the parent node has not been
-    /// moved in memory since the pointer was set.
-    pub fn parent(&self) -> Option<&Node> {
-        // SAFETY: caller upholds the invariant that the parent is still live.
-        self.parent.map(|p| unsafe { p.as_ref() })
-    }
-
-    pub fn with_text(mut self, text: impl Into<String>) -> Self {
-        self.text = Some(text.into());
-        self
-    }
-
-    pub fn with_attr(mut self, key: impl Into<String>, value: impl Into<String>) -> Self {
-        self.attributes.insert(key.into(), value.into());
-        self
-    }
-
-    pub fn to_json(&self) -> Value {
-        let mut attributes = Map::new();
-        for (key, value) in &self.attributes {
-            attributes.insert(key.clone(), Value::String(value.clone()));
-        }
-
-        let children = self
-            .children
-            .iter()
-            .map(Node::to_json)
-            .collect::<Vec<Value>>();
-
-        let mut obj = Map::new();
-        obj.insert(
-            "kind".to_string(),
-            Value::String(format!("{:?}", self.kind)),
-        );
-        obj.insert("attributes".to_string(), Value::Object(attributes));
-        obj.insert(
-            "text".to_string(),
-            self.text.clone().map(Value::String).unwrap_or(Value::Null),
-        );
-        obj.insert("children".to_string(), Value::Array(children));
-
-        Value::Object(obj)
-    }
-
-    pub fn to_yaml(&self) -> Result<String, serde_yaml::Error> {
-        serde_yaml::to_string(&self.to_json())
-    }
-
-    // TODO: Eventually remove
-    pub fn with_child(&mut self, child: Node) -> &mut Self {
-        self.children.push(child);
-        let self_ptr = Some(NonNull::from(&mut *self));
-        if let Some(inserted) = self.children.last_mut() {
-            inserted.parent = self_ptr;
-            relink_parent_pointers(inserted);
-        }
-        self
-    }
-
-    pub fn push_child(&mut self, child: Node) -> Result<(), ValidationError> {
-        if !allows_child(self.kind, child.kind) {
-            return Err(ValidationError::new(
-                format!("invalid child {:?} inside {:?}", child.kind, self.kind),
-                Some(self.kind),
-                child.kind,
-            ));
-        }
-        self.children.push(child);
-        let self_ptr = Some(NonNull::from(&mut *self));
-        if let Some(inserted) = self.children.last_mut() {
-            inserted.parent = self_ptr;
-            relink_parent_pointers(inserted);
-        }
-        Ok(())
-    }
-
-    pub fn validate(&self) -> Result<(), ValidationError> {
-        self.validate_with_parent(None)
-    }
-
-    pub fn closest_ancestor_section(&self, section_marker: Option<&str>) -> Option<&Node> {
-        let mut current = self.parent();
-        while let Some(node) = current {
-            if node.kind == ElementKind::Section
-                && section_marker.is_none_or(|marker| {
-                    node.attributes.get("section_marker").map(String::as_str) == Some(marker)
-                })
-            {
-                return Some(node);
-            }
-            current = node.parent();
-        }
-        None
-    }
-
-    pub fn push_section(&mut self, section: Node) -> Result<(), ValidationError> {
-        assert!(
-            section.kind.has_category(ElementCategory::Structural),
-            "push_section requires a structural node, got {:?}",
-            section.kind
-        );
-
-        let section_marker = section
-            .attributes
-            .get("section_marker")
-            .map(String::as_str)
-            .map(str::to_owned);
-
-        if self.parent.is_none() {
-            return self.push_child(section);
-        }
-
-        let self_marker = self.attributes.get("section_marker").map(String::as_str);
-        if self_marker == section_marker.as_deref() {
-            let mut parent = self.parent.expect("A section always has a parent.");
-            return unsafe { parent.as_mut().push_child(section) };
-        }
-
-        if let Some(node) = self.closest_ancestor_section(section_marker.as_deref()) {
-            let mut parent = node.parent.expect("A section always has a parent.");
-            return unsafe { parent.as_mut().push_child(section) };
-        }
-
-        if let Some(closest_section) = self.closest_ancestor_section(None) {
-            return unsafe {
-                (closest_section as *const Node as *mut Node)
-                    .as_mut()
-                    .unwrap()
-                    .push_child(section)
-            };
-        }
-
-        let mut root = self.parent.expect("A section always has a parent.");
-        unsafe {
-            while let Some(parent) = root.as_ref().parent {
-                root = parent;
-            }
-            root.as_mut().push_child(section)
-        }
-    }
-
-    fn validate_with_parent(&self, parent: Option<ElementKind>) -> Result<(), ValidationError> {
-        if let Some(parent_kind) = parent {
-            if !allows_child(parent_kind, self.kind) {
-                return Err(ValidationError::new(
-                    format!("invalid child {:?} inside {:?}", self.kind, parent_kind),
-                    Some(parent_kind),
-                    self.kind,
-                ));
-            }
-        }
-
-        match self.kind.content_model() {
-            ContentModel::Empty => {
-                if self.text.as_deref().is_some_and(|t| !t.is_empty()) || !self.children.is_empty()
-                {
-                    return Err(ValidationError::new(
-                        "empty element must not contain text or children",
-                        parent,
-                        self.kind,
-                    ));
-                }
-            }
-            ContentModel::TextOnly => {
-                if !self.children.is_empty() {
-                    return Err(ValidationError::new(
-                        "text-only element must not contain children",
-                        parent,
-                        self.kind,
-                    ));
-                }
-            }
-            ContentModel::TextOrInline => {
-                for child in &self.children {
-                    if !child.kind.has_category(ElementCategory::Inline) {
-                        return Err(ValidationError::new(
-                            format!(
-                                "non-inline child {:?} in text-or-inline element",
-                                child.kind
-                            ),
-                            parent,
-                            self.kind,
-                        ));
-                    }
-                }
-            }
-            ContentModel::ChildrenOnly => {
-                if self.text.as_deref().is_some_and(|t| !t.is_empty()) {
-                    return Err(ValidationError::new(
-                        "children-only element must not contain text",
-                        parent,
-                        self.kind,
-                    ));
-                }
-            }
-        }
-
-        validate_element_shape(self)?;
-
-        for child in &self.children {
-            child.validate_with_parent(Some(self.kind))?;
-        }
-
-        Ok(())
-    }
-}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ValidationError {
@@ -410,59 +146,51 @@ fn allows_child(parent: ElementKind, child: ElementKind) -> bool {
     }
 }
 
-fn validate_element_shape(node: &Node) -> Result<(), ValidationError> {
-    use ElementKind::*;
+// fn validate_element_shape(node: &AstNode) -> Result<(), ValidationError> {
+//     use ElementKind::*;
 
-    match node.kind {
-        Section => {
-            if !matches!(node.children.first().map(|c| c.kind), Some(Title)) {
-                return Err(ValidationError::new(
-                    "section must start with a title",
-                    None,
-                    node.kind,
-                ));
-            }
-        }
-        Sidebar => {
-            if matches!(node.children.first().map(|c| c.kind), Some(Subtitle)) {
-                return Err(ValidationError::new(
-                    "sidebar subtitle requires a preceding title",
-                    None,
-                    node.kind,
-                ));
-            }
-        }
-        Table => {
-            if !node.children.iter().any(|c| c.kind == Tgroup) {
-                return Err(ValidationError::new(
-                    "table must contain a tgroup child",
-                    None,
-                    node.kind,
-                ));
-            }
-        }
-        Tgroup => {
-            if !node.children.iter().any(|c| c.kind == Colspec) {
-                return Err(ValidationError::new(
-                    "tgroup must contain at least one colspec child",
-                    None,
-                    node.kind,
-                ));
-            }
-        }
-        _ => {}
-    }
+//     match node.kind {
+//         Section => {
+//             if !matches!(node.children.first().map(|c| c.borrow().kind), Some(Title)) {
+//                 return Err(ValidationError::new(
+//                     "section must start with a title",
+//                     None,
+//                     node.kind,
+//                 ));
+//             }
+//         }
+//         Sidebar => {
+//             if matches!(node.children.first().map(|c| c.borrow().kind), Some(Subtitle)) {
+//                 return Err(ValidationError::new(
+//                     "sidebar subtitle requires a preceding title",
+//                     None,
+//                     node.kind,
+//                 ));
+//             }
+//         }
+//         Table => {
+//             if !node.children.iter().any(|c| c.borrow().kind == Tgroup) {
+//                 return Err(ValidationError::new(
+//                     "table must contain a tgroup child",
+//                     None,
+//                     node.kind,
+//                 ));
+//             }
+//         }
+//         Tgroup => {
+//             if !node.children.iter().any(|c| c.borrow().kind == Colspec) {
+//                 return Err(ValidationError::new(
+//                     "tgroup must contain at least one colspec child",
+//                     None,
+//                     node.kind,
+//                 ));
+//             }
+//         }
+//         _ => {}
+//     }
 
-    Ok(())
-}
-
-pub(crate) fn relink_parent_pointers(node: &mut Node) {
-    let self_ptr = Some(NonNull::from(&mut *node));
-    for child in &mut node.children {
-        child.parent = self_ptr;
-        relink_parent_pointers(child);
-    }
-}
+//     Ok(())
+// }
 
 pub type NodeRef = Rc<RefCell<AstNode>>;
 
@@ -485,37 +213,6 @@ impl AstNode {
             children: Vec::new(),
         }))
     }
-
-    pub fn from_node(node: Node) -> NodeRef {
-        let node_ref = Self::new_ref(node.kind);
-        {
-            let mut borrowed = node_ref.borrow_mut();
-            borrowed.attributes = node.attributes;
-            borrowed.text = node.text;
-        }
-
-        for child in node.children {
-            let child_ref = Self::from_node(child);
-            child_ref.borrow_mut().parent = Some(Rc::downgrade(&node_ref));
-            node_ref.borrow_mut().children.push(child_ref);
-        }
-
-        node_ref
-    }
-
-    pub fn to_node(node_ref: &NodeRef) -> Node {
-        let borrowed = node_ref.borrow();
-        let mut node = Node::new(borrowed.kind);
-        node.attributes = borrowed.attributes.clone();
-        node.text = borrowed.text.clone();
-
-        for child_ref in &borrowed.children {
-            node.with_child(Self::to_node(child_ref));
-        }
-
-        node
-    }
-
     pub fn with_text(node_ref: &NodeRef, text: impl Into<String>) {
         node_ref.borrow_mut().text = Some(text.into());
     }
