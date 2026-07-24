@@ -4,7 +4,7 @@
 
 use rstest::rstest;
 use rstu_parser::lexer::tokenize;
-use rstu_parser::try_find_section_header;
+use rstu_parser::try_match_section_header;
 use rstu_parser::FindElementError;
 use std::fs;
 use std::path::Path;
@@ -24,7 +24,7 @@ fn finds_all_section_headers(#[case] filename: &str) {
     let mut spans = Vec::new();
 
     while let Some((start, end)) =
-        try_find_section_header(&tokens, start_at).expect("failed to scan section header")
+        try_match_section_header(&tokens, start_at).expect("failed to scan section header")
     {
         spans.push((start, end));
         start_at = end + 1;
@@ -62,7 +62,7 @@ fn test_missing_closing() {
         fs::read_to_string(path).unwrap_or_else(|_| panic!("failed to read sections test file"));
 
     let tokens = tokenize(&contents);
-    let result = try_find_section_header(&tokens, 10);
+    let result = try_match_section_header(&tokens, 10);
 
     assert!(
         result.is_err(),
@@ -86,7 +86,7 @@ fn test_unbalanced_section_style() {
         fs::read_to_string(path).unwrap_or_else(|_| panic!("failed to read sections test file"));
 
     let tokens = tokenize(&contents);
-    let (first_start, first_end) = try_find_section_header(&tokens, 0)
+    let (first_start, first_end) = try_match_section_header(&tokens, 0)
         .expect("failed to scan section header")
         .unwrap();
     assert_eq!(
@@ -94,7 +94,7 @@ fn test_unbalanced_section_style() {
         "expected first section to be parsed before mismatch"
     );
 
-    let result = try_find_section_header(&tokens, first_end + 1);
+    let result = try_match_section_header(&tokens, first_end + 1);
 
     match result {
         Err(FindElementError::SectionTitleUnbalancedStyle {
