@@ -44,7 +44,7 @@ pub fn parse(input: &str) -> Node {
 }
 
 pub fn try_match_section_header(
-    tokens: &[Token],
+    tokens: &Vec<Token>,
     start_at: usize,
 ) -> Result<Option<(Node, usize)>, FindElementError> {
     match tokens[0].kind {
