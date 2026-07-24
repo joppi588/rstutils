@@ -5,9 +5,6 @@
 pub mod lexer;
 pub mod token;
 
-use std::collections::BTreeMap;
-use std::thread::current;
-
 use rstu_ast::{ElementKind, Node};
 
 use crate::lexer::tokenize;
@@ -31,17 +28,17 @@ pub enum FindElementError {
 
 pub fn parse(input: &str) -> Node {
     let tokens = tokenize(input);
-    let doc: Node = Node::new(ElementKind::Document);
-    let mut current_node = &doc;
+    let mut doc: Node = Node::new(ElementKind::Document);
     let mut index: usize = 0;
 
     while index < tokens.len() {
         // TODO Skip until next section content
 
-        if let Some(section_header, next_start) = try_match_section_header(tokens, index) {
-            current_node.push_section(section_header);
-            current_node = section_header;
+        if let Ok(Some((section_header, next_start))) = try_match_section_header(&tokens, index) {
+            let _ = doc.push_section(section_header);
             index = next_start;
+        } else {
+            break;
         }
     }
 
@@ -78,13 +75,13 @@ pub fn try_match_section_header(
                     closing_style: closing_style,
                 });
             }
-            let section_marker = Node::new(ElementKind::Section)
+            let mut section_marker = Node::new(ElementKind::Section)
                 .with_attr("opening_style", opening_style)
-                .with_attr("closing_style", closing_style)
-                .with_child(
-                    Node::new(ElementKind::Title)
-                        .with_text(tokens_to_text(&tokens[start_at + 1..closing_index])),
-                );
+                .with_attr("closing_style", closing_style);
+            section_marker.with_child(
+                Node::new(ElementKind::Title)
+                    .with_text(tokens_to_text(&tokens[start_at + 1..closing_index])),
+            );
 
             return Ok(Some((section_marker, closing_index + 1)));
         }
@@ -92,13 +89,13 @@ pub fn try_match_section_header(
             let previous_line_start = move_back_one_line(tokens, start_at).unwrap_or(0);
             let closing_style = tokens[start_at].lexeme.clone();
 
-            let section_marker = Node::new(ElementKind::Section)
+            let mut section_marker = Node::new(ElementKind::Section)
                 .with_attr("opening_style", "")
-                .with_attr("closing_style", closing_style)
-                .with_child(
-                    Node::new(ElementKind::Title)
-                        .with_text(tokens_to_text(&tokens[previous_line_start..start_at])),
-                );
+                .with_attr("closing_style", closing_style);
+            section_marker.with_child(
+                Node::new(ElementKind::Title)
+                    .with_text(tokens_to_text(&tokens[previous_line_start..start_at])),
+            );
 
             return Ok(Some((section_marker, start_at + 1)));
         }
