@@ -238,3 +238,67 @@ fn to_json_serializes_node_tree_without_parent() {
         "serialized json must not contain parent"
     );
 }
+
+#[test]
+fn to_yaml_serializes_node_tree_without_parent() {
+    let mut root = Node::new(ElementKind::Document).with_attr("lang", "rst");
+    let mut section = Node::new(ElementKind::Section)
+        .with_attr("opening_style", "=========")
+        .with_attr("closing_style", "=========");
+    section.with_child(Node::new(ElementKind::Title).with_text("Heading 1\n"));
+    root.with_child(section);
+
+    let yaml_text = root.to_yaml().expect("failed to serialize yaml");
+    let actual: serde_yaml::Value =
+        serde_yaml::from_str(&yaml_text).expect("failed to parse generated yaml");
+    let expected: serde_yaml::Value = serde_yaml::from_str(
+        r#"kind: Document
+attributes:
+  lang: rst
+text: null
+children:
+  - kind: Section
+    attributes:
+      closing_style: =========
+      opening_style: =========
+    text: null
+    children:
+      - kind: Title
+        text: "Heading 1\n"
+        children: []
+"#,
+    )
+    .expect("failed to parse expected yaml");
+
+    assert_eq!(actual["kind"], expected["kind"]);
+    assert_eq!(actual["attributes"], expected["attributes"]);
+    assert_eq!(actual["text"], expected["text"]);
+    assert_eq!(
+        actual["children"][0]["kind"],
+        expected["children"][0]["kind"]
+    );
+    assert_eq!(
+        actual["children"][0]["attributes"],
+        expected["children"][0]["attributes"]
+    );
+    assert_eq!(
+        actual["children"][0]["children"][0]["kind"],
+        expected["children"][0]["children"][0]["kind"]
+    );
+    assert_eq!(
+        actual["children"][0]["children"][0]["text"],
+        expected["children"][0]["children"][0]["text"]
+    );
+    assert_eq!(
+        actual["children"][0]["children"][0]["children"],
+        expected["children"][0]["children"][0]["children"]
+    );
+    assert_eq!(
+        actual["children"][0]["children"][0]["attributes"],
+        serde_yaml::Value::Mapping(serde_yaml::Mapping::new())
+    );
+    assert!(
+        !yaml_text.contains("parent:"),
+        "serialized yaml must not contain parent"
+    );
+}

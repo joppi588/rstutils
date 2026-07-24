@@ -112,6 +112,10 @@ impl Node {
         Value::Object(obj)
     }
 
+    pub fn to_yaml(&self) -> Result<String, serde_yaml::Error> {
+        serde_yaml::to_string(&self.to_json())
+    }
+
     // TODO: Eventually remove
     pub fn with_child(&mut self, child: Node) -> &mut Self {
         self.children.push(child);
