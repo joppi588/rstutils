@@ -5,6 +5,7 @@
 use super::relink_parent_pointers;
 use super::{ElementKind, Node};
 use serde::Deserialize;
+use serde_json::json;
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::Path;
@@ -188,5 +189,52 @@ fn closest_ancestor_section_matches_requested_marker() {
     assert_eq!(
         closest.attributes.get("section_marker").map(String::as_str),
         Some("#")
+    );
+}
+
+#[test]
+fn to_json_serializes_node_tree_without_parent() {
+    let mut root = Node::new(ElementKind::Document).with_attr("lang", "rst");
+    let mut section = Node::new(ElementKind::Section)
+        .with_attr("opening_style", "=========")
+        .with_attr("closing_style", "=========");
+    section.with_child(Node::new(ElementKind::Title).with_text("Heading 1\n"));
+    root.with_child(section);
+
+    let json_value = root.to_json();
+
+    assert_eq!(
+        json_value,
+        json!({
+            "kind": "Document",
+            "attributes": {
+                "lang": "rst"
+            },
+            "text": null,
+            "children": [
+                {
+                    "kind": "Section",
+                    "attributes": {
+                        "closing_style": "=========",
+                        "opening_style": "========="
+                    },
+                    "text": null,
+                    "children": [
+                        {
+                            "kind": "Title",
+                            "attributes": {},
+                            "text": "Heading 1\n",
+                            "children": []
+                        }
+                    ]
+                }
+            ]
+        })
+    );
+
+    let json_text = json_value.to_string();
+    assert!(
+        !json_text.contains("parent"),
+        "serialized json must not contain parent"
     );
 }
