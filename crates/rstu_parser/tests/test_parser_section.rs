@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 use rstest::rstest;
+use rstu_ast::AstNode;
 use rstu_parser::parse;
 use rstu_parser::FindElementError;
 use std::fs;
@@ -26,9 +27,7 @@ fn parses_sections_and_matches_yaml_fixture(
         .unwrap_or_else(|_| panic!("failed to read sections test file: {rst_filename}"));
 
     let parsed = parse(&rst_contents).expect("expected parse to succeed");
-    let actual_yaml = parsed
-        .to_yaml()
-        .expect("failed to serialize parse output to yaml");
+    let actual_yaml = AstNode::to_yaml(&parsed).expect("failed to serialize parse output to yaml");
 
     let expected_path = section_data_path(yaml_filename);
     let expected_yaml = fs::read_to_string(&expected_path)
