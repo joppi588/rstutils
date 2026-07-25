@@ -173,7 +173,24 @@ fn push_section_without_marker_match_pushes_to_closest_ancestor_section() {
 }
 
 #[test]
+fn closest_ancestor_section_finds_itself() {
+    // GIVEN a document tree
+    // WHEN looking up the next ancestor, starting from a section node
+    // THEN the notde itself is returned
+    let tree = load_document_fixture("section_nested_hash_tilde.yaml");
+
+    let section = tree.borrow().children[0].borrow().children[0].clone();
+    let closest = AstNode::closest_ancestor_section(&section, None).unwrap();
+
+    assert!(Rc::ptr_eq(&closest, &section));
+}
+
+#[test]
 fn closest_ancestor_section_finds_nearest_section_upwards() {
+    // GIVEN a document tree
+    // WHEN looking up the next ancestor, starting from a non-section node
+    // THEN the section is returned
+
     let tree = load_document_fixture("section_nested_hash_tilde.yaml");
 
     let paragraph = tree.borrow().children[0].borrow().children[0]
