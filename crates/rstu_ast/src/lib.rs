@@ -5,46 +5,13 @@
 mod elements;
 #[cfg(test)]
 mod tests;
+mod validation;
 pub use elements::{ContentModel, ElementCategory, ElementKind};
 use serde_json::{Map, Value};
 use std::cell::RefCell;
 use std::collections::BTreeMap;
-use std::error::Error;
-use std::fmt;
 use std::rc::{Rc, Weak};
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ValidationError {
-    pub message: String,
-    pub parent: Option<ElementKind>,
-    pub node: ElementKind,
-}
-
-impl ValidationError {
-    fn new(message: impl Into<String>, parent: Option<ElementKind>, node: ElementKind) -> Self {
-        Self {
-            message: message.into(),
-            parent,
-            node,
-        }
-    }
-}
-
-impl fmt::Display for ValidationError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        if let Some(parent) = self.parent {
-            write!(
-                f,
-                "{} (node: {:?}, parent: {:?})",
-                self.message, self.node, parent
-            )
-        } else {
-            write!(f, "{} (node: {:?})", self.message, self.node)
-        }
-    }
-}
-
-impl Error for ValidationError {}
+pub use validation::ValidationError;
 
 fn is_any_of<const N: usize>(kind: ElementKind, allowed: &[ElementKind; N]) -> bool {
     allowed.contains(&kind)
