@@ -44,6 +44,7 @@ impl fmt::Display for ValidationError {
 
 impl Error for ValidationError {}
 
+#[allow(dead_code)]
 fn validate_element_shape(node: &AstNode) -> Result<(), ValidationError> {
     use ElementKind::*;
 
