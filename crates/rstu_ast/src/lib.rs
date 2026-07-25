@@ -125,7 +125,7 @@ impl AstNode {
     // - with the given marker
     // - the lowest section if no marker given.
     {
-        let mut current = node.borrow().parent.as_ref().and_then(Weak::upgrade);
+        let mut current = Some(node.clone());
         while let Some(current_node) = current.clone() {
             let matches = {
                 let borrowed = current_node.borrow();
