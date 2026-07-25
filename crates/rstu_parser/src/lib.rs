@@ -30,51 +30,27 @@ pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
     let tokens = tokenize(input);
     let doc = AstNode::new_ref(ElementKind::Document);
     let mut index: usize = 0;
-    let mut section_styles: Vec<String> = Vec::new();
-    let mut section_stack: Vec<NodeRef> = Vec::new();
+    let mut current_node = doc.clone();
 
     while index < tokens.len() {
-        let parsed = match tokens[index].kind {
-            TokenKind::SectionTitlePrefix => Some(try_match_section_header_prefix(&tokens, index)?),
-            TokenKind::SectionTitleSuffix => Some(try_match_section_header_suffix(&tokens, index)?),
-            _ => None,
-        };
-
-        let Some((section_header, next_start)) = parsed else {
-            index += 1;
-            continue;
-        };
-
-        let style = {
-            let borrowed = section_header.borrow();
-            borrowed
-                .attributes
-                .get("opening_style")
-                .filter(|value| !value.is_empty())
-                .cloned()
-                .or_else(|| borrowed.attributes.get("closing_style").cloned())
-                .unwrap_or_default()
-        };
-
-        let level = match section_styles.iter().position(|known| known == &style) {
-            Some(existing) => existing,
-            None => {
-                section_styles.push(style);
-                section_styles.len() - 1
+        match tokens[index].kind {
+            TokenKind::SectionTitlePrefix => {
+                let (section, next_start) = try_match_section_header_prefix(&tokens, index)?;
+                AstNode::push_section_ref(&current_node, section.clone())
+                    .expect("Could not insert section!");
+                current_node = section;
+                index = next_start;
             }
-        };
+            TokenKind::SectionTitleSuffix => {
+                let (section, next_start) = try_match_section_header_suffix(&tokens, index)?;
+                AstNode::push_section_ref(&current_node, section.clone())
+                    .expect("Could not insert section!");
+                current_node = section;
+                index = next_start;
+            }
 
-        section_stack.truncate(level);
-        let parent = if level == 0 {
-            doc.clone()
-        } else {
-            section_stack[level - 1].clone()
+            _ => index += 1,
         };
-
-        AstNode::push_child(&parent, section_header.clone())
-            .expect("section placement should produce a valid AST");
-        section_stack.push(section_header);
-        index = next_start;
     }
 
     Ok(doc)
