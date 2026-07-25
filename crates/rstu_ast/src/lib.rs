@@ -117,14 +117,13 @@ impl AstNode {
         Ok(section)
     }
 
+    /// returns the current section the node is in
+    /// - with the given marker
+    /// - the lowest section if no marker given.
     pub fn closest_ancestor_section(
         node: &NodeRef,
         section_marker: Option<&str>,
-    ) -> Option<NodeRef>
-// returns the current section the node is in
-    // - with the given marker
-    // - the lowest section if no marker given.
-    {
+    ) -> Option<NodeRef> {
         let mut current = Some(node.clone());
         while let Some(current_node) = current.clone() {
             let matches = {
