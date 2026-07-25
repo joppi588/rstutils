@@ -85,8 +85,7 @@ pub fn try_match_section_header_prefix(
         });
     }
     let section_marker = AstNode::new_ref(ElementKind::Section);
-    AstNode::with_attr(&section_marker, "opening_style", opening_style);
-    AstNode::with_attr(&section_marker, "closing_style", closing_style);
+    AstNode::with_attr(&section_marker, "section_marker", closing_style);
 
     let title = AstNode::new_ref(ElementKind::Title);
     AstNode::with_text(&title, tokens_to_text(&tokens[start_at + 1..closing_index]));
@@ -104,8 +103,7 @@ pub fn try_match_section_header_suffix(
     let closing_style = tokens[start_at].lexeme.clone();
 
     let section_marker = AstNode::new_ref(ElementKind::Section);
-    AstNode::with_attr(&section_marker, "opening_style", "");
-    AstNode::with_attr(&section_marker, "closing_style", closing_style);
+    AstNode::with_attr(&section_marker, "section_marker", closing_style);
 
     let title = AstNode::new_ref(ElementKind::Title);
     AstNode::with_text(
