@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: MIT
 
 use super::elements::{ElementCategory, ElementKind};
-use super::AstNode;
 use std::error::Error;
 use std::fmt;
 
@@ -44,51 +43,108 @@ impl fmt::Display for ValidationError {
 
 impl Error for ValidationError {}
 
-#[allow(dead_code)]
-fn validate_element_shape(node: &AstNode) -> Result<(), ValidationError> {
-    use ElementKind::*;
+#[cfg(test)]
+pub(crate) fn validate_tree(node_ref: &super::NodeRef) -> Result<(), super::ValidationError> {
+    let (parent_kind, children) = {
+        let borrowed = node_ref.borrow();
 
-    match node.kind {
-        Section => {
-            if !matches!(node.children.first().map(|c| c.borrow().kind), Some(Title)) {
-                return Err(ValidationError::new(
-                    "section must start with a title",
-                    None,
-                    node.kind,
-                ));
+        match borrowed.kind {
+            ElementKind::Section => {
+                if !matches!(
+                    borrowed.children.first().map(|c| c.borrow().kind),
+                    Some(ElementKind::Title)
+                ) {
+                    return Err(super::ValidationError {
+                        message: "section must start with a title".to_string(),
+                        parent: None,
+                        node: borrowed.kind,
+                    });
+                }
             }
-        }
-        Sidebar => {
-            if matches!(
-                node.children.first().map(|c| c.borrow().kind),
-                Some(Subtitle)
-            ) {
-                return Err(ValidationError::new(
-                    "sidebar subtitle requires a preceding title",
-                    None,
-                    node.kind,
-                ));
+            ElementKind::Sidebar => {
+                if matches!(
+                    borrowed.children.first().map(|c| c.borrow().kind),
+                    Some(ElementKind::Subtitle)
+                ) {
+                    return Err(super::ValidationError {
+                        message: "sidebar subtitle requires a preceding title".to_string(),
+                        parent: None,
+                        node: borrowed.kind,
+                    });
+                }
             }
-        }
-        Table => {
-            if !node.children.iter().any(|c| c.borrow().kind == Tgroup) {
-                return Err(ValidationError::new(
-                    "table must contain a tgroup child",
-                    None,
-                    node.kind,
-                ));
+            ElementKind::Table => {
+                if !borrowed
+                    .children
+                    .iter()
+                    .any(|c| c.borrow().kind == ElementKind::Tgroup)
+                {
+                    return Err(super::ValidationError {
+                        message: "table must contain a tgroup child".to_string(),
+                        parent: None,
+                        node: borrowed.kind,
+                    });
+                }
             }
-        }
-        Tgroup => {
-            if !node.children.iter().any(|c| c.borrow().kind == Colspec) {
-                return Err(ValidationError::new(
-                    "tgroup must contain at least one colspec child",
-                    None,
-                    node.kind,
-                ));
+            ElementKind::Tgroup => {
+                if !borrowed
+                    .children
+                    .iter()
+                    .any(|c| c.borrow().kind == ElementKind::Colspec)
+                {
+                    return Err(super::ValidationError {
+                        message: "tgroup must contain at least one colspec child".to_string(),
+                        parent: None,
+                        node: borrowed.kind,
+                    });
+                }
             }
+            _ => {}
         }
-        _ => {}
+
+        match borrowed.kind.content_model() {
+            super::ContentModel::Empty | super::ContentModel::ChildrenOnly => {
+                if borrowed.text.is_some() {
+                    return Err(super::ValidationError {
+                        message: format!("{:?} must not carry text", borrowed.kind),
+                        parent: borrowed
+                            .parent
+                            .as_ref()
+                            .and_then(|p| p.upgrade())
+                            .map(|p| p.borrow().kind),
+                        node: borrowed.kind,
+                    });
+                }
+            }
+            super::ContentModel::TextOnly => {
+                if !borrowed.children.is_empty() {
+                    return Err(super::ValidationError {
+                        message: format!("{:?} must not have children", borrowed.kind),
+                        parent: borrowed
+                            .parent
+                            .as_ref()
+                            .and_then(|p| p.upgrade())
+                            .map(|p| p.borrow().kind),
+                        node: borrowed.kind,
+                    });
+                }
+            }
+            super::ContentModel::TextOrInline => {}
+        }
+
+        (borrowed.kind, borrowed.children.clone())
+    };
+
+    for child in children {
+        let child_kind = child.borrow().kind;
+        if !super::allows_child(parent_kind, child_kind) {
+            return Err(super::ValidationError {
+                message: format!("invalid child {:?} inside {:?}", child_kind, parent_kind),
+                parent: Some(parent_kind),
+                node: child_kind,
+            });
+        }
+        validate_tree(&child)?;
     }
 
     Ok(())
