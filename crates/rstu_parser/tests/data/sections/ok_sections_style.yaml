@@ -4,28 +4,25 @@ text: null
 children:
   - kind: Section
     attributes:
-      closing_style: =========
-      opening_style: =========
+      section_marker: =========
     text: null
     children:
       - kind: Title
         attributes: {}
         text: "\nHeading 1\n"
         children: []
+      - kind: Section
+        attributes:
+          section_marker: ---------
+        text: null
+        children:
+          - kind: Title
+            attributes: {}
+            text: "\nHeading 2\n"
+            children: []
   - kind: Section
     attributes:
-      closing_style: ---------
-      opening_style: ---------
-    text: null
-    children:
-      - kind: Title
-        attributes: {}
-        text: "\nHeading 2\n"
-        children: []
-  - kind: Section
-    attributes:
-      closing_style: =========
-      opening_style: =========
+      section_marker: =========
     text: null
     children:
       - kind: Title
