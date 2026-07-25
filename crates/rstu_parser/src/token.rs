@@ -23,7 +23,7 @@ macro_rules! compiled_regex {
     }};
 }
 macro_rules! token_kinds {
-    ($(($kind:ident, $len_context:expr, $context:expr, $pattern:expr)),+ $(,)?) => {
+    ($(($kind:ident, $len_context:expr, $context:expr, $pattern:expr, $category:ident)),+ $(,)?) => {
         pub const ALL: [TokenKind; count_idents!($($kind),+)] = [
             $(TokenKind::$kind),+
         ];
@@ -36,6 +36,12 @@ macro_rules! token_kinds {
         pub fn context_len(self) -> (usize, usize) {
             match self {
                 $(TokenKind::$kind => $len_context,)+
+            }
+        }
+
+        pub fn category(self) -> TokenCategory {
+            match self {
+                $(TokenKind::$kind => TokenCategory::$category,)+
             }
         }
     };
@@ -58,6 +64,19 @@ impl Token {
     pub fn as_tuple(&self) -> (TokenKind, &str) {
         (self.kind, &self.lexeme)
     }
+
+    pub fn category(&self) -> TokenCategory {
+        self.kind.category()
+    }
+}
+
+pub enum TokenCategory {
+    DirectiveLike,
+    Inline,
+    Structural,
+    Control,
+    Plain,
+    Table,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -86,21 +105,46 @@ impl TokenKind {
             (r"\n", r"\n"),
             format!(r"[{0}]{{4,}}", RECOMMENDED_SECTION_CHARS)
         ),
-        (Indent, (1, 1), (r"\n", r"[^ \t\n]"), r"[ \t]+"),
-        (Spaces, (1, 1), (r"[^ \t\n]", r"[^ \t]"), r"[ \t]+"),
-        (DoubleDot, (1, 1), (r"[\n\s]", r"[\n\s]"), r"\.\."),
-        (DoubleColon, (1, 1), (r"(?:.|\n)", r"(?:.|\n)"), r"::"),
-        (TableHorizontal, (1, 1), (r"\n", r"\n"), r"=+(?:\s+=+)+\s*"),
-        (BlankLine, (1, 1), (r"\n", r"(?:.|\n)"), r"[ \t]*\n"),
-        (NewLine, (1, 1), (r"[^\n]", r"(?:.|\n)"), r"\n"),
+        (Indent, (1, 1), (r"\n", r"[^ \t\n]"), r"[ \t]+", Control),
+        (Spaces, (1, 1), (r"[^ \t\n]", r"[^ \t]"), r"[ \t]+", Plain),
+        (
+            DoubleDot,
+            (1, 1),
+            (r"[\n\s]", r"[\n\s]"),
+            r"\.\.",
+            DirectiveLike
+        ),
+        (
+            DoubleColon,
+            (1, 1),
+            (r"(?:.|\n)", r"(?:.|\n)"),
+            r"::",
+            DirectiveLike
+        ),
+        (
+            TableHorizontal,
+            (1, 1),
+            (r"\n", r"\n"),
+            r"=+(?:\s+=+)+\s*",
+            Table
+        ),
+        (
+            BlankLine,
+            (1, 1),
+            (r"\n", r"(?:.|\n)"),
+            r"[ \t]*\n",
+            Control
+        ),
+        (NewLine, (1, 1), (r"[^\n]", r"(?:.|\n)"), r"\n", Control),
         (
             Word,
             (1, 1),
             (r"[^A-Za-z0-9_]", r"[^A-Za-z0-9_]"),
-            r"[A-Za-z0-9_]+"
+            r"[A-Za-z0-9_]+",
+            Plain
         ),
-        (Strong, (1, 1), (r"(?:.|\n)", r"(?:.|\n)"), r"\*\*"),
-        (LiteralChar, (0, 0), ("", ""), r"[\s\S]")
+        (Strong, (1, 1), (r"(?:.|\n)", r"(?:.|\n)"), r"\*\*", Inline),
+        (LiteralChar, (0, 0), ("", ""), r"[\s\S]", Plain)
     );
 
     pub fn find(self, input: &str) -> Option<&str> {
