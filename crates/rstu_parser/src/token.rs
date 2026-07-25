@@ -71,7 +71,7 @@ pub enum TokenKind {
     BlankLine,
     NewLine,
     Word,
-    Bold,
+    Strong,
     LiteralChar,
 }
 
@@ -99,7 +99,7 @@ impl TokenKind {
             (r"[^A-Za-z0-9_]", r"[^A-Za-z0-9_]"),
             r"[A-Za-z0-9_]+"
         ),
-        (Bold, (1, 1), (r"(?:.|\n)", r"(?:.|\n)"), r"\*\*"),
+        (Strong, (1, 1), (r"(?:.|\n)", r"(?:.|\n)"), r"\*\*"),
         (LiteralChar, (0, 0), ("", ""), r"[\s\S]")
     );
 
@@ -146,12 +146,12 @@ mod tests {
 
     #[test]
     fn bold_matches() {
-        assert!(TokenKind::Bold.is_match("\n**\n"));
+        assert!(TokenKind::Strong.is_match("\n**\n"));
     }
 
     #[test]
     fn bold_non_matching() {
-        assert!(!TokenKind::Bold.is_match("*"));
+        assert!(!TokenKind::Strong.is_match("*"));
     }
 
     #[test]
