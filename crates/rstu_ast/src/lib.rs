@@ -113,52 +113,6 @@ fn allows_child(parent: ElementKind, child: ElementKind) -> bool {
     }
 }
 
-// fn validate_element_shape(node: &AstNode) -> Result<(), ValidationError> {
-//     use ElementKind::*;
-
-//     match node.kind {
-//         Section => {
-//             if !matches!(node.children.first().map(|c| c.borrow().kind), Some(Title)) {
-//                 return Err(ValidationError::new(
-//                     "section must start with a title",
-//                     None,
-//                     node.kind,
-//                 ));
-//             }
-//         }
-//         Sidebar => {
-//             if matches!(node.children.first().map(|c| c.borrow().kind), Some(Subtitle)) {
-//                 return Err(ValidationError::new(
-//                     "sidebar subtitle requires a preceding title",
-//                     None,
-//                     node.kind,
-//                 ));
-//             }
-//         }
-//         Table => {
-//             if !node.children.iter().any(|c| c.borrow().kind == Tgroup) {
-//                 return Err(ValidationError::new(
-//                     "table must contain a tgroup child",
-//                     None,
-//                     node.kind,
-//                 ));
-//             }
-//         }
-//         Tgroup => {
-//             if !node.children.iter().any(|c| c.borrow().kind == Colspec) {
-//                 return Err(ValidationError::new(
-//                     "tgroup must contain at least one colspec child",
-//                     None,
-//                     node.kind,
-//                 ));
-//             }
-//         }
-//         _ => {}
-//     }
-
-//     Ok(())
-// }
-
 pub type NodeRef = Rc<RefCell<AstNode>>;
 
 #[derive(Debug, Clone)]
