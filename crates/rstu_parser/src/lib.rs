@@ -64,7 +64,7 @@ pub fn try_match_section_header_prefix(
 ) -> Result<(NodeRef, usize), FindElementError> {
     let next_line_end = find_next_kind(
         tokens,
-        TokenKind::NewLine,
+        &[TokenKind::NewLine],
         ScanDirection::Forward,
         start_at + 2,
     )
@@ -107,7 +107,13 @@ pub fn try_match_section_header_suffix(
     tokens: &Vec<Token>,
     start_at: usize,
 ) -> Result<(NodeRef, usize), FindElementError> {
-    let previous_line_start = move_back_one_line(tokens, start_at).unwrap_or(0);
+    let previous_line_start = find_next_kind(
+        tokens,
+        &[TokenKind::BlankLine, TokenKind::NewLine],
+        ScanDirection::Backward,
+        start_at - 2,
+    )
+    .unwrap_or(0);
     let closing_style = tokens[start_at].lexeme.clone();
 
     let section_marker = AstNode::new_ref(ElementKind::Section);
@@ -122,16 +128,4 @@ pub fn try_match_section_header_suffix(
         .expect("section title should always be a valid section child");
 
     Ok((section_marker, start_at + 1))
-}
-
-fn move_back_one_line(tokens: &[Token], index: usize) -> Option<usize> {
-    // Move to the first token of the line ending before index
-    let mut cursor = index.checked_sub(2)?;
-    while !matches!(
-        tokens[cursor].kind,
-        TokenKind::NewLine | TokenKind::BlankLine
-    ) {
-        cursor = cursor.checked_sub(1)?;
-    }
-    Some(cursor + 1)
 }
