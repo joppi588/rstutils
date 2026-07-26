@@ -72,7 +72,7 @@ pub fn try_match_section_header_prefix(
         });
     }
 
-    let next_line_end = find_next_newline(tokens, start_at + 2).ok_or(
+    let next_line_end = tokens.find_next_newline(start_at + 2).ok_or(
         FindElementError::SectionTitleMissingClosingAfterOpening {
             opening_index: start_at,
         },
@@ -134,7 +134,7 @@ pub fn try_match_section_header_suffix(
         });
     }
 
-    let previous_line_start = move_back_one_line(tokens, start_at).unwrap_or(0);
+    let previous_line_start = tokens.move_back_one_line(start_at).unwrap_or(0);
     let closing_style = tokens
         .get(start_at)
         .expect("start index is validated")
@@ -153,28 +153,4 @@ pub fn try_match_section_header_suffix(
         .expect("section title should always be a valid section child");
 
     Ok((section_marker, start_at + 1))
-}
-
-fn find_next_newline(tokens: &TokenSlice, start_at: usize) -> Option<usize> {
-    tokens
-        .as_slice()
-        .iter()
-        .enumerate()
-        .skip(start_at)
-        .find_map(|(index, token)| (token.kind == TokenKind::NewLine).then_some(index))
-}
-
-fn move_back_one_line(tokens: &TokenSlice, index: usize) -> Option<usize> {
-    // Move to the first token of the line ending before index
-    let mut cursor = index.checked_sub(2)?;
-    let token_values = tokens.as_slice();
-
-    while !matches!(
-        token_values[cursor].kind,
-        TokenKind::NewLine | TokenKind::BlankLine
-    ) {
-        cursor = cursor.checked_sub(1)?;
-    }
-
-    Some(cursor + 1)
 }

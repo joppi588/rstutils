@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 use rstu_parser::token::TokenKind;
-use rstu_parser::token_slice::TokenSlice;
+use rstu_parser::token_slice::{ScanDirection, TokenSlice};
 
 #[test]
 fn from_string_and_to_text_roundtrip() {
@@ -46,7 +46,7 @@ fn forward_scan_until_next_kind() {
     let mut view = TokenSlice::from_string("Hello World\nTail");
     assert!(view.set_cursor(2)); // World
 
-    let scan = view.until_next_kind_forward(TokenKind::NewLine);
+    let scan = view.until_next_kind(TokenKind::NewLine, ScanDirection::Forward);
 
     assert_eq!(scan.to_text(), "World");
 }
@@ -56,7 +56,7 @@ fn backward_scan_until_next_kind() {
     let mut view = TokenSlice::from_string("Left\nRight");
     assert!(view.set_cursor(3)); // Right
 
-    let scan = view.until_next_kind_backward(TokenKind::NewLine);
+    let scan = view.until_next_kind(TokenKind::NewLine, ScanDirection::Backward);
 
     assert_eq!(scan.to_text(), "Right");
 }

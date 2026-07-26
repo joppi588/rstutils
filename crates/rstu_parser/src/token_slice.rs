@@ -8,6 +8,12 @@ use std::sync::Arc;
 use crate::lexer::tokenize;
 use crate::token::{Token, TokenKind};
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ScanDirection {
+    Forward,
+    Backward,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TokenSlice {
     tokens: Arc<Vec<Token>>,
@@ -106,37 +112,71 @@ impl TokenSlice {
             .collect()
     }
 
-    pub fn until_next_kind_forward(&self, kind: TokenKind) -> Self {
-        let end = self
-            .tokens
-            .iter()
-            .enumerate()
-            .skip(self.cursor)
-            .take(self.end.saturating_sub(self.cursor))
-            .find_map(|(index, token)| (token.kind == kind).then_some(index))
-            .unwrap_or(self.end);
+    pub fn until_next_kind(&self, kind: TokenKind, direction: ScanDirection) -> Self {
+        match direction {
+            ScanDirection::Forward => {
+                let end = self
+                    .tokens
+                    .iter()
+                    .enumerate()
+                    .skip(self.cursor)
+                    .take(self.end.saturating_sub(self.cursor))
+                    .find_map(|(index, token)| (token.kind == kind).then_some(index))
+                    .unwrap_or(self.end);
 
-        Self {
-            tokens: self.tokens.clone(),
-            start: self.cursor,
-            end,
-            cursor: self.cursor,
+                Self {
+                    tokens: self.tokens.clone(),
+                    start: self.cursor,
+                    end,
+                    cursor: self.cursor,
+                }
+            }
+            ScanDirection::Backward => {
+                let from = self.cursor.min(self.end);
+                let start = self.tokens[self.start..from]
+                    .iter()
+                    .rposition(|token| token.kind == kind)
+                    .map(|index| self.start + index + 1)
+                    .unwrap_or(self.start);
+
+                Self {
+                    tokens: self.tokens.clone(),
+                    start,
+                    end: from,
+                    cursor: start,
+                }
+            }
         }
     }
 
-    pub fn until_next_kind_backward(&self, kind: TokenKind) -> Self {
-        let from = self.cursor.min(self.end);
-        let start = self.tokens[self.start..from]
-            .iter()
-            .rposition(|token| token.kind == kind)
-            .map(|index| self.start + index + 1)
-            .unwrap_or(self.start);
-
-        Self {
-            tokens: self.tokens.clone(),
-            start,
-            end: from,
-            cursor: start,
+    pub fn find_next_newline(&self, start_at: usize) -> Option<usize> {
+        if start_at >= self.len() {
+            return None;
         }
+
+        self.slice(start_at..self.len()).and_then(|mut scan| {
+            scan.set_cursor(0);
+            let line = scan.until_next_kind(TokenKind::NewLine, ScanDirection::Forward);
+            (line.end < scan.end).then_some(start_at + line.len())
+        })
+    }
+
+    pub fn move_back_one_line(&self, index: usize) -> Option<usize> {
+        if index > self.len() {
+            return None;
+        }
+
+        // Move to the first token of the line ending before index.
+        let mut cursor = index.checked_sub(2)?;
+        let token_values = self.as_slice();
+
+        while !matches!(
+            token_values[cursor].kind,
+            TokenKind::NewLine | TokenKind::BlankLine
+        ) {
+            cursor = cursor.checked_sub(1)?;
+        }
+
+        Some(cursor + 1)
     }
 }
