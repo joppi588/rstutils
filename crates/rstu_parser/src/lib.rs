@@ -4,11 +4,13 @@
 
 pub mod lexer;
 pub mod token;
+pub mod token_slice;
 
 use rstu_ast::{AstNode, ElementKind, NodeRef};
 
 use crate::lexer::tokenize;
 use crate::token::{Token, TokenKind};
+use token_slice::{find_next_kind, tokens_to_text, ScanDirection};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum FindElementError {
@@ -60,8 +62,14 @@ pub fn try_match_section_header_prefix(
     tokens: &Vec<Token>,
     start_at: usize,
 ) -> Result<(NodeRef, usize), FindElementError> {
-    let next_line_end = find_next_newline(tokens, start_at + 2).ok_or(
-        FindElementError::SectionTitleMissingClosingAfterOpening {
+    let next_line_end = find_next_kind(
+        tokens,
+        TokenKind::NewLine,
+        ScanDirection::Forward,
+        start_at + 2,
+    )
+    .map_err(
+        |_| FindElementError::SectionTitleMissingClosingAfterOpening {
             opening_index: start_at,
         },
     )?;
@@ -116,14 +124,6 @@ pub fn try_match_section_header_suffix(
     Ok((section_marker, start_at + 1))
 }
 
-fn find_next_newline(tokens: &[Token], start_at: usize) -> Option<usize> {
-    tokens
-        .iter()
-        .enumerate()
-        .skip(start_at)
-        .find_map(|(index, token)| (token.kind == TokenKind::NewLine).then_some(index))
-}
-
 fn move_back_one_line(tokens: &[Token], index: usize) -> Option<usize> {
     // Move to the first token of the line ending before index
     let mut cursor = index.checked_sub(2)?;
@@ -134,12 +134,4 @@ fn move_back_one_line(tokens: &[Token], index: usize) -> Option<usize> {
         cursor = cursor.checked_sub(1)?;
     }
     Some(cursor + 1)
-}
-
-fn tokens_to_text(tokens: &[Token]) -> String {
-    let mut text = String::new();
-    for token in tokens {
-        text.push_str(&token.lexeme);
-    }
-    text
 }
