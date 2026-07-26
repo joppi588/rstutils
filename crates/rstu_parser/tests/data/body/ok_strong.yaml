@@ -1,0 +1,20 @@
+kind: Document
+attributes: {}
+text: null
+children:
+  - kind: Section
+    attributes:
+      section_marker: -------------------------------
+    text: null
+    children:
+      - kind: Title
+        attributes: {}
+        text: "Short text with strong elements\n"
+        children: []
+      - kind: Paragraph
+        attributes: {}
+        text: null
+        childeren:
+        - kind: strong
+          attributes: {}
+          text: print this in bold text.

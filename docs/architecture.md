@@ -29,7 +29,7 @@ tbd (granularity of tokens)
 
 5. Parser approach
 tbd (bottom-up vs top-down)
-Will be some hybrid solution.
+Will be some hybrid solution, depending on the part of the rst grammar to be analyzed.
 
 
 # Architectural drivers
