@@ -15,6 +15,14 @@ pub enum ScanDirection {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+pub enum TokenSliceError {
+    TokenNotFound {
+        kind: TokenKind,
+        direction: ScanDirection,
+    },
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TokenSlice {
     tokens: Arc<Vec<Token>>,
     start: usize,
@@ -58,22 +66,22 @@ impl TokenSlice {
         }
     }
 
-    pub fn advance(&mut self) -> bool {
-        if self.cursor < self.end {
-            self.cursor += 1;
-            true
-        } else {
-            false
+    pub fn move_cursor(&mut self, direction: ScanDirection) -> bool {
+        match direction {
+            ScanDirection::Forward => {
+                if self.cursor < self.end {
+                    self.cursor += 1;
+                    return true;
+                }
+            }
+            ScanDirection::Backward => {
+                if self.cursor > self.start {
+                    self.cursor -= 1;
+                    return true;
+                }
+            }
         }
-    }
-
-    pub fn retreat(&mut self) -> bool {
-        if self.cursor > self.start {
-            self.cursor -= 1;
-            true
-        } else {
-            false
-        }
+        false
     }
 
     pub fn current(&self) -> Option<&Token> {
@@ -112,41 +120,41 @@ impl TokenSlice {
             .collect()
     }
 
-    pub fn until_next_kind(&self, kind: TokenKind, direction: ScanDirection) -> Self {
-        match direction {
+    pub fn until_next_kind(
+        &self,
+        kind: TokenKind,
+        direction: ScanDirection,
+    ) -> Result<Self, TokenSliceError> {
+        let (start, end) = match direction {
             ScanDirection::Forward => {
-                let end = self
+                let found = self
                     .tokens
                     .iter()
                     .enumerate()
                     .skip(self.cursor)
                     .take(self.end.saturating_sub(self.cursor))
                     .find_map(|(index, token)| (token.kind == kind).then_some(index))
-                    .unwrap_or(self.end);
+                    .ok_or(TokenSliceError::TokenNotFound { kind, direction })?;
 
-                Self {
-                    tokens: self.tokens.clone(),
-                    start: self.cursor,
-                    end,
-                    cursor: self.cursor,
-                }
+                (self.cursor, found)
             }
             ScanDirection::Backward => {
-                let from = self.cursor.min(self.end);
-                let start = self.tokens[self.start..from]
+                let found = self.tokens[self.start..self.cursor]
                     .iter()
                     .rposition(|token| token.kind == kind)
                     .map(|index| self.start + index + 1)
-                    .unwrap_or(self.start);
+                    .ok_or(TokenSliceError::TokenNotFound { kind, direction })?;
 
-                Self {
-                    tokens: self.tokens.clone(),
-                    start,
-                    end: from,
-                    cursor: start,
-                }
+                (found, self.cursor)
             }
-        }
+        };
+
+        Ok(Self {
+            tokens: self.tokens.clone(),
+            start,
+            end,
+            cursor: start,
+        })
     }
 
     pub fn find_next_newline(&self, start_at: usize) -> Option<usize> {
@@ -156,8 +164,10 @@ impl TokenSlice {
 
         self.slice(start_at..self.len()).and_then(|mut scan| {
             scan.set_cursor(0);
-            let line = scan.until_next_kind(TokenKind::NewLine, ScanDirection::Forward);
-            (line.end < scan.end).then_some(start_at + line.len())
+            let line = scan
+                .until_next_kind(TokenKind::NewLine, ScanDirection::Forward)
+                .ok()?;
+            Some(start_at + line.len())
         })
     }
 

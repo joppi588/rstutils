@@ -33,11 +33,11 @@ fn supports_cursor_navigation() {
     let mut view = TokenSlice::from_string("A B\n");
 
     assert_eq!(view.current().map(|token| token.lexeme.as_str()), Some("A"));
-    assert!(view.advance());
+    assert!(view.move_cursor(ScanDirection::Forward));
     assert_eq!(view.current().map(|token| token.lexeme.as_str()), Some(" "));
     assert!(view.set_cursor(2));
     assert_eq!(view.current().map(|token| token.lexeme.as_str()), Some("B"));
-    assert!(view.retreat());
+    assert!(view.move_cursor(ScanDirection::Backward));
     assert_eq!(view.current().map(|token| token.lexeme.as_str()), Some(" "));
 }
 
@@ -46,7 +46,9 @@ fn forward_scan_until_next_kind() {
     let mut view = TokenSlice::from_string("Hello World\nTail");
     assert!(view.set_cursor(2)); // World
 
-    let scan = view.until_next_kind(TokenKind::NewLine, ScanDirection::Forward);
+    let scan = view
+        .until_next_kind(TokenKind::NewLine, ScanDirection::Forward)
+        .expect("newline should be found");
 
     assert_eq!(scan.to_text(), "World");
 }
@@ -56,7 +58,18 @@ fn backward_scan_until_next_kind() {
     let mut view = TokenSlice::from_string("Left\nRight");
     assert!(view.set_cursor(3)); // Right
 
-    let scan = view.until_next_kind(TokenKind::NewLine, ScanDirection::Backward);
+    let scan = view
+        .until_next_kind(TokenKind::NewLine, ScanDirection::Backward)
+        .expect("newline should be found");
 
     assert_eq!(scan.to_text(), "Right");
+}
+
+#[test]
+fn scan_reports_missing_token() {
+    let view = TokenSlice::from_string("Hello World");
+
+    assert!(view
+        .until_next_kind(TokenKind::NewLine, ScanDirection::Forward)
+        .is_err());
 }
