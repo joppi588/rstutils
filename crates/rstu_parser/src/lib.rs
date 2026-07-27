@@ -34,21 +34,28 @@ pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
     let mut index: usize = 0;
     let mut current_node = doc.clone();
 
-    while index < tokens.len() {
-        match tokens[index].kind {
-            TokenKind::SectionTitlePrefix => {
+    while index < tokens.len() - 1 {
+        let index_line_end = find_next_kind(
+            &tokens,
+            &[TokenKind::NewLine],
+            ScanDirection::Forward,
+            index,
+        )
+        .expect("Token stream shall end with a newline.");
+        match (tokens[index].kind, tokens[index_line_end + 1].kind) {
+            (TokenKind::Separator, TokenKind::Indent) | (TokenKind::Separator, TokenKind::Word) => {
                 let (section, next_start) = try_match_section_header_prefix(&tokens, index)?;
                 AstNode::push_section_ref(&current_node, section.clone())
                     .expect("Could not insert section!");
                 current_node = section;
                 index = next_start;
             }
-            TokenKind::SectionTitleSuffix => {
-                let (section, next_start) = try_match_section_header_suffix(&tokens, index)?;
+            (TokenKind::Word, TokenKind::Separator) => {
+                let (section, index_end_header) = try_match_section_header_suffix(&tokens, index)?;
                 AstNode::push_section_ref(&current_node, section.clone())
                     .expect("Could not insert section!");
                 current_node = section;
-                index = next_start;
+                index = index_end_header + 1;
             }
 
             _ => index += 1,
@@ -75,9 +82,7 @@ pub fn try_match_section_header_prefix(
     )?;
 
     let closing_index = next_line_end + 1;
-    if (closing_index >= tokens.len())
-        || (tokens[closing_index].kind != TokenKind::SectionTitleSuffix)
-    {
+    if (closing_index >= tokens.len()) || (tokens[closing_index].kind != TokenKind::Separator) {
         return Err(FindElementError::SectionTitleMissingClosingAfterOpening {
             opening_index: start_at,
         });
@@ -107,25 +112,22 @@ pub fn try_match_section_header_suffix(
     tokens: &Vec<Token>,
     start_at: usize,
 ) -> Result<(NodeRef, usize), FindElementError> {
-    let previous_line_start = find_next_kind(
+    let line_end = find_next_kind(
         tokens,
-        &[TokenKind::BlankLine, TokenKind::NewLine],
-        ScanDirection::Backward,
-        start_at - 2,
+        &[TokenKind::NewLine],
+        ScanDirection::Forward,
+        start_at,
     )
-    .unwrap_or(0);
-    let closing_style = tokens[start_at].lexeme.clone();
+    .expect("Section title ends with new line.");
+    let closing_style = tokens[line_end + 1].lexeme.clone();
 
     let section_marker = AstNode::new_ref(ElementKind::Section);
     AstNode::with_attr(&section_marker, "section_marker", closing_style);
 
     let title = AstNode::new_ref(ElementKind::Title);
-    AstNode::with_text(
-        &title,
-        tokens_to_text(&tokens[previous_line_start..start_at]),
-    );
+    AstNode::with_text(&title, tokens_to_text(&tokens[start_at..line_end]));
     AstNode::push_child(&section_marker, title)
         .expect("section title should always be a valid section child");
 
-    Ok((section_marker, start_at + 1))
+    Ok((section_marker, line_end + 2))
 }

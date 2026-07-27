@@ -62,9 +62,7 @@ impl Token {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TokenKind {
-    Transition,
-    SectionTitlePrefix,
-    SectionTitleSuffix,
+    Separator,
     Indent,
     Spaces,
     DoubleDot,
@@ -83,22 +81,10 @@ impl TokenKind {
         // The order of the enum matters, as the first matching token will be picked.
         // Format (name, context length, context regex, token regex)
         (
-            Transition,
-            (2, 2),
-            (r"\n\n", r"\n\n"),
-            format!(r"[{0}]{{4,}}", RECOMMENDED_SECTION_CHARS)
-        ),
-        (
-            SectionTitlePrefix,
-            (2, 1),
-            (r"\n\n", r"\n"),
-            format!(r"[{0}]+", RECOMMENDED_SECTION_CHARS)
-        ),
-        (
-            SectionTitleSuffix,
+            Separator,
             (1, 1),
             (r"\n", r"\n"),
-            format!(r"[{0}]+", RECOMMENDED_SECTION_CHARS)
+            format!(r"[{0}]{{4,}}", RECOMMENDED_SECTION_CHARS)
         ),
         (Indent, (1, 1), (r"\n", r"[^ \t\n]"), r"[ \t]+"),
         (Spaces, (1, 1), (r"[^ \t\n]", r"[^ \t]"), r"[ \t]+"),
@@ -133,26 +119,9 @@ mod tests {
 
     #[test]
     fn transition_matches() {
-        assert!(TokenKind::Transition.is_match("\n\n====\n\n"));
-        assert!(!TokenKind::Transition.is_match("\n\n==a=\n\n"));
-        assert!(!TokenKind::Transition.is_match("\n\n===\n\n"));
-    }
-
-    #[test]
-    fn section_title_prefix_matches() {
-        assert!(TokenKind::SectionTitlePrefix.is_match("\n\n====\nTitle"));
-        assert!(!TokenKind::SectionTitlePrefix.is_match("\n\n==a=\nTitle"));
-        assert!(!TokenKind::SectionTitlePrefix.is_match("e\n====\n"));
-    }
-
-    #[test]
-    fn section_title_suffix_matches() {
-        assert!(TokenKind::SectionTitleSuffix.is_match("\n=====\nParagraph"));
-        assert!(!TokenKind::SectionTitleSuffix.is_match("\n==a=\n\n"));
-        assert!(
-            TokenKind::SectionTitlePrefix.is_match("\n\n====\nTitle")
-                && TokenKind::SectionTitleSuffix.is_match("\n====\nTitle")
-        ); // Prefix is catched first!
+        assert!(TokenKind::Separator.is_match("\n====\n"));
+        assert!(!TokenKind::Separator.is_match("\n==a=\n"));
+        assert!(!TokenKind::Separator.is_match("\n===\n"));
     }
 
     #[test]
@@ -243,12 +212,5 @@ mod tests {
     #[test]
     fn word_non_matching_without_word_chars() {
         assert!(!TokenKind::Word.is_match("---\n***"));
-    }
-
-    #[test]
-    fn context_length_matches_declared_values() {
-        assert_eq!(TokenKind::Transition.context_len(), (2, 2));
-        assert_eq!(TokenKind::SectionTitlePrefix.context_len(), (2, 1));
-        assert_eq!(TokenKind::Word.context_len(), (1, 1));
     }
 }
