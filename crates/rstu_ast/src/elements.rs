@@ -114,6 +114,7 @@ pub enum ElementKind {
     Target,
     Tbody,
     Term,
+    Text,
     Tgroup,
     Thead,
     Tip,
@@ -137,6 +138,7 @@ impl ElementKind {
             ElementKind::Target => vec![Body, Inline],
             ElementKind::Title => vec![StructuralSub, BodySub],
             ElementKind::Document => vec![Root],
+            ElementKind::Text => vec![Body],
             ElementKind::Section | ElementKind::Sidebar | ElementKind::Topic => vec![Structural],
             ElementKind::Meta
             | ElementKind::Transition
@@ -244,7 +246,8 @@ impl ElementKind {
             | ElementKind::OptionString
             | ElementKind::Raw
             | ElementKind::Comment
-            | ElementKind::Target => ContentModel::TextOnly,
+            | ElementKind::Target
+            | ElementKind::Text => ContentModel::TextOnly,
 
             ElementKind::Abbreviation
             | ElementKind::Acronym

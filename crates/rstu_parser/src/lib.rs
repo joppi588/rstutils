@@ -28,6 +28,9 @@ pub enum FindElementError {
     },
 }
 
+// Parser implementation:
+// Lookahead one line -> Decide on element.
+
 pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
     let tokens = tokenize(input);
     let doc = AstNode::new_ref(ElementKind::Document);
@@ -57,7 +60,13 @@ pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
                 current_node = section;
                 index = index_end_header + 1;
             }
-
+            TokenKind::BlankLine => index += 1,
+            TokenKind::Strong | TokenKind::Word => {
+                let (paragraph, next_start) = try_parse_paragraph(&tokens, index)?;
+                AstNode::push_child(&current_node, paragraph.clone());
+                current_node = paragraph;
+                index = next_start;
+            }
             _ => index += 1,
         };
     }
@@ -113,4 +122,22 @@ pub fn try_match_section_header(
         .expect("section title should always be a valid section child");
 
     Ok((section_marker, closing_index + 1))
+}
+
+fn try_parse_paragraph(
+    tokens: &Vec<Token>,
+    start_at: usize,
+) -> Result<(NodeRef, usize), FindElementError> {
+    let paragraph_end = find_next_kind(
+        tokens,
+        &[TokenKind::BlankLine, TokenKind::Indent],
+        ScanDirection::Forward,
+        start_at,
+    )?;
+    let paragraph = AstNode::new_ref(ElementKind::Paragraph);
+    // loop from start_at to paragraph_end
+    // Check current token category:
+    // 1. Inline -> try_parse_inline (with stop token as parameter)
+    // 2. Sentence -> fast forward until next non-
+    Ok((paragraph, paragraph_end + 1))
 }
