@@ -94,6 +94,7 @@ pub enum ElementKind {
     Organization,
     Paragraph,
     Pending,
+    PlainText,
     Problematic,
     Raw,
     Reference,
@@ -114,7 +115,6 @@ pub enum ElementKind {
     Target,
     Tbody,
     Term,
-    Text,
     Tgroup,
     Thead,
     Tip,
@@ -138,7 +138,6 @@ impl ElementKind {
             ElementKind::Target => vec![Body, Inline],
             ElementKind::Title => vec![StructuralSub, BodySub],
             ElementKind::Document => vec![Root],
-            ElementKind::Text => vec![Body],
             ElementKind::Section | ElementKind::Sidebar | ElementKind::Topic => vec![Structural],
             ElementKind::Meta
             | ElementKind::Transition
@@ -189,6 +188,7 @@ impl ElementKind {
             | ElementKind::Inline
             | ElementKind::Literal
             | ElementKind::Math
+            | ElementKind::PlainText
             | ElementKind::Problematic
             | ElementKind::Strong
             | ElementKind::Subscript
@@ -247,7 +247,7 @@ impl ElementKind {
             | ElementKind::Raw
             | ElementKind::Comment
             | ElementKind::Target
-            | ElementKind::Text => ContentModel::TextOnly,
+            | ElementKind::PlainText => ContentModel::TextOnly,
 
             ElementKind::Abbreviation
             | ElementKind::Acronym

@@ -204,12 +204,16 @@ fn try_parse_plain(
 ) -> Result<(NodeRef, usize), FindElementError> {
     let plain_tokens = find_next_kind(
         tokens,
-        &[TokenKind::Word, TokenKind::Spaces],
+        &[
+            TokenKind::Strong,
+            TokenKind::BlankLine,
+            TokenKind::DoubleDot,
+        ], // TODO implement kinds_except
         ScanDirection::Forward,
         start_at,
     )
     .map_err(|_| FindElementError::InvalidPlainText { start_at: start_at })?;
-    let sentence = AstNode::new_ref(ElementKind::Text);
+    let sentence = AstNode::new_ref(ElementKind::PlainText);
     AstNode::with_attr(
         &sentence,
         "text",
