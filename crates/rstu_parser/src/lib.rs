@@ -75,7 +75,6 @@ pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
                 let (paragraph, next_start) = try_parse_paragraph(&tokens, index)?;
                 AstNode::push_child(&current_node, paragraph.clone())
                     .expect("Structural node can have children.");
-                current_node = paragraph;
                 index = next_start;
             }
             _ => index += 1,
@@ -156,6 +155,10 @@ fn try_parse_paragraph(
         let (node, new_index) = match tokens[index].category() {
             token::TokenCategory::Inline => try_parse_inline(tokens, index)?,
             token::TokenCategory::Plain => try_parse_plain(tokens, index)?,
+            token::TokenCategory::Control => {
+                index += 1;
+                continue;
+            }
             _ => {
                 return Err(FindElementError::UnexpectedToken {
                     expected: "Inline/plain".to_owned(),
@@ -178,7 +181,7 @@ fn try_parse_inline(
             tokens,
             &[TokenKind::Strong],
             ScanDirection::Forward,
-            start_at,
+            start_at + 1,
         )
         .map_err(|_| FindElementError::StrongMissingClosing { start_at: start_at })?,
         _ => {
@@ -192,7 +195,7 @@ fn try_parse_inline(
     AstNode::with_attr(
         &strong,
         "text",
-        tokens_to_text(&tokens[start_at + 1..inline_final - 1]),
+        tokens_to_text(&tokens[start_at + 1..inline_final]),
     );
     // TODO: recursive parsing of nested inline or text
     Ok((strong, inline_final + 1))
