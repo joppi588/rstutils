@@ -101,7 +101,10 @@ pub fn try_match_section_header_prefix(
     AstNode::with_attr(&section_marker, "section_marker", closing_style);
 
     let title = AstNode::new_ref(ElementKind::Title);
-    AstNode::with_text(&title, tokens_to_text(&tokens[start_at + 1..closing_index]));
+    AstNode::with_text(
+        &title,
+        tokens_to_text(&tokens[start_at + 1..next_line_end + 1]),
+    );
     AstNode::push_child(&section_marker, title)
         .expect("section title should always be a valid section child");
 
@@ -125,7 +128,7 @@ pub fn try_match_section_header_suffix(
     AstNode::with_attr(&section_marker, "section_marker", closing_style);
 
     let title = AstNode::new_ref(ElementKind::Title);
-    AstNode::with_text(&title, tokens_to_text(&tokens[start_at..line_end]));
+    AstNode::with_text(&title, tokens_to_text(&tokens[start_at..line_end + 1]));
     AstNode::push_child(&section_marker, title)
         .expect("section title should always be a valid section child");
 
