@@ -26,6 +26,16 @@ pub enum FindElementError {
         opening_style: String,
         closing_style: String,
     },
+    InvalidPlainText {
+        start_at: usize,
+    },
+    UnexpectedToken {
+        expected: String,
+        found: String,
+    },
+    StrongMissingClosing {
+        start_at: usize,
+    },
 }
 
 // Parser implementation:
@@ -130,14 +140,79 @@ fn try_parse_paragraph(
 ) -> Result<(NodeRef, usize), FindElementError> {
     let paragraph_end = find_next_kind(
         tokens,
-        &[TokenKind::BlankLine, TokenKind::Indent],
+        &[
+            TokenKind::BlankLine,
+            TokenKind::Indent,
+            TokenKind::SectionTitlePrefix,
+        ],
         ScanDirection::Forward,
         start_at,
-    )?;
+    )
+    .expect("Paragraph must end somewhere.");
     let paragraph = AstNode::new_ref(ElementKind::Paragraph);
-    // loop from start_at to paragraph_end
-    // Check current token category:
-    // 1. Inline -> try_parse_inline (with stop token as parameter)
-    // 2. Sentence -> fast forward until next non-
+    let mut index = start_at;
+    while index < paragraph_end {
+        let (node, new_index) = match tokens[index].category() {
+            token::TokenCategory::Inline => try_parse_inline(tokens, index)?,
+            token::TokenCategory::Plain => try_parse_plain(tokens, index)?,
+            _ => {
+                return Err(FindElementError::UnexpectedToken {
+                    expected: "Inline/plain".to_owned(),
+                    found: format!("{:?}", tokens[index].category()),
+                });
+            }
+        };
+        index = new_index;
+        AstNode::push_child(&paragraph, node).expect("Paragraph can have children.");
+    }
     Ok((paragraph, paragraph_end + 1))
+}
+
+fn try_parse_inline(
+    tokens: &Vec<Token>,
+    start_at: usize,
+) -> Result<(NodeRef, usize), FindElementError> {
+    let inline_final = match tokens[start_at].kind {
+        TokenKind::Strong => find_next_kind(
+            tokens,
+            &[TokenKind::Strong],
+            ScanDirection::Forward,
+            start_at,
+        )
+        .map_err(|_| FindElementError::StrongMissingClosing { start_at: start_at })?,
+        _ => {
+            return Err(FindElementError::UnexpectedToken {
+                expected: "Inline".to_owned(),
+                found: format!("{:?}", tokens[start_at].category()),
+            });
+        }
+    };
+    let strong = AstNode::new_ref(ElementKind::Strong);
+    AstNode::with_attr(
+        &strong,
+        "text",
+        tokens_to_text(&tokens[start_at + 1..inline_final - 1]),
+    );
+    // TODO: recursive parsing of nested inline or text
+    Ok((strong, inline_final + 1))
+}
+
+fn try_parse_plain(
+    tokens: &Vec<Token>,
+    start_at: usize,
+) -> Result<(NodeRef, usize), FindElementError> {
+    let plain_tokens = find_next_kind(
+        tokens,
+        &[TokenKind::Word, TokenKind::Spaces],
+        ScanDirection::Forward,
+        start_at,
+    )
+    .map_err(|_| FindElementError::InvalidPlainText { start_at: start_at })?;
+    let sentence = AstNode::new_ref(ElementKind::Text);
+    AstNode::with_attr(
+        &sentence,
+        "text",
+        tokens_to_text(&tokens[start_at..plain_tokens]),
+    );
+    Ok((sentence, plain_tokens))
 }
