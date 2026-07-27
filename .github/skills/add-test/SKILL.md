@@ -7,10 +7,10 @@ description: "use when adding a test (unit or integration)
 
 Use this skill when adding a new test.
 
-Use the following formt:
+Use the following format ():
 
+/// GIVEN <Prerequisites>
+/// WHEN <Test steps to execute>
+/// THEN <Expected result>
 fn test_something
-// GIVEN <Prerequisites>
-// WHEN <Test steps to execute>
-// THEN
 Code...
