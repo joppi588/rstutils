@@ -70,8 +70,8 @@ pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
                 current_node = section;
                 index = index_end_header + 1;
             }
-            TokenKind::BlankLine => index += 1,
-            TokenKind::Strong | TokenKind::Word => {
+            (TokenKind::BlankLine, _) => index += 1,
+            (TokenKind::Strong | TokenKind::Word, _) => {
                 let (paragraph, next_start) = try_parse_paragraph(&tokens, index)?;
                 AstNode::push_child(&current_node, paragraph.clone())
                     .expect("Structural node can have children.");
@@ -144,7 +144,7 @@ fn try_parse_paragraph(
         &[
             TokenKind::BlankLine,
             TokenKind::Indent,
-            TokenKind::SectionTitlePrefix,
+            TokenKind::Separator,
         ],
         ScanDirection::Forward,
         start_at,

@@ -11,6 +11,15 @@ children:
         attributes: {}
         text: "Heading 1\n"
         children: []
+      - kind: Paragraph
+        attributes: {}
+        text: null
+        children:
+          - kind: PlainText
+            attributes:
+              text: "Some Text\n"
+            text: null
+            children: []
       - kind: Section
         attributes:
           section_marker: ---------
@@ -20,6 +29,15 @@ children:
             attributes: {}
             text: "Heading 2\n"
             children: []
+          - kind: Paragraph
+            attributes: {}
+            text: null
+            children:
+              - kind: PlainText
+                attributes:
+                  text: "More Text\n"
+                text: null
+                children: []
   - kind: Section
     attributes:
       section_marker: =========
@@ -29,3 +47,12 @@ children:
         attributes: {}
         text: "Heading 3\n"
         children: []
+      - kind: Paragraph
+        attributes: {}
+        text: null
+        children:
+          - kind: PlainText
+            attributes:
+              text: "Same level as Heading 1.\n"
+            text: null
+            children: []

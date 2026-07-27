@@ -104,7 +104,8 @@ impl TokenKind {
             Separator,
             (1, 1),
             (r"\n", r"\n"),
-            format!(r"[{0}]{{4,}}", RECOMMENDED_SECTION_CHARS)
+            format!(r"[{0}]{{4,}}", RECOMMENDED_SECTION_CHARS),
+            Structural
         ),
         (Indent, (1, 1), (r"\n", r"[^ \t\n]"), r"[ \t]+", Control),
         (Spaces, (1, 1), (r"[^ \t\n]", r"[^ \t]"), r"[ \t]+", Plain),
