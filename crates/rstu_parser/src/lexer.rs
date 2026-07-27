@@ -6,9 +6,9 @@ use crate::token::{Token, TokenKind};
 
 pub fn tokenize(input: &str) -> Vec<Token> {
     let mut tokens = Vec::new();
-    let input = format!("\n\n{input}\n\n"); // leading and trailing blank line
-    let mut index: usize = 2;
-    while index < input.len() - 2 {
+    let input = format!("\n{input}\n\n"); // leading and trailing blank line
+    let mut index: usize = 1;
+    while index < input.len() - 1 {
         let mut lexeme_len = 0;
         for kind in TokenKind::ALL {
             let sub_str = &input[index - kind.context_len().0..];
@@ -39,6 +39,7 @@ mod tests {
             Token::new(TokenKind::Spaces, " "),
             Token::new(TokenKind::Word, "World"),
             Token::new(TokenKind::NewLine, "\n"),
+            Token::new(TokenKind::BlankLine, "\n"),
         ];
 
         assert_eq!(tokenize(input), expected);
@@ -54,6 +55,7 @@ mod tests {
             Token::new(TokenKind::LiteralChar, "%"),
             Token::new(TokenKind::LiteralChar, "*"),
             Token::new(TokenKind::NewLine, "\n"),
+            Token::new(TokenKind::BlankLine, "\n"),
         ];
 
         assert_eq!(tokenize(input), expected);

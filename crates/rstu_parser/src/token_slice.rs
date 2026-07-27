@@ -82,7 +82,7 @@ mod tests {
             Token::new(TokenKind::Word, "before"),
             Token::new(TokenKind::BlankLine, "\n\n"),
             Token::new(TokenKind::Word, "after"),
-            Token::new(TokenKind::SectionTitleSuffix, "---"),
+            Token::new(TokenKind::Separator, "----"),
         ];
 
         let found = find_next_kind(
