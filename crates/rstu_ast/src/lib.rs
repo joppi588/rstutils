@@ -166,16 +166,15 @@ impl AstNode {
             "kind".to_string(),
             Value::String(format!("{:?}", borrowed.kind)),
         );
-        obj.insert("attributes".to_string(), Value::Object(attributes));
-        obj.insert(
-            "text".to_string(),
-            borrowed
-                .text
-                .clone()
-                .map(Value::String)
-                .unwrap_or(Value::Null),
-        );
-        obj.insert("children".to_string(), Value::Array(children));
+        if attributes.len() > 0 {
+            obj.insert("attributes".to_string(), Value::Object(attributes));
+        };
+        if let Some(v) = borrowed.text.clone().map(Value::String) {
+            obj.insert("text".to_string(), v);
+        };
+        if children.len() > 0 {
+            obj.insert("children".to_string(), Value::Array(children));
+        };
         Value::Object(obj)
     }
 
