@@ -23,19 +23,14 @@ macro_rules! compiled_regex {
     }};
 }
 macro_rules! token_kinds {
-    ($(($kind:ident, $len_context:expr, $context:expr, $pattern:expr, $category:ident)),+ $(,)?) => {
+    ($(($kind:ident, $pattern:expr, $category:ident)),+ $(,)?) => {
         pub const ALL: [TokenKind; count_idents!($($kind),+)] = [
             $(TokenKind::$kind),+
         ];
 
         pub fn regex(self) -> &'static Regex {
             match self {
-                $(TokenKind::$kind => compiled_regex!(format!(r"^{}{}{}", $context.0, $pattern, $context.1)),)+
-            }
-        }
-        pub fn context_len(self) -> (usize, usize) {
-            match self {
-                $(TokenKind::$kind => $len_context,)+
+                $(TokenKind::$kind => compiled_regex!(format!(r"^{}",$pattern)),)+
             }
         }
 
@@ -102,51 +97,19 @@ impl TokenKind {
         // Format (name, context length, context regex, token regex)
         (
             Separator,
-            (1, 1),
-            (r"\n", r"\n"),
-            format!(r"[{0}]{{4,}}", RECOMMENDED_SECTION_CHARS),
+            format!(r"\n[{0}]{{4,}}\n", RECOMMENDED_SECTION_CHARS),
             Structural
         ),
-        (Indent, (1, 1), (r"\n", r"[^ \t\n]"), r"[ \t]+", Control),
-        (Spaces, (1, 1), (r"[^ \t\n]", r"[^ \t]"), r"[ \t]+", Plain),
-        (
-            DoubleDot,
-            (1, 1),
-            (r"[\n\s]", r"[\n\s]"),
-            r"\.\.",
-            DirectiveLike
-        ),
-        (
-            DoubleColon,
-            (1, 1),
-            (r"(?:.|\n)", r"(?:.|\n)"),
-            r"::",
-            DirectiveLike
-        ),
-        (
-            TableHorizontal,
-            (1, 1),
-            (r"\n", r"\n"),
-            r"=+(?:\s+=+)+\s*",
-            Table
-        ),
-        (
-            BlankLine,
-            (1, 1),
-            (r"\n", r"(?:.|\n)"),
-            r"[ \t]*\n",
-            Control
-        ),
-        (NewLine, (1, 1), (r"[^\n]", r"(?:.|\n)"), r"\n", Control),
-        (
-            Word,
-            (1, 1),
-            (r"[^A-Za-z0-9_]", r"[^A-Za-z0-9_]"),
-            r"[A-Za-z0-9_]+",
-            Plain
-        ),
-        (Strong, (1, 1), (r"(?:.|\n)", r"(?:.|\n)"), r"\*\*", Inline),
-        (LiteralChar, (0, 0), ("", ""), r"[\s\S]", Plain)
+        (Indent, r"\n[ \t]+[^ \t\n]", Control),
+        (Spaces, r"[^ \t\n][ \t]+[^ \t]", Plain),
+        (DoubleDot, r"[\n\s]\.\.[\n\s]", DirectiveLike),
+        (DoubleColon, r"(.|\n)::(.|\n)", DirectiveLike),
+        (TableHorizontal, r"\n=+(?:\s+=+)+\s*\n", Table),
+        (BlankLine, r"\n[ \t]*\n(.|\n)", Control),
+        (NewLine, r"[^\n]\n(.|\n)", Control),
+        (Word, r"[^A-Za-z0-9_][A-Za-z0-9_]+[^A-Za-z0-9_]", Plain),
+        (Strong, r"(.|\n)\*\*(.|\n)", Inline),
+        (LiteralChar, r"(.|\n)[\s\S](.|\n)", Plain)
     );
 
     pub fn find(self, input: &str) -> Option<&str> {
