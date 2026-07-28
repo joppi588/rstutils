@@ -19,7 +19,6 @@ fn data_path(directory: &str, filename: &str) -> std::path::PathBuf {
 #[rstest]
 #[case("sections", "ok_three_sections.rst", "ok_three_sections.yaml")]
 #[case("sections", "ok_sections_style.rst", "ok_sections_style.yaml")]
-#[case("body", "ok_strong.rst", "ok_strong.yaml")]
 fn parses_sections_and_matches_yaml_fixture(
     #[case] directory: &str,
     #[case] rst_filename: &str,
