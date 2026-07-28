@@ -68,7 +68,7 @@ impl Token {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TokenCategory {
     DirectiveLike,
-    Inline,
+    InlineMarker,
     Structural,
     Control,
     Plain,
@@ -108,7 +108,7 @@ impl TokenKind {
         (BlankLine, r"\n[ \t]*\n(.|\n)", Control),
         (NewLine, r"[^\n]\n(.|\n)", Control),
         (Word, r"[^A-Za-z0-9_][A-Za-z0-9_]+[^A-Za-z0-9_]", Plain),
-        (Strong, r"(.|\n)\*\*(.|\n)", Inline),
+        (Strong, r"(.|\n)\*\*(.|\n)", InlineMarker),
         (LiteralChar, r"(.|\n)[\s\S](.|\n)", Plain)
     );
 

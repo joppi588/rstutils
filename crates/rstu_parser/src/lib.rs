@@ -9,7 +9,7 @@ pub mod token_slice;
 use rstu_ast::{AstNode, ElementKind, NodeRef};
 
 use crate::lexer::tokenize;
-use crate::token::{Token, TokenKind};
+use crate::token::{Token, TokenCategory as TC, TokenKind as TK};
 use token_slice::{find_next_kind, tokens_to_text, ScanDirection};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -48,36 +48,41 @@ pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
     let mut current_node = doc.clone();
 
     while index < tokens.len() - 1 {
-        let index_line_end = find_next_kind(
-            &tokens,
-            &[TokenKind::NewLine],
-            ScanDirection::Forward,
-            index,
-        )
-        .expect("Token stream shall end with a newline.");
-        match (tokens[index].kind, tokens[index_line_end + 1].kind) {
-            (TokenKind::Separator, TokenKind::Indent) | (TokenKind::Separator, TokenKind::Word) => {
+        let index_line_end = find_next_kind(&tokens, &[TK::NewLine], ScanDirection::Forward, index)
+            .expect("Token stream shall end with a newline.");
+        match (
+            tokens[index].kind,
+            tokens[index].category(),
+            tokens[index_line_end + 1].kind,
+            tokens[index_line_end + 1].category(),
+        ) {
+            (TK::Separator, _, TK::Indent, _) | (TK::Separator, _, TK::Word, _) => {
                 let (section, next_start) = try_match_section_header(&tokens, index, true)?;
                 AstNode::push_section_ref(&current_node, section.clone())
                     .expect("Could not insert section!");
                 current_node = section;
                 index = next_start;
             }
-            (TokenKind::Word, TokenKind::Separator) => {
+            (TK::Word, _, TK::Separator, _) => {
                 let (section, index_end_header) = try_match_section_header(&tokens, index, false)?;
                 AstNode::push_section_ref(&current_node, section.clone())
                     .expect("Could not insert section!");
                 current_node = section;
                 index = index_end_header + 1;
             }
-            (TokenKind::BlankLine, _) => index += 1,
-            (TokenKind::Strong | TokenKind::Word, _) => {
+            (TK::BlankLine, _, _, _) => index += 1,
+            (_, TC::InlineMarker, _, _) | (TK::Word, _, _, _) => {
                 let (paragraph, next_start) = try_parse_paragraph(&tokens, index)?;
                 AstNode::push_child(&current_node, paragraph.clone())
                     .expect("Structural node can have children.");
                 index = next_start;
             }
             _ => index += 1,
+            // panic!(
+            //     "Unexpected token combination {:?} / {:?}",
+            //     tokens[index].kind,
+            //     tokens[index_line_end + 1].kind
+            // ),
         };
     }
 
@@ -93,7 +98,7 @@ pub fn try_match_section_header(
     let line_search_start = if skip_prefix { start_at + 2 } else { start_at };
     let line_end = find_next_kind(
         tokens,
-        &[TokenKind::NewLine],
+        &[TK::NewLine],
         ScanDirection::Forward,
         line_search_start,
     )
@@ -104,7 +109,7 @@ pub fn try_match_section_header(
     )?;
 
     let closing_index = line_end + 1;
-    if (closing_index >= tokens.len()) || (tokens[closing_index].kind != TokenKind::Separator) {
+    if (closing_index >= tokens.len()) || (tokens[closing_index].kind != TK::Separator) {
         return Err(FindElementError::SectionTitleMissingClosingAfterOpening {
             opening_index: start_at,
         });
@@ -140,11 +145,7 @@ fn try_parse_paragraph(
 ) -> Result<(NodeRef, usize), FindElementError> {
     let paragraph_end = find_next_kind(
         tokens,
-        &[
-            TokenKind::BlankLine,
-            TokenKind::Indent,
-            TokenKind::Separator,
-        ],
+        &[TK::BlankLine, TK::Indent, TK::Separator],
         ScanDirection::Forward,
         start_at,
     )
@@ -153,9 +154,9 @@ fn try_parse_paragraph(
     let mut index = start_at;
     while index < paragraph_end {
         let (node, new_index) = match tokens[index].category() {
-            token::TokenCategory::Inline => try_parse_inline(tokens, index)?,
-            token::TokenCategory::Plain => try_parse_plain(tokens, index)?,
-            token::TokenCategory::Control => {
+            TC::InlineMarker => try_parse_inline(tokens, index)?,
+            TC::Plain => try_parse_plain(tokens, index)?,
+            TC::Control => {
                 index += 1;
                 continue;
             }
@@ -177,13 +178,8 @@ fn try_parse_inline(
     start_at: usize,
 ) -> Result<(NodeRef, usize), FindElementError> {
     let inline_final = match tokens[start_at].kind {
-        TokenKind::Strong => find_next_kind(
-            tokens,
-            &[TokenKind::Strong],
-            ScanDirection::Forward,
-            start_at + 1,
-        )
-        .map_err(|_| FindElementError::StrongMissingClosing { start_at: start_at })?,
+        TK::Strong => find_next_kind(tokens, &[TK::Strong], ScanDirection::Forward, start_at + 1)
+            .map_err(|_| FindElementError::StrongMissingClosing { start_at: start_at })?,
         _ => {
             return Err(FindElementError::UnexpectedToken {
                 expected: "Inline".to_owned(),
@@ -207,11 +203,7 @@ fn try_parse_plain(
 ) -> Result<(NodeRef, usize), FindElementError> {
     let plain_tokens = find_next_kind(
         tokens,
-        &[
-            TokenKind::Strong,
-            TokenKind::BlankLine,
-            TokenKind::DoubleDot,
-        ], // TODO implement kinds_except
+        &[TK::Strong, TK::BlankLine, TK::DoubleDot], // TODO implement kinds_except
         ScanDirection::Forward,
         start_at,
     )
