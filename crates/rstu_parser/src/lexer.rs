@@ -11,13 +11,10 @@ pub fn tokenize(input: &str) -> Vec<Token> {
     while index < input.len() - 1 {
         let mut lexeme_len = 0;
         for kind in TokenKind::ALL {
-            let sub_str = &input[index - kind.context_len().0..];
+            let sub_str = &input[index - 1..];
             if let Some(token_match) = kind.find(sub_str) {
-                lexeme_len = token_match.len() - kind.context_len().0 - kind.context_len().1;
-                tokens.push(Token::new(
-                    kind,
-                    &sub_str[(kind.context_len().0)..lexeme_len + kind.context_len().0],
-                ));
+                lexeme_len = token_match.len() - 2;
+                tokens.push(Token::new(kind, &sub_str[1..lexeme_len + 1]));
                 break;
             }
         }
