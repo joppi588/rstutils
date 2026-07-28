@@ -94,6 +94,7 @@ pub enum ElementKind {
     Organization,
     Paragraph,
     Pending,
+    PlainText,
     Problematic,
     Raw,
     Reference,
@@ -187,6 +188,7 @@ impl ElementKind {
             | ElementKind::Inline
             | ElementKind::Literal
             | ElementKind::Math
+            | ElementKind::PlainText
             | ElementKind::Problematic
             | ElementKind::Strong
             | ElementKind::Subscript
@@ -244,7 +246,8 @@ impl ElementKind {
             | ElementKind::OptionString
             | ElementKind::Raw
             | ElementKind::Comment
-            | ElementKind::Target => ContentModel::TextOnly,
+            | ElementKind::Target
+            | ElementKind::PlainText => ContentModel::TextOnly,
 
             ElementKind::Abbreviation
             | ElementKind::Acronym
