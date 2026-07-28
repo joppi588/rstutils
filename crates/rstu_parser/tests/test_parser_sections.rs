@@ -9,27 +9,30 @@ use rstu_parser::FindElementError;
 use std::fs;
 use std::path::Path;
 
-fn section_data_path(filename: &str) -> std::path::PathBuf {
+fn data_path(directory: &str, filename: &str) -> std::path::PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("tests/data/sections")
+        .join("tests/data")
+        .join(directory)
         .join(filename)
 }
 
 #[rstest]
-#[case("ok_three_sections.rst", "ok_three_sections.yaml")]
-#[case("ok_sections_style.rst", "ok_sections_style.yaml")]
+#[case("sections", "ok_three_sections.rst", "ok_three_sections.yaml")]
+#[case("sections", "ok_sections_style.rst", "ok_sections_style.yaml")]
+#[case("body", "ok_strong.rst", "ok_strong.yaml")]
 fn parses_sections_and_matches_yaml_fixture(
+    #[case] directory: &str,
     #[case] rst_filename: &str,
     #[case] yaml_filename: &str,
 ) {
-    let rst_path = section_data_path(rst_filename);
+    let rst_path = data_path(directory, rst_filename);
     let rst_contents = fs::read_to_string(&rst_path)
         .unwrap_or_else(|_| panic!("failed to read sections test file: {rst_filename}"));
 
     let parsed = parse(&rst_contents).expect("expected parse to succeed");
     let actual_yaml = AstNode::to_yaml(&parsed).expect("failed to serialize parse output to yaml");
 
-    let expected_path = section_data_path(yaml_filename);
+    let expected_path = data_path(directory, yaml_filename);
     let expected_yaml = fs::read_to_string(&expected_path)
         .unwrap_or_else(|_| panic!("failed to read expected yaml fixture: {yaml_filename}"));
 
@@ -46,7 +49,7 @@ fn parses_sections_and_matches_yaml_fixture(
 
 #[test]
 fn test_missing_closing() {
-    let path = section_data_path("nok_sections_missing_closing.rst");
+    let path = data_path("sections", "nok_sections_missing_closing.rst");
     let contents =
         fs::read_to_string(path).unwrap_or_else(|_| panic!("failed to read sections test file"));
 
@@ -60,7 +63,7 @@ fn test_missing_closing() {
 
 #[test]
 fn test_unbalanced_section_style() {
-    let path = section_data_path("nok_sections_unbalanced_style.rst");
+    let path = data_path("sections", "nok_sections_unbalanced_style.rst");
     let contents =
         fs::read_to_string(path).unwrap_or_else(|_| panic!("failed to read sections test file"));
 
