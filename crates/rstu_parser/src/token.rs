@@ -23,7 +23,7 @@ macro_rules! compiled_regex {
     }};
 }
 macro_rules! token_kinds {
-    ($(($kind:ident, $pattern:expr, $category:ident)),+ $(,)?) => {
+    ($(($kind:ident, $pattern:expr)),+ $(,)?) => {
         pub const ALL: [TokenKind; count_idents!($($kind),+)] = [
             $(TokenKind::$kind),+
         ];
@@ -31,12 +31,6 @@ macro_rules! token_kinds {
         pub fn regex(self) -> &'static Regex {
             match self {
                 $(TokenKind::$kind => compiled_regex!(format!(r"^{}",$pattern)),)+
-            }
-        }
-
-        pub fn category(self) -> TokenCategory {
-            match self {
-                $(TokenKind::$kind => TokenCategory::$category,)+
             }
         }
     };
@@ -59,20 +53,30 @@ impl Token {
     pub fn as_tuple(&self) -> (TokenKind, &str) {
         (self.kind, &self.lexeme)
     }
-
-    pub fn category(&self) -> TokenCategory {
-        self.kind.category()
-    }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum TokenCategory {
-    DirectiveLike,
-    InlineMarker,
-    Structural,
-    Control,
-    Plain,
-    Table,
+pub struct TokenCategory;
+
+impl TokenCategory {
+    pub const DIRECTIVE_LIKE: &'static [TokenKind] =
+        &[TokenKind::DoubleDot, TokenKind::DoubleColon];
+    pub const INLINE_MARKER: &'static [TokenKind] = &[TokenKind::Strong];
+    pub const STRUCTURAL: &'static [TokenKind] = &[TokenKind::Separator];
+    pub const CONTROL: &'static [TokenKind] =
+        &[TokenKind::Indent, TokenKind::BlankLine, TokenKind::NewLine];
+    pub const PLAIN: &'static [TokenKind] =
+        &[TokenKind::Spaces, TokenKind::Word, TokenKind::LiteralChar];
+    pub const TABLE: &'static [TokenKind] = &[TokenKind::TableHorizontal];
+}
+
+pub trait TokenKindIs {
+    fn is(self, kinds: &[TokenKind]) -> bool;
+}
+
+impl TokenKindIs for TokenKind {
+    fn is(self, kinds: &[TokenKind]) -> bool {
+        kinds.contains(&self)
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -97,19 +101,18 @@ impl TokenKind {
         // Format (name, context length, context regex, token regex)
         (
             Separator,
-            format!(r"\n[{0}]{{4,}}\n", RECOMMENDED_SECTION_CHARS),
-            Structural
+            format!(r"\n[{0}]{{4,}}\n", RECOMMENDED_SECTION_CHARS)
         ),
-        (Indent, r"\n[ \t]+[^ \t\n]", Control),
-        (Spaces, r"[^ \t\n][ \t]+[^ \t]", Plain),
-        (DoubleDot, r"[\n\s]\.\.[\n\s]", DirectiveLike),
-        (DoubleColon, r"(.|\n)::(.|\n)", DirectiveLike),
-        (TableHorizontal, r"\n=+(?:\s+=+)+\s*\n", Table),
-        (BlankLine, r"\n[ \t]*\n(.|\n)", Control),
-        (NewLine, r"[^\n]\n(.|\n)", Control),
-        (Word, r"[^A-Za-z0-9_][A-Za-z0-9_]+[^A-Za-z0-9_]", Plain),
-        (Strong, r"(.|\n)\*\*(.|\n)", InlineMarker),
-        (LiteralChar, r"(.|\n)[\s\S](.|\n)", Plain)
+        (Indent, r"\n[ \t]+[^ \t\n]"),
+        (Spaces, r"[^ \t\n][ \t]+[^ \t]"),
+        (DoubleDot, r"[\n\s]\.\.[\n\s]"),
+        (DoubleColon, r"(.|\n)::(.|\n)"),
+        (TableHorizontal, r"\n=+(?:\s+=+)+\s*\n"),
+        (BlankLine, r"\n[ \t]*\n(.|\n)"),
+        (NewLine, r"[^\n]\n(.|\n)"),
+        (Word, r"[^A-Za-z0-9_][A-Za-z0-9_]+[^A-Za-z0-9_]"),
+        (Strong, r"(.|\n)\*\*(.|\n)"),
+        (LiteralChar, r"(.|\n)[\s\S](.|\n)")
     );
 
     pub fn find(self, input: &str) -> Option<&str> {
@@ -124,7 +127,7 @@ impl TokenKind {
 
 #[cfg(test)]
 mod tests {
-    use super::TokenKind;
+    use super::{TokenCategory, TokenKind, TokenKindIs};
 
     #[test]
     fn transition_matches() {
@@ -221,5 +224,12 @@ mod tests {
     #[test]
     fn word_non_matching_without_word_chars() {
         assert!(!TokenKind::Word.is_match("---\n***"));
+    }
+
+    #[test]
+    fn kind_is_matches_category_membership() {
+        assert!(TokenKind::Strong.is(TokenCategory::INLINE_MARKER));
+        assert!(TokenKind::Word.is(TokenCategory::PLAIN));
+        assert!(!TokenKind::Separator.is(TokenCategory::PLAIN));
     }
 }
