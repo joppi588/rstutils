@@ -50,7 +50,8 @@ pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
     let mut index: usize = 0;
     let mut current_node = doc.clone();
 
-    while index < tokens.len() - 1 {
+    while index < tokens.len() - 2 {
+        // final two tokens are always Newline+Blankline
         let index_line_end = find_next_kind(&tokens, &[TK::NewLine], ScanDirection::Forward, index)
             .expect("Token stream shall end with a newline.");
         match (tokens[index].kind, tokens[index_line_end + 1].kind) {
@@ -68,19 +69,19 @@ pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
                 current_node = section;
                 index = index_end_header + 1;
             }
-            (TK::BlankLine, _) => index += 1,
+            // TODO: Which cases are these?
+            (TK::NewLine, TK::BlankLine) | (TK::BlankLine, _) => index += 1,
             (kind, _) if kind.is(TC::INLINE_MARKER) || kind.is(TC::PLAIN) => {
                 let (paragraph, next_start) = try_parse_paragraph(&tokens, index)?;
                 AstNode::push_child(&current_node, paragraph.clone())
                     .expect("Structural node can have children.");
                 index = next_start;
             }
-            _ => index += 1,
-            // panic!(
-            //     "Unexpected token combination {:?} / {:?}",
-            //     tokens[index].kind,
-            //     tokens[index_line_end + 1].kind
-            // ),
+            _ => panic!(
+                "Unexpected token combination ({:?},{:?})",
+                tokens[index].kind,
+                tokens[index_line_end + 1].kind
+            ),
         };
     }
 
