@@ -40,6 +40,77 @@ macro_rules! rst_vs_yaml {
             }
         }
 
+        fn yaml_remainder(
+            actual: &serde_yaml::Value,
+            expected: &serde_yaml::Value,
+        ) -> Option<(serde_yaml::Value, serde_yaml::Value)> {
+            match (actual, expected) {
+                (serde_yaml::Value::Mapping(a), serde_yaml::Value::Mapping(e)) => {
+                    let mut only_actual = serde_yaml::Mapping::new();
+                    let mut only_expected = serde_yaml::Mapping::new();
+
+                    for (k, av) in a {
+                        match e.get(k) {
+                            Some(ev) => {
+                                if let Some((da, de)) = yaml_remainder(av, ev) {
+                                    only_actual.insert(k.clone(), da);
+                                    only_expected.insert(k.clone(), de);
+                                }
+                            }
+                            None => {
+                                only_actual.insert(k.clone(), av.clone());
+                            }
+                        }
+                    }
+
+                    for (k, ev) in e {
+                        if !a.contains_key(k) {
+                            only_expected.insert(k.clone(), ev.clone());
+                        }
+                    }
+
+                    if only_actual.is_empty() && only_expected.is_empty() {
+                        None
+                    } else {
+                        Some((
+                            serde_yaml::Value::Mapping(only_actual),
+                            serde_yaml::Value::Mapping(only_expected),
+                        ))
+                    }
+                }
+                (serde_yaml::Value::Sequence(a), serde_yaml::Value::Sequence(e)) => {
+                    let mut only_actual = Vec::new();
+                    let mut only_expected = Vec::new();
+                    let min_len = a.len().min(e.len());
+
+                    for idx in 0..min_len {
+                        if let Some((da, de)) = yaml_remainder(&a[idx], &e[idx]) {
+                            only_actual.push(da);
+                            only_expected.push(de);
+                        }
+                    }
+
+                    if a.len() > min_len {
+                        only_actual.extend(a[min_len..].iter().cloned());
+                    }
+                    if e.len() > min_len {
+                        only_expected.extend(e[min_len..].iter().cloned());
+                    }
+
+                    if only_actual.is_empty() && only_expected.is_empty() {
+                        None
+                    } else {
+                        Some((
+                            serde_yaml::Value::Sequence(only_actual),
+                            serde_yaml::Value::Sequence(only_expected),
+                        ))
+                    }
+                }
+                _ if actual == expected => None,
+                _ => Some((actual.clone(), expected.clone())),
+            }
+        }
+
         let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
             .join("tests/data")
             .join($directory)
@@ -65,6 +136,22 @@ macro_rules! rst_vs_yaml {
 
         canonicalize_yaml(&mut actual_value);
         canonicalize_yaml(&mut expected_value);
+
+        if actual_value != expected_value {
+            let (actual_remainder, expected_remainder) =
+                yaml_remainder(&actual_value, &expected_value).unwrap_or_else(|| {
+                    (actual_value.clone(), expected_value.clone())
+                });
+            let actual_pretty = serde_yaml::to_string(&actual_remainder)
+                .expect("failed to pretty-print actual yaml remainder");
+            let expected_pretty = serde_yaml::to_string(&expected_remainder)
+                .expect("failed to pretty-print expected yaml remainder");
+
+            panic!(
+                "Unexpected parse output for {}\n\nActual-only remainder:\n{}\nExpected-only remainder:\n{}",
+                $rst_filename, actual_pretty, expected_pretty
+            );
+        }
 
         assert_eq!(
             actual_value, expected_value,
