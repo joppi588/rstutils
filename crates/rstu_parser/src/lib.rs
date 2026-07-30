@@ -187,7 +187,6 @@ fn try_parse_inline(
         "text",
         tokens_to_text(&tokens[start_at + 1..inline_final]),
     );
-    // TODO: recursive parsing of nested inline or text
     Ok((strong, inline_final + 1))
 }
 

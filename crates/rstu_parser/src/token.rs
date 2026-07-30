@@ -186,8 +186,7 @@ impl TokenKind {
         (Punctuation, r"(.|\n)[[:punct:]](.|\n)"),
         (LiteralChar, r"(.|\n).(.|\n)"),
     );
-    // TODO: Model context, allow punctuation as delimiters.
-    // punctuation tokens
+
     // tests according to inline markup recognition rules.
 
     pub fn find(self, input: &str) -> Option<&str> {
