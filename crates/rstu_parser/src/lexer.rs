@@ -6,7 +6,7 @@ use crate::token::{Token, TokenKind};
 
 pub fn tokenize(input: &str) -> Vec<Token> {
     let mut tokens = Vec::new();
-    let input = format!("\n{input}\n\n"); // leading and trailing blank line
+    let input = format!("\n\n{input}\n\n"); // leading and trailing blank line
     let mut index: usize = 1;
     while index < input.len() - 1 {
         let mut lexeme_len = 0;
@@ -32,6 +32,7 @@ mod tests {
     fn tokenize_spaces_words() {
         let input = "Hello World\n";
         let expected = vec![
+            Token::new(TokenKind::BlankLine, "\n"),
             Token::new(TokenKind::Word, "Hello"),
             Token::new(TokenKind::Spaces, " "),
             Token::new(TokenKind::Word, "World"),
@@ -44,13 +45,12 @@ mod tests {
 
     #[test]
     fn tokenize_treats_unmatched_input_as_literal_string() {
-        let input = "*%*%*\n";
+        let input = "abc\x07def\n";
         let expected = vec![
-            Token::new(TokenKind::LiteralChar, "*"),
-            Token::new(TokenKind::LiteralChar, "%"),
-            Token::new(TokenKind::LiteralChar, "*"),
-            Token::new(TokenKind::LiteralChar, "%"),
-            Token::new(TokenKind::LiteralChar, "*"),
+            Token::new(TokenKind::BlankLine, "\n"),
+            Token::new(TokenKind::Word, "abc"),
+            Token::new(TokenKind::LiteralChar, "\x07"),
+            Token::new(TokenKind::Word, "def"),
             Token::new(TokenKind::NewLine, "\n"),
             Token::new(TokenKind::BlankLine, "\n"),
         ];

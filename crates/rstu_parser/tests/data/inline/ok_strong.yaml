@@ -5,7 +5,7 @@ children:
       section_marker: -------------------------------
     children:
       - kind: Title
-        text: "Short text with strong elements\n"
+        text: "Short text with strong elements"
       - kind: Paragraph
         children:
           - kind: Strong

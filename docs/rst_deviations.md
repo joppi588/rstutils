@@ -4,5 +4,6 @@ This document lists deviations from the rst specification.
 - Allowed section/transition markers: restrict to the "recommended" set.
 - Minimum length for section header marker: 4 chars (tbc)
 - Additional element type "Text" for plain text.
+- character_level_inline_markup = False
 
 # Interpretations
