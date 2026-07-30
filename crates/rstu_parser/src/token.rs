@@ -84,16 +84,6 @@ impl TokenCategory {
     pub const TABLE: &'static [TokenKind] = &[TokenKind::TableHorizontal];
 }
 
-pub trait TokenKindIs {
-    fn is(self, kinds: &[TokenKind]) -> bool;
-}
-
-impl TokenKindIs for TokenKind {
-    fn is(self, kinds: &[TokenKind]) -> bool {
-        kinds.contains(&self)
-    }
-}
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TokenKind {
     Separator,
@@ -119,6 +109,10 @@ pub enum TokenKind {
 }
 
 impl TokenKind {
+    pub fn is(self, kinds: &[TokenKind]) -> bool {
+        kinds.contains(&self)
+    }
+
     token_kinds!(
         // IMPORTANT:
         // The order of the enum matters, as the first matching token will be picked.
@@ -201,7 +195,7 @@ impl TokenKind {
 
 #[cfg(test)]
 mod tests {
-    use super::{TokenCategory, TokenKind, TokenKindIs};
+    use super::{TokenCategory, TokenKind};
 
     #[test]
     fn transition_matches() {

@@ -9,7 +9,7 @@ pub mod token_slice;
 use rstu_ast::{AstNode, ElementKind, NodeRef};
 
 use crate::lexer::tokenize;
-use crate::token::{Token, TokenCategory as TC, TokenKind as TK, TokenKindIs};
+use crate::token::{Token, TokenCategory as TC, TokenKind as TK};
 use token_slice::{find_next_kind, tokens_to_text, ScanDirection};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
