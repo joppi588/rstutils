@@ -51,19 +51,17 @@ pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
         let index_line_end = find_next_kind(&tokens, &[TK::NewLine], ScanDirection::Forward, index)
             .expect("Token stream shall end with a newline.");
         match (tokens[index].kind, tokens[index_line_end + 1].kind) {
-            (TK::Separator, TK::Indent) | (TK::Separator, TK::Word) => {
-                let (section, next_start) = try_match_section_header(&tokens, index, true)?;
+            (token1, token2)
+                if (token1, token2) == (TK::Separator, TK::Indent)
+                    || (token1, token2) == (TK::Separator, TK::Word)
+                    || (token1, token2) == (TK::Word, TK::Separator) =>
+            {
+                let (section, next_start) =
+                    try_match_section_header(&tokens, index, token1.is(&[TK::Separator]))?;
                 AstNode::push_section_ref(&current_node, section.clone())
                     .expect("Could not insert section!");
                 current_node = section;
                 index = next_start;
-            }
-            (TK::Word, TK::Separator) => {
-                let (section, index_end_header) = try_match_section_header(&tokens, index, false)?;
-                AstNode::push_section_ref(&current_node, section.clone())
-                    .expect("Could not insert section!");
-                current_node = section;
-                index = index_end_header + 1;
             }
             (TK::NewLine, TK::BlankLine) | (TK::BlankLine, _) => index += 1,
             (kind, _) if kind.is(TC::INLINE_MARKER) || kind.is(TC::PLAIN) => {
@@ -86,11 +84,11 @@ pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
 pub fn try_match_section_header(
     tokens: &[Token],
     start_at: usize,
-    skip_prefix: bool,
+    has_overline: bool,
 ) -> Result<(NodeRef, usize), FindElementError> {
-    let title_start = start_at + usize::from(skip_prefix);
-    let line_search_start = if skip_prefix { start_at + 2 } else { start_at };
-    let line_end = find_next_kind(
+    let title_start = start_at + usize::from(has_overline);
+    let line_search_start = if has_overline { start_at + 2 } else { start_at };
+    let title_end = find_next_kind(
         tokens,
         &[TK::NewLine],
         ScanDirection::Forward,
@@ -102,16 +100,15 @@ pub fn try_match_section_header(
         },
     )?;
 
-    let closing_index = line_end + 1;
+    let closing_index = title_end + 1;
     if (closing_index >= tokens.len()) || (tokens[closing_index].kind != TK::Separator) {
         return Err(FindElementError::SectionTitleMissingClosingAfterOpening {
             opening_index: start_at,
         });
     }
-
     let closing_style = tokens[closing_index].lexeme.clone();
 
-    if skip_prefix {
+    if has_overline {
         let opening_style = tokens[start_at].lexeme.clone(); // TODO: single char + opening/closing length
         if tokens[start_at].lexeme != tokens[closing_index].lexeme {
             return Err(FindElementError::SectionTitleUnbalancedStyle {
@@ -126,11 +123,11 @@ pub fn try_match_section_header(
     AstNode::with_attr(&section_marker, "section_marker", closing_style);
 
     let title = AstNode::new_ref(ElementKind::Title);
-    AstNode::with_text(&title, tokens_to_text(&tokens[title_start..line_end + 1]));
+    AstNode::with_text(&title, tokens_to_text(&tokens[title_start..title_end + 1]));
     AstNode::push_child(&section_marker, title)
         .expect("section title should always be a valid section child");
 
-    Ok((section_marker, closing_index + 1))
+    Ok((section_marker, closing_index + 2))
 }
 
 fn try_parse_paragraph(
