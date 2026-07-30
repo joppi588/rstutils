@@ -140,7 +140,9 @@ fn try_parse_paragraph(
     while index < paragraph_end {
         let (node, new_index) = match tokens[index].kind {
             kind if kind.is(TC::INLINE_MARKER) => try_parse_inline(tokens, index)?,
-            kind if kind.is(TC::PLAIN) => try_parse_plain(tokens, index)?,
+            kind if kind.is(TC::PLAIN) || kind == TK::Punctuation => {
+                try_parse_plain(tokens, index)?
+            }
             kind if kind.is(TC::CONTROL) => {
                 index += 1;
                 continue;
