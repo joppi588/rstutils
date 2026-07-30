@@ -6,6 +6,9 @@ use regex::Regex;
 use std::sync::LazyLock;
 
 static RECOMMENDED_SECTION_CHARS: &str = "=\\-`:.'\"~\\^_\\*\\+#"; // escaped =-`:.'"~^_*+#
+static INLINE_PRE_CHARS: &str = r#"(?:[\n\s\-:/'"<(\[{]|\p{Ps}|\p{Pi}|\p{Pf}|\p{Pd}|\p{Po})"#;
+static INLINE_POST_CHARS: &str =
+    r#"(?:[\n\s\-\.,:;!?\\/'")\]}>]|\p{Pe}|\p{Pi}|\p{Pf}|\p{Pd}|\p{Po})"#;
 
 macro_rules! count_idents {
     ($($ident:ident),* $(,)?) => {
@@ -23,7 +26,7 @@ macro_rules! compiled_regex {
     }};
 }
 macro_rules! token_kinds {
-    ($(($kind:ident, $pattern:expr, $category:ident)),+ $(,)?) => {
+    ($(($kind:ident, $pattern:expr)),+ $(,)?) => {
         pub const ALL: [TokenKind; count_idents!($($kind),+)] = [
             $(TokenKind::$kind),+
         ];
@@ -31,12 +34,6 @@ macro_rules! token_kinds {
         pub fn regex(self) -> &'static Regex {
             match self {
                 $(TokenKind::$kind => compiled_regex!(format!(r"^{}",$pattern)),)+
-            }
-        }
-
-        pub fn category(self) -> TokenCategory {
-            match self {
-                $(TokenKind::$kind => TokenCategory::$category,)+
             }
         }
     };
@@ -59,20 +56,32 @@ impl Token {
     pub fn as_tuple(&self) -> (TokenKind, &str) {
         (self.kind, &self.lexeme)
     }
-
-    pub fn category(&self) -> TokenCategory {
-        self.kind.category()
-    }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum TokenCategory {
-    DirectiveLike,
-    Inline,
-    Structural,
-    Control,
-    Plain,
-    Table,
+pub struct TokenCategory;
+
+impl TokenCategory {
+    pub const DIRECTIVE_LIKE: &'static [TokenKind] =
+        &[TokenKind::DoubleDot, TokenKind::DoubleColon];
+    pub const INLINE_MARKER: &'static [TokenKind] = &[
+        TokenKind::Strong,
+        TokenKind::Emphasis,
+        TokenKind::InterpretedText,
+        TokenKind::InlineLiteral,
+        TokenKind::SubstitutionReference,
+        TokenKind::HyperlinkReference,
+        TokenKind::InlineInternalTarget,
+    ];
+    pub const STRUCTURAL: &'static [TokenKind] = &[TokenKind::Separator];
+    pub const CONTROL: &'static [TokenKind] =
+        &[TokenKind::Indent, TokenKind::BlankLine, TokenKind::NewLine];
+    pub const PLAIN: &'static [TokenKind] = &[
+        TokenKind::Spaces,
+        TokenKind::Word,
+        TokenKind::Punctuation,
+        TokenKind::LiteralChar,
+    ];
+    pub const TABLE: &'static [TokenKind] = &[TokenKind::TableHorizontal];
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -86,31 +95,93 @@ pub enum TokenKind {
     BlankLine,
     NewLine,
     Word,
+    Punctuation,
     Strong,
+    Emphasis,
+    InterpretedText,
+    InlineLiteral,
+    SubstitutionReference,
+    InlineInternalTarget,
+    FootnoteReferenceOpen,
+    FootnoteReferenceClose,
+    HyperlinkReference,
     LiteralChar,
 }
 
 impl TokenKind {
+    pub fn is(self, kinds: &[TokenKind]) -> bool {
+        kinds.contains(&self)
+    }
+
     token_kinds!(
         // IMPORTANT:
         // The order of the enum matters, as the first matching token will be picked.
         // Format (name, context length, context regex, token regex)
         (
             Separator,
-            format!(r"\n[{0}]{{4,}}\n", RECOMMENDED_SECTION_CHARS),
-            Structural
+            format!(r"\n[{0}]{{4,}}\n", RECOMMENDED_SECTION_CHARS)
         ),
-        (Indent, r"\n[ \t]+[^ \t\n]", Control),
-        (Spaces, r"[^ \t\n][ \t]+[^ \t]", Plain),
-        (DoubleDot, r"[\n\s]\.\.[\n\s]", DirectiveLike),
-        (DoubleColon, r"(.|\n)::(.|\n)", DirectiveLike),
-        (TableHorizontal, r"\n=+(?:\s+=+)+\s*\n", Table),
-        (BlankLine, r"\n[ \t]*\n(.|\n)", Control),
-        (NewLine, r"[^\n]\n(.|\n)", Control),
-        (Word, r"[^A-Za-z0-9_][A-Za-z0-9_]+[^A-Za-z0-9_]", Plain),
-        (Strong, r"(.|\n)\*\*(.|\n)", Inline),
-        (LiteralChar, r"(.|\n)[\s\S](.|\n)", Plain)
+        (Indent, r"\n[ \t]+[^ \t\n]"),
+        (Spaces, r"[^ \t\n][ \t]+[^ \t]"),
+        (DoubleDot, r"[\n\s]\.\.[\n\s]"),
+        (DoubleColon, r"(.|\n)::(.|\n)"),
+        (TableHorizontal, r"\n=+(?:\s+=+)+\s*\n"),
+        (BlankLine, r"\n[ \t]*\n(.|\n)"),
+        (NewLine, r"[^\n]\n(.|\n)"),
+        (Word, r"[^A-Za-z0-9_][A-Za-z0-9_]+[^A-Za-z0-9_]"),
+        (
+            Strong,
+            format!(
+                r"(?:{0}\*\*[^\s]|[^\s]\*\*{1})",
+                INLINE_PRE_CHARS, INLINE_POST_CHARS
+            )
+        ),
+        (
+            Emphasis,
+            format!(
+                r"(?:{0}\*[^\s]|[^\s]\*{1})",
+                INLINE_PRE_CHARS, INLINE_POST_CHARS
+            )
+        ),
+        (
+            InlineLiteral,
+            format!(
+                r"(?:{0}``[^\s]|[^\s]``{1})",
+                INLINE_PRE_CHARS, INLINE_POST_CHARS
+            )
+        ),
+        (
+            InterpretedText,
+            format!(
+                r"(?:{0}`[^\s]|[^\s]`{1})",
+                INLINE_PRE_CHARS, INLINE_POST_CHARS
+            )
+        ),
+        (
+            SubstitutionReference,
+            format!(
+                r"(?:{0}\|[^\s]|[^\s]\|{1})",
+                INLINE_PRE_CHARS, INLINE_POST_CHARS
+            )
+        ),
+        (
+            InlineInternalTarget,
+            format!(r"{0}_`[^\s]", INLINE_PRE_CHARS)
+        ),
+        (
+            FootnoteReferenceOpen,
+            format!(r"{0}\[[^\s]", INLINE_PRE_CHARS)
+        ),
+        (
+            FootnoteReferenceClose,
+            format!(r"[^\s]\]_{0}", INLINE_POST_CHARS)
+        ),
+        (HyperlinkReference, format!(r"[^\s]_{0}", INLINE_POST_CHARS)),
+        (Punctuation, r"(.|\n)[[:punct:]](.|\n)"),
+        (LiteralChar, r"(.|\n).(.|\n)"),
     );
+
+    // tests according to inline markup recognition rules.
 
     pub fn find(self, input: &str) -> Option<&str> {
         self.regex().find(input).map(|m| m.as_str())
@@ -124,7 +195,7 @@ impl TokenKind {
 
 #[cfg(test)]
 mod tests {
-    use super::TokenKind;
+    use super::{TokenCategory, TokenKind};
 
     #[test]
     fn transition_matches() {
@@ -155,12 +226,35 @@ mod tests {
 
     #[test]
     fn bold_matches() {
-        assert!(TokenKind::Strong.is_match("\n**\n"));
+        assert!(TokenKind::Strong.is_match(" **x"));
+        assert!(TokenKind::Strong.is_match("x** "));
     }
 
     #[test]
     fn bold_non_matching() {
         assert!(!TokenKind::Strong.is_match("*"));
+    }
+
+    #[test]
+    fn inline_markup_tokens_match_common_delimiters() {
+        assert!(TokenKind::Emphasis.is_match(" *x"));
+        assert!(TokenKind::InterpretedText.is_match(" `x"));
+        assert!(TokenKind::InlineLiteral.is_match(" ``x"));
+        assert!(TokenKind::SubstitutionReference.is_match(" |x"));
+        assert!(TokenKind::HyperlinkReference.is_match("x_ "));
+        assert!(TokenKind::FootnoteReferenceOpen.is_match(" [x"));
+    }
+
+    // TODO: exclude escaped characters
+
+    #[test]
+    fn emphasis_non_matching_for_strong_delimiters() {
+        assert!(!TokenKind::Emphasis.is_match("**"));
+    }
+
+    #[test]
+    fn interpreted_text_non_matching_for_double_backticks() {
+        assert!(!TokenKind::InterpretedText.is_match("``"));
     }
 
     #[test]
@@ -221,5 +315,26 @@ mod tests {
     #[test]
     fn word_non_matching_without_word_chars() {
         assert!(!TokenKind::Word.is_match("---\n***"));
+    }
+
+    #[test]
+    fn punctuation_matches_ascii_non_alphanumeric() {
+        assert!(TokenKind::Punctuation.is_match("x,x"));
+        assert!(TokenKind::Punctuation.is_match("x!x"));
+        assert!(TokenKind::Punctuation.is_match("x_x"));
+    }
+
+    #[test]
+    fn punctuation_non_matching_for_alphanumeric() {
+        assert!(!TokenKind::Punctuation.is_match("xax"));
+        assert!(!TokenKind::Punctuation.is_match("x1x"));
+    }
+
+    #[test]
+    fn kind_is_matches_category_membership() {
+        assert!(TokenKind::Strong.is(TokenCategory::INLINE_MARKER));
+        assert!(TokenKind::Word.is(TokenCategory::PLAIN));
+        assert!(TokenKind::Punctuation.is(TokenCategory::PLAIN));
+        assert!(!TokenKind::Separator.is(TokenCategory::PLAIN));
     }
 }
