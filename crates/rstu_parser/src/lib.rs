@@ -86,19 +86,13 @@ pub fn try_match_section_header(
     start_at: usize,
     has_overline: bool,
 ) -> Result<(NodeRef, usize), FindElementError> {
-    let title_start = start_at + usize::from(has_overline);
-    let line_search_start = if has_overline { start_at + 2 } else { start_at };
-    let title_end = find_next_kind(
-        tokens,
-        &[TK::NewLine],
-        ScanDirection::Forward,
-        line_search_start,
-    )
-    .map_err(
-        |_| FindElementError::SectionTitleMissingClosingAfterOpening {
-            opening_index: start_at,
-        },
-    )?;
+    let title_start = start_at + 2 * usize::from(has_overline);
+    let title_end = find_next_kind(tokens, &[TK::NewLine], ScanDirection::Forward, title_start)
+        .map_err(
+            |_| FindElementError::SectionTitleMissingClosingAfterOpening {
+                opening_index: start_at,
+            },
+        )?;
 
     let closing_index = title_end + 1;
     if (closing_index >= tokens.len()) || (tokens[closing_index].kind != TK::Separator) {
@@ -119,15 +113,15 @@ pub fn try_match_section_header(
         }
     }
 
-    let section_marker = AstNode::new_ref(ElementKind::Section);
-    AstNode::with_attr(&section_marker, "section_marker", closing_style);
+    let section = AstNode::new_ref(ElementKind::Section);
+    AstNode::with_attr(&section, "section_marker", closing_style);
 
     let title = AstNode::new_ref(ElementKind::Title);
-    AstNode::with_text(&title, tokens_to_text(&tokens[title_start..title_end + 1]));
-    AstNode::push_child(&section_marker, title)
+    AstNode::with_text(&title, tokens_to_text(&tokens[title_start..title_end]));
+    AstNode::push_child(&section, title)
         .expect("section title should always be a valid section child");
 
-    Ok((section_marker, closing_index + 2))
+    Ok((section, closing_index + 2))
 }
 
 fn try_parse_paragraph(
