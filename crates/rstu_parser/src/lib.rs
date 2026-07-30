@@ -38,12 +38,8 @@ pub enum FindElementError {
     },
 }
 
-// Parser implementation:
-// Lookahead one line -> Decide on element.
-
-// TODO: activate panic case
-// Use Token Categories
-
+/// Parser implementation:
+/// Lookahead one line -> Decide on element.
 pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
     let tokens = tokenize(input);
     let doc = AstNode::new_ref(ElementKind::Document);
@@ -69,7 +65,6 @@ pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
                 current_node = section;
                 index = index_end_header + 1;
             }
-            // TODO: Which cases are these?
             (TK::NewLine, TK::BlankLine) | (TK::BlankLine, _) => index += 1,
             (kind, _) if kind.is(TC::INLINE_MARKER) || kind.is(TC::PLAIN) => {
                 let (paragraph, next_start) = try_parse_paragraph(&tokens, index)?;

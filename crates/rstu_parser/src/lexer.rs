@@ -45,14 +45,12 @@ mod tests {
 
     #[test]
     fn tokenize_treats_unmatched_input_as_literal_string() {
-        let input = "*%*%*\n";
+        let input = "abc\x07def\n";
         let expected = vec![
             Token::new(TokenKind::BlankLine, "\n"),
-            Token::new(TokenKind::LiteralChar, "*"),
-            Token::new(TokenKind::LiteralChar, "%"),
-            Token::new(TokenKind::LiteralChar, "*"),
-            Token::new(TokenKind::LiteralChar, "%"),
-            Token::new(TokenKind::LiteralChar, "*"),
+            Token::new(TokenKind::Word, "abc"),
+            Token::new(TokenKind::LiteralChar, "\x07"),
+            Token::new(TokenKind::Word, "def"),
             Token::new(TokenKind::NewLine, "\n"),
             Token::new(TokenKind::BlankLine, "\n"),
         ];
