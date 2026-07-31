@@ -17,6 +17,8 @@ pub fn tokens_to_text(tokens: &[Token]) -> String {
     text
 }
 
+// better have two separate finders, one with interrupt, the other without.
+
 pub fn find_next_kind(
     tokens: &[Token],
     kinds: &[TokenKind],
@@ -26,7 +28,31 @@ pub fn find_next_kind(
         .iter()
         .enumerate()
         .skip(start_at)
-        .find_map(|(index, token)| kinds.contains(&token.kind).then_some(index))
+        .find_map(|(index, token)| (&token.kind).is(kinds).then_some(index))
+        .ok_or(TokenSliceError::TokenNotFound {
+            kinds: kinds.to_vec(),
+        })
+}
+
+pub fn find_next_kind_interrupt(
+    tokens: &[Token],
+    kinds: &[TokenKind],
+    interrupt_kinds: &[TokenKind],
+    start_at: usize,
+) -> Result<Option<usize>, TokenSliceError> {
+    tokens
+        .iter()
+        .enumerate()
+        .skip(start_at)
+        .find_map(|(index, token)| {
+            if (&token.kind).is(kinds) {
+                return Some(Some(index));
+            }
+            if (&token.kind).is(interrupt_kinds) {
+                return Some(None);
+            }
+            None
+        })
         .ok_or(TokenSliceError::TokenNotFound {
             kinds: kinds.to_vec(),
         })

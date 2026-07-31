@@ -115,6 +115,10 @@ fn try_parse_directive_like(
     tokens: &[Token],
     start_at: usize,
 ) -> Result<(NodeRef, usize), FindElementError> {
+    let _line_end = find_next_kind(tokens, &[TK::NewLine], start_at);
+    // interrupt_kinds: citation, citations_,
+    // directives_, footnotes_, `hyperlink targets`_, or `substitution
+    // definitions`_
     // find_next_kind newline, break if any non plain element
     // if Some() -> Directive
     // else comment
