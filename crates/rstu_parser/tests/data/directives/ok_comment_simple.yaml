@@ -1,4 +1,0 @@
-kind: Document
-children:
-  - kind: Comment
-    text: "This is a simple comment.\nIt should be ignored by the parser as visible content.\n"

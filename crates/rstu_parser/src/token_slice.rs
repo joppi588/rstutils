@@ -4,18 +4,9 @@
 
 use crate::token::{Token, TokenKind};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ScanDirection {
-    Forward,
-    Backward,
-}
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum TokenSliceError {
-    TokenNotFound {
-        kinds: Vec<TokenKind>,
-        direction: ScanDirection,
-    },
+    TokenNotFound { kinds: Vec<TokenKind> },
 }
 
 pub fn tokens_to_text(tokens: &[Token]) -> String {
@@ -29,28 +20,16 @@ pub fn tokens_to_text(tokens: &[Token]) -> String {
 pub fn find_next_kind(
     tokens: &[Token],
     kinds: &[TokenKind],
-    direction: ScanDirection,
     start_at: usize,
 ) -> Result<usize, TokenSliceError> {
-    match direction {
-        ScanDirection::Forward => tokens
-            .iter()
-            .enumerate()
-            .skip(start_at)
-            .find_map(|(index, token)| kinds.contains(&token.kind).then_some(index))
-            .ok_or(TokenSliceError::TokenNotFound {
-                kinds: kinds.to_vec(),
-                direction,
-            }),
-        ScanDirection::Backward => tokens[..start_at]
-            .iter()
-            .rposition(|token| kinds.contains(&token.kind))
-            .map(|index| index + 1)
-            .ok_or(TokenSliceError::TokenNotFound {
-                kinds: kinds.to_vec(),
-                direction,
-            }),
-    }
+    tokens
+        .iter()
+        .enumerate()
+        .skip(start_at)
+        .find_map(|(index, token)| kinds.contains(&token.kind).then_some(index))
+        .ok_or(TokenSliceError::TokenNotFound {
+            kinds: kinds.to_vec(),
+        })
 }
 
 pub fn skip_kinds(
@@ -65,13 +44,12 @@ pub fn skip_kinds(
         .find_map(|(index, token)| (!kinds.contains(&token.kind)).then_some(index))
         .ok_or(TokenSliceError::TokenNotFound {
             kinds: kinds.to_vec(),
-            direction: ScanDirection::Forward,
         })
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{find_next_kind, skip_kinds, ScanDirection};
+    use super::{find_next_kind, skip_kinds};
     use crate::token::{Token, TokenKind};
 
     #[test]
@@ -82,31 +60,7 @@ mod tests {
             Token::new(TokenKind::NewLine, "\n"),
         ];
 
-        let found = find_next_kind(
-            &tokens,
-            &[TokenKind::BlankLine, TokenKind::NewLine],
-            ScanDirection::Forward,
-            0,
-        );
-
-        assert_eq!(found, Ok(2));
-    }
-
-    #[test]
-    fn find_next_kind_scans_backward_to_after_matching_token() {
-        let tokens = vec![
-            Token::new(TokenKind::Word, "before"),
-            Token::new(TokenKind::BlankLine, "\n\n"),
-            Token::new(TokenKind::Word, "after"),
-            Token::new(TokenKind::Separator, "----"),
-        ];
-
-        let found = find_next_kind(
-            &tokens,
-            &[TokenKind::BlankLine, TokenKind::NewLine],
-            ScanDirection::Backward,
-            3,
-        );
+        let found = find_next_kind(&tokens, &[TokenKind::BlankLine, TokenKind::NewLine], 0);
 
         assert_eq!(found, Ok(2));
     }
@@ -137,7 +91,6 @@ mod tests {
             found,
             Err(super::TokenSliceError::TokenNotFound {
                 kinds: vec![TokenKind::Spaces, TokenKind::NewLine],
-                direction: ScanDirection::Forward,
             })
         );
     }

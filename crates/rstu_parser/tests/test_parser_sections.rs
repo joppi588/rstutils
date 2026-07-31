@@ -5,7 +5,7 @@
 use rstest::rstest;
 use rstu_ast::AstNode;
 use rstu_parser::parse;
-use rstu_parser::FindElementError;
+use rstu_parser::parser_errors::FindElementError;
 use std::fs;
 use std::path::Path;
 mod test_parser;

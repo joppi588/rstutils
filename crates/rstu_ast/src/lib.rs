@@ -62,6 +62,10 @@ impl AstNode {
         Ok(())
     }
 
+    pub fn push_body_element(current: &NodeRef, body: NodeRef) -> Result<NodeRef, ValidationError> {
+        Ok(body)
+    }
+
     pub fn push_section_ref(
         current: &NodeRef,
         section: NodeRef,
