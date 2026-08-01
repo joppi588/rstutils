@@ -24,14 +24,8 @@ pub fn find_next_kind(
     kinds: &[TokenKind],
     start_at: usize,
 ) -> Result<usize, TokenSliceError> {
-    tokens
-        .iter()
-        .enumerate()
-        .skip(start_at)
-        .find_map(|(index, token)| (&token.kind).is(kinds).then_some(index))
-        .ok_or(TokenSliceError::TokenNotFound {
-            kinds: kinds.to_vec(),
-        })
+    Ok(find_next_kind_interrupt(tokens, kinds, &[], start_at)?
+        .expect("interrupt_kinds is empty, so None is unreachable"))
 }
 
 pub fn find_next_kind_interrupt(

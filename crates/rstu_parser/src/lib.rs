@@ -14,6 +14,8 @@ use crate::token::{Token, TokenCategory as TC, TokenKind as TK};
 use parser_errors::FindElementError;
 use token_slice::{find_next_kind, tokens_to_text};
 
+static EXPECT_NEWLINE: &str = "There is at least one newline at the end of tokens.";
+
 /// Parser implementation:
 /// Lookahead one line -> Decide on element.
 pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
@@ -115,15 +117,42 @@ fn try_parse_directive_like(
     tokens: &[Token],
     start_at: usize,
 ) -> Result<(NodeRef, usize), FindElementError> {
-    let _line_end = find_next_kind(tokens, &[TK::NewLine], start_at);
-    // interrupt_kinds: citation, citations_,
-    // directives_, footnotes_, `hyperlink targets`_, or `substitution
-    // definitions`_
-    // find_next_kind newline, break if any non plain element
-    // if Some() -> Directive
-    // else comment
-    let directive = AstNode::new_ref(ElementKind::Comment);
-    Ok((directive, start_at + 1))
+    let index = find_next_kind(
+        tokens,
+        &[
+            TK::NewLine,
+            TK::FootnoteReferenceOpen,
+            TK::DoubleColon,
+            TK::HyperlinkReference,
+            TK::SubstitutionReference,
+        ],
+        start_at,
+    )
+    .expect(EXPECT_NEWLINE);
+    let (directive, final_index) = match &tokens[index].kind {
+        TK::NewLine => try_parse_comment(tokens, start_at, index)?,
+        _ => panic!("Not implemented directive-like."),
+    };
+    Ok((directive, final_index + 1))
+}
+
+fn try_parse_comment(
+    tokens: &[Token],
+    start_at: usize,
+    first_line_end: usize,
+) -> Result<(NodeRef, usize), FindElementError> {
+    let mut index = first_line_end;
+    while tokens[index + 1].kind == TK::Indent {
+        index = find_next_kind(tokens, &[TK::NewLine], index + 1).expect(EXPECT_NEWLINE)
+    }
+
+    let comment = AstNode::new_ref(ElementKind::Comment);
+    AstNode::with_attr(
+        &comment,
+        "text",
+        token_slice::tokens_to_text(&tokens[start_at..index + 1]),
+    );
+    Ok((comment, index + 1))
 }
 
 fn try_parse_paragraph(
