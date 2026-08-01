@@ -30,12 +30,14 @@ Use composition.
 Rationale: more simple AST definition
 
 4. Tokenizer approach
-tbd (granularity of tokens)
+Use a 1 character context before and after the token.
 
 5. Parser approach
-tbd (bottom-up vs top-down)
-Will be some hybrid solution, depending on the part of the rst grammar to be analyzed.
-
+Top-down.
+- Level 1: Document structure (sections)
+- Level 2: Main blocks (directives, comments)
+- Level 3 (recursive): Body elements
+This represents the language structure.
 
 # Architectural drivers
 Development speed, especially bug fixes -> Maintainability is key
