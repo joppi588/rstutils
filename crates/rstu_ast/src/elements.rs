@@ -33,6 +33,7 @@ pub enum ElementKind {
     Attribution,
     Author,
     Authors,
+    Block, // Technical, not part of rst
     BlockQuote,
     BulletList,
     Caption,
@@ -94,7 +95,7 @@ pub enum ElementKind {
     Organization,
     Paragraph,
     Pending,
-    PlainText,
+    PlainText, // Technical, not part of rst
     Problematic,
     Raw,
     Reference,
@@ -205,6 +206,7 @@ impl ElementKind {
             | ElementKind::SubstitutionDefinition
             | ElementKind::Admonition
             | ElementKind::Attention
+            | ElementKind::Block
             | ElementKind::BlockQuote
             | ElementKind::BulletList
             | ElementKind::Caution

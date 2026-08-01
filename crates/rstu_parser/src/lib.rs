@@ -110,7 +110,7 @@ pub fn try_match_section_header(
     Ok((section, closing_index + 2))
 }
 
-/// Parse directives and comments
+/// Parse directives, comments, citations, substitutions
 fn try_parse_directive_like(
     tokens: &[Token],
     start_at: usize,
@@ -119,8 +119,8 @@ fn try_parse_directive_like(
         tokens,
         &[
             TK::NewLine,
-            TK::FootnoteReferenceOpen,
             TK::DoubleColon,
+            TK::FootnoteReferenceOpen,
             TK::HyperlinkReference,
             TK::SubstitutionReference,
         ],
@@ -129,7 +129,8 @@ fn try_parse_directive_like(
     .expect(EXPECT_NEWLINE);
     let (directive, new_index) = match &tokens[index].kind {
         TK::NewLine => try_parse_comment(tokens, start_at, index)?,
-        _ => panic!("Not implemented directive-like."),
+        TK::DoubleColon => try_parse_directive(tokens, start_at, index)?,
+        _ => panic!("Not implemented directive-like structure."),
     };
     Ok((directive, new_index))
 }
@@ -149,6 +150,72 @@ fn try_parse_comment(
         token_slice::tokens_without_kinds(&tokens[start_at + 2..index + 1], &[TK::Indent]); // skip '.. '
     AstNode::with_text(&comment, token_slice::tokens_to_text(&comment_tokens));
     Ok((comment, index + 1))
+}
+
+fn directive_kind_from_type(directive_type: &str) -> ElementKind {
+    match directive_type.trim().to_ascii_lowercase().as_str() {
+        "admonition" => ElementKind::Admonition,
+        "attention" => ElementKind::Attention,
+        "caution" => ElementKind::Caution,
+        "danger" => ElementKind::Danger,
+        "error" => ElementKind::Error,
+        "hint" => ElementKind::Hint,
+        "important" => ElementKind::Important,
+        "note" => ElementKind::Note,
+        "tip" => ElementKind::Tip,
+        "warning" => ElementKind::Warning,
+        _ => ElementKind::Container,
+    }
+}
+
+fn try_parse_directive(
+    tokens: &[Token],
+    start_at: usize,
+    directive_colon_index: usize,
+) -> Result<(NodeRef, usize), FindElementError> {
+    let first_line_end =
+        find_next_kind(tokens, &[TK::NewLine], directive_colon_index).expect(EXPECT_NEWLINE);
+
+    let directive_type = tokens_to_text(&tokens[start_at + 1..directive_colon_index])
+        .trim()
+        .to_string();
+    let directive_text = tokens_to_text(&tokens[directive_colon_index + 1..first_line_end]);
+
+    let directive = AstNode::new_ref(directive_kind_from_type(&directive_type));
+    AstNode::with_attr(&directive, "directive_type", directive_type);
+    if !directive_text.is_empty() {
+        AstNode::with_text(&directive, directive_text);
+    }
+
+    let mut index = first_line_end + 1;
+    if index >= tokens.len() || tokens[index].kind != TK::Indent {
+        return Ok((directive, index));
+    }
+
+    let indentation = tokens[index].lexeme.clone();
+    let indented_block = AstNode::new_ref(ElementKind::Block);
+    AstNode::with_attr(&indented_block, "indentation", indentation);
+
+    let mut paragraph_text = String::new();
+    while index < tokens.len() && tokens[index].kind == TK::Indent {
+        let line_end = find_next_kind(tokens, &[TK::NewLine], index + 1).expect(EXPECT_NEWLINE);
+        paragraph_text.push_str(&tokens_to_text(&tokens[index + 1..line_end + 1]));
+        index = line_end + 1;
+    }
+
+    if !paragraph_text.is_empty() {
+        let paragraph = AstNode::new_ref(ElementKind::Paragraph);
+        let plain = AstNode::new_ref(ElementKind::PlainText);
+        AstNode::with_attr(&plain, "text", paragraph_text);
+        AstNode::push_child(&paragraph, plain).expect("Paragraph can contain plain text.");
+        AstNode::push_child(&indented_block, paragraph)
+            .expect("Indented block can contain paragraphs.");
+    }
+
+    AstNode::push_child(&directive, indented_block)
+        .expect("Directive node should accept indented block child.");
+
+    Ok((directive, index))
 }
 
 fn try_parse_paragraph(
