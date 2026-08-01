@@ -1,0 +1,14 @@
+kind: Document
+children:
+  - kind: Comment
+    text: "This is a simple comment.\nIt should be ignored by the parser as visible content.\n"
+  - kind: Comment
+    text: "This is a comment\n"
+  - kind: Comment
+    text: "_so: is this!\n"
+  - kind: Comment
+    text: "[and] this!\n"
+  - kind: Comment
+    text: "this:: too!\n"
+  - kind: Comment
+    text: "|even| this:: !\n"
