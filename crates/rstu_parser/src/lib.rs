@@ -129,11 +129,11 @@ fn try_parse_directive_like(
         start_at,
     )
     .expect(EXPECT_NEWLINE);
-    let (directive, final_index) = match &tokens[index].kind {
+    let (directive, new_index) = match &tokens[index].kind {
         TK::NewLine => try_parse_comment(tokens, start_at, index)?,
         _ => panic!("Not implemented directive-like."),
     };
-    Ok((directive, final_index + 1))
+    Ok((directive, new_index))
 }
 
 fn try_parse_comment(
@@ -147,11 +147,13 @@ fn try_parse_comment(
     }
 
     let comment = AstNode::new_ref(ElementKind::Comment);
-    AstNode::with_attr(
-        &comment,
-        "text",
-        token_slice::tokens_to_text(&tokens[start_at..index + 1]),
-    );
+    let comment_tokens =
+        token_slice::tokens_without_kinds(&tokens[start_at..index + 1], &[TK::Indent]);
+    let comment_tokens =
+        token_slice::trim_leading_kinds(&comment_tokens, &[TK::DoubleDot, TK::Spaces]);
+    let comment_tokens =
+        token_slice::trim_leading_kinds(&comment_tokens, &[TK::NewLine, TK::BlankLine]);
+    AstNode::with_text(&comment, token_slice::tokens_to_text(&comment_tokens));
     Ok((comment, index + 1))
 }
 
