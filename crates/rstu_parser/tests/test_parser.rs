@@ -139,16 +139,15 @@ macro_rules! rst_vs_yaml {
 
         if actual_value != expected_value {
             let (actual_remainder, expected_remainder) =
-                yaml_remainder(&actual_value, &expected_value).unwrap_or_else(|| {
-                    (actual_value.clone(), expected_value.clone())
-                });
+                yaml_remainder(&actual_value, &expected_value)
+                    .unwrap_or_else(|| (actual_value.clone(), expected_value.clone()));
             let actual_pretty = serde_yaml::to_string(&actual_remainder)
                 .expect("failed to pretty-print actual yaml remainder");
             let expected_pretty = serde_yaml::to_string(&expected_remainder)
                 .expect("failed to pretty-print expected yaml remainder");
 
             panic!(
-                "Unexpected parse output for {}\n\nActual-only remainder:\n{}\nExpected-only remainder:\n{}",
+                "Unexpected parse output for {}\n\nActual\n[...]\n{}\nExpected\n[...]\n{}",
                 $rst_filename, actual_pretty, expected_pretty
             );
         }
