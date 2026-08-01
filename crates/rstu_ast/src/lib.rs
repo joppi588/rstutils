@@ -62,11 +62,23 @@ impl AstNode {
         Ok(())
     }
 
-    pub fn push_body_element(
-        _current: &NodeRef,
-        body: NodeRef,
-    ) -> Result<NodeRef, ValidationError> {
-        Ok(body)
+    pub fn push_body_element(current: &NodeRef, body: NodeRef) -> Result<NodeRef, ValidationError> {
+        let current_kind = current.borrow().kind;
+        let body_kind = body.borrow().kind;
+
+        if allows_child(current_kind, body_kind) {
+            Self::push_child(current, body.clone())?;
+            Ok(body)
+        } else {
+            let parent = current
+                .borrow()
+                .parent
+                .as_ref()
+                .and_then(Weak::upgrade)
+                .unwrap_or_else(|| current.clone());
+            Self::push_child(&parent, body.clone())?;
+            Ok(body)
+        }
     }
 
     pub fn push_section_ref(
