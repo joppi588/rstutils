@@ -1,0 +1,9 @@
+kind: Document
+children:
+  - kind: Note
+    children:
+      - kind: Paragraph
+        children:
+          - kind: PlainText
+            attributes:
+              text: "This is a simple note directive.\n"

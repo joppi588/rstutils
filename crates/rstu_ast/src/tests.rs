@@ -316,6 +316,32 @@ children:
 }
 
 #[test]
+fn push_body_element_attaches_to_current_when_current_accepts_it() {
+    let current = AstNode::new_ref(ElementKind::Document);
+    let body = AstNode::new_ref(ElementKind::Paragraph);
+
+    AstNode::push_body_element(&current, body.clone()).unwrap();
+
+    let borrowed = current.borrow();
+    assert_eq!(borrowed.children.len(), 1);
+    assert!(Rc::ptr_eq(&borrowed.children[0], &body));
+}
+
+#[test]
+fn push_body_element_falls_back_to_parent_when_current_cannot_accept_it() {
+    let parent = AstNode::new_ref(ElementKind::Document);
+    let current = AstNode::new_ref(ElementKind::Paragraph);
+    AstNode::push_child(&parent, current.clone()).unwrap();
+
+    let body = AstNode::new_ref(ElementKind::Comment);
+    AstNode::push_body_element(&current, body.clone()).unwrap();
+
+    let borrowed = parent.borrow();
+    assert_eq!(borrowed.children.len(), 2);
+    assert!(Rc::ptr_eq(&borrowed.children[1], &body));
+}
+
+#[test]
 fn push_section_ref_returns_inserted_current_node() {
     let document = AstNode::new_ref(ElementKind::Document);
 

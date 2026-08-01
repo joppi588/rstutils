@@ -4,18 +4,9 @@
 
 use crate::token::{Token, TokenKind};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ScanDirection {
-    Forward,
-    Backward,
-}
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum TokenSliceError {
-    TokenNotFound {
-        kinds: Vec<TokenKind>,
-        direction: ScanDirection,
-    },
+    TokenNotFound { kinds: Vec<TokenKind> },
 }
 
 pub fn tokens_to_text(tokens: &[Token]) -> String {
@@ -26,31 +17,47 @@ pub fn tokens_to_text(tokens: &[Token]) -> String {
     text
 }
 
+pub fn tokens_without_kinds(tokens: &[Token], kinds: &[TokenKind]) -> Vec<Token> {
+    tokens
+        .iter()
+        .filter(|token| !kinds.contains(&token.kind))
+        .cloned()
+        .collect()
+}
+
 pub fn find_next_kind(
     tokens: &[Token],
     kinds: &[TokenKind],
-    direction: ScanDirection,
     start_at: usize,
 ) -> Result<usize, TokenSliceError> {
-    match direction {
-        ScanDirection::Forward => tokens
-            .iter()
-            .enumerate()
-            .skip(start_at)
-            .find_map(|(index, token)| kinds.contains(&token.kind).then_some(index))
-            .ok_or(TokenSliceError::TokenNotFound {
-                kinds: kinds.to_vec(),
-                direction,
-            }),
-        ScanDirection::Backward => tokens[..start_at]
-            .iter()
-            .rposition(|token| kinds.contains(&token.kind))
-            .map(|index| index + 1)
-            .ok_or(TokenSliceError::TokenNotFound {
-                kinds: kinds.to_vec(),
-                direction,
-            }),
-    }
+    Ok(find_next_kind_interrupt(tokens, kinds, &[], start_at)?
+        .expect("interrupt_kinds is empty, so None is unreachable"))
+}
+
+// TODO: remove if not used finally
+
+pub fn find_next_kind_interrupt(
+    tokens: &[Token],
+    kinds: &[TokenKind],
+    interrupt_kinds: &[TokenKind],
+    start_at: usize,
+) -> Result<Option<usize>, TokenSliceError> {
+    tokens
+        .iter()
+        .enumerate()
+        .skip(start_at)
+        .find_map(|(index, token)| {
+            if (&token.kind).is(kinds) {
+                return Some(Some(index));
+            }
+            if (&token.kind).is(interrupt_kinds) {
+                return Some(None);
+            }
+            None
+        })
+        .ok_or(TokenSliceError::TokenNotFound {
+            kinds: kinds.to_vec(),
+        })
 }
 
 pub fn skip_kinds(
@@ -65,13 +72,12 @@ pub fn skip_kinds(
         .find_map(|(index, token)| (!kinds.contains(&token.kind)).then_some(index))
         .ok_or(TokenSliceError::TokenNotFound {
             kinds: kinds.to_vec(),
-            direction: ScanDirection::Forward,
         })
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{find_next_kind, skip_kinds, ScanDirection};
+    use super::{find_next_kind, skip_kinds, tokens_without_kinds};
     use crate::token::{Token, TokenKind};
 
     #[test]
@@ -82,31 +88,7 @@ mod tests {
             Token::new(TokenKind::NewLine, "\n"),
         ];
 
-        let found = find_next_kind(
-            &tokens,
-            &[TokenKind::BlankLine, TokenKind::NewLine],
-            ScanDirection::Forward,
-            0,
-        );
-
-        assert_eq!(found, Ok(2));
-    }
-
-    #[test]
-    fn find_next_kind_scans_backward_to_after_matching_token() {
-        let tokens = vec![
-            Token::new(TokenKind::Word, "before"),
-            Token::new(TokenKind::BlankLine, "\n\n"),
-            Token::new(TokenKind::Word, "after"),
-            Token::new(TokenKind::Separator, "----"),
-        ];
-
-        let found = find_next_kind(
-            &tokens,
-            &[TokenKind::BlankLine, TokenKind::NewLine],
-            ScanDirection::Backward,
-            3,
-        );
+        let found = find_next_kind(&tokens, &[TokenKind::BlankLine, TokenKind::NewLine], 0);
 
         assert_eq!(found, Ok(2));
     }
@@ -137,8 +119,27 @@ mod tests {
             found,
             Err(super::TokenSliceError::TokenNotFound {
                 kinds: vec![TokenKind::Spaces, TokenKind::NewLine],
-                direction: ScanDirection::Forward,
             })
+        );
+    }
+
+    #[test]
+    fn tokens_without_kinds_removes_requested_token_kinds() {
+        let tokens = vec![
+            Token::new(TokenKind::Indent, "   "),
+            Token::new(TokenKind::Word, "hello"),
+            Token::new(TokenKind::Indent, "   "),
+            Token::new(TokenKind::Punctuation, "."),
+        ];
+
+        let filtered = tokens_without_kinds(&tokens, &[TokenKind::Indent]);
+
+        assert_eq!(
+            filtered,
+            vec![
+                Token::new(TokenKind::Word, "hello"),
+                Token::new(TokenKind::Punctuation, "."),
+            ]
         );
     }
 }
