@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/*", "rst_doctree"]
+members = ["crates/*"]
 resolver = "2"
 
 [workspace.package]
