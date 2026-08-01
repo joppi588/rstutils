@@ -183,7 +183,9 @@ fn try_parse_directive(
 
     let directive = AstNode::new_ref(directive_kind_from_type(&directive_type));
     AstNode::with_attr(&directive, "directive_type", directive_type);
-    AstNode::with_attr(&directive, "directive_text", directive_text);
+    if !directive_text.is_empty() {
+        AstNode::with_text(&directive, directive_text);
+    }
 
     let mut index = first_line_end + 1;
     if index >= tokens.len() || tokens[index].kind != TK::Indent {
@@ -191,7 +193,7 @@ fn try_parse_directive(
     }
 
     let indentation = tokens[index].lexeme.clone();
-    let indented_block = AstNode::new_ref(ElementKind::BlockQuote);
+    let indented_block = AstNode::new_ref(ElementKind::Block);
     AstNode::with_attr(&indented_block, "indentation", indentation);
 
     let mut paragraph_text = String::new();

@@ -183,6 +183,8 @@ pub(super) fn allows_child(parent: ElementKind, child: ElementKind) -> bool {
 
         Admonition => is_any_of(child, &[Title]) || child.has_category(ElementCategory::Body),
 
+        Block => is_any_of(child, &[Paragraph]),
+
         BlockQuote | Compound | Container | Definition | Description | Entry | FieldBody
         | Footer | Footnote | Header | Hint | Important | Legend | ListItem | Note
         | SystemMessage | Tip | Warning | Attention | Caution | Danger | Error | Citation => {

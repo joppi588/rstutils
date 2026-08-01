@@ -3,9 +3,8 @@ children:
   - kind: Note
     attributes:
       directive_type: note
-      directive_text: ""
     children:
-      - kind: BlockQuote
+      - kind: Block
         attributes:
           indentation: "   "
         children:
