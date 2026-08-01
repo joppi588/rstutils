@@ -25,14 +25,6 @@ pub fn tokens_without_kinds(tokens: &[Token], kinds: &[TokenKind]) -> Vec<Token>
         .collect()
 }
 
-pub fn trim_leading_kinds(tokens: &[Token], kinds: &[TokenKind]) -> Vec<Token> {
-    let prefix_len = tokens
-        .iter()
-        .take_while(|token| kinds.contains(&token.kind))
-        .count();
-    tokens[prefix_len..].to_vec()
-}
-
 // better have two separate finders, one with interrupt, the other without.
 
 pub fn find_next_kind(
@@ -85,7 +77,7 @@ pub fn skip_kinds(
 
 #[cfg(test)]
 mod tests {
-    use super::{find_next_kind, skip_kinds, tokens_without_kinds, trim_leading_kinds};
+    use super::{find_next_kind, skip_kinds, tokens_without_kinds};
     use crate::token::{Token, TokenKind};
 
     #[test]
@@ -149,18 +141,5 @@ mod tests {
                 Token::new(TokenKind::Punctuation, "."),
             ]
         );
-    }
-
-    #[test]
-    fn trim_leading_kinds_removes_requested_prefix_tokens() {
-        let tokens = vec![
-            Token::new(TokenKind::DoubleDot, ".."),
-            Token::new(TokenKind::Spaces, " "),
-            Token::new(TokenKind::Word, "hello"),
-        ];
-
-        let trimmed = trim_leading_kinds(&tokens, &[TokenKind::DoubleDot, TokenKind::Spaces]);
-
-        assert_eq!(trimmed, vec![Token::new(TokenKind::Word, "hello")]);
     }
 }

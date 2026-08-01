@@ -148,11 +148,7 @@ fn try_parse_comment(
 
     let comment = AstNode::new_ref(ElementKind::Comment);
     let comment_tokens =
-        token_slice::tokens_without_kinds(&tokens[start_at..index + 1], &[TK::Indent]);
-    let comment_tokens =
-        token_slice::trim_leading_kinds(&comment_tokens, &[TK::DoubleDot, TK::Spaces]);
-    let comment_tokens =
-        token_slice::trim_leading_kinds(&comment_tokens, &[TK::NewLine, TK::BlankLine]);
+        token_slice::tokens_without_kinds(&tokens[start_at + 2..index + 1], &[TK::Indent]); // skip '.. '
     AstNode::with_text(&comment, token_slice::tokens_to_text(&comment_tokens));
     Ok((comment, index + 1))
 }
