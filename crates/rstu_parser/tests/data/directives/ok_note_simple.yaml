@@ -1,15 +1,15 @@
-kind: Document
+class: Document
 children:
-  - kind: Note
+  - class: Directive
     attributes:
       directive_type: note
     children:
-      - kind: Block
+      - class: Block
         attributes:
           indentation: "   "
         children:
-          - kind: Paragraph
+          - class: Paragraph
             children:
-              - kind: PlainText
+              - class: PlainText
                 attributes:
                   text: "This is a simple note directive.\n"

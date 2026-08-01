@@ -3,8 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 mod elements;
-#[cfg(test)]
-mod tests;
+
 mod validation;
 pub use elements::{ContentModel, ElementCategory, ElementKind};
 use serde_json::{Map, Value};

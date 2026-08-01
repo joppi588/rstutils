@@ -44,7 +44,7 @@ impl fmt::Display for ValidationError {
 impl Error for ValidationError {}
 
 #[cfg(test)]
-pub(crate) fn validate_tree(node_ref: &super::NodeRef) -> Result<(), super::ValidationError> {
+pub(crate) fn _validate_tree(node_ref: &super::NodeRef) -> Result<(), super::ValidationError> {
     let (parent_kind, children) = {
         let borrowed = node_ref.borrow();
 
@@ -144,7 +144,7 @@ pub(crate) fn validate_tree(node_ref: &super::NodeRef) -> Result<(), super::Vali
                 node: child_kind,
             });
         }
-        validate_tree(&child)?;
+        _validate_tree(&child)?;
     }
 
     Ok(())
