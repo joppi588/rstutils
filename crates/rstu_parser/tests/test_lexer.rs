@@ -130,9 +130,8 @@ fn tokenize_ok_note_simple_file() {
 }
 
 #[test]
-fn tokenize_ok_comment_simple_file() {
-    let path =
-        Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/data/directives/ok_comment_simple.rst");
+fn tokenize_ok_comment_file() {
+    let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/data/directives/ok_comment.rst");
     let contents =
         fs::read_to_string(path).expect("failed to read simple comment directive test file");
 
@@ -174,6 +173,59 @@ fn tokenize_ok_comment_simple_file() {
         (TokenKind::Spaces, " "),
         (TokenKind::Word, "content"),
         (TokenKind::Punctuation, "."),
+        (TokenKind::NewLine, "\n"),
+        (TokenKind::BlankLine, "\n"),
+        (TokenKind::DoubleDot, ".."),
+        (TokenKind::Spaces, " "),
+        (TokenKind::Word, "This"),
+        (TokenKind::Spaces, " "),
+        (TokenKind::Word, "is"),
+        (TokenKind::Spaces, " "),
+        (TokenKind::Word, "a"),
+        (TokenKind::Spaces, " "),
+        (TokenKind::Word, "comment"),
+        (TokenKind::NewLine, "\n"),
+        (TokenKind::DoubleDot, ".."),
+        (TokenKind::NewLine, "\n"),
+        (TokenKind::Indent, "   "),
+        (TokenKind::Word, "_so"),
+        (TokenKind::Punctuation, ":"),
+        (TokenKind::Spaces, " "),
+        (TokenKind::Word, "is"),
+        (TokenKind::Spaces, " "),
+        (TokenKind::Word, "this"),
+        (TokenKind::Punctuation, "!"),
+        (TokenKind::NewLine, "\n"),
+        (TokenKind::DoubleDot, ".."),
+        (TokenKind::NewLine, "\n"),
+        (TokenKind::Indent, "   "),
+        (TokenKind::FootnoteReferenceOpen, "["),
+        (TokenKind::Word, "and"),
+        (TokenKind::Punctuation, "]"),
+        (TokenKind::Spaces, " "),
+        (TokenKind::Word, "this"),
+        (TokenKind::Punctuation, "!"),
+        (TokenKind::NewLine, "\n"),
+        (TokenKind::DoubleDot, ".."),
+        (TokenKind::NewLine, "\n"),
+        (TokenKind::Indent, "   "),
+        (TokenKind::Word, "this"),
+        (TokenKind::DoubleColon, "::"),
+        (TokenKind::Spaces, " "),
+        (TokenKind::Word, "too"),
+        (TokenKind::Punctuation, "!"),
+        (TokenKind::NewLine, "\n"),
+        (TokenKind::DoubleDot, ".."),
+        (TokenKind::NewLine, "\n"),
+        (TokenKind::Indent, "   "),
+        (TokenKind::SubstitutionReference, "|"),
+        (TokenKind::Word, "even"),
+        (TokenKind::SubstitutionReference, "|"),
+        (TokenKind::Spaces, " "),
+        (TokenKind::Word, "this"),
+        (TokenKind::DoubleColon, "::"),
+        (TokenKind::Spaces, " "),
+        (TokenKind::Punctuation, "!"),
         (TokenKind::NewLine, "\n"),
         (TokenKind::BlankLine, "\n"),
     ];
