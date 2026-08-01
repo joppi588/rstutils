@@ -11,10 +11,8 @@ use rstu_ast::{AstNode, ElementKind, NodeRef};
 
 use crate::lexer::tokenize;
 use crate::token::{Token, TokenCategory as TC, TokenKind as TK};
-use parser_errors::FindElementError;
+use parser_errors::{FindElementError, EXPECT_NEWLINE};
 use token_slice::{find_next_kind, tokens_to_text};
-
-static EXPECT_NEWLINE: &str = "There is at least one newline at the end of tokens.";
 
 /// Parser implementation:
 /// Lookahead one line -> Decide on element.

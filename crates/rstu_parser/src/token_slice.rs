@@ -25,8 +25,6 @@ pub fn tokens_without_kinds(tokens: &[Token], kinds: &[TokenKind]) -> Vec<Token>
         .collect()
 }
 
-// better have two separate finders, one with interrupt, the other without.
-
 pub fn find_next_kind(
     tokens: &[Token],
     kinds: &[TokenKind],
@@ -35,6 +33,8 @@ pub fn find_next_kind(
     Ok(find_next_kind_interrupt(tokens, kinds, &[], start_at)?
         .expect("interrupt_kinds is empty, so None is unreachable"))
 }
+
+// TODO: remove if not used finally
 
 pub fn find_next_kind_interrupt(
     tokens: &[Token],

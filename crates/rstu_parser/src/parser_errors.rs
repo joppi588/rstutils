@@ -27,3 +27,5 @@ pub enum FindElementError {
         start_at: usize,
     },
 }
+
+pub(crate) static EXPECT_NEWLINE: &str = "There is at least one newline at the end of tokens.";
