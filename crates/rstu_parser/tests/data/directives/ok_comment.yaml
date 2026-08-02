@@ -12,3 +12,5 @@ children:
     text: "this:: too!\n"
   - class: Comment
     text: "|even| this:: !\n"
+  - class: Comment
+    text: "This comment\nspans\nmultiple lines\n"
