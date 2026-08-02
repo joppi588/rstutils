@@ -113,6 +113,13 @@ impl TokenKind {
         kinds.contains(&self)
     }
 
+    pub fn match_token(input: &str) -> Option<(Self, &str)> {
+        Self::ALL.iter().find_map(|&kind| {
+            kind.find(input)
+                .map(|lexeme| (kind, &lexeme[1..lexeme.len() - 1]))
+        })
+    }
+
     token_kinds!(
         // IMPORTANT:
         // The order of the enum matters, as the first matching token will be picked.
@@ -196,6 +203,14 @@ impl TokenKind {
 #[cfg(test)]
 mod tests {
     use super::{TokenCategory, TokenKind};
+
+    #[test]
+    fn match_token_uses_centralized_token_list() {
+        let (kind, lexeme) = TokenKind::match_token("\nHello\n").unwrap();
+
+        assert_eq!(kind, TokenKind::Word);
+        assert_eq!(lexeme, "Hello");
+    }
 
     #[test]
     fn transition_matches() {
