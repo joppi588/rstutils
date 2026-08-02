@@ -2,23 +2,20 @@
 //
 // SPDX-License-Identifier: MIT
 
-mod elements;
+mod nodes;
 #[cfg(test)]
 mod tests;
-mod validation;
-pub use elements::{ContentModel, ElementCategory, ElementKind};
+pub use nodes::NodeClass;
 use serde_json::{Map, Value};
 use std::cell::RefCell;
 use std::collections::BTreeMap;
 use std::rc::{Rc, Weak};
-use validation::allows_child;
-pub use validation::ValidationError;
 
 pub type NodeRef = Rc<RefCell<AstNode>>;
 
 #[derive(Debug, Clone)]
 pub struct AstNode {
-    pub kind: ElementKind,
+    pub class: NodeClass,
     pub parent: Option<Weak<RefCell<AstNode>>>,
     pub attributes: BTreeMap<String, String>,
     pub text: Option<String>,
@@ -26,9 +23,9 @@ pub struct AstNode {
 }
 
 impl AstNode {
-    pub fn new_ref(kind: ElementKind) -> NodeRef {
+    pub fn new_ref(class: NodeClass) -> NodeRef {
         Rc::new(RefCell::new(Self {
-            kind,
+            class,
             parent: None,
             attributes: BTreeMap::new(),
             text: None,
@@ -46,29 +43,17 @@ impl AstNode {
             .insert(key.into(), value.into());
     }
 
-    pub fn push_child(parent: &NodeRef, child: NodeRef) -> Result<(), ValidationError> {
-        let parent_kind = parent.borrow().kind;
-        let child_kind = child.borrow().kind;
-        if !allows_child(parent_kind, child_kind) {
-            return Err(ValidationError::new(
-                format!("invalid child {:?} inside {:?}", child_kind, parent_kind),
-                Some(parent_kind),
-                child_kind,
-            ));
-        }
-
+    pub fn push_child(parent: &NodeRef, child: NodeRef) {
         child.borrow_mut().parent = Some(Rc::downgrade(parent));
         parent.borrow_mut().children.push(child);
-        Ok(())
     }
 
-    pub fn push_body_element(current: &NodeRef, body: NodeRef) -> Result<NodeRef, ValidationError> {
-        let current_kind = current.borrow().kind;
-        let body_kind = body.borrow().kind;
-
-        if allows_child(current_kind, body_kind) {
-            Self::push_child(current, body.clone())?;
-            Ok(body)
+    pub fn push_body_element(current: &NodeRef, body: NodeRef) -> NodeRef {
+        if matches!(
+            current.borrow().class,
+            NodeClass::Document | NodeClass::Section
+        ) {
+            Self::push_child(current, body.clone());
         } else {
             let parent = current
                 .borrow()
@@ -76,20 +61,17 @@ impl AstNode {
                 .as_ref()
                 .and_then(Weak::upgrade)
                 .unwrap_or_else(|| current.clone());
-            Self::push_child(&parent, body.clone())?;
-            Ok(body)
+            Self::push_child(&parent, body.clone());
         }
+
+        body
     }
 
-    pub fn push_section_ref(
-        current: &NodeRef,
-        section: NodeRef,
-    ) -> Result<NodeRef, ValidationError> {
-        let section_kind = section.borrow().kind;
-        assert!(
-            section_kind.has_category(ElementCategory::Structural),
-            "push_section requires a structural node, got {:?}",
-            section_kind
+    pub fn push_section_ref(current: &NodeRef, section: NodeRef) -> NodeRef {
+        assert_eq!(
+            section.borrow().class,
+            NodeClass::Section,
+            "push_section_ref requires a section node"
         );
 
         let section_marker = section.borrow().attributes.get("section_marker").cloned();
@@ -132,8 +114,8 @@ impl AstNode {
             }
         };
 
-        Self::push_child(&target_parent, section.clone())?;
-        Ok(section)
+        Self::push_child(&target_parent, section.clone());
+        section
     }
 
     /// returns the current section the node is in
@@ -147,7 +129,7 @@ impl AstNode {
         while let Some(current_node) = current.clone() {
             let matches = {
                 let borrowed = current_node.borrow();
-                borrowed.kind == ElementKind::Section
+                borrowed.class == NodeClass::Section
                     && section_marker.is_none_or(|marker| {
                         borrowed
                             .attributes
@@ -182,8 +164,8 @@ impl AstNode {
 
         let mut obj = Map::new();
         obj.insert(
-            "kind".to_string(),
-            Value::String(format!("{:?}", borrowed.kind)),
+            "class".to_string(),
+            Value::String(format!("{:?}", borrowed.class)),
         );
         if attributes.len() > 0 {
             obj.insert("attributes".to_string(), Value::Object(attributes));

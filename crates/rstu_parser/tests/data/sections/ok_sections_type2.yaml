@@ -1,35 +1,35 @@
-kind: Document
+class: Document
 children:
-  - kind: Section
+  - class: Section
     attributes:
       section_marker: =========
     children:
-      - kind: Title
+      - class: Title
         text: "Heading 1"
-      - kind: Paragraph
+      - class: Paragraph
         children:
-          - kind: PlainText
+          - class: PlainText
             attributes:
               text: "Some Text\n"
-      - kind: Section
+      - class: Section
         attributes:
           section_marker: ---------
         children:
-          - kind: Title
+          - class: Title
             text: "Heading 2"
-          - kind: Paragraph
+          - class: Paragraph
             children:
-              - kind: PlainText
+              - class: PlainText
                 attributes:
                   text: "More Text\n"
-  - kind: Section
+  - class: Section
     attributes:
       section_marker: =========
     children:
-      - kind: Title
+      - class: Title
         text: "Heading 3"
-      - kind: Paragraph
+      - class: Paragraph
         children:
-          - kind: PlainText
+          - class: PlainText
             attributes:
               text: "Same level as Heading 1.\n"

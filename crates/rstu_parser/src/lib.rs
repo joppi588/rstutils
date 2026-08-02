@@ -7,7 +7,7 @@ pub mod parser_errors;
 pub mod token;
 pub mod token_slice;
 
-use rstu_ast::{AstNode, ElementKind, NodeRef};
+use rstu_ast::{AstNode, NodeClass, NodeRef};
 
 use crate::lexer::tokenize;
 use crate::token::{Token, TokenCategory as TC, TokenKind as TK};
@@ -18,7 +18,7 @@ use token_slice::{find_next_kind, tokens_to_text};
 /// Lookahead one line -> Decide on element.
 pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
     let tokens = tokenize(input);
-    let doc = AstNode::new_ref(ElementKind::Document);
+    let doc = AstNode::new_ref(NodeClass::Document);
     let mut index: usize = 0;
     let mut current_node = doc.clone();
 
@@ -34,16 +34,14 @@ pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
             {
                 let (section, next_start) =
                     try_match_section_header(&tokens, index, token1.is(&[TK::Separator]))?;
-                AstNode::push_section_ref(&current_node, section.clone())
-                    .expect("Section insertion is always possible!");
+                AstNode::push_section_ref(&current_node, section.clone());
                 current_node = section;
                 index = next_start;
             }
 
             (TK::DoubleDot, _) => {
                 let (directive, next_start) = try_parse_directive_like(&tokens, index)?;
-                AstNode::push_body_element(&current_node, directive.clone())
-                    .expect("Node insertion is always possible!");
+                AstNode::push_body_element(&current_node, directive.clone());
                 current_node = directive;
                 index = next_start;
             }
@@ -52,8 +50,7 @@ pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
 
             (kind, _) if kind.is(TC::INLINE_MARKER) || kind.is(TC::PLAIN) => {
                 let (paragraph, next_start) = try_parse_paragraph(&tokens, index)?;
-                AstNode::push_child(&current_node, paragraph.clone())
-                    .expect("Structural node can have children.");
+                AstNode::push_child(&current_node, paragraph.clone());
                 index = next_start;
             }
 
@@ -99,13 +96,12 @@ pub fn try_match_section_header(
         }
     }
 
-    let section = AstNode::new_ref(ElementKind::Section);
+    let section = AstNode::new_ref(NodeClass::Section);
     AstNode::with_attr(&section, "section_marker", closing_style);
 
-    let title = AstNode::new_ref(ElementKind::Title);
+    let title = AstNode::new_ref(NodeClass::Title);
     AstNode::with_text(&title, tokens_to_text(&tokens[title_start..title_end]));
-    AstNode::push_child(&section, title)
-        .expect("section title should always be a valid section child");
+    AstNode::push_child(&section, title);
 
     Ok((section, closing_index + 2))
 }
@@ -145,27 +141,11 @@ fn try_parse_comment(
         index = find_next_kind(tokens, &[TK::NewLine], index + 1).expect(EXPECT_NEWLINE)
     }
 
-    let comment = AstNode::new_ref(ElementKind::Comment);
+    let comment = AstNode::new_ref(NodeClass::Comment);
     let comment_tokens =
         token_slice::tokens_without_kinds(&tokens[start_at + 2..index + 1], &[TK::Indent]); // skip '.. '
     AstNode::with_text(&comment, token_slice::tokens_to_text(&comment_tokens));
     Ok((comment, index + 1))
-}
-
-fn directive_kind_from_type(directive_type: &str) -> ElementKind {
-    match directive_type.trim().to_ascii_lowercase().as_str() {
-        "admonition" => ElementKind::Admonition,
-        "attention" => ElementKind::Attention,
-        "caution" => ElementKind::Caution,
-        "danger" => ElementKind::Danger,
-        "error" => ElementKind::Error,
-        "hint" => ElementKind::Hint,
-        "important" => ElementKind::Important,
-        "note" => ElementKind::Note,
-        "tip" => ElementKind::Tip,
-        "warning" => ElementKind::Warning,
-        _ => ElementKind::Container,
-    }
 }
 
 fn try_parse_directive(
@@ -181,7 +161,7 @@ fn try_parse_directive(
         .to_string();
     let directive_text = tokens_to_text(&tokens[directive_colon_index + 1..first_line_end]);
 
-    let directive = AstNode::new_ref(directive_kind_from_type(&directive_type));
+    let directive = AstNode::new_ref(NodeClass::Directive);
     AstNode::with_attr(&directive, "directive_type", directive_type);
     if !directive_text.is_empty() {
         AstNode::with_text(&directive, directive_text);
@@ -193,7 +173,7 @@ fn try_parse_directive(
     }
 
     let indentation = tokens[index].lexeme.clone();
-    let indented_block = AstNode::new_ref(ElementKind::Block);
+    let indented_block = AstNode::new_ref(NodeClass::Block);
     AstNode::with_attr(&indented_block, "indentation", indentation);
 
     let mut paragraph_text = String::new();
@@ -204,16 +184,14 @@ fn try_parse_directive(
     }
 
     if !paragraph_text.is_empty() {
-        let paragraph = AstNode::new_ref(ElementKind::Paragraph);
-        let plain = AstNode::new_ref(ElementKind::PlainText);
+        let paragraph = AstNode::new_ref(NodeClass::Paragraph);
+        let plain = AstNode::new_ref(NodeClass::PlainText);
         AstNode::with_attr(&plain, "text", paragraph_text);
-        AstNode::push_child(&paragraph, plain).expect("Paragraph can contain plain text.");
-        AstNode::push_child(&indented_block, paragraph)
-            .expect("Indented block can contain paragraphs.");
+        AstNode::push_child(&paragraph, plain);
+        AstNode::push_child(&indented_block, paragraph);
     }
 
-    AstNode::push_child(&directive, indented_block)
-        .expect("Directive node should accept indented block child.");
+    AstNode::push_child(&directive, indented_block);
 
     Ok((directive, index))
 }
@@ -228,7 +206,7 @@ fn try_parse_paragraph(
         start_at,
     )
     .expect("Paragraph must end somewhere.");
-    let paragraph = AstNode::new_ref(ElementKind::Paragraph);
+    let paragraph = AstNode::new_ref(NodeClass::Paragraph);
     let mut index = start_at;
     while index < paragraph_end {
         let (node, new_index) = match tokens[index].kind {
@@ -248,7 +226,7 @@ fn try_parse_paragraph(
             }
         };
         index = new_index;
-        AstNode::push_child(&paragraph, node).expect("Paragraph can have children.");
+        AstNode::push_child(&paragraph, node);
     }
     Ok((paragraph, paragraph_end + 1))
 }
@@ -267,12 +245,9 @@ fn try_parse_inline(
             });
         }
     };
-    let strong = AstNode::new_ref(ElementKind::Strong);
-    AstNode::with_attr(
-        &strong,
-        "text",
-        tokens_to_text(&tokens[start_at + 1..inline_final]),
-    );
+    let strong = AstNode::new_ref(NodeClass::InlineMarkup);
+    AstNode::with_attr(&strong, "markup", "strong");
+    AstNode::with_text(&strong, tokens_to_text(&tokens[start_at + 1..inline_final]));
     Ok((strong, inline_final + 1))
 }
 
@@ -286,7 +261,7 @@ fn try_parse_plain(
         start_at,
     )
     .map_err(|_| FindElementError::InvalidPlainText { start_at: start_at })?;
-    let sentence = AstNode::new_ref(ElementKind::PlainText);
+    let sentence = AstNode::new_ref(NodeClass::PlainText);
     AstNode::with_attr(
         &sentence,
         "text",

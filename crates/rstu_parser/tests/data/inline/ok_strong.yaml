@@ -1,41 +1,45 @@
-kind: Document
+class: Document
 children:
-  - kind: Section
+  - class: Section
     attributes:
       section_marker: -------------------------------
     children:
-      - kind: Title
+      - class: Title
         text: "Short text with strong elements"
-      - kind: Paragraph
+      - class: Paragraph
         children:
-          - kind: Strong
+          - class: InlineMarkup
+            text: print this in bold text.
             attributes:
-              text: print this in bold text.
-      - kind: Paragraph
+              markup: strong
+      - class: Paragraph
         children:
-          - kind: PlainText
+          - class: PlainText
             attributes:
               text: "print "
-          - kind: Strong
+          - class: InlineMarkup
+            text: this
             attributes:
-              text: this
-          - kind: PlainText
+              markup: strong
+          - class: PlainText
             attributes:
               text: " too.\n"
-      - kind: Paragraph
+      - class: Paragraph
         children:
-          - kind: PlainText
+          - class: PlainText
             attributes:
               text: "This "
-          - kind: Strong
+          - class: InlineMarkup
+            text: should
             attributes:
-              text: should
-          - kind: PlainText
+              markup: strong
+          - class: PlainText
             attributes:
               text: " "
-          - kind: Strong
+          - class: InlineMarkup
+            text: work as
             attributes:
-              text: work as
-          - kind: PlainText
+              markup: strong
+          - class: PlainText
             attributes:
               text: " well.\n"
