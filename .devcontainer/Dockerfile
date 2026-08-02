@@ -20,6 +20,9 @@ RUN git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions \
     && printf '\nsource $HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh\nZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=8"\nbindkey "^[[C" autosuggest-accept\nbindkey "^[OC" autosuggest-accept\n' >> /home/vscode/.zshrc \
     && chown -R vscode:rustlang /home/vscode/.oh-my-zsh/custom /home/vscode/.zshrc
 
+# Remove username/arrow prefix from the prompt and render branch in light grey.
+RUN python3 -c 'from pathlib import Path; theme = Path("/home/vscode/.oh-my-zsh/custom/themes/devcontainers.zsh-theme"); text = theme.read_text(); text = text.replace("    PROMPT=\"%{$fg[green]%}${prompt_username} %(?:%{$reset_color%}➜ :%{$fg_bold[red]%}➜ )\" # User/exit code arrow\\n", "    PROMPT=\"\" # No username or arrow prefix\\n"); text = text.replace("    PROMPT=\"%(?:%{$reset_color%}➜ :%{$fg_bold[red]%}➜ )\" # User/exit code arrow\\n", "    PROMPT=\"\" # No username or arrow prefix\\n"); text = text.replace("                echo -n \"%{$fg_bold[cyan]%}(%{$fg_bold[red]%}${BRANCH}\" \\\\n", "                echo -n \"%{$fg[8]%}(%{$fg[8]%}${BRANCH}\" \\\\n"); text = text.replace("                && echo -n \"%{$fg_bold[cyan]%})%{$reset_color%} \"; \\\\n", "                && echo -n \"%{$fg[8]%})%{$reset_color%} \"; \\\\n"); theme.write_text(text)'
+
 
 # Pin Rust toolchain and include rustfmt so cargo fmt is available by default.
 RUN rustup toolchain install 1.94 --profile minimal \
