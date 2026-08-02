@@ -4,10 +4,6 @@
 
 use crate::token::{Token, TokenKind};
 
-fn whitespace_width(lexeme: &str) -> usize {
-    lexeme.chars().count()
-}
-
 pub fn tokenize(input: &str) -> Vec<Token> {
     let mut tokens = Vec::new();
     let input = format!("\n\n{input}\n\n"); // leading and trailing blank line
@@ -21,57 +17,37 @@ pub fn tokenize(input: &str) -> Vec<Token> {
     }
 
     let mut transformed = Vec::new();
-    let mut current_indent: Option<(String, usize)> = None;
+    let mut current_indent: usize = 0;
 
-    for token in tokens {
-        if token.kind != TokenKind::Indent {
-            if let Some((previous_lexeme, previous_width)) = current_indent.as_ref() {
-                if *previous_width > 0 {
-                    let dedent = Token::new(TokenKind::Dedent, previous_lexeme.clone());
+    transformed.push(tokens[0].clone());
+    index = 1;
+    while index < tokens.len() {
+        match (tokens[index - 1].kind, tokens[index].kind) {
+            (TokenKind::NewLine, TokenKind::Indent) => {
+                let new_indent = tokens[index].lexeme.len();
+                if new_indent > current_indent {
+                    let indent_token =
+                        Token::new(TokenKind::Indent, " ".repeat(new_indent - current_indent));
+                    transformed.push(indent_token);
+                } else if new_indent < current_indent {
+                    let dedent_token =
+                        Token::new(TokenKind::Dedent, " ".repeat(current_indent - new_indent));
+                    transformed.push(dedent_token);
+                }
+                current_indent = new_indent;
+            }
+            (TokenKind::NewLine, _) => {
+                if current_indent > 0 {
+                    let dedent = Token::new(TokenKind::Dedent, " ".repeat(current_indent));
                     transformed.push(dedent);
                 }
-                current_indent = None;
+                current_indent = 0;
+                transformed.push(tokens[index].clone());
             }
-            transformed.push(token);
-            continue;
+            _ => transformed.push(tokens[index].clone()),
         }
-
-        let indent_width = whitespace_width(&token.lexeme);
-        let relative_token = match current_indent.as_ref() {
-            None => {
-                current_indent = Some((token.lexeme.clone(), indent_width));
-                Some(Token::new(TokenKind::Indent, token.lexeme.clone()))
-            }
-            Some((previous_lexeme, previous_width)) => {
-                if indent_width > *previous_width {
-                    let delta = indent_width - previous_width;
-                    let relative_lexeme = token
-                        .lexeme
-                        .chars()
-                        .skip(token.lexeme.chars().count().saturating_sub(delta))
-                        .collect::<String>();
-                    current_indent = Some((token.lexeme.clone(), indent_width));
-                    Some(Token::new(TokenKind::Indent, relative_lexeme))
-                } else if indent_width < *previous_width {
-                    let delta = previous_width - indent_width;
-                    let relative_lexeme = previous_lexeme
-                        .chars()
-                        .skip(previous_lexeme.chars().count().saturating_sub(delta))
-                        .collect::<String>();
-                    current_indent = Some((token.lexeme.clone(), indent_width));
-                    Some(Token::new(TokenKind::Dedent, relative_lexeme))
-                } else {
-                    current_indent = Some((token.lexeme.clone(), indent_width));
-                    None
-                }
-            }
-        };
-
-        if let Some(relative_token) = relative_token {
-            transformed.push(relative_token);
-        }
+        index += 1;
     }
-
     transformed
 }
 
@@ -112,38 +88,54 @@ mod tests {
 
     #[test]
     fn tokenize_converts_indents_to_relative_indents_and_dedents() {
-        let input = "line 1\n    nested\n  dedented\n";
+        let input = "line_1\n    nested\n  dedented\n";
         let tokens = tokenize(input);
         let actual: Vec<(TokenKind, &str)> = tokens
             .iter()
-            .filter(|token| token.kind == TokenKind::Indent || token.kind == TokenKind::Dedent)
             .map(|token| (token.kind, token.lexeme.as_str()))
             .collect();
 
         assert_eq!(
             actual,
             vec![
+                (TokenKind::BlankLine, "\n"),
+                (TokenKind::Word, "line_1"),
+                (TokenKind::NewLine, "\n"),
                 (TokenKind::Indent, "    "),
-                (TokenKind::Dedent, "    "),
-                (TokenKind::Indent, "  "),
+                (TokenKind::Word, "nested"),
+                (TokenKind::NewLine, "\n"),
                 (TokenKind::Dedent, "  "),
+                (TokenKind::Word, "dedented"),
+                (TokenKind::NewLine, "\n"),
+                (TokenKind::Dedent, "  "),
+                (TokenKind::BlankLine, "\n"),
             ]
         );
     }
 
     #[test]
     fn tokenize_emits_dedent_when_indented_block_returns_to_zero_indent() {
-        let input = "line 1\n    nested\nplain\n";
+        let input = "line_1\n    nested\nplain\n";
         let tokens = tokenize(input);
         let actual: Vec<(TokenKind, &str)> = tokens
             .iter()
-            .filter(|token| token.kind == TokenKind::Indent || token.kind == TokenKind::Dedent)
             .map(|token| (token.kind, token.lexeme.as_str()))
             .collect();
 
         assert_eq!(
             actual,
-            vec![(TokenKind::Indent, "    "), (TokenKind::Dedent, "    ")]
+            vec![
+                (TokenKind::BlankLine, "\n"),
+                (TokenKind::Word, "line_1"),
+                (TokenKind::NewLine, "\n"),
+                (TokenKind::Indent, "    "),
+                (TokenKind::Word, "nested"),
+                (TokenKind::NewLine, "\n"),
+                (TokenKind::Dedent, "    "),
+                (TokenKind::Word, "plain"),
+                (TokenKind::NewLine, "\n"),
+                (TokenKind::BlankLine, "\n"),
+            ]
         );
     }
 }
