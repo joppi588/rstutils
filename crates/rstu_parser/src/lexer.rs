@@ -15,7 +15,7 @@ pub fn tokenize(input: &str) -> Vec<Token> {
         let sub_str = &input[index - 1..];
         let (token_kind, lexeme) = TokenKind::match_token(sub_str)
             .unwrap_or_else(|| panic!("No token matched input: {sub_str:?}"));
-        let current_token = Token::new(token_kind, lexeme);
+        let new_token = Token::new(token_kind, lexeme);
 
         match (last_token_kind, token_kind) {
             (TokenKind::NewLine, TokenKind::Indent) => {
@@ -37,9 +37,9 @@ pub fn tokenize(input: &str) -> Vec<Token> {
                     tokens.push(dedent_token);
                 }
                 current_indent = 0;
-                tokens.push(current_token);
+                tokens.push(new_token);
             }
-            _ => tokens.push(current_token),
+            _ => tokens.push(new_token),
         }
 
         last_token_kind = token_kind;

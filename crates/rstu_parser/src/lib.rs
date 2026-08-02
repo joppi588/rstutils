@@ -142,13 +142,9 @@ fn try_parse_comment(
     first_line_end: usize,
 ) -> Result<(NodeRef, usize), FindElementError> {
     let mut index = first_line_end;
-    while index + 1 < tokens.len() && tokens[index + 1].kind == TK::Indent {
-        index += 1;
-        while index + 1 < tokens.len() && tokens[index + 1].kind == TK::Dedent {
-            index += 1;
-        }
-        let line_end = find_next_kind(tokens, &[TK::NewLine], index + 1).expect(EXPECT_NEWLINE);
-        index = line_end;
+    if tokens[index + 1].kind == TK::Indent {
+        index = find_next_kind(tokens, &[TK::Dedent], index + 1)
+            .expect("There is always a final dedent.");
     }
 
     let comment = AstNode::new_ref(NodeClass::Comment);
