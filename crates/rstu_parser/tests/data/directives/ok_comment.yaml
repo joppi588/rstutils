@@ -1,14 +1,14 @@
-kind: Document
+class: Document
 children:
-  - kind: Comment
+  - class: Comment
     text: "This is a simple comment.\nIt should be ignored by the parser as visible content.\n"
-  - kind: Comment
+  - class: Comment
     text: "This is a comment\n"
-  - kind: Comment
+  - class: Comment
     text: "_so: is this!\n"
-  - kind: Comment
+  - class: Comment
     text: "[and] this!\n"
-  - kind: Comment
+  - class: Comment
     text: "this:: too!\n"
-  - kind: Comment
+  - class: Comment
     text: "|even| this:: !\n"
