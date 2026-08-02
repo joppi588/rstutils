@@ -114,9 +114,10 @@ impl TokenKind {
     }
 
     pub fn match_token(input: &str) -> Option<(Self, &str)> {
-        Self::ALL
-            .iter()
-            .find_map(|&kind| kind.find(input).map(|lexeme| (kind, lexeme)))
+        Self::ALL.iter().find_map(|&kind| {
+            kind.find(input)
+                .map(|lexeme| (kind, &lexeme[1..lexeme.len() - 1]))
+        })
     }
 
     token_kinds!(
@@ -208,7 +209,7 @@ mod tests {
         let (kind, lexeme) = TokenKind::match_token("\nHello\n").unwrap();
 
         assert_eq!(kind, TokenKind::Word);
-        assert!(lexeme.contains("Hello"));
+        assert_eq!(lexeme, "Hello");
     }
 
     #[test]
