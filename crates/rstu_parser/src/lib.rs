@@ -14,6 +14,8 @@ use crate::token::{Token, TokenCategory as TC, TokenKind as TK};
 use parser_errors::{FindElementError, EXPECT_NEWLINE};
 use token_slice::{find_next_kind, tokens_to_text};
 
+// static DEDENT_GRACE: usize = 1;
+
 /// Parser implementation:
 /// Lookahead one line -> Decide on element.
 pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
@@ -46,7 +48,10 @@ pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
                 index = next_start;
             }
 
-            (TK::NewLine, TK::BlankLine) | (TK::BlankLine, _) => index += 1,
+            (TK::NewLine, TK::BlankLine)
+            | (TK::BlankLine, _)
+            | (TK::Indent, _)
+            | (TK::Dedent, _) => index += 1,
 
             (kind, _) if kind.is(TC::INLINE_MARKER) || kind.is(TC::PLAIN) => {
                 let (paragraph, next_start) = try_parse_paragraph(&tokens, index)?;
@@ -137,13 +142,16 @@ fn try_parse_comment(
     first_line_end: usize,
 ) -> Result<(NodeRef, usize), FindElementError> {
     let mut index = first_line_end;
-    while tokens[index + 1].kind == TK::Indent {
-        index = find_next_kind(tokens, &[TK::NewLine], index + 1).expect(EXPECT_NEWLINE)
+    if tokens[index + 1].kind == TK::Indent {
+        index = find_next_kind(tokens, &[TK::Dedent], index + 1)
+            .expect("There is always a final dedent.");
     }
 
     let comment = AstNode::new_ref(NodeClass::Comment);
-    let comment_tokens =
-        token_slice::tokens_without_kinds(&tokens[start_at + 2..index + 1], &[TK::Indent]); // skip '.. '
+    let comment_tokens = token_slice::tokens_without_kinds(
+        &tokens[start_at + 2..index + 1],
+        &[TK::Indent, TK::Dedent],
+    ); // skip '.. '
     AstNode::with_text(&comment, token_slice::tokens_to_text(&comment_tokens));
     Ok((comment, index + 1))
 }
@@ -167,42 +175,29 @@ fn try_parse_directive(
         AstNode::with_text(&directive, directive_text);
     }
 
-    let mut index = first_line_end + 1;
+    let index = first_line_end + 1;
     if index >= tokens.len() || tokens[index].kind != TK::Indent {
         return Ok((directive, index));
     }
 
     let indentation = tokens[index].lexeme.clone();
+
     let indented_block = AstNode::new_ref(NodeClass::Block);
     AstNode::with_attr(&indented_block, "indentation", indentation);
-
-    let mut paragraph_text = String::new();
-    while index < tokens.len() && tokens[index].kind == TK::Indent {
-        let line_end = find_next_kind(tokens, &[TK::NewLine], index + 1).expect(EXPECT_NEWLINE);
-        paragraph_text.push_str(&tokens_to_text(&tokens[index + 1..line_end + 1]));
-        index = line_end + 1;
-    }
-
-    if !paragraph_text.is_empty() {
-        let paragraph = AstNode::new_ref(NodeClass::Paragraph);
-        let plain = AstNode::new_ref(NodeClass::PlainText);
-        AstNode::with_attr(&plain, "text", paragraph_text);
-        AstNode::push_child(&paragraph, plain);
-        AstNode::push_child(&indented_block, paragraph);
-    }
-
+    let (paragraph, index) = try_parse_paragraph(&tokens, index + 1)?;
+    AstNode::push_child(&indented_block, paragraph);
     AstNode::push_child(&directive, indented_block);
 
     Ok((directive, index))
 }
 
 fn try_parse_paragraph(
-    tokens: &Vec<Token>,
+    tokens: &[Token],
     start_at: usize,
 ) -> Result<(NodeRef, usize), FindElementError> {
     let paragraph_end = find_next_kind(
         tokens,
-        &[TK::BlankLine, TK::Indent, TK::Separator],
+        &[TK::BlankLine, TK::Indent, TK::Separator, TK::Dedent],
         start_at,
     )
     .expect("Paragraph must end somewhere.");
@@ -210,9 +205,9 @@ fn try_parse_paragraph(
     let mut index = start_at;
     while index < paragraph_end {
         let (node, new_index) = match tokens[index].kind {
-            kind if kind.is(TC::INLINE_MARKER) => try_parse_inline(tokens, index)?,
+            kind if kind.is(TC::INLINE_MARKER) => try_parse_inline(&tokens, index)?,
             kind if kind.is(TC::PLAIN) || kind == TK::Punctuation => {
-                try_parse_plain(tokens, index)?
+                try_parse_plain(&tokens, index)?
             }
             kind if kind.is(TC::CONTROL) => {
                 index += 1;
@@ -232,7 +227,7 @@ fn try_parse_paragraph(
 }
 
 fn try_parse_inline(
-    tokens: &Vec<Token>,
+    tokens: &[Token],
     start_at: usize,
 ) -> Result<(NodeRef, usize), FindElementError> {
     let inline_final = match tokens[start_at].kind {
@@ -252,12 +247,18 @@ fn try_parse_inline(
 }
 
 fn try_parse_plain(
-    tokens: &Vec<Token>,
+    tokens: &[Token],
     start_at: usize,
 ) -> Result<(NodeRef, usize), FindElementError> {
     let plain_tokens = find_next_kind(
         tokens,
-        &[TK::Strong, TK::BlankLine, TK::DoubleDot], // TODO implement kinds_except
+        &[
+            TK::Strong,
+            TK::BlankLine,
+            TK::DoubleDot,
+            TK::Indent,
+            TK::Dedent,
+        ], // TODO implement kinds_except
         start_at,
     )
     .map_err(|_| FindElementError::InvalidPlainText { start_at: start_at })?;

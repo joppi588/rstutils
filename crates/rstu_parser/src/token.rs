@@ -73,8 +73,12 @@ impl TokenCategory {
         TokenKind::InlineInternalTarget,
     ];
     pub const STRUCTURAL: &'static [TokenKind] = &[TokenKind::Separator];
-    pub const CONTROL: &'static [TokenKind] =
-        &[TokenKind::Indent, TokenKind::BlankLine, TokenKind::NewLine];
+    pub const CONTROL: &'static [TokenKind] = &[
+        TokenKind::Indent,
+        TokenKind::Dedent,
+        TokenKind::BlankLine,
+        TokenKind::NewLine,
+    ];
     pub const PLAIN: &'static [TokenKind] = &[
         TokenKind::Spaces,
         TokenKind::Word,
@@ -88,6 +92,7 @@ impl TokenCategory {
 pub enum TokenKind {
     Separator,
     Indent,
+    Dedent,
     Spaces,
     DoubleDot,
     DoubleColon,
@@ -186,6 +191,7 @@ impl TokenKind {
         (HyperlinkReference, format!(r"[^\s]_{0}", INLINE_POST_CHARS)),
         (Punctuation, r"(.|\n)[[:punct:]](.|\n)"),
         (LiteralChar, r"(.|\n).(.|\n)"),
+        (Dedent, r"") // never matches, assigned by the lexer
     );
 
     // tests according to inline markup recognition rules.
