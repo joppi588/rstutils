@@ -14,6 +14,8 @@ use crate::token::{Token, TokenCategory as TC, TokenKind as TK};
 use parser_errors::{FindElementError, EXPECT_NEWLINE};
 use token_slice::{find_next_kind, tokens_to_text};
 
+static DEDENT_GRACE: usize = 1;
+
 /// Parser implementation:
 /// Lookahead one line -> Decide on element.
 pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
@@ -172,7 +174,8 @@ fn try_parse_directive(
         return Ok((directive, index));
     }
 
-    let indentation = tokens[index].lexeme.clone();
+    let indentation = tokens[index].lexeme.len();
+
     let indented_block = AstNode::new_ref(NodeClass::Block);
     AstNode::with_attr(&indented_block, "indentation", indentation);
 
