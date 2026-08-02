@@ -5,18 +5,19 @@
 use crate::token::{Token, TokenKind};
 
 pub fn tokenize(input: &str) -> Vec<Token> {
-    let mut tokens: Vec<Token> = Vec::new();
     let input = format!("\n\n{input}\n\n"); // leading and trailing blank line
-    let mut index: usize = 1;
+    let mut tokens: Vec<Token> = Vec::new();
     let mut last_token_kind = TokenKind::BlankLine;
     let mut current_indent = 0;
+
+    let mut index: usize = 1;
     while index < input.len() - 1 {
         let sub_str = &input[index - 1..];
-        let (kind, lexeme) = TokenKind::match_token(sub_str)
+        let (token_kind, lexeme) = TokenKind::match_token(sub_str)
             .unwrap_or_else(|| panic!("No token matched input: {sub_str:?}"));
-        let current_token = Token::new(kind, lexeme);
+        let current_token = Token::new(token_kind, lexeme);
 
-        match (last_token_kind, kind) {
+        match (last_token_kind, token_kind) {
             (TokenKind::NewLine, TokenKind::Indent) => {
                 let new_indent = lexeme.len();
                 if new_indent > current_indent {
@@ -41,7 +42,7 @@ pub fn tokenize(input: &str) -> Vec<Token> {
             _ => tokens.push(current_token),
         }
 
-        last_token_kind = kind;
+        last_token_kind = token_kind;
         index += lexeme.len();
     }
     tokens
