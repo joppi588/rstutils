@@ -5,50 +5,46 @@
 use crate::token::{Token, TokenKind};
 
 pub fn tokenize(input: &str) -> Vec<Token> {
-    let mut tokens = Vec::new();
+    let mut tokens: Vec<Token> = Vec::new();
     let input = format!("\n\n{input}\n\n"); // leading and trailing blank line
     let mut index: usize = 1;
+    let mut last_token_kind = TokenKind::BlankLine;
+    let mut current_indent = 0;
     while index < input.len() - 1 {
         let sub_str = &input[index - 1..];
         let (kind, lexeme) = TokenKind::match_token(sub_str)
             .unwrap_or_else(|| panic!("No token matched input: {sub_str:?}"));
-        tokens.push(Token::new(kind, lexeme));
-        index += lexeme.len();
-    }
+        let current_token = Token::new(kind, lexeme);
 
-    let mut transformed = Vec::new();
-    let mut current_indent: usize = 0;
-
-    transformed.push(tokens[0].clone());
-    index = 1;
-    while index < tokens.len() {
-        match (tokens[index - 1].kind, tokens[index].kind) {
+        match (last_token_kind, kind) {
             (TokenKind::NewLine, TokenKind::Indent) => {
-                let new_indent = tokens[index].lexeme.len();
+                let new_indent = lexeme.len();
                 if new_indent > current_indent {
                     let indent_token =
                         Token::new(TokenKind::Indent, " ".repeat(new_indent - current_indent));
-                    transformed.push(indent_token);
+                    tokens.push(indent_token);
                 } else if new_indent < current_indent {
                     let dedent_token =
                         Token::new(TokenKind::Dedent, " ".repeat(current_indent - new_indent));
-                    transformed.push(dedent_token);
+                    tokens.push(dedent_token);
                 }
                 current_indent = new_indent;
             }
             (TokenKind::NewLine, _) => {
                 if current_indent > 0 {
-                    let dedent = Token::new(TokenKind::Dedent, " ".repeat(current_indent));
-                    transformed.push(dedent);
+                    let dedent_token = Token::new(TokenKind::Dedent, " ".repeat(current_indent));
+                    tokens.push(dedent_token);
                 }
                 current_indent = 0;
-                transformed.push(tokens[index].clone());
+                tokens.push(current_token);
             }
-            _ => transformed.push(tokens[index].clone()),
+            _ => tokens.push(current_token),
         }
-        index += 1;
+
+        last_token_kind = kind;
+        index += lexeme.len();
     }
-    transformed
+    tokens
 }
 
 #[cfg(test)]
