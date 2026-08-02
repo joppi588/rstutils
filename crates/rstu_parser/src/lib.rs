@@ -14,7 +14,7 @@ use crate::token::{Token, TokenCategory as TC, TokenKind as TK};
 use parser_errors::{FindElementError, EXPECT_NEWLINE};
 use token_slice::{find_next_kind, tokens_to_text};
 
-static DEDENT_GRACE: usize = 1;
+// static DEDENT_GRACE: usize = 1;
 
 /// Parser implementation:
 /// Lookahead one line -> Decide on element.
@@ -48,7 +48,10 @@ pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
                 index = next_start;
             }
 
-            (TK::NewLine, TK::BlankLine) | (TK::BlankLine, _) => index += 1,
+            (TK::NewLine, TK::BlankLine)
+            | (TK::BlankLine, _)
+            | (TK::Indent, _)
+            | (TK::Dedent, _) => index += 1,
 
             (kind, _) if kind.is(TC::INLINE_MARKER) || kind.is(TC::PLAIN) => {
                 let (paragraph, next_start) = try_parse_paragraph(&tokens, index)?;
@@ -139,13 +142,20 @@ fn try_parse_comment(
     first_line_end: usize,
 ) -> Result<(NodeRef, usize), FindElementError> {
     let mut index = first_line_end;
-    while tokens[index + 1].kind == TK::Indent {
-        index = find_next_kind(tokens, &[TK::NewLine], index + 1).expect(EXPECT_NEWLINE)
+    while index + 1 < tokens.len() && tokens[index + 1].kind == TK::Indent {
+        index += 1;
+        while index + 1 < tokens.len() && tokens[index + 1].kind == TK::Dedent {
+            index += 1;
+        }
+        let line_end = find_next_kind(tokens, &[TK::NewLine], index + 1).expect(EXPECT_NEWLINE);
+        index = line_end;
     }
 
     let comment = AstNode::new_ref(NodeClass::Comment);
-    let comment_tokens =
-        token_slice::tokens_without_kinds(&tokens[start_at + 2..index + 1], &[TK::Indent]); // skip '.. '
+    let comment_tokens = token_slice::tokens_without_kinds(
+        &tokens[start_at + 2..index + 1],
+        &[TK::Indent, TK::Dedent],
+    ); // skip '.. '
     AstNode::with_text(&comment, token_slice::tokens_to_text(&comment_tokens));
     Ok((comment, index + 1))
 }
@@ -182,8 +192,16 @@ fn try_parse_directive(
     let mut paragraph_text = String::new();
     while index < tokens.len() && tokens[index].kind == TK::Indent {
         let line_end = find_next_kind(tokens, &[TK::NewLine], index + 1).expect(EXPECT_NEWLINE);
-        paragraph_text.push_str(&tokens_to_text(&tokens[index + 1..line_end + 1]));
+        let content_start = if index + 1 < tokens.len() && tokens[index + 1].kind == TK::Dedent {
+            index + 2
+        } else {
+            index + 1
+        };
+        paragraph_text.push_str(&tokens_to_text(&tokens[content_start..line_end + 1]));
         index = line_end + 1;
+        if index < tokens.len() && tokens[index].kind == TK::Dedent {
+            index += 1;
+        }
     }
 
     if !paragraph_text.is_empty() {

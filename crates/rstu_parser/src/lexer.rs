@@ -4,6 +4,10 @@
 
 use crate::token::{Token, TokenKind};
 
+fn whitespace_width(lexeme: &str) -> usize {
+    lexeme.chars().count()
+}
+
 pub fn tokenize(input: &str) -> Vec<Token> {
     let mut tokens = Vec::new();
     let input = format!("\n\n{input}\n\n"); // leading and trailing blank line
@@ -15,7 +19,60 @@ pub fn tokenize(input: &str) -> Vec<Token> {
         tokens.push(Token::new(kind, lexeme));
         index += lexeme.len();
     }
-    tokens
+
+    let mut transformed = Vec::new();
+    let mut current_indent: Option<(String, usize)> = None;
+
+    for token in tokens {
+        if token.kind != TokenKind::Indent {
+            if let Some((previous_lexeme, previous_width)) = current_indent.as_ref() {
+                if *previous_width > 0 {
+                    let dedent = Token::new(TokenKind::Dedent, previous_lexeme.clone());
+                    transformed.push(dedent);
+                }
+                current_indent = None;
+            }
+            transformed.push(token);
+            continue;
+        }
+
+        let indent_width = whitespace_width(&token.lexeme);
+        let relative_token = match current_indent.as_ref() {
+            None => {
+                current_indent = Some((token.lexeme.clone(), indent_width));
+                Some(Token::new(TokenKind::Indent, token.lexeme.clone()))
+            }
+            Some((previous_lexeme, previous_width)) => {
+                if indent_width > *previous_width {
+                    let delta = indent_width - previous_width;
+                    let relative_lexeme = token
+                        .lexeme
+                        .chars()
+                        .skip(token.lexeme.chars().count().saturating_sub(delta))
+                        .collect::<String>();
+                    current_indent = Some((token.lexeme.clone(), indent_width));
+                    Some(Token::new(TokenKind::Indent, relative_lexeme))
+                } else if indent_width < *previous_width {
+                    let delta = previous_width - indent_width;
+                    let relative_lexeme = previous_lexeme
+                        .chars()
+                        .skip(previous_lexeme.chars().count().saturating_sub(delta))
+                        .collect::<String>();
+                    current_indent = Some((token.lexeme.clone(), indent_width));
+                    Some(Token::new(TokenKind::Dedent, relative_lexeme))
+                } else {
+                    current_indent = Some((token.lexeme.clone(), indent_width));
+                    None
+                }
+            }
+        };
+
+        if let Some(relative_token) = relative_token {
+            transformed.push(relative_token);
+        }
+    }
+
+    transformed
 }
 
 #[cfg(test)]
@@ -51,5 +108,42 @@ mod tests {
         ];
 
         assert_eq!(tokenize(input), expected);
+    }
+
+    #[test]
+    fn tokenize_converts_indents_to_relative_indents_and_dedents() {
+        let input = "line 1\n    nested\n  dedented\n";
+        let tokens = tokenize(input);
+        let actual: Vec<(TokenKind, &str)> = tokens
+            .iter()
+            .filter(|token| token.kind == TokenKind::Indent || token.kind == TokenKind::Dedent)
+            .map(|token| (token.kind, token.lexeme.as_str()))
+            .collect();
+
+        assert_eq!(
+            actual,
+            vec![
+                (TokenKind::Indent, "    "),
+                (TokenKind::Dedent, "    "),
+                (TokenKind::Indent, "  "),
+                (TokenKind::Dedent, "  "),
+            ]
+        );
+    }
+
+    #[test]
+    fn tokenize_emits_dedent_when_indented_block_returns_to_zero_indent() {
+        let input = "line 1\n    nested\nplain\n";
+        let tokens = tokenize(input);
+        let actual: Vec<(TokenKind, &str)> = tokens
+            .iter()
+            .filter(|token| token.kind == TokenKind::Indent || token.kind == TokenKind::Dedent)
+            .map(|token| (token.kind, token.lexeme.as_str()))
+            .collect();
+
+        assert_eq!(
+            actual,
+            vec![(TokenKind::Indent, "    "), (TokenKind::Dedent, "    ")]
+        );
     }
 }
