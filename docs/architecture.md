@@ -35,6 +35,7 @@ Use a 1 character context before and after the token.
 5. Parser approach
 Top-down.
 - Level 1: Document structure (sections)
+           Lookahead one line.
 - Level 2: Main blocks (directives, comments)
 - Level 3 (recursive): Body elements
 This represents the language structure.
