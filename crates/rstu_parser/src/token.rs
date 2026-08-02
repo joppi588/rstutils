@@ -88,6 +88,7 @@ impl TokenCategory {
 pub enum TokenKind {
     Separator,
     Indent,
+    Dedent,
     Spaces,
     DoubleDot,
     DoubleColon,
@@ -186,6 +187,7 @@ impl TokenKind {
         (HyperlinkReference, format!(r"[^\s]_{0}", INLINE_POST_CHARS)),
         (Punctuation, r"(.|\n)[[:punct:]](.|\n)"),
         (LiteralChar, r"(.|\n).(.|\n)"),
+        (Dedent, r"") // never matches, assigned by the lexer
     );
 
     // tests according to inline markup recognition rules.

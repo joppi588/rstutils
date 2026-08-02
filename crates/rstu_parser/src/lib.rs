@@ -174,7 +174,7 @@ fn try_parse_directive(
         return Ok((directive, index));
     }
 
-    let indentation = tokens[index].lexeme.len();
+    let indentation = tokens[index].lexeme.clone();
 
     let indented_block = AstNode::new_ref(NodeClass::Block);
     AstNode::with_attr(&indented_block, "indentation", indentation);

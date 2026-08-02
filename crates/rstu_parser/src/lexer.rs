@@ -21,6 +21,7 @@ pub fn tokenize(input: &str) -> Vec<Token> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::token::TokenKind;
 
     #[test]
     fn tokenize_spaces_words() {
