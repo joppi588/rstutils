@@ -10,9 +10,9 @@ pub fn tokenize(input: &str) -> Vec<Token> {
     let mut index: usize = 1;
     while index < input.len() - 1 {
         let sub_str = &input[index - 1..];
-        let (kind, token_match) = TokenKind::match_token(sub_str)
+        let (kind, lexeme) = TokenKind::match_token(sub_str)
             .unwrap_or_else(|| panic!("No token matched input: {sub_str:?}"));
-        let lexeme_len = token_match.len() - 2;
+        let lexeme_len = lexeme.len() - 2;
         tokens.push(Token::new(kind, &sub_str[1..lexeme_len + 1]));
         index += lexeme_len;
     }
