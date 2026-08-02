@@ -2,7 +2,9 @@
 //
 // SPDX-License-Identifier: MIT
 
-use super::elements::{ElementCategory, ElementKind};
+#![allow(dead_code)]
+
+use super::elements::ElementKind;
 use std::error::Error;
 use std::fmt;
 
