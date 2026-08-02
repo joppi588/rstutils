@@ -9,15 +9,11 @@ pub fn tokenize(input: &str) -> Vec<Token> {
     let input = format!("\n\n{input}\n\n"); // leading and trailing blank line
     let mut index: usize = 1;
     while index < input.len() - 1 {
-        let mut lexeme_len = 0;
-        for kind in TokenKind::ALL {
-            let sub_str = &input[index - 1..];
-            if let Some(token_match) = kind.find(sub_str) {
-                lexeme_len = token_match.len() - 2;
-                tokens.push(Token::new(kind, &sub_str[1..lexeme_len + 1]));
-                break;
-            }
-        }
+        let sub_str = &input[index - 1..];
+        let (kind, token_match) = TokenKind::match_token(sub_str)
+            .unwrap_or_else(|| panic!("No token matched input: {sub_str:?}"));
+        let lexeme_len = token_match.len() - 2;
+        tokens.push(Token::new(kind, &sub_str[1..lexeme_len + 1]));
         index += lexeme_len;
     }
 
