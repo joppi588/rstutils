@@ -131,7 +131,7 @@ impl TokenKind {
         (DoubleColon, r"(.|\n)::(.|\n)"),
 
         // Lists
-        (Field,r"[\s\n]:[^:]+:[.\n]"),
+        (Field,r"[\n\s]:\w+:[^w]"),
 
         (TableHorizontal, r"\n=+(?:\s+=+)+\s*\n"),
 
@@ -148,7 +148,7 @@ impl TokenKind {
 
         // Plain text
         (Spaces, r"[^ \t\n][ \t]+[^ \t]"),
-        (Word, r"[^A-Za-z0-9_][A-Za-z0-9_]+[^A-Za-z0-9_]"),
+        (Word, r"[^\w]\w+[^\w]"),
         (Punctuation, r"(.|\n)[[:punct:]](.|\n)"),
 
         (Dedent, r"\b\B"), // never matches, assigned by the lexer
@@ -332,9 +332,9 @@ mod tests {
 
     #[test]
     fn field_token() {
-        assert_eq!(
-            TK::Field.find_lexeme("\n:some_field:\n"),
-            Some(":some_field:")
-        )
+        assert_eq!(TK::Field.find_lexeme("\n:field1:\n"), Some(":field1:"));
+        assert_eq!(TK::Field.find_lexeme(" :F_2: Some value"), Some(":F_2:"));
+        assert_eq!(TK::Field.find_lexeme(" :F_2:Some value"), Some(":F_2:"));
+        assert_eq!(TK::Field.find_lexeme("\n:F$x: "), None);
     }
 }
