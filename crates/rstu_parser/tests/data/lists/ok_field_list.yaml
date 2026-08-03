@@ -1,0 +1,11 @@
+class: Document
+children:
+  - class: field_list
+    text: "This is a field list:\n"
+    children:
+    - class: field_item
+      fieldname: field_1
+      text: "Some Text\n"
+    - class: field_item
+      fieldname: field_2
+      text: "More Text\n"
