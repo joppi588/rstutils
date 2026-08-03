@@ -6,7 +6,7 @@ use rstu_ast::{AstNode, NodeClass, NodeRef};
 
 use crate::parser_errors::FindElementError;
 use crate::token::{Token, TokenKind as TK};
-use crate::token_slice::{find_next_kind, skip_kinds, tokens_to_text};
+use crate::token_slice::skip_kinds;
 
 pub(crate) fn try_parse_field_list(
     tokens: &[Token],
@@ -14,17 +14,6 @@ pub(crate) fn try_parse_field_list(
 ) -> Result<(NodeRef, usize), FindElementError> {
     let list = AstNode::new_ref(NodeClass::List);
     let mut index = start_at;
-
-    if tokens[index].kind != TK::Field {
-        let first_field = find_next_kind(tokens, &[TK::Field], index).map_err(|_| {
-            FindElementError::UnexpectedToken {
-                expected: "Field".to_owned(),
-                found: format!("{:?}", tokens[index].kind),
-            }
-        })?;
-        AstNode::with_text(&list, tokens_to_text(&tokens[index..first_field]));
-        index = first_field;
-    }
 
     while index < tokens.len() && tokens[index].kind == TK::Field {
         let item = AstNode::new_ref(NodeClass::FieldListItem);
