@@ -15,31 +15,26 @@ children:
       - class: Paragraph
         children:
           - class: PlainText
-            attributes:
-              text: "print "
+            text: "print "
           - class: InlineMarkup
             text: this
             attributes:
               markup: strong
           - class: PlainText
-            attributes:
-              text: " too.\n"
+            text: " too.\n"
       - class: Paragraph
         children:
           - class: PlainText
-            attributes:
-              text: "This "
+            text: "This "
           - class: InlineMarkup
             text: should
             attributes:
               markup: strong
           - class: PlainText
-            attributes:
-              text: " "
+            text: " "
           - class: InlineMarkup
             text: work as
             attributes:
               markup: strong
           - class: PlainText
-            attributes:
-              text: " well.\n"
+            text: " well.\n"

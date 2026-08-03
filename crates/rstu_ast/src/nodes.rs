@@ -9,6 +9,8 @@ pub enum NodeClass {
     Document,
     Section,
     Title,
+    List,
+    FieldListItem,
     Paragraph,
     InlineMarkup,
     PlainText,

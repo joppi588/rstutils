@@ -1,0 +1,24 @@
+class: Document
+children:
+  - class: Paragraph
+    children:
+    - class: PlainText
+      text: "This is a field list:\n"
+  - class: List
+    children:
+      - class: FieldListItem
+        attributes:
+          fieldname: field_1
+        children:
+          - class: Paragraph
+            children:
+              - class: PlainText
+                text: "Some Text\n"
+      - class: FieldListItem
+        attributes:
+          fieldname: field_2
+        children:
+          - class: Paragraph
+            children:
+              - class: PlainText
+                text: "More Text\n"
