@@ -179,161 +179,161 @@ impl TokenKind {
 
 #[cfg(test)]
 mod tests {
-    use super::{TokenCategory, TokenKind};
+    use super::{TokenCategory, TokenKind as TK};
 
     #[test]
     fn match_token_uses_centralized_token_list() {
-        let (kind, lexeme) = TokenKind::match_token("\nHello\n").unwrap();
+        let (kind, lexeme) = TK::match_token("\nHello\n").unwrap();
 
-        assert_eq!(kind, TokenKind::Word);
+        assert_eq!(kind, TK::Word);
         assert_eq!(lexeme, "Hello");
     }
 
     #[test]
     fn transition_matches() {
-        assert!(TokenKind::Separator.is_match("\n====\n"));
-        assert!(!TokenKind::Separator.is_match("\n==a=\n"));
-        assert!(!TokenKind::Separator.is_match("\n===\n"));
+        assert!(TK::Separator.is_match("\n====\n"));
+        assert!(!TK::Separator.is_match("\n==a=\n"));
+        assert!(!TK::Separator.is_match("\n===\n"));
     }
 
     #[test]
     fn indent_matches() {
-        assert!(TokenKind::Indent.is_match("\n \t  W"));
+        assert!(TK::Indent.is_match("\n \t  W"));
     }
 
     #[test]
     fn indent_non_matching() {
-        assert!(!TokenKind::Indent.is_match("abc"));
+        assert!(!TK::Indent.is_match("abc"));
     }
 
     #[test]
     fn spaces_matches() {
-        assert!(TokenKind::Spaces.is_match("x \t x"));
+        assert!(TK::Spaces.is_match("x \t x"));
     }
 
     #[test]
     fn spaces_non_matching() {
-        assert!(!TokenKind::Spaces.is_match("xabcx"));
+        assert!(!TK::Spaces.is_match("xabcx"));
     }
 
     #[test]
     fn bold_matches() {
-        assert!(TokenKind::Strong.is_match(" **x"));
-        assert!(TokenKind::Strong.is_match("x** "));
+        assert!(TK::Strong.is_match(" **x"));
+        assert!(TK::Strong.is_match("x** "));
     }
 
     #[test]
     fn bold_non_matching() {
-        assert!(!TokenKind::Strong.is_match("*"));
+        assert!(!TK::Strong.is_match("*"));
     }
 
     #[test]
     fn inline_markup_tokens_match_common_delimiters() {
-        assert!(TokenKind::Emphasis.is_match(" *x"));
-        assert!(TokenKind::InterpretedText.is_match(" `x"));
-        assert!(TokenKind::InlineLiteral.is_match(" ``x"));
-        assert!(TokenKind::SubstitutionReference.is_match(" |x"));
-        assert!(TokenKind::HyperlinkReference.is_match("x_ "));
-        assert!(TokenKind::FootnoteReferenceOpen.is_match(" [x"));
+        assert!(TK::Emphasis.is_match(" *x"));
+        assert!(TK::InterpretedText.is_match(" `x"));
+        assert!(TK::InlineLiteral.is_match(" ``x"));
+        assert!(TK::SubstitutionReference.is_match(" |x"));
+        assert!(TK::HyperlinkReference.is_match("x_ "));
+        assert!(TK::FootnoteReferenceOpen.is_match(" [x"));
     }
 
     // TODO: exclude escaped characters
 
     #[test]
     fn emphasis_non_matching_for_strong_delimiters() {
-        assert!(!TokenKind::Emphasis.is_match("**"));
+        assert!(!TK::Emphasis.is_match("**"));
     }
 
     #[test]
     fn interpreted_text_non_matching_for_double_backticks() {
-        assert!(!TokenKind::InterpretedText.is_match("``"));
+        assert!(!TK::InterpretedText.is_match("``"));
     }
 
     #[test]
     fn doublecolon_matches() {
-        assert!(TokenKind::DoubleColon.is_match("e::\n"));
+        assert!(TK::DoubleColon.is_match("e::\n"));
     }
 
     #[test]
     fn doublecolon_non_matching() {
-        assert!(!TokenKind::DoubleColon.is_match("e:\n"));
+        assert!(!TK::DoubleColon.is_match("e:\n"));
     }
 
     #[test]
     fn doubledot_matches() {
-        assert!(TokenKind::DoubleDot.is_match("\n.. this is a comment\n"));
+        assert!(TK::DoubleDot.is_match("\n.. this is a comment\n"));
     }
 
     #[test]
     fn doubledot_non_matching() {
-        assert!(!TokenKind::DoubleDot.is_match("\nwarning...\n"));
+        assert!(!TK::DoubleDot.is_match("\nwarning...\n"));
     }
 
     #[test]
     fn table_horizontal_matches() {
-        assert!(TokenKind::TableHorizontal.is_match("\n==== =====\n"));
+        assert!(TK::TableHorizontal.is_match("\n==== =====\n"));
     }
 
     #[test]
     fn table_horizontal_non_matching() {
-        assert!(!TokenKind::TableHorizontal.is_match("\n========\n"));
+        assert!(!TK::TableHorizontal.is_match("\n========\n"));
     }
 
     #[test]
     fn blank_line_matches_empty() {
-        assert!(TokenKind::BlankLine.is_match("\n\n\n"));
+        assert!(TK::BlankLine.is_match("\n\n\n"));
     }
 
     #[test]
     fn blank_line_matches_whitespace_only() {
-        assert!(TokenKind::BlankLine.is_match("\n \t\n\n"));
+        assert!(TK::BlankLine.is_match("\n \t\n\n"));
     }
 
     #[test]
     fn blank_line_non_matching_text() {
-        assert!(!TokenKind::BlankLine.is_match("text"));
+        assert!(!TK::BlankLine.is_match("text"));
     }
 
     #[test]
     fn word_matches_alphanumeric_and_underscore() {
-        assert!(TokenKind::Word.is_match(" alpha_123 "));
+        assert!(TK::Word.is_match(" alpha_123 "));
     }
 
     #[test]
     fn word_matches_with_newline_boundary() {
-        assert!(TokenKind::Word.is_match("\nalpha_123\n"));
+        assert!(TK::Word.is_match("\nalpha_123\n"));
     }
 
     #[test]
     fn word_non_matching_without_word_chars() {
-        assert!(!TokenKind::Word.is_match("---\n***"));
+        assert!(!TK::Word.is_match("---\n***"));
     }
 
     #[test]
     fn punctuation_matches_ascii_non_alphanumeric() {
-        assert!(TokenKind::Punctuation.is_match("x,x"));
-        assert!(TokenKind::Punctuation.is_match("x!x"));
-        assert!(TokenKind::Punctuation.is_match("x_x"));
+        assert!(TK::Punctuation.is_match("x,x"));
+        assert!(TK::Punctuation.is_match("x!x"));
+        assert!(TK::Punctuation.is_match("x_x"));
     }
 
     #[test]
     fn punctuation_non_matching_for_alphanumeric() {
-        assert!(!TokenKind::Punctuation.is_match("xax"));
-        assert!(!TokenKind::Punctuation.is_match("x1x"));
+        assert!(!TK::Punctuation.is_match("xax"));
+        assert!(!TK::Punctuation.is_match("x1x"));
     }
 
     #[test]
     fn kind_is_matches_category_membership() {
-        assert!(TokenKind::Strong.is(TokenCategory::INLINE_MARKER));
-        assert!(TokenKind::Word.is(TokenCategory::PLAIN));
-        assert!(TokenKind::Punctuation.is(TokenCategory::PLAIN));
-        assert!(!TokenKind::Separator.is(TokenCategory::PLAIN));
+        assert!(TK::Strong.is(TokenCategory::INLINE_MARKER));
+        assert!(TK::Word.is(TokenCategory::PLAIN));
+        assert!(TK::Punctuation.is(TokenCategory::PLAIN));
+        assert!(!TK::Separator.is(TokenCategory::PLAIN));
     }
 
     #[test]
     fn field_token() {
         assert_eq!(
-            TokenKind::Field.find_lexeme("\n:some_field:\n"),
+            TK::Field.find_lexeme("\n:some_field:\n"),
             Some(":some_field:")
         )
     }
