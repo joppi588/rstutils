@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: MIT
 
 pub mod lexer;
+#[path = "lib/list.rs"]
+mod list;
 pub mod parser_errors;
 pub mod token;
 pub mod token_slice;
@@ -48,15 +50,40 @@ pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
                 index = next_start;
             }
 
+            (TK::Field, _) => {
+                let (field_list, next_start) = list::try_parse_field_list(&tokens, index)?;
+                AstNode::push_body_element(&current_node, field_list);
+                index = next_start;
+            }
+
             (TK::NewLine, TK::BlankLine)
             | (TK::BlankLine, _)
             | (TK::Indent, _)
             | (TK::Dedent, _) => index += 1,
 
             (kind, _) if kind.is(TC::INLINE_MARKER) || kind.is(TC::PLAIN) => {
-                let (paragraph, next_start) = try_parse_paragraph(&tokens, index)?;
-                AstNode::push_child(&current_node, paragraph.clone());
-                index = next_start;
+                let paragraph_end = find_next_kind(
+                    &tokens,
+                    &[
+                        TK::BlankLine,
+                        TK::Indent,
+                        TK::Separator,
+                        TK::Dedent,
+                        TK::Field,
+                    ],
+                    index,
+                )
+                .expect("Paragraph must end somewhere.");
+
+                if tokens[paragraph_end].kind == TK::Field {
+                    let (field_list, next_start) = list::try_parse_field_list(&tokens, index)?;
+                    AstNode::push_body_element(&current_node, field_list);
+                    index = next_start;
+                } else {
+                    let (paragraph, next_start) = try_parse_paragraph(&tokens, index)?;
+                    AstNode::push_child(&current_node, paragraph.clone());
+                    index = next_start;
+                }
             }
 
             _ => panic!(
@@ -197,7 +224,13 @@ fn try_parse_paragraph(
 ) -> Result<(NodeRef, usize), FindElementError> {
     let paragraph_end = find_next_kind(
         tokens,
-        &[TK::BlankLine, TK::Indent, TK::Separator, TK::Dedent],
+        &[
+            TK::BlankLine,
+            TK::Indent,
+            TK::Separator,
+            TK::Dedent,
+            TK::Field,
+        ],
         start_at,
     )
     .expect("Paragraph must end somewhere.");
@@ -223,7 +256,13 @@ fn try_parse_paragraph(
         index = new_index;
         AstNode::push_child(&paragraph, node);
     }
-    Ok((paragraph, paragraph_end + 1))
+    // Keep field token for the field-list parser; consume other terminators.
+    let next_index = if tokens[paragraph_end].kind == TK::Field {
+        paragraph_end
+    } else {
+        paragraph_end + 1
+    };
+    Ok((paragraph, next_index))
 }
 
 fn try_parse_inline(
@@ -256,6 +295,7 @@ fn try_parse_plain(
             TK::Strong,
             TK::BlankLine,
             TK::DoubleDot,
+            TK::Field,
             TK::Indent,
             TK::Dedent,
         ], // TODO implement kinds_except
