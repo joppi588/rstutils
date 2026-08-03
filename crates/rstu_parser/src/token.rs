@@ -131,7 +131,6 @@ impl TokenKind {
         // IMPORTANT:
         // The order of the enum matters, as the first matching token will be picked.
         // Format (name, token regex)
-        // The list is informally sorted by scope size of the token category
         (Separator, format!(r"\n[{0}]{{4,}}\n", RECOMMENDED_SECTION_CHARS)),
 
         (Indent, r"\n[ \t]+[^ \t\n]"),
@@ -163,8 +162,8 @@ impl TokenKind {
         (Word, r"[^A-Za-z0-9_][A-Za-z0-9_]+[^A-Za-z0-9_]"),
         (Punctuation, r"(.|\n)[[:punct:]](.|\n)"),
 
+        (Dedent, r"\b\B"), // never matches, assigned by the lexer
         (LiteralChar, r"(.|\n).(.|\n)"),
-        (Dedent, r""), // never matches, assigned by the lexer
     );
     pub fn find(self, input: &str) -> Option<&str> {
         self.regex().find(input).map(|m| m.as_str())
