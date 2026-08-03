@@ -131,7 +131,7 @@ impl TokenKind {
         (DoubleColon, r"(.|\n)::(.|\n)"),
 
         // Lists
-        (Field,r"[\n\s]:\w+:[^w]"),
+        (Field,r"[\n\s]:\w+:[\n\s]"),
 
         (TableHorizontal, r"\n=+(?:\s+=+)+\s*\n"),
 
@@ -334,7 +334,7 @@ mod tests {
     fn field_token() {
         assert_eq!(TK::Field.find_lexeme("\n:field1:\n"), Some(":field1:"));
         assert_eq!(TK::Field.find_lexeme(" :F_2: Some value"), Some(":F_2:"));
-        assert_eq!(TK::Field.find_lexeme(" :F_2:Some value"), Some(":F_2:"));
+        assert_eq!(TK::Field.find_lexeme(" :F_2:Some value"), None);
         assert_eq!(TK::Field.find_lexeme("\n:F$x: "), None);
     }
 }
