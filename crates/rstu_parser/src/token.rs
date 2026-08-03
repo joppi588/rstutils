@@ -160,18 +160,19 @@ impl TokenKind {
     }
 
     pub fn match_token(input: &str) -> Option<(Self, &str)> {
-        Self::ALL.iter().find_map(|&kind| {
-            kind.find(input)
-                .map(|lexeme| (kind, &lexeme[1..lexeme.len() - 1]))
-        })
+        Self::ALL
+            .iter()
+            .find_map(|&kind| kind.find_lexeme(input).map(|lexeme| (kind, lexeme)))
     }
 
-    pub fn find(self, input: &str) -> Option<&str> {
-        self.regex().find(input).map(|m| m.as_str())
+    pub fn find_lexeme(self, input: &str) -> Option<&str> {
+        self.regex()
+            .find(input)
+            .map(|m| &(m.as_str())[1..m.len() - 1])
     }
 
     pub fn is_match(self, input: &str) -> bool {
-        let result = self.find(input);
+        let result = self.find_lexeme(input);
         result.is_some()
     }
 }
@@ -332,8 +333,8 @@ mod tests {
     #[test]
     fn field_token() {
         assert_eq!(
-            TokenKind::Field.find("\n:some_field:\n"),
-            Some("\n:some_field:\n")
+            TokenKind::Field.find_lexeme("\n:some_field:\n"),
+            Some(":some_field:")
         )
     }
 }
