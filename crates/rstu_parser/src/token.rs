@@ -130,24 +130,22 @@ impl TokenKind {
     token_kinds!(
         // IMPORTANT:
         // The order of the enum matters, as the first matching token will be picked.
-        // Format (name, context length, context regex, token regex)
+        // Format (name, token regex)
+        // The list is informally sorted by scope size of the token category
         (Separator, format!(r"\n[{0}]{{4,}}\n", RECOMMENDED_SECTION_CHARS)),
 
         (Indent, r"\n[ \t]+[^ \t\n]"),
         (BlankLine, r"\n[ \t]*\n(.|\n)"),
         (NewLine, r"[^\n]\n(.|\n)"),
 
-        // Directives
+        // Directive-Like
         (DoubleDot, r"[\n\s]\.\.[\n\s]"),
         (DoubleColon, r"(.|\n)::(.|\n)"),
 
+        // Lists
+        (Field,r"[\s\n]:[^:]+:[.\n]"),
+
         (TableHorizontal, r"\n=+(?:\s+=+)+\s*\n"),
-
-
-        // Plain text
-        (Word, r"[^A-Za-z0-9_][A-Za-z0-9_]+[^A-Za-z0-9_]"),
-        (Spaces, r"[^ \t\n][ \t]+[^ \t]"),
-        (Punctuation, r"(.|\n)[[:punct:]](.|\n)"),
 
         // Inline
         (Strong, format!(r"(?:{0}\*\*[^\s]|[^\s]\*\*{1})", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
@@ -160,13 +158,14 @@ impl TokenKind {
         (FootnoteReferenceClose, format!(r"[^\s]\]_{0}", INLINE_POST_CHARS)),
         (HyperlinkReference, format!(r"[^\s]_{0}", INLINE_POST_CHARS)),
 
-        // Lists
-        (Field,r"[\s\n]:[^:]+:[.\n]"),
+        // Plain text
+        (Spaces, r"[^ \t\n][ \t]+[^ \t]"),
+        (Word, r"[^A-Za-z0-9_][A-Za-z0-9_]+[^A-Za-z0-9_]"),
+        (Punctuation, r"(.|\n)[[:punct:]](.|\n)"),
 
         (LiteralChar, r"(.|\n).(.|\n)"),
         (Dedent, r""), // never matches, assigned by the lexer
     );
-
     pub fn find(self, input: &str) -> Option<&str> {
         self.regex().find(input).map(|m| m.as_str())
     }
