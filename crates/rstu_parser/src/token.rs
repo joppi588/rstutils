@@ -115,17 +115,6 @@ pub enum TokenKind {
 }
 
 impl TokenKind {
-    pub fn is(self, kinds: &[TokenKind]) -> bool {
-        kinds.contains(&self)
-    }
-
-    pub fn match_token(input: &str) -> Option<(Self, &str)> {
-        Self::ALL.iter().find_map(|&kind| {
-            kind.find(input)
-                .map(|lexeme| (kind, &lexeme[1..lexeme.len() - 1]))
-        })
-    }
-
     #[rustfmt::skip]
     token_kinds!(
         // IMPORTANT:
@@ -165,6 +154,18 @@ impl TokenKind {
         (Dedent, r"\b\B"), // never matches, assigned by the lexer
         (LiteralChar, r"(.|\n).(.|\n)"),
     );
+
+    pub fn is(self, kinds: &[TokenKind]) -> bool {
+        kinds.contains(&self)
+    }
+
+    pub fn match_token(input: &str) -> Option<(Self, &str)> {
+        Self::ALL.iter().find_map(|&kind| {
+            kind.find(input)
+                .map(|lexeme| (kind, &lexeme[1..lexeme.len() - 1]))
+        })
+    }
+
     pub fn find(self, input: &str) -> Option<&str> {
         self.regex().find(input).map(|m| m.as_str())
     }
