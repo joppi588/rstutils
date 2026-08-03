@@ -11,5 +11,4 @@ children:
           - class: Paragraph
             children:
               - class: PlainText
-                attributes:
-                  text: "This is a simple note directive.\n"
+                text: "This is a simple note directive.\n"

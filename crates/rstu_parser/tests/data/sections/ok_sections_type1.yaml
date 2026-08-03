@@ -9,8 +9,7 @@ children:
       - class: Paragraph
         children:
           - class: PlainText
-            attributes:
-              text: "Some Text\n"
+            text: "Some Text\n"
       - class: Section
         attributes:
           section_marker: ---------
@@ -20,8 +19,7 @@ children:
           - class: Paragraph
             children:
               - class: PlainText
-                attributes:
-                  text: "More Text\n"
+                text: "More Text\n"
   - class: Section
     attributes:
       section_marker: =========
@@ -31,5 +29,4 @@ children:
       - class: Paragraph
         children:
           - class: PlainText
-            attributes:
-              text: "Same level as Heading 1.\n"
+            text: "Same level as Heading 1.\n"

@@ -15,13 +15,6 @@ pub(crate) fn try_parse_field_list(
     let list = AstNode::new_ref(NodeClass::List);
     let mut index = start_at;
 
-    if index >= tokens.len() {
-        return Err(FindElementError::StartAtOutOfBounds {
-            start_at,
-            token_count: tokens.len(),
-        });
-    }
-
     if tokens[index].kind != TK::Field {
         let first_field = find_next_kind(tokens, &[TK::Field], index).map_err(|_| {
             FindElementError::UnexpectedToken {

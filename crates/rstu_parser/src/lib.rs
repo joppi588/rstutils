@@ -62,28 +62,9 @@ pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
             | (TK::Dedent, _) => index += 1,
 
             (kind, _) if kind.is(TC::INLINE_MARKER) || kind.is(TC::PLAIN) => {
-                let paragraph_end = find_next_kind(
-                    &tokens,
-                    &[
-                        TK::BlankLine,
-                        TK::Indent,
-                        TK::Separator,
-                        TK::Dedent,
-                        TK::Field,
-                    ],
-                    index,
-                )
-                .expect("Paragraph must end somewhere.");
-
-                if tokens[paragraph_end].kind == TK::Field {
-                    let (field_list, next_start) = list::try_parse_field_list(&tokens, index)?;
-                    AstNode::push_body_element(&current_node, field_list);
-                    index = next_start;
-                } else {
-                    let (paragraph, next_start) = try_parse_paragraph(&tokens, index)?;
-                    AstNode::push_child(&current_node, paragraph.clone());
-                    index = next_start;
-                }
+                let (paragraph, next_start) = try_parse_paragraph(&tokens, index)?;
+                AstNode::push_child(&current_node, paragraph.clone());
+                index = next_start;
             }
 
             _ => panic!(
@@ -256,13 +237,7 @@ fn try_parse_paragraph(
         index = new_index;
         AstNode::push_child(&paragraph, node);
     }
-    // Keep field token for the field-list parser; consume other terminators.
-    let next_index = if tokens[paragraph_end].kind == TK::Field {
-        paragraph_end
-    } else {
-        paragraph_end + 1
-    };
-    Ok((paragraph, next_index))
+    Ok((paragraph, index))
 }
 
 fn try_parse_inline(
@@ -303,10 +278,6 @@ fn try_parse_plain(
     )
     .map_err(|_| FindElementError::InvalidPlainText { start_at: start_at })?;
     let sentence = AstNode::new_ref(NodeClass::PlainText);
-    AstNode::with_attr(
-        &sentence,
-        "text",
-        tokens_to_text(&tokens[start_at..plain_tokens]),
-    );
+    AstNode::with_text(&sentence, tokens_to_text(&tokens[start_at..plain_tokens]));
     Ok((sentence, plain_tokens))
 }
