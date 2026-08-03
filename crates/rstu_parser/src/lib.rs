@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: MIT
 
 pub mod lexer;
+#[path = "lib/list.rs"]
+mod list;
 pub mod parser_errors;
 pub mod token;
 pub mod token_slice;
@@ -45,6 +47,12 @@ pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
                 let (directive, next_start) = try_parse_directive_like(&tokens, index)?;
                 AstNode::push_body_element(&current_node, directive.clone());
                 current_node = directive;
+                index = next_start;
+            }
+
+            (TK::Field, _) => {
+                let (field_list, next_start) = list::try_parse_field_list(&tokens, index)?;
+                AstNode::push_body_element(&current_node, field_list);
                 index = next_start;
             }
 
@@ -197,7 +205,13 @@ fn try_parse_paragraph(
 ) -> Result<(NodeRef, usize), FindElementError> {
     let paragraph_end = find_next_kind(
         tokens,
-        &[TK::BlankLine, TK::Indent, TK::Separator, TK::Dedent],
+        &[
+            TK::BlankLine,
+            TK::Indent,
+            TK::Separator,
+            TK::Dedent,
+            TK::Field,
+        ],
         start_at,
     )
     .expect("Paragraph must end somewhere.");
@@ -223,7 +237,7 @@ fn try_parse_paragraph(
         index = new_index;
         AstNode::push_child(&paragraph, node);
     }
-    Ok((paragraph, paragraph_end + 1))
+    Ok((paragraph, index))
 }
 
 fn try_parse_inline(
@@ -256,6 +270,7 @@ fn try_parse_plain(
             TK::Strong,
             TK::BlankLine,
             TK::DoubleDot,
+            TK::Field,
             TK::Indent,
             TK::Dedent,
         ], // TODO implement kinds_except
@@ -263,10 +278,6 @@ fn try_parse_plain(
     )
     .map_err(|_| FindElementError::InvalidPlainText { start_at: start_at })?;
     let sentence = AstNode::new_ref(NodeClass::PlainText);
-    AstNode::with_attr(
-        &sentence,
-        "text",
-        tokens_to_text(&tokens[start_at..plain_tokens]),
-    );
+    AstNode::with_text(&sentence, tokens_to_text(&tokens[start_at..plain_tokens]));
     Ok((sentence, plain_tokens))
 }

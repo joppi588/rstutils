@@ -1,0 +1,36 @@
+// SPDX-FileCopyrightText: 2026 Jochen Schmaehling <tostmann1@web.de>
+//
+// SPDX-License-Identifier: MIT
+
+use rstu_ast::{AstNode, NodeClass, NodeRef};
+
+use crate::parser_errors::FindElementError;
+use crate::token::{Token, TokenKind as TK};
+use crate::token_slice::skip_kinds;
+
+pub(crate) fn try_parse_field_list(
+    tokens: &[Token],
+    start_at: usize,
+) -> Result<(NodeRef, usize), FindElementError> {
+    let list = AstNode::new_ref(NodeClass::List);
+    let mut index = start_at;
+
+    while index < tokens.len() && tokens[index].kind == TK::Field {
+        let item = AstNode::new_ref(NodeClass::FieldListItem);
+        let field_name = tokens[index]
+            .lexeme
+            .trim_start_matches(':')
+            .trim_end_matches(':')
+            .to_string();
+        AstNode::with_attr(&item, "fieldname", field_name);
+
+        let body_start = skip_kinds(tokens, &[TK::Spaces], index + 1).unwrap_or(index + 1);
+        let (paragraph, next_index) = super::try_parse_paragraph(tokens, body_start)?;
+        AstNode::push_child(&item, paragraph);
+        AstNode::push_child(&list, item);
+
+        index = next_index;
+    }
+
+    Ok((list, index))
+}

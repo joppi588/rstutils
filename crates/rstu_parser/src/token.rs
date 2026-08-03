@@ -90,272 +90,251 @@ impl TokenCategory {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TokenKind {
-    Separator,
-    Indent,
-    Dedent,
-    Spaces,
-    DoubleDot,
-    DoubleColon,
-    TableHorizontal,
     BlankLine,
-    NewLine,
-    Word,
-    Punctuation,
-    Strong,
+    Dedent,
+    DoubleColon,
+    DoubleDot,
     Emphasis,
-    InterpretedText,
-    InlineLiteral,
-    SubstitutionReference,
-    InlineInternalTarget,
-    FootnoteReferenceOpen,
+    Field,
     FootnoteReferenceClose,
+    FootnoteReferenceOpen,
     HyperlinkReference,
+    Indent,
+    InlineInternalTarget,
+    InlineLiteral,
+    InterpretedText,
     LiteralChar,
+    NewLine,
+    Punctuation,
+    Separator,
+    Spaces,
+    Strong,
+    SubstitutionReference,
+    TableHorizontal,
+    Word,
 }
 
 impl TokenKind {
+    #[rustfmt::skip]
+    token_kinds!(
+        // IMPORTANT:
+        // The order of the enum matters, as the first matching token will be picked.
+        // Format (name, token regex)
+        (Separator, format!(r"\n[{0}]{{4,}}\n", RECOMMENDED_SECTION_CHARS)),
+
+        (Indent, r"\n[ \t]+[^ \t\n]"),
+        (BlankLine, r"\n[ \t]*\n(.|\n)"),
+        (NewLine, r"[^\n]\n(.|\n)"),
+
+        // Directive-Like
+        (DoubleDot, r"[\n\s]\.\.[\n\s]"),
+        (DoubleColon, r"(.|\n)::(.|\n)"),
+
+        // Lists
+        (Field,r"[\n\s]:\w+:[\n\s]"),
+
+        (TableHorizontal, r"\n=+(?:\s+=+)+\s*\n"),
+
+        // Inline
+        (Strong, format!(r"(?:{0}\*\*[^\s]|[^\s]\*\*{1})", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
+        (Emphasis, format!(r"(?:{0}\*[^\s]|[^\s]\*{1})", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
+        (InlineLiteral, format!(r"(?:{0}``[^\s]|[^\s]``{1})", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
+        (InterpretedText, format!(r"(?:{0}`[^\s]|[^\s]`{1})", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
+        (SubstitutionReference, format!(r"(?:{0}\|[^\s]|[^\s]\|{1})", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
+        (InlineInternalTarget, format!(r"{0}_`[^\s]", INLINE_PRE_CHARS)),
+        (FootnoteReferenceOpen, format!(r"{0}\[[^\s]", INLINE_PRE_CHARS)),
+        (FootnoteReferenceClose, format!(r"[^\s]\]_{0}", INLINE_POST_CHARS)),
+        (HyperlinkReference, format!(r"[^\s]_{0}", INLINE_POST_CHARS)),
+
+        // Plain text
+        (Spaces, r"[^ \t\n][ \t]+[^ \t]"),
+        (Word, r"[^\w]\w+[^\w]"),
+        (Punctuation, r"(.|\n)[[:punct:]](.|\n)"),
+
+        (Dedent, r"\b\B"), // never matches, assigned by the lexer
+        (LiteralChar, r"(.|\n).(.|\n)"),
+    );
+
     pub fn is(self, kinds: &[TokenKind]) -> bool {
         kinds.contains(&self)
     }
 
     pub fn match_token(input: &str) -> Option<(Self, &str)> {
-        Self::ALL.iter().find_map(|&kind| {
-            kind.find(input)
-                .map(|lexeme| (kind, &lexeme[1..lexeme.len() - 1]))
-        })
+        Self::ALL
+            .iter()
+            .find_map(|&kind| kind.find_lexeme(input).map(|lexeme| (kind, lexeme)))
     }
 
-    token_kinds!(
-        // IMPORTANT:
-        // The order of the enum matters, as the first matching token will be picked.
-        // Format (name, context length, context regex, token regex)
-        (
-            Separator,
-            format!(r"\n[{0}]{{4,}}\n", RECOMMENDED_SECTION_CHARS)
-        ),
-        (Indent, r"\n[ \t]+[^ \t\n]"),
-        (Spaces, r"[^ \t\n][ \t]+[^ \t]"),
-        (DoubleDot, r"[\n\s]\.\.[\n\s]"),
-        (DoubleColon, r"(.|\n)::(.|\n)"),
-        (TableHorizontal, r"\n=+(?:\s+=+)+\s*\n"),
-        (BlankLine, r"\n[ \t]*\n(.|\n)"),
-        (NewLine, r"[^\n]\n(.|\n)"),
-        (Word, r"[^A-Za-z0-9_][A-Za-z0-9_]+[^A-Za-z0-9_]"),
-        (
-            Strong,
-            format!(
-                r"(?:{0}\*\*[^\s]|[^\s]\*\*{1})",
-                INLINE_PRE_CHARS, INLINE_POST_CHARS
-            )
-        ),
-        (
-            Emphasis,
-            format!(
-                r"(?:{0}\*[^\s]|[^\s]\*{1})",
-                INLINE_PRE_CHARS, INLINE_POST_CHARS
-            )
-        ),
-        (
-            InlineLiteral,
-            format!(
-                r"(?:{0}``[^\s]|[^\s]``{1})",
-                INLINE_PRE_CHARS, INLINE_POST_CHARS
-            )
-        ),
-        (
-            InterpretedText,
-            format!(
-                r"(?:{0}`[^\s]|[^\s]`{1})",
-                INLINE_PRE_CHARS, INLINE_POST_CHARS
-            )
-        ),
-        (
-            SubstitutionReference,
-            format!(
-                r"(?:{0}\|[^\s]|[^\s]\|{1})",
-                INLINE_PRE_CHARS, INLINE_POST_CHARS
-            )
-        ),
-        (
-            InlineInternalTarget,
-            format!(r"{0}_`[^\s]", INLINE_PRE_CHARS)
-        ),
-        (
-            FootnoteReferenceOpen,
-            format!(r"{0}\[[^\s]", INLINE_PRE_CHARS)
-        ),
-        (
-            FootnoteReferenceClose,
-            format!(r"[^\s]\]_{0}", INLINE_POST_CHARS)
-        ),
-        (HyperlinkReference, format!(r"[^\s]_{0}", INLINE_POST_CHARS)),
-        (Punctuation, r"(.|\n)[[:punct:]](.|\n)"),
-        (LiteralChar, r"(.|\n).(.|\n)"),
-        (Dedent, r"") // never matches, assigned by the lexer
-    );
-
-    // tests according to inline markup recognition rules.
-
-    pub fn find(self, input: &str) -> Option<&str> {
-        self.regex().find(input).map(|m| m.as_str())
+    pub fn find_lexeme(self, input: &str) -> Option<&str> {
+        self.regex()
+            .find(input)
+            .map(|m| &(m.as_str())[1..m.len() - 1])
     }
 
     pub fn is_match(self, input: &str) -> bool {
-        let result = self.find(input);
+        let result = self.find_lexeme(input);
         result.is_some()
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{TokenCategory, TokenKind};
+    use super::{TokenCategory, TokenKind as TK};
 
     #[test]
     fn match_token_uses_centralized_token_list() {
-        let (kind, lexeme) = TokenKind::match_token("\nHello\n").unwrap();
+        let (kind, lexeme) = TK::match_token("\nHello\n").unwrap();
 
-        assert_eq!(kind, TokenKind::Word);
+        assert_eq!(kind, TK::Word);
         assert_eq!(lexeme, "Hello");
     }
 
     #[test]
     fn transition_matches() {
-        assert!(TokenKind::Separator.is_match("\n====\n"));
-        assert!(!TokenKind::Separator.is_match("\n==a=\n"));
-        assert!(!TokenKind::Separator.is_match("\n===\n"));
+        assert!(TK::Separator.is_match("\n====\n"));
+        assert!(!TK::Separator.is_match("\n==a=\n"));
+        assert!(!TK::Separator.is_match("\n===\n"));
     }
 
     #[test]
     fn indent_matches() {
-        assert!(TokenKind::Indent.is_match("\n \t  W"));
+        assert!(TK::Indent.is_match("\n \t  W"));
     }
 
     #[test]
     fn indent_non_matching() {
-        assert!(!TokenKind::Indent.is_match("abc"));
+        assert!(!TK::Indent.is_match("abc"));
     }
 
     #[test]
     fn spaces_matches() {
-        assert!(TokenKind::Spaces.is_match("x \t x"));
+        assert!(TK::Spaces.is_match("x \t x"));
     }
 
     #[test]
     fn spaces_non_matching() {
-        assert!(!TokenKind::Spaces.is_match("xabcx"));
+        assert!(!TK::Spaces.is_match("xabcx"));
     }
 
     #[test]
     fn bold_matches() {
-        assert!(TokenKind::Strong.is_match(" **x"));
-        assert!(TokenKind::Strong.is_match("x** "));
+        assert!(TK::Strong.is_match(" **x"));
+        assert!(TK::Strong.is_match("x** "));
     }
 
     #[test]
     fn bold_non_matching() {
-        assert!(!TokenKind::Strong.is_match("*"));
+        assert!(!TK::Strong.is_match("*"));
     }
 
     #[test]
     fn inline_markup_tokens_match_common_delimiters() {
-        assert!(TokenKind::Emphasis.is_match(" *x"));
-        assert!(TokenKind::InterpretedText.is_match(" `x"));
-        assert!(TokenKind::InlineLiteral.is_match(" ``x"));
-        assert!(TokenKind::SubstitutionReference.is_match(" |x"));
-        assert!(TokenKind::HyperlinkReference.is_match("x_ "));
-        assert!(TokenKind::FootnoteReferenceOpen.is_match(" [x"));
+        assert!(TK::Emphasis.is_match(" *x"));
+        assert!(TK::InterpretedText.is_match(" `x"));
+        assert!(TK::InlineLiteral.is_match(" ``x"));
+        assert!(TK::SubstitutionReference.is_match(" |x"));
+        assert!(TK::HyperlinkReference.is_match("x_ "));
+        assert!(TK::FootnoteReferenceOpen.is_match(" [x"));
     }
 
     // TODO: exclude escaped characters
 
     #[test]
     fn emphasis_non_matching_for_strong_delimiters() {
-        assert!(!TokenKind::Emphasis.is_match("**"));
+        assert!(!TK::Emphasis.is_match("**"));
     }
 
     #[test]
     fn interpreted_text_non_matching_for_double_backticks() {
-        assert!(!TokenKind::InterpretedText.is_match("``"));
+        assert!(!TK::InterpretedText.is_match("``"));
     }
 
     #[test]
     fn doublecolon_matches() {
-        assert!(TokenKind::DoubleColon.is_match("e::\n"));
+        assert!(TK::DoubleColon.is_match("e::\n"));
     }
 
     #[test]
     fn doublecolon_non_matching() {
-        assert!(!TokenKind::DoubleColon.is_match("e:\n"));
+        assert!(!TK::DoubleColon.is_match("e:\n"));
     }
 
     #[test]
     fn doubledot_matches() {
-        assert!(TokenKind::DoubleDot.is_match("\n.. this is a comment\n"));
+        assert!(TK::DoubleDot.is_match("\n.. this is a comment\n"));
     }
 
     #[test]
     fn doubledot_non_matching() {
-        assert!(!TokenKind::DoubleDot.is_match("\nwarning...\n"));
+        assert!(!TK::DoubleDot.is_match("\nwarning...\n"));
     }
 
     #[test]
     fn table_horizontal_matches() {
-        assert!(TokenKind::TableHorizontal.is_match("\n==== =====\n"));
+        assert!(TK::TableHorizontal.is_match("\n==== =====\n"));
     }
 
     #[test]
     fn table_horizontal_non_matching() {
-        assert!(!TokenKind::TableHorizontal.is_match("\n========\n"));
+        assert!(!TK::TableHorizontal.is_match("\n========\n"));
     }
 
     #[test]
     fn blank_line_matches_empty() {
-        assert!(TokenKind::BlankLine.is_match("\n\n\n"));
+        assert!(TK::BlankLine.is_match("\n\n\n"));
     }
 
     #[test]
     fn blank_line_matches_whitespace_only() {
-        assert!(TokenKind::BlankLine.is_match("\n \t\n\n"));
+        assert!(TK::BlankLine.is_match("\n \t\n\n"));
     }
 
     #[test]
     fn blank_line_non_matching_text() {
-        assert!(!TokenKind::BlankLine.is_match("text"));
+        assert!(!TK::BlankLine.is_match("text"));
     }
 
     #[test]
     fn word_matches_alphanumeric_and_underscore() {
-        assert!(TokenKind::Word.is_match(" alpha_123 "));
+        assert!(TK::Word.is_match(" alpha_123 "));
     }
 
     #[test]
     fn word_matches_with_newline_boundary() {
-        assert!(TokenKind::Word.is_match("\nalpha_123\n"));
+        assert!(TK::Word.is_match("\nalpha_123\n"));
     }
 
     #[test]
     fn word_non_matching_without_word_chars() {
-        assert!(!TokenKind::Word.is_match("---\n***"));
+        assert!(!TK::Word.is_match("---\n***"));
     }
 
     #[test]
     fn punctuation_matches_ascii_non_alphanumeric() {
-        assert!(TokenKind::Punctuation.is_match("x,x"));
-        assert!(TokenKind::Punctuation.is_match("x!x"));
-        assert!(TokenKind::Punctuation.is_match("x_x"));
+        assert!(TK::Punctuation.is_match("x,x"));
+        assert!(TK::Punctuation.is_match("x!x"));
+        assert!(TK::Punctuation.is_match("x_x"));
     }
 
     #[test]
     fn punctuation_non_matching_for_alphanumeric() {
-        assert!(!TokenKind::Punctuation.is_match("xax"));
-        assert!(!TokenKind::Punctuation.is_match("x1x"));
+        assert!(!TK::Punctuation.is_match("xax"));
+        assert!(!TK::Punctuation.is_match("x1x"));
     }
 
     #[test]
     fn kind_is_matches_category_membership() {
-        assert!(TokenKind::Strong.is(TokenCategory::INLINE_MARKER));
-        assert!(TokenKind::Word.is(TokenCategory::PLAIN));
-        assert!(TokenKind::Punctuation.is(TokenCategory::PLAIN));
-        assert!(!TokenKind::Separator.is(TokenCategory::PLAIN));
+        assert!(TK::Strong.is(TokenCategory::INLINE_MARKER));
+        assert!(TK::Word.is(TokenCategory::PLAIN));
+        assert!(TK::Punctuation.is(TokenCategory::PLAIN));
+        assert!(!TK::Separator.is(TokenCategory::PLAIN));
+    }
+
+    #[test]
+    fn field_token() {
+        assert_eq!(TK::Field.find_lexeme("\n:field1:\n"), Some(":field1:"));
+        assert_eq!(TK::Field.find_lexeme(" :F_2: Some value"), Some(":F_2:"));
+        assert_eq!(TK::Field.find_lexeme(" :F_2:Some value"), None);
+        assert_eq!(TK::Field.find_lexeme("\n:F$x: "), None);
     }
 }
