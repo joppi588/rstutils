@@ -264,20 +264,14 @@ fn try_parse_plain(
     tokens: &[Token],
     start_at: usize,
 ) -> Result<(NodeRef, usize), FindElementError> {
-    let plain_tokens = find_next_kind(
-        tokens,
-        &[
-            TK::Strong,
-            TK::BlankLine,
-            TK::DoubleDot,
-            TK::Field,
-            TK::Indent,
-            TK::Dedent,
-        ], // TODO implement kinds_except
-        start_at,
-    )
-    .map_err(|_| FindElementError::InvalidPlainText { start_at: start_at })?;
+    let mut plain_tokens = start_at;
+    let mut text = String::new();
+    while tokens[plain_tokens].is(&[TK::Word, TK::Spaces, TK::Punctuation, TK::NewLine]) {
+        text.push_str(&tokens[plain_tokens].lexeme);
+        plain_tokens += 1;
+    }
+
     let sentence = AstNode::new_ref(NodeClass::PlainText);
-    AstNode::with_text(&sentence, tokens_to_text(&tokens[start_at..plain_tokens]));
+    AstNode::with_text(&sentence, text);
     Ok((sentence, plain_tokens))
 }

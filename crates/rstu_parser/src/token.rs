@@ -56,6 +56,10 @@ impl Token {
     pub fn as_tuple(&self) -> (TokenKind, &str) {
         (self.kind, &self.lexeme)
     }
+
+    pub fn is(&self, kinds: &[TokenKind]) -> bool {
+        self.kind.is(kinds)
+    }
 }
 
 pub struct TokenCategory;
