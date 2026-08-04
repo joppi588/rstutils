@@ -16,6 +16,6 @@ pub enum NodeClass {
     PlainText,
     Directive,
     Comment,
-    TextBlock,
+    IndentedBlock,
     Strong,
 }

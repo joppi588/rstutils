@@ -193,7 +193,7 @@ fn try_parse_directive(
 
     let indentation = tokens[index].lexeme.clone();
 
-    let indented_block = AstNode::new_ref(NodeClass::Paragraph);
+    let indented_block = AstNode::new_ref(NodeClass::IndentedBlock);
     AstNode::with_attr(&indented_block, "indentation", indentation);
     let (paragraph, index) = paragraph::try_parse_paragraph(&tokens, index + 1)?;
     AstNode::push_child(&indented_block, paragraph);
