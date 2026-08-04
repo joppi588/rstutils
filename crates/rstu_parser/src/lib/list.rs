@@ -4,6 +4,7 @@
 
 use rstu_ast::{AstNode, NodeClass, NodeRef};
 
+use crate::paragraph;
 use crate::parser_errors::FindElementError;
 use crate::token::{Token, TokenKind as TK};
 use crate::token_slice::skip_kinds;
@@ -25,7 +26,7 @@ pub(crate) fn try_parse_field_list(
         AstNode::with_attr(&item, "fieldname", field_name);
 
         let body_start = skip_kinds(tokens, &[TK::Spaces], index + 1).unwrap_or(index + 1);
-        let (paragraph, next_index) = super::try_parse_paragraph(tokens, body_start)?;
+        let (paragraph, next_index) = paragraph::try_parse_paragraph(tokens, body_start)?;
         AstNode::push_child(&item, paragraph);
         AstNode::push_child(&list, item);
 
