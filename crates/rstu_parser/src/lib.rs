@@ -5,6 +5,9 @@
 pub mod lexer;
 #[path = "lib/list.rs"]
 mod list;
+#[path = "lib/paragraph.rs"]
+mod paragraph;
+
 pub mod parser_errors;
 pub mod token;
 pub mod token_slice;
@@ -62,7 +65,7 @@ pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
             | (TK::Dedent, _) => index += 1,
 
             (kind, _) if kind.is(TC::INLINE_MARKER) || kind.is(TC::PLAIN) => {
-                let (paragraph, next_start) = try_parse_paragraph(&tokens, index)?;
+                let (paragraph, next_start) = paragraph::try_parse_paragraph(&tokens, index)?;
                 AstNode::push_child(&current_node, paragraph.clone());
                 index = next_start;
             }
@@ -190,88 +193,11 @@ fn try_parse_directive(
 
     let indentation = tokens[index].lexeme.clone();
 
-    let indented_block = AstNode::new_ref(NodeClass::Block);
+    let indented_block = AstNode::new_ref(NodeClass::IndentedBlock);
     AstNode::with_attr(&indented_block, "indentation", indentation);
-    let (paragraph, index) = try_parse_paragraph(&tokens, index + 1)?;
+    let (paragraph, index) = paragraph::try_parse_paragraph(&tokens, index + 1)?;
     AstNode::push_child(&indented_block, paragraph);
     AstNode::push_child(&directive, indented_block);
 
     Ok((directive, index))
-}
-
-fn try_parse_paragraph(
-    tokens: &[Token],
-    start_at: usize,
-) -> Result<(NodeRef, usize), FindElementError> {
-    let paragraph_end = find_next_kind(
-        tokens,
-        &[
-            TK::BlankLine,
-            TK::Indent,
-            TK::Separator,
-            TK::Dedent,
-            TK::Field,
-        ],
-        start_at,
-    )
-    .expect("Paragraph must end somewhere.");
-    let paragraph = AstNode::new_ref(NodeClass::Paragraph);
-    let mut index = start_at;
-    while index < paragraph_end {
-        let (node, new_index) = match tokens[index].kind {
-            kind if kind.is(TC::INLINE_MARKER) => try_parse_inline(&tokens, index)?,
-            kind if kind.is(TC::PLAIN) || kind == TK::Punctuation => {
-                try_parse_plain(&tokens, index)?
-            }
-            kind if kind.is(TC::CONTROL) => {
-                index += 1;
-                continue;
-            }
-            _ => {
-                return Err(FindElementError::UnexpectedToken {
-                    expected: "Inline/plain".to_owned(),
-                    found: format!("{:?}", tokens[index].kind),
-                });
-            }
-        };
-        index = new_index;
-        AstNode::push_child(&paragraph, node);
-    }
-    Ok((paragraph, index))
-}
-
-fn try_parse_inline(
-    tokens: &[Token],
-    start_at: usize,
-) -> Result<(NodeRef, usize), FindElementError> {
-    let inline_final = match tokens[start_at].kind {
-        TK::Strong => find_next_kind(tokens, &[TK::Strong], start_at + 1)
-            .map_err(|_| FindElementError::StrongMissingClosing { start_at: start_at })?,
-        _ => {
-            return Err(FindElementError::UnexpectedToken {
-                expected: "Inline".to_owned(),
-                found: format!("{:?}", tokens[start_at].kind),
-            });
-        }
-    };
-    let strong = AstNode::new_ref(NodeClass::InlineMarkup);
-    AstNode::with_attr(&strong, "markup", "strong");
-    AstNode::with_text(&strong, tokens_to_text(&tokens[start_at + 1..inline_final]));
-    Ok((strong, inline_final + 1))
-}
-
-fn try_parse_plain(
-    tokens: &[Token],
-    start_at: usize,
-) -> Result<(NodeRef, usize), FindElementError> {
-    let mut plain_tokens = start_at;
-    let mut text = String::new();
-    while tokens[plain_tokens].is(&[TK::Word, TK::Spaces, TK::Punctuation, TK::NewLine]) {
-        text.push_str(&tokens[plain_tokens].lexeme);
-        plain_tokens += 1;
-    }
-
-    let sentence = AstNode::new_ref(NodeClass::PlainText);
-    AstNode::with_text(&sentence, text);
-    Ok((sentence, plain_tokens))
 }
