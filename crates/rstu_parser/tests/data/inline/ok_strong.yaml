@@ -3,6 +3,8 @@ children:
   - class: Section
     attributes:
       section_marker: "-"
+      marker_len: 31
+      marker_len_opening: 0
     children:
       - class: Title
         text: "Short text with strong elements"

@@ -103,10 +103,9 @@ pub fn try_match_section_header(
     let closing_style: String = closing_token.lexeme[..1].to_string();
     let closing_len = closing_token.lexeme.len();
 
-    if has_overline {
+    let opening_len = if has_overline {
         let opening_token = &tokens[start_at];
         let opening_style = opening_token.lexeme[..1].to_string();
-        let opening_len = opening_style.len();
         if opening_style != closing_style {
             return Err(FindElementError::SectionTitleUnbalancedStyle {
                 opening_index: start_at,
@@ -114,7 +113,10 @@ pub fn try_match_section_header(
                 closing_style,
             });
         }
-    }
+        opening_style.len()
+    } else {
+        0
+    };
 
     let section = AstNode::new_ref(NodeClass::Section);
     AstNode::with_attr(&section, "section_marker", closing_style);

@@ -3,6 +3,8 @@ children:
   - class: Section
     attributes:
       section_marker: "="
+      marker_len: 9
+      marker_len_opening: 0
     children:
       - class: Title
         text: "Heading I"
@@ -13,6 +15,8 @@ children:
       - class: Section
         attributes:
           section_marker: "-"
+          marker_len: 10
+          marker_len_opening: 0
         children:
           - class: Title
             text: "Heading II"
@@ -23,6 +27,8 @@ children:
   - class: Section
     attributes:
       section_marker: "="
+      marker_len: 11
+      marker_len_opening: 0
     children:
       - class: Title
         text: "Heading III"

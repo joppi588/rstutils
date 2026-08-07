@@ -13,11 +13,58 @@ use std::rc::{Rc, Weak};
 
 pub type NodeRef = Rc<RefCell<AstNode>>;
 
+#[derive(Debug, Clone, PartialEq)]
+pub enum AttributeType {
+    Integer(i32),
+    Float(f64),
+    String(String),
+    Usize(usize),
+}
+
+impl AttributeType {
+    fn as_str(&self) -> Option<&str> {
+        match self {
+            AttributeType::String(value) => Some(value.as_str()),
+            _ => None,
+        }
+    }
+}
+
+impl From<String> for AttributeType {
+    fn from(value: String) -> Self {
+        AttributeType::String(value)
+    }
+}
+
+impl From<&str> for AttributeType {
+    fn from(value: &str) -> Self {
+        AttributeType::String(value.to_owned())
+    }
+}
+
+impl From<usize> for AttributeType {
+    fn from(value: usize) -> Self {
+        AttributeType::Usize(value)
+    }
+}
+
+impl From<i32> for AttributeType {
+    fn from(value: i32) -> Self {
+        AttributeType::Integer(value)
+    }
+}
+
+impl From<f64> for AttributeType {
+    fn from(value: f64) -> Self {
+        AttributeType::Float(value)
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct AstNode {
     pub class: NodeClass,
     pub parent: Option<Weak<RefCell<AstNode>>>,
-    pub attributes: BTreeMap<String, String>,
+    pub attributes: BTreeMap<String, AttributeType>,
     pub text: Option<String>,
     pub children: Vec<NodeRef>,
 }
@@ -36,7 +83,7 @@ impl AstNode {
         node_ref.borrow_mut().text = Some(text.into());
     }
 
-    pub fn with_attr(node_ref: &NodeRef, key: impl Into<String>, value: impl Into<String>) {
+    pub fn with_attr(node_ref: &NodeRef, key: impl Into<String>, value: impl Into<AttributeType>) {
         node_ref
             .borrow_mut()
             .attributes
@@ -74,12 +121,22 @@ impl AstNode {
             "push_section_ref requires a section node"
         );
 
-        let section_marker = section.borrow().attributes.get("section_marker").cloned();
+        let section_marker = section
+            .borrow()
+            .attributes
+            .get("section_marker")
+            .and_then(AttributeType::as_str)
+            .map(str::to_owned);
 
         let target_parent = if current.borrow().parent.is_none() {
             current.clone()
         } else {
-            let self_marker = current.borrow().attributes.get("section_marker").cloned();
+            let self_marker = current
+                .borrow()
+                .attributes
+                .get("section_marker")
+                .and_then(AttributeType::as_str)
+                .map(str::to_owned);
             if self_marker == section_marker {
                 current
                     .borrow()
@@ -134,7 +191,7 @@ impl AstNode {
                         borrowed
                             .attributes
                             .get("section_marker")
-                            .map(String::as_str)
+                            .and_then(AttributeType::as_str)
                             == Some(marker)
                     })
             };
@@ -154,7 +211,13 @@ impl AstNode {
         let borrowed = node_ref.borrow();
         let mut attributes = Map::new();
         for (key, value) in &borrowed.attributes {
-            attributes.insert(key.clone(), Value::String(value.clone()));
+            let json_value = match value {
+                AttributeType::Integer(value) => Value::from(*value),
+                AttributeType::Float(value) => Value::from(*value),
+                AttributeType::String(value) => Value::String(value.clone()),
+                AttributeType::Usize(value) => Value::from(*value as u64),
+            };
+            attributes.insert(key.clone(), json_value);
         }
         let children = borrowed
             .children
