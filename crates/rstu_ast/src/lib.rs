@@ -2,9 +2,11 @@
 //
 // SPDX-License-Identifier: MIT
 
+mod attr;
 mod nodes;
 #[cfg(test)]
 mod tests;
+pub use attr::AttributeType;
 pub use nodes::NodeClass;
 use serde_json::{Map, Value};
 use std::cell::RefCell;
@@ -12,53 +14,6 @@ use std::collections::BTreeMap;
 use std::rc::{Rc, Weak};
 
 pub type NodeRef = Rc<RefCell<AstNode>>;
-
-#[derive(Debug, Clone, PartialEq)]
-pub enum AttributeType {
-    Integer(i32),
-    Float(f64),
-    String(String),
-    Usize(usize),
-}
-
-impl AttributeType {
-    fn as_str(&self) -> Option<&str> {
-        match self {
-            AttributeType::String(value) => Some(value.as_str()),
-            _ => None,
-        }
-    }
-}
-
-impl From<String> for AttributeType {
-    fn from(value: String) -> Self {
-        AttributeType::String(value)
-    }
-}
-
-impl From<&str> for AttributeType {
-    fn from(value: &str) -> Self {
-        AttributeType::String(value.to_owned())
-    }
-}
-
-impl From<usize> for AttributeType {
-    fn from(value: usize) -> Self {
-        AttributeType::Usize(value)
-    }
-}
-
-impl From<i32> for AttributeType {
-    fn from(value: i32) -> Self {
-        AttributeType::Integer(value)
-    }
-}
-
-impl From<f64> for AttributeType {
-    fn from(value: f64) -> Self {
-        AttributeType::Float(value)
-    }
-}
 
 #[derive(Debug, Clone)]
 pub struct AstNode {
