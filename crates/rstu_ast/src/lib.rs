@@ -166,13 +166,7 @@ impl AstNode {
         let borrowed = node_ref.borrow();
         let mut attributes = Map::new();
         for (key, value) in &borrowed.attributes {
-            let json_value = match value {
-                AttributeType::Integer(value) => Value::from(*value),
-                AttributeType::Float(value) => Value::from(*value),
-                AttributeType::String(value) => Value::String(value.clone()),
-                AttributeType::Usize(value) => Value::from(*value as u64),
-            };
-            attributes.insert(key.clone(), json_value);
+            attributes.insert(key.clone(), value.to_json_value());
         }
         let children = borrowed
             .children
