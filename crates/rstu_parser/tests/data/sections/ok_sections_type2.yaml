@@ -2,7 +2,9 @@ class: Document
 children:
   - class: Section
     attributes:
-      section_marker: =========
+      section_marker:  "="
+      marker_len: 9
+      marker_len_opening: 1
     children:
       - class: Title
         text: "Heading 1"
@@ -12,7 +14,9 @@ children:
             text: "Some Text\n"
       - class: Section
         attributes:
-          section_marker: ---------
+          section_marker: "-"
+          marker_len: 9
+          marker_len_opening: 1
         children:
           - class: Title
             text: "Heading 2"
@@ -22,7 +26,9 @@ children:
                 text: "More Text\n"
   - class: Section
     attributes:
-      section_marker: =========
+      section_marker:  "="
+      marker_len: 9
+      marker_len_opening: 1
     children:
       - class: Title
         text: "Heading 3"

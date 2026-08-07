@@ -1,14 +1,14 @@
-Heading 1
+Heading I
 =========
 
 Some Text
 
-Heading 2
----------
+Heading II
+----------
 
 More Text
 
-Heading 3
-=========
+Heading III
+===========
 
 Same level as Heading 1.

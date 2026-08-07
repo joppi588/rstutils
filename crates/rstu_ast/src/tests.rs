@@ -87,6 +87,7 @@ fn to_json_serializes_node_tree_without_parent() {
 
     let section = AstNode::new_ref(NodeClass::Section);
     AstNode::with_attr(&section, "section_marker", "=========");
+    AstNode::with_attr(&section, "marker_len", 9usize);
 
     let title = AstNode::new_ref(NodeClass::Title);
     AstNode::with_text(&title, "Heading 1\n");
@@ -106,7 +107,8 @@ fn to_json_serializes_node_tree_without_parent() {
                 {
                     "class": "Section",
                     "attributes": {
-                        "section_marker": "========="
+                        "section_marker": "=========",
+                        "marker_len": 9
                     },
                     "children": [
                         {
@@ -127,6 +129,7 @@ fn to_yaml_serializes_node_tree_without_parent() {
 
     let section = AstNode::new_ref(NodeClass::Section);
     AstNode::with_attr(&section, "section_marker", "=========");
+    AstNode::with_attr(&section, "marker_len", 9usize);
 
     let title = AstNode::new_ref(NodeClass::Title);
     AstNode::with_text(&title, "Heading 1\n");
@@ -144,6 +147,7 @@ children:
   - class: Section
     attributes:
       section_marker: =========
+      marker_len: 9
     children:
       - class: Title
         text: "Heading 1\n"

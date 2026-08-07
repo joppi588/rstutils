@@ -56,8 +56,8 @@ fn test_unbalanced_section_style() {
             closing_style,
             ..
         }) => {
-            assert_eq!(opening_style, "---------");
-            assert_eq!(closing_style, "=========");
+            assert_eq!(opening_style, "-");
+            assert_eq!(closing_style, "=");
         }
         other => panic!("expected SectionTitleUnbalancedStyle error, got: {other:?}"),
     }

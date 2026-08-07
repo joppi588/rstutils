@@ -2,9 +2,11 @@
 //
 // SPDX-License-Identifier: MIT
 
+mod attr;
 mod nodes;
 #[cfg(test)]
 mod tests;
+pub use attr::AttributeType;
 pub use nodes::NodeClass;
 use serde_json::{Map, Value};
 use std::cell::RefCell;
@@ -17,7 +19,7 @@ pub type NodeRef = Rc<RefCell<AstNode>>;
 pub struct AstNode {
     pub class: NodeClass,
     pub parent: Option<Weak<RefCell<AstNode>>>,
-    pub attributes: BTreeMap<String, String>,
+    pub attributes: BTreeMap<String, AttributeType>,
     pub text: Option<String>,
     pub children: Vec<NodeRef>,
 }
@@ -36,7 +38,7 @@ impl AstNode {
         node_ref.borrow_mut().text = Some(text.into());
     }
 
-    pub fn with_attr(node_ref: &NodeRef, key: impl Into<String>, value: impl Into<String>) {
+    pub fn with_attr(node_ref: &NodeRef, key: impl Into<String>, value: impl Into<AttributeType>) {
         node_ref
             .borrow_mut()
             .attributes
@@ -74,12 +76,22 @@ impl AstNode {
             "push_section_ref requires a section node"
         );
 
-        let section_marker = section.borrow().attributes.get("section_marker").cloned();
+        let section_marker = section
+            .borrow()
+            .attributes
+            .get("section_marker")
+            .and_then(AttributeType::as_str)
+            .map(str::to_owned);
 
         let target_parent = if current.borrow().parent.is_none() {
             current.clone()
         } else {
-            let self_marker = current.borrow().attributes.get("section_marker").cloned();
+            let self_marker = current
+                .borrow()
+                .attributes
+                .get("section_marker")
+                .and_then(AttributeType::as_str)
+                .map(str::to_owned);
             if self_marker == section_marker {
                 current
                     .borrow()
@@ -134,7 +146,7 @@ impl AstNode {
                         borrowed
                             .attributes
                             .get("section_marker")
-                            .map(String::as_str)
+                            .and_then(AttributeType::as_str)
                             == Some(marker)
                     })
             };
@@ -154,7 +166,7 @@ impl AstNode {
         let borrowed = node_ref.borrow();
         let mut attributes = Map::new();
         for (key, value) in &borrowed.attributes {
-            attributes.insert(key.clone(), Value::String(value.clone()));
+            attributes.insert(key.clone(), value.to_json_value());
         }
         let children = borrowed
             .children
