@@ -40,75 +40,49 @@ macro_rules! rst_vs_yaml {
             }
         }
 
-        fn yaml_remainder(
-            actual: &serde_yaml::Value,
-            expected: &serde_yaml::Value,
-        ) -> Option<(serde_yaml::Value, serde_yaml::Value)> {
-            match (actual, expected) {
-                (serde_yaml::Value::Mapping(a), serde_yaml::Value::Mapping(e)) => {
-                    let mut only_actual = serde_yaml::Mapping::new();
-                    let mut only_expected = serde_yaml::Mapping::new();
+        fn first_diff_line(actual: &str, expected: &str) -> Option<usize> {
+            let actual_lines: Vec<&str> = actual.lines().collect();
+            let expected_lines: Vec<&str> = expected.lines().collect();
+            let min_len = actual_lines.len().min(expected_lines.len());
 
-                    for (k, av) in a {
-                        match e.get(k) {
-                            Some(ev) => {
-                                if let Some((da, de)) = yaml_remainder(av, ev) {
-                                    only_actual.insert(k.clone(), da);
-                                    only_expected.insert(k.clone(), de);
-                                }
-                            }
-                            None => {
-                                only_actual.insert(k.clone(), av.clone());
-                            }
-                        }
-                    }
-
-                    for (k, ev) in e {
-                        if !a.contains_key(k) {
-                            only_expected.insert(k.clone(), ev.clone());
-                        }
-                    }
-
-                    if only_actual.is_empty() && only_expected.is_empty() {
-                        None
-                    } else {
-                        Some((
-                            serde_yaml::Value::Mapping(only_actual),
-                            serde_yaml::Value::Mapping(only_expected),
-                        ))
-                    }
+            for index in 0..min_len {
+                if actual_lines[index] != expected_lines[index] {
+                    return Some(index + 1);
                 }
-                (serde_yaml::Value::Sequence(a), serde_yaml::Value::Sequence(e)) => {
-                    let mut only_actual = Vec::new();
-                    let mut only_expected = Vec::new();
-                    let min_len = a.len().min(e.len());
-
-                    for idx in 0..min_len {
-                        if let Some((da, de)) = yaml_remainder(&a[idx], &e[idx]) {
-                            only_actual.push(da);
-                            only_expected.push(de);
-                        }
-                    }
-
-                    if a.len() > min_len {
-                        only_actual.extend(a[min_len..].iter().cloned());
-                    }
-                    if e.len() > min_len {
-                        only_expected.extend(e[min_len..].iter().cloned());
-                    }
-
-                    if only_actual.is_empty() && only_expected.is_empty() {
-                        None
-                    } else {
-                        Some((
-                            serde_yaml::Value::Sequence(only_actual),
-                            serde_yaml::Value::Sequence(only_expected),
-                        ))
-                    }
-                }
-                _ if actual == expected => None,
-                _ => Some((actual.clone(), expected.clone())),
             }
+
+            if actual_lines.len() != expected_lines.len() {
+                Some(min_len + 1)
+            } else {
+                None
+            }
+        }
+
+        fn line_at<'a>(lines: &'a [&'a str], line_number: usize) -> &'a str {
+            if line_number == 0 {
+                return "";
+            }
+
+            lines.get(line_number - 1).copied().unwrap_or("<missing>")
+        }
+
+        fn format_context(yaml: &str, start_line: usize, follow_lines: usize) -> String {
+            let lines: Vec<&str> = yaml.lines().collect();
+            if start_line == 0 || lines.is_empty() {
+                return "<no context available>".to_string();
+            }
+
+            let start_index = start_line.saturating_sub(1);
+            if start_index >= lines.len() {
+                return format!("{:>4}: <missing>", start_line);
+            }
+
+            let end_exclusive = (start_index + follow_lines + 1).min(lines.len());
+            let mut out = Vec::new();
+            for index in start_index..end_exclusive {
+                out.push(format!("{:>4}: {}", index + 1, lines[index]));
+            }
+            out.join("\n")
         }
 
         let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -138,17 +112,27 @@ macro_rules! rst_vs_yaml {
         canonicalize_yaml(&mut expected_value);
 
         if actual_value != expected_value {
-            let (actual_remainder, expected_remainder) =
-                yaml_remainder(&actual_value, &expected_value)
-                    .unwrap_or_else(|| (actual_value.clone(), expected_value.clone()));
-            let actual_pretty = serde_yaml::to_string(&actual_remainder)
-                .expect("failed to pretty-print actual yaml remainder");
-            let expected_pretty = serde_yaml::to_string(&expected_remainder)
-                .expect("failed to pretty-print expected yaml remainder");
+            let actual_canonical = serde_yaml::to_string(&actual_value)
+                .expect("failed to serialize canonical actual yaml");
+            let expected_canonical = serde_yaml::to_string(&expected_value)
+                .expect("failed to serialize canonical expected yaml");
+
+            let diff_line = first_diff_line(&actual_canonical, &expected_canonical).unwrap_or(1);
+            let actual_lines: Vec<&str> = actual_canonical.lines().collect();
+            let expected_lines: Vec<&str> = expected_canonical.lines().collect();
+            let actual_line = line_at(&actual_lines, diff_line);
+            let expected_line = line_at(&expected_lines, diff_line);
+            let actual_context = format_context(&actual_canonical, diff_line, 5);
+            let expected_context = format_context(&expected_canonical, diff_line, 5);
 
             panic!(
-                "Unexpected parse output for {}\n\nActual\n[...]\n{}\nExpected\n[...]\n{}",
-                $rst_filename, actual_pretty, expected_pretty
+                "Unexpected parse output for {}\n\nFirst deviation at canonicalized line {}\nActual line: {}\nExpected line: {}\n\nActual context\n{}\n\nExpected context\n{}",
+                $rst_filename,
+                diff_line,
+                actual_line,
+                expected_line,
+                actual_context,
+                expected_context
             );
         }
 
