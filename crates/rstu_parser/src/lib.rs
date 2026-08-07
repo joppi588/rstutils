@@ -94,26 +94,34 @@ pub fn try_match_section_header(
     })?;
 
     let closing_index = title_end + 1;
-    if (closing_index >= tokens.len()) || (tokens[closing_index].kind != TK::Separator) {
+    let closing_token = &tokens[closing_index];
+    if (closing_index >= tokens.len()) || (closing_token.kind != TK::Separator) {
         return Err(FindElementError::SectionTitleMissingClosingAfterOpening {
             opening_index: start_at,
         });
     }
-    let closing_style = tokens[closing_index].lexeme.clone();
+    let closing_style: String = closing_token.lexeme[..1].to_string();
+    let closing_len = closing_token.lexeme.len();
 
-    if has_overline {
-        let opening_style = tokens[start_at].lexeme.clone(); // TODO: single char + opening/closing length
-        if tokens[start_at].lexeme != tokens[closing_index].lexeme {
+    let opening_len = if has_overline {
+        let opening_token = &tokens[start_at];
+        let opening_style = opening_token.lexeme[..1].to_string();
+        if opening_style != closing_style {
             return Err(FindElementError::SectionTitleUnbalancedStyle {
                 opening_index: start_at,
                 opening_style,
-                closing_style: closing_style.clone(),
+                closing_style,
             });
         }
-    }
+        opening_style.len()
+    } else {
+        0
+    };
 
     let section = AstNode::new_ref(NodeClass::Section);
     AstNode::with_attr(&section, "section_marker", closing_style);
+    AstNode::with_attr(&section, "marker_len", closing_len);
+    AstNode::with_attr(&section, "marker_len_opening", opening_len);
 
     let title = AstNode::new_ref(NodeClass::Title);
     AstNode::with_text(&title, tokens_to_text(&tokens[title_start..title_end]));

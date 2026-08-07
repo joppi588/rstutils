@@ -1,0 +1,80 @@
+class: Document
+children:
+  - class: Section
+    attributes:
+      section_marker: "-"
+    children:
+      - class: Title
+        text: "All inline markups"
+      - class: Paragraph
+        children:
+          - class: InlineMarkup
+            text: em
+            attributes:
+              markup: emphasis
+          - class: PlainText
+            text: " "
+          - class: InlineMarkup
+            text: strong
+            attributes:
+              markup: strong
+          - class: PlainText
+            text: " "
+          - class: InlineMarkup
+            text: lit
+            attributes:
+              markup: inline_literal
+          - class: PlainText
+            text: " "
+          - class: InlineMarkup
+            text: interp
+            attributes:
+              markup: interpreted_text
+  - class: Section
+    attributes:
+      section_marker: "-"
+    children:
+      - class: Title
+        text: "Inline references"
+      - class: Paragraph
+        children:
+          - class: Reference
+            text: simple_reference
+            attributes:
+              type: simple_ref
+          - class: PlainText
+            text: " "
+          - class: Reference
+            text: anonymous_reference
+            attributes:
+              type: simple_anonymous_ref
+          - class: PlainText
+            text: " "
+          - class: InlineMarkup
+            text: link
+            attributes:
+              markup: hyperlink_reference
+          - class: PlainText
+            text: " "
+          - class: Reference
+            text: "1]_ [CIT"
+            attributes:
+              type: footnote
+          - class: PlainText
+            text: " "
+          - class: Reference
+            text: "sub"
+            attributes:
+              type: sub
+  - class: Section
+    attributes:
+      section_marker:  "-"
+    children:
+      - class: Title
+        text: "Inline internal targets"
+      - class: Paragraph
+        children:
+          - class: InlineMarkup
+            text: target
+            attributes:
+              markup: inline_internal_target
