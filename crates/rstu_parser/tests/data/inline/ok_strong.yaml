@@ -2,7 +2,7 @@ class: Document
 children:
   - class: Section
     attributes:
-      section_marker: -------------------------------
+      section_marker: "-"
     children:
       - class: Title
         text: "Short text with strong elements"

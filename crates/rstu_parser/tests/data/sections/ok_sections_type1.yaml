@@ -2,30 +2,30 @@ class: Document
 children:
   - class: Section
     attributes:
-      section_marker: =========
+      section_marker: "="
     children:
       - class: Title
-        text: "Heading 1"
+        text: "Heading I"
       - class: Paragraph
         children:
           - class: PlainText
             text: "Some Text\n"
       - class: Section
         attributes:
-          section_marker: ---------
+          section_marker: "-"
         children:
           - class: Title
-            text: "Heading 2"
+            text: "Heading II"
           - class: Paragraph
             children:
               - class: PlainText
                 text: "More Text\n"
   - class: Section
     attributes:
-      section_marker: =========
+      section_marker: "="
     children:
       - class: Title
-        text: "Heading 3"
+        text: "Heading III"
       - class: Paragraph
         children:
           - class: PlainText
