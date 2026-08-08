@@ -1,7 +1,7 @@
 class: Document
 children:
   - class: Comment
-    text: "This is a simple comment.\nIt should be ignored by the parser as visible content.\n"
+    text: "This is a simple comment.\nIt should be ignored by the parser as visible content.\n\n"
   - class: Comment
     text: "This is a comment\n"
   - class: Comment
@@ -11,6 +11,6 @@ children:
   - class: Comment
     text: "this:: too!\n"
   - class: Comment
-    text: "|even| this:: !\n"
+    text: "|even| this:: !\n\n\n"
   - class: Comment
-    text: "This comment\nspans\nmultiple lines\n"
+    text: "This comment\nspans\nmultiple lines\n\n"
