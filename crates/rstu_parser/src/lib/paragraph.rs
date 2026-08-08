@@ -89,7 +89,8 @@ pub(crate) fn try_parse_inline(
     tokens: &[Token],
     start_at: usize,
 ) -> Result<(NodeRef, usize), FindElementError> {
-    let (markup, end_kind_candidates): (&str, &[TK]) = match tokens[start_at].kind {
+    let kind = tokens[start_at].kind;
+    let (markup, end_kind_candidates): (&str, &[TK]) = match kind {
         TK::StrongStart => ("strong", &[TK::StrongEnd]),
         TK::EmphasisStart => ("emphasis", &[TK::EmphasisEnd]),
         TK::InlineLiteralStart => ("inline_literal", &[TK::InlineLiteralEnd]),
@@ -101,7 +102,7 @@ pub(crate) fn try_parse_inline(
         _ => {
             return Err(FindElementError::UnexpectedToken {
                 expected: "Inline start token".to_owned(),
-                found: format!("{:?}", tokens[start_at].kind),
+                found: format!("{:?}", kind),
             });
         }
     };
@@ -113,14 +114,10 @@ pub(crate) fn try_parse_inline(
         }
     })?;
 
-    let effective_markup = if tokens[start_at].kind == TK::BackquoteStart {
-        if tokens[inline_final].kind == TK::HyperlinkReferenceEnd {
-            "hyperlink_reference"
-        } else {
-            "interpreted_text"
-        }
-    } else {
-        markup
+    let effective_markup = match (kind, tokens[inline_final].kind) {
+        (TK::BackquoteStart, TK::HyperlinkReferenceEnd) => "hyperlink_reference",
+        (TK::BackquoteStart, TK::BackquoteEnd) => "interpreted_text",
+        _ => markup,
     };
 
     let inline = AstNode::new_ref(NodeClass::InlineMarkup);

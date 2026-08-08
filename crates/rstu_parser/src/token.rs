@@ -160,11 +160,16 @@ impl TokenKind {
         (InlineInternalTargetStart, format!(r"{0}_`[^\s]", INLINE_PRE_CHARS)),
         (BackquoteStart, format!(r"{0}`[^\s]", INLINE_PRE_CHARS)),
         (BackquoteEnd, format!(r"[^\s]`{0}", INLINE_POST_CHARS)),
+
+        // Inline references
         (SubstitutionReference, format!(r"{0}\|.+\|{1}", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
+        // SubsRefHyperLink rst l.3033
+        // SubRefAnonymousHyperlink
         (FootnoteReference, format!(r"{0}\[.+\]_{1}", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
         (HyperlinkReferenceEnd, format!(r"(?:[^\s]`_|[^\s]_){}", INLINE_POST_CHARS)),
         (SimpleAnonymousHyperLinkReference,r"[\s\n]\w+__\s"),
         (SimpleHyperlinkReference,r"[\s\n]\w+_\s"),
+
 
         // Plain text
         (Spaces, r"[^ \t\n][ \t]+[^ \t]"),
