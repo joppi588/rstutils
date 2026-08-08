@@ -16,9 +16,8 @@ pub fn tokenize(input: &str) -> Vec<Token> {
         let (token_kind, lexeme) = TokenKind::match_token(sub_str)
             .unwrap_or_else(|| panic!("No token matched input: {sub_str:?}"));
         let new_token = Token::new(token_kind, lexeme);
-
         match (last_token_kind, token_kind) {
-            (TokenKind::NewLine, TokenKind::Indent) => {
+            (TokenKind::NewLine | TokenKind::BlankLine, TokenKind::Indent) => {
                 let new_indent = lexeme.len();
                 if new_indent > current_indent {
                     let indent_token =
@@ -31,7 +30,10 @@ pub fn tokenize(input: &str) -> Vec<Token> {
                 }
                 current_indent = new_indent;
             }
-            (TokenKind::NewLine, _) => {
+            (TokenKind::NewLine | TokenKind::BlankLine, TokenKind::BlankLine) => {
+                tokens.push(new_token)
+            } // Blank line does not change indent
+            (TokenKind::NewLine | TokenKind::BlankLine, _) => {
                 if current_indent > 0 {
                     let dedent_token = Token::new(TokenKind::Dedent, " ".repeat(current_indent));
                     tokens.push(dedent_token);
@@ -45,6 +47,9 @@ pub fn tokenize(input: &str) -> Vec<Token> {
         last_token_kind = token_kind;
         index += lexeme.len();
     }
+    if current_indent > 0 {
+        tokens.push(Token::new(TokenKind::Dedent, " ".repeat(current_indent)))
+    };
     tokens
 }
 
@@ -104,8 +109,8 @@ mod tests {
                 (TokenKind::Dedent, "  "),
                 (TokenKind::Word, "dedented"),
                 (TokenKind::NewLine, "\n"),
-                (TokenKind::Dedent, "  "),
                 (TokenKind::BlankLine, "\n"),
+                (TokenKind::Dedent, "  ")
             ]
         );
     }
