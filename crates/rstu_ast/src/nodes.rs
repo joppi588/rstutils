@@ -6,16 +6,17 @@ use serde::Deserialize;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
 pub enum NodeClass {
-    Document,
-    Section,
-    Title,
-    List,
-    FieldListItem,
-    Paragraph,
-    InlineMarkup,
-    PlainText,
-    Directive,
     Comment,
+    Directive,
+    Document,
+    FieldListItem,
     IndentedBlock,
+    InlineMarkup,
+    List,
+    Paragraph,
+    PlainText,
+    Reference,
+    Section,
     Strong,
+    Title,
 }
