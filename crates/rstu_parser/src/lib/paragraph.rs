@@ -45,7 +45,7 @@ pub(crate) fn try_parse_paragraph(
             }
         };
         index = new_index;
-        AstNode::push_child(&paragraph, node);
+        paragraph.push_child(node);
     }
     Ok((paragraph, index))
 }

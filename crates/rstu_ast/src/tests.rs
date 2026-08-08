@@ -17,7 +17,7 @@ fn push_child_sets_parent_and_appends_child() {
     let parent = AstNode::new_ref(NodeClass::Document);
     let child = AstNode::new_ref(NodeClass::Paragraph);
 
-    AstNode::push_child(&parent, child.clone());
+    parent.push_child(child.clone());
 
     let borrowed = parent.borrow();
     assert_eq!(borrowed.children.len(), 1);
@@ -30,7 +30,7 @@ fn push_body_element_attaches_to_section() {
     let section = AstNode::new_ref(NodeClass::Section);
     let comment = AstNode::new_ref(NodeClass::Comment);
 
-    let current = AstNode::push_body_element(&section, comment.clone());
+    let current = section.push_body_element(comment.clone());
 
     assert!(Rc::ptr_eq(&current, &comment));
     let borrowed = section.borrow();
@@ -42,10 +42,10 @@ fn push_body_element_attaches_to_section() {
 fn push_body_element_falls_back_to_parent() {
     let document = AstNode::new_ref(NodeClass::Document);
     let current = AstNode::new_ref(NodeClass::Comment);
-    AstNode::push_child(&document, current.clone());
+    document.push_child(current.clone());
 
     let body = AstNode::new_ref(NodeClass::Directive);
-    AstNode::push_body_element(&current, body.clone());
+    current.push_body_element(body.clone());
 
     let borrowed = document.borrow();
     assert_eq!(borrowed.children.len(), 2);
@@ -56,10 +56,10 @@ fn push_body_element_falls_back_to_parent() {
 fn push_section_with_same_marker_pushes_to_parent_of_self() {
     let tree = AstNode::new_ref(NodeClass::Document);
     let current = section_with_marker("#");
-    AstNode::push_child(&tree, current.clone());
+    tree.push_child(current.clone());
 
     let section = section_with_marker("#");
-    AstNode::push_section_ref(&current, section);
+    current.push_section_ref(section);
 
     let borrowed = tree.borrow();
     assert_eq!(borrowed.children.len(), 2);
@@ -70,11 +70,11 @@ fn push_section_with_same_marker_pushes_to_parent_of_self() {
 fn closest_ancestor_section_matches_requested_marker() {
     let document = AstNode::new_ref(NodeClass::Document);
     let outer = section_with_marker("#");
-    AstNode::push_child(&document, outer.clone());
+    document.push_child(outer.clone());
     let inner = section_with_marker("~");
-    AstNode::push_child(&outer, inner.clone());
+    outer.push_child(inner.clone());
     let paragraph = AstNode::new_ref(NodeClass::Paragraph);
-    AstNode::push_child(&inner, paragraph.clone());
+    inner.push_child(paragraph.clone());
 
     let closest = AstNode::closest_ancestor_section(&paragraph, Some("#")).unwrap();
     assert!(Rc::ptr_eq(&closest, &outer));
@@ -92,8 +92,8 @@ fn to_json_serializes_node_tree_without_parent() {
 
     let title = AstNode::new_ref(NodeClass::Title);
     title.with_text("Heading 1\n");
-    AstNode::push_child(&section, title);
-    AstNode::push_child(&root, section);
+    section.push_child(title);
+    root.push_child(section);
 
     let json_value = AstNode::to_json(&root);
 
@@ -135,8 +135,8 @@ fn to_yaml_serializes_node_tree_without_parent() {
 
     let title = AstNode::new_ref(NodeClass::Title);
     title.with_text("Heading 1\n");
-    AstNode::push_child(&section, title);
-    AstNode::push_child(&root, section);
+    section.push_child(title);
+    root.push_child(section);
 
     let yaml_text = AstNode::to_yaml(&root).expect("failed to serialize yaml");
     let actual: serde_yaml::Value =

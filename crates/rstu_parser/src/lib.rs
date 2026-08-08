@@ -41,21 +41,21 @@ pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
             {
                 let (section, next_start) =
                     try_match_section_header(&tokens, index, token1.is(&[TK::Separator]))?;
-                AstNode::push_section_ref(&current_node, section.clone());
+                current_node.push_section_ref(section.clone());
                 current_node = section;
                 index = next_start;
             }
 
             (TK::DoubleDot, _) => {
                 let (directive, next_start) = try_parse_directive_like(&tokens, index)?;
-                AstNode::push_body_element(&current_node, directive.clone());
+                current_node.push_body_element(directive.clone());
                 current_node = directive;
                 index = next_start;
             }
 
             (TK::Field, _) => {
                 let (field_list, next_start) = list::try_parse_field_list(&tokens, index)?;
-                AstNode::push_body_element(&current_node, field_list);
+                current_node.push_body_element(field_list);
                 index = next_start;
             }
 
@@ -70,7 +70,7 @@ pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
                     || kind.is(TC::PLAIN) =>
             {
                 let (paragraph, next_start) = paragraph::try_parse_paragraph(&tokens, index)?;
-                AstNode::push_child(&current_node, paragraph.clone());
+                current_node.push_child(paragraph.clone());
                 index = next_start;
             }
 
@@ -130,7 +130,7 @@ pub fn try_match_section_header(
 
     let title = AstNode::new_ref(NodeClass::Title);
     title.with_text(tokens_to_text(&tokens[title_start..title_end]));
-    AstNode::push_child(&section, title);
+    section.push_child(title);
 
     Ok((section, closing_index + 2))
 }
@@ -209,8 +209,8 @@ fn try_parse_directive(
     let indented_block = AstNode::new_ref(NodeClass::IndentedBlock);
     indented_block.with_attr("indentation", indentation);
     let (paragraph, index) = paragraph::try_parse_paragraph(&tokens, index + 1)?;
-    AstNode::push_child(&indented_block, paragraph);
-    AstNode::push_child(&directive, indented_block);
+    indented_block.push_child(paragraph);
+    directive.push_child(indented_block);
 
     Ok((directive, index))
 }

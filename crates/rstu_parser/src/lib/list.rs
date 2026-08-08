@@ -27,8 +27,8 @@ pub(crate) fn try_parse_field_list(
 
         let body_start = skip_kinds(tokens, &[TK::Spaces], index + 1).unwrap_or(index + 1);
         let (paragraph, next_index) = paragraph::try_parse_paragraph(tokens, body_start)?;
-        AstNode::push_child(&item, paragraph);
-        AstNode::push_child(&list, item);
+        item.push_child(paragraph);
+        list.push_child(item);
 
         index = next_index;
     }
