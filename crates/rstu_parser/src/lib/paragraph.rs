@@ -29,7 +29,7 @@ pub(crate) fn try_parse_paragraph(
     while index < paragraph_end {
         let (node, new_index) = match tokens[index].kind {
             kind if kind.is(TC::INLINE_MARKER) => try_parse_inline(&tokens, index)?,
-            kind if kind.is(TC::INLINE_TOKEN) => try_parse_inline_ref(&tokens, index)?,
+            kind if kind.is(TC::INLINE_TOKEN) => try_parse_inline_token(&tokens, index)?,
             kind if kind.is(TC::PLAIN) || kind == TK::Punctuation => {
                 try_parse_plain(&tokens, index)?
             }
@@ -50,7 +50,7 @@ pub(crate) fn try_parse_paragraph(
     Ok((paragraph, index))
 }
 
-pub(crate) fn try_parse_inline_ref(
+pub(crate) fn try_parse_inline_token(
     tokens: &[Token],
     at: usize,
 ) -> Result<(NodeRef, usize), FindElementError> {
