@@ -12,7 +12,7 @@ pub mod parser_errors;
 pub mod token;
 pub mod token_slice;
 
-use rstu_ast::{AstNode, NodeClass, NodeRef};
+use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use crate::lexer::tokenize;
 use crate::token::{Token, TokenCategory as TC, TokenKind as TK};
@@ -123,12 +123,13 @@ pub fn try_match_section_header(
     };
 
     let section = AstNode::new_ref(NodeClass::Section);
-    AstNode::with_attr(&section, "section_marker", closing_style);
-    AstNode::with_attr(&section, "marker_len", closing_len);
-    AstNode::with_attr(&section, "marker_len_opening", opening_len);
+    section
+        .with_attr("section_marker", closing_style)
+        .with_attr("marker_len", closing_len)
+        .with_attr("marker_len_opening", opening_len);
 
     let title = AstNode::new_ref(NodeClass::Title);
-    AstNode::with_text(&title, tokens_to_text(&tokens[title_start..title_end]));
+    title.with_text(tokens_to_text(&tokens[title_start..title_end]));
     AstNode::push_child(&section, title);
 
     Ok((section, closing_index + 2))
@@ -175,7 +176,7 @@ fn try_parse_comment(
         &tokens[start_at + 2..index + 1],
         &[TK::Indent, TK::Dedent],
     ); // skip '.. '
-    AstNode::with_text(&comment, token_slice::tokens_to_text(&comment_tokens));
+    comment.with_text(token_slice::tokens_to_text(&comment_tokens));
     Ok((comment, index + 1))
 }
 
@@ -193,9 +194,9 @@ fn try_parse_directive(
     let directive_text = tokens_to_text(&tokens[directive_colon_index + 1..first_line_end]);
 
     let directive = AstNode::new_ref(NodeClass::Directive);
-    AstNode::with_attr(&directive, "directive_type", directive_type);
+    directive.with_attr("directive_type", directive_type);
     if !directive_text.is_empty() {
-        AstNode::with_text(&directive, directive_text);
+        directive.with_text(directive_text);
     }
 
     let index = first_line_end + 1;
@@ -206,7 +207,7 @@ fn try_parse_directive(
     let indentation = tokens[index].lexeme.clone();
 
     let indented_block = AstNode::new_ref(NodeClass::IndentedBlock);
-    AstNode::with_attr(&indented_block, "indentation", indentation);
+    indented_block.with_attr("indentation", indentation);
     let (paragraph, index) = paragraph::try_parse_paragraph(&tokens, index + 1)?;
     AstNode::push_child(&indented_block, paragraph);
     AstNode::push_child(&directive, indented_block);

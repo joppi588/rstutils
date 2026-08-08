@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-use rstu_ast::{AstNode, NodeClass, NodeRef};
+use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use crate::parser_errors::FindElementError;
 use crate::token::{Token, TokenCategory as TC, TokenKind as TK};
@@ -59,20 +59,20 @@ pub(crate) fn try_parse_inline_token(
     let lexeme = &tokens[at].lexeme;
     match kind {
         TK::FootnoteReference => {
-            AstNode::with_text(&node, &lexeme[1..lexeme.len() - 2]);
-            AstNode::with_attr(&node, "type", "footnote");
+            node.with_text(&lexeme[1..lexeme.len() - 2])
+                .with_attr("type", "footnote");
         }
         TK::SubstitutionReference => {
-            AstNode::with_text(&node, &lexeme[1..lexeme.len() - 1]);
-            AstNode::with_attr(&node, "type", "sub");
+            node.with_text(&lexeme[1..lexeme.len() - 1])
+                .with_attr("type", "sub");
         }
         TK::SimpleHyperlinkReference => {
-            AstNode::with_text(&node, &lexeme[0..lexeme.len() - 1]);
-            AstNode::with_attr(&node, "type", "simple_ref");
+            node.with_text(&lexeme[0..lexeme.len() - 1])
+                .with_attr("type", "simple_ref");
         }
         TK::SimpleAnonymousHyperLinkReference => {
-            AstNode::with_text(&node, &lexeme[0..lexeme.len() - 2]);
-            AstNode::with_attr(&node, "type", "simple_anonymous_ref");
+            node.with_text(&lexeme[0..lexeme.len() - 2])
+                .with_attr("type", "simple_anonymous_ref");
         }
 
         _ => {
@@ -121,8 +121,9 @@ pub(crate) fn try_parse_inline(
     };
 
     let inline = AstNode::new_ref(NodeClass::InlineMarkup);
-    AstNode::with_attr(&inline, "markup", effective_markup);
-    AstNode::with_text(&inline, tokens_to_text(&tokens[start_at + 1..inline_final]));
+    inline
+        .with_attr("markup", effective_markup)
+        .with_text(tokens_to_text(&tokens[start_at + 1..inline_final]));
     Ok((inline, inline_final + 1))
 }
 
@@ -138,6 +139,6 @@ fn try_parse_plain(
     }
 
     let sentence = AstNode::new_ref(NodeClass::PlainText);
-    AstNode::with_text(&sentence, text);
+    sentence.with_text(text);
     Ok((sentence, plain_tokens))
 }

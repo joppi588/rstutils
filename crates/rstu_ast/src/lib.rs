@@ -24,6 +24,25 @@ pub struct AstNode {
     pub children: Vec<NodeRef>,
 }
 
+pub trait NodeRefExt {
+    fn with_text(&self, text: impl Into<String>) -> NodeRef;
+    fn with_attr(&self, key: impl Into<String>, value: impl Into<AttributeType>) -> NodeRef;
+}
+
+impl NodeRefExt for NodeRef {
+    fn with_text(&self, text: impl Into<String>) -> NodeRef {
+        self.borrow_mut().text = Some(text.into());
+        self.clone()
+    }
+
+    fn with_attr(&self, key: impl Into<String>, value: impl Into<AttributeType>) -> NodeRef {
+        self.borrow_mut()
+            .attributes
+            .insert(key.into(), value.into());
+        self.clone()
+    }
+}
+
 impl AstNode {
     pub fn new_ref(class: NodeClass) -> NodeRef {
         Rc::new(RefCell::new(Self {
@@ -33,16 +52,6 @@ impl AstNode {
             text: None,
             children: Vec::new(),
         }))
-    }
-    pub fn with_text(node_ref: &NodeRef, text: impl Into<String>) {
-        node_ref.borrow_mut().text = Some(text.into());
-    }
-
-    pub fn with_attr(node_ref: &NodeRef, key: impl Into<String>, value: impl Into<AttributeType>) {
-        node_ref
-            .borrow_mut()
-            .attributes
-            .insert(key.into(), value.into());
     }
 
     pub fn push_child(parent: &NodeRef, child: NodeRef) {

@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-use rstu_ast::{AstNode, NodeClass, NodeRef};
+use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use crate::paragraph;
 use crate::parser_errors::FindElementError;
@@ -23,7 +23,7 @@ pub(crate) fn try_parse_field_list(
             .trim_start_matches(':')
             .trim_end_matches(':')
             .to_string();
-        AstNode::with_attr(&item, "fieldname", field_name);
+        item.with_attr("fieldname", field_name);
 
         let body_start = skip_kinds(tokens, &[TK::Spaces], index + 1).unwrap_or(index + 1);
         let (paragraph, next_index) = paragraph::try_parse_paragraph(tokens, body_start)?;

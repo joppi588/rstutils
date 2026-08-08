@@ -2,13 +2,13 @@
 //
 // SPDX-License-Identifier: MIT
 
-use super::{AstNode, NodeClass};
+use super::{AstNode, NodeClass, NodeRefExt};
 use serde_json::json;
 use std::rc::Rc;
 
 fn section_with_marker(section_marker: &str) -> super::NodeRef {
     let section = AstNode::new_ref(NodeClass::Section);
-    AstNode::with_attr(&section, "section_marker", section_marker);
+    section.with_attr("section_marker", section_marker);
     section
 }
 
@@ -83,14 +83,15 @@ fn closest_ancestor_section_matches_requested_marker() {
 #[test]
 fn to_json_serializes_node_tree_without_parent() {
     let root = AstNode::new_ref(NodeClass::Document);
-    AstNode::with_attr(&root, "lang", "rst");
+    root.with_attr("lang", "rst");
 
     let section = AstNode::new_ref(NodeClass::Section);
-    AstNode::with_attr(&section, "section_marker", "=========");
-    AstNode::with_attr(&section, "marker_len", 9usize);
+    section
+        .with_attr("section_marker", "=========")
+        .with_attr("marker_len", 9usize);
 
     let title = AstNode::new_ref(NodeClass::Title);
-    AstNode::with_text(&title, "Heading 1\n");
+    title.with_text("Heading 1\n");
     AstNode::push_child(&section, title);
     AstNode::push_child(&root, section);
 
@@ -125,14 +126,15 @@ fn to_json_serializes_node_tree_without_parent() {
 #[test]
 fn to_yaml_serializes_node_tree_without_parent() {
     let root = AstNode::new_ref(NodeClass::Document);
-    AstNode::with_attr(&root, "lang", "rst");
+    root.with_attr("lang", "rst");
 
     let section = AstNode::new_ref(NodeClass::Section);
-    AstNode::with_attr(&section, "section_marker", "=========");
-    AstNode::with_attr(&section, "marker_len", 9usize);
+    section
+        .with_attr("section_marker", "=========")
+        .with_attr("marker_len", 9usize);
 
     let title = AstNode::new_ref(NodeClass::Title);
-    AstNode::with_text(&title, "Heading 1\n");
+    title.with_text("Heading 1\n");
     AstNode::push_child(&section, title);
     AstNode::push_child(&root, section);
 
