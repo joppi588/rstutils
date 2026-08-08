@@ -64,7 +64,11 @@ pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
             | (TK::Indent, _)
             | (TK::Dedent, _) => index += 1,
 
-            (kind, _) if kind.is(TC::INLINE_MARKER) || kind.is(TC::PLAIN) => {
+            (kind, _)
+                if kind.is(TC::INLINE_MARKER)
+                    || kind.is(TC::INLINE_TOKEN)
+                    || kind.is(TC::PLAIN) =>
+            {
                 let (paragraph, next_start) = paragraph::try_parse_paragraph(&tokens, index)?;
                 AstNode::push_child(&current_node, paragraph.clone());
                 index = next_start;
@@ -140,8 +144,8 @@ fn try_parse_directive_like(
         &[
             TK::NewLine,
             TK::DoubleColon,
-            TK::FootnoteReferenceOpen,
-            TK::HyperlinkReference,
+            TK::FootnoteReference,
+            TK::HyperlinkReferenceEnd,
             TK::SubstitutionReference,
         ],
         start_at,

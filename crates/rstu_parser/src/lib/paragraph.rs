@@ -29,6 +29,7 @@ pub(crate) fn try_parse_paragraph(
     while index < paragraph_end {
         let (node, new_index) = match tokens[index].kind {
             kind if kind.is(TC::INLINE_MARKER) => try_parse_inline(&tokens, index)?,
+            kind if kind.is(TC::INLINE_TOKEN) => try_parse_inline_ref(&tokens, index)?,
             kind if kind.is(TC::PLAIN) || kind == TK::Punctuation => {
                 try_parse_plain(&tokens, index)?
             }
@@ -49,24 +50,83 @@ pub(crate) fn try_parse_paragraph(
     Ok((paragraph, index))
 }
 
-fn try_parse_inline(
+pub(crate) fn try_parse_inline_ref(
+    tokens: &[Token],
+    at: usize,
+) -> Result<(NodeRef, usize), FindElementError> {
+    let node = AstNode::new_ref(NodeClass::Reference);
+    let kind = tokens[at].kind;
+    let lexeme = &tokens[at].lexeme;
+    match kind {
+        TK::FootnoteReference => {
+            AstNode::with_text(&node, &lexeme[1..lexeme.len() - 2]);
+            AstNode::with_attr(&node, "type", "footnote");
+        }
+        TK::SubstitutionReference => {
+            AstNode::with_text(&node, &lexeme[1..lexeme.len() - 1]);
+            AstNode::with_attr(&node, "type", "sub");
+        }
+        TK::SimpleHyperlinkReference => {
+            AstNode::with_text(&node, &lexeme[0..lexeme.len() - 1]);
+            AstNode::with_attr(&node, "type", "simple_ref");
+        }
+        TK::SimpleAnonymousHyperLinkReference => {
+            AstNode::with_text(&node, &lexeme[0..lexeme.len() - 2]);
+            AstNode::with_attr(&node, "type", "simple_anonymous_ref");
+        }
+
+        _ => {
+            return Err(FindElementError::UnexpectedToken {
+                expected: "Reference token".to_owned(),
+                found: format!("{:?}", kind),
+            });
+        }
+    };
+    Ok((node, at + 1))
+}
+
+pub(crate) fn try_parse_inline(
     tokens: &[Token],
     start_at: usize,
 ) -> Result<(NodeRef, usize), FindElementError> {
-    let inline_final = match tokens[start_at].kind {
-        TK::Strong => find_next_kind(tokens, &[TK::Strong], start_at + 1)
-            .map_err(|_| FindElementError::StrongMissingClosing { start_at: start_at })?,
+    let (markup, end_kind_candidates): (&str, &[TK]) = match tokens[start_at].kind {
+        TK::StrongStart => ("strong", &[TK::StrongEnd]),
+        TK::EmphasisStart => ("emphasis", &[TK::EmphasisEnd]),
+        TK::InlineLiteralStart => ("inline_literal", &[TK::InlineLiteralEnd]),
+        TK::InlineInternalTargetStart => ("inline_internal_target", &[TK::BackquoteEnd]),
+        TK::BackquoteStart => (
+            "interpreted_or_hyperlink",
+            &[TK::BackquoteEnd, TK::HyperlinkReferenceEnd],
+        ),
         _ => {
             return Err(FindElementError::UnexpectedToken {
-                expected: "Inline".to_owned(),
+                expected: "Inline start token".to_owned(),
                 found: format!("{:?}", tokens[start_at].kind),
             });
         }
     };
-    let strong = AstNode::new_ref(NodeClass::InlineMarkup);
-    AstNode::with_attr(&strong, "markup", "strong");
-    AstNode::with_text(&strong, tokens_to_text(&tokens[start_at + 1..inline_final]));
-    Ok((strong, inline_final + 1))
+
+    let inline_final = find_next_kind(tokens, end_kind_candidates, start_at + 1).map_err(|_| {
+        FindElementError::InlineMissingClosing {
+            markup: markup.to_owned(),
+            start_at,
+        }
+    })?;
+
+    let effective_markup = if tokens[start_at].kind == TK::BackquoteStart {
+        if tokens[inline_final].kind == TK::HyperlinkReferenceEnd {
+            "hyperlink_reference"
+        } else {
+            "interpreted_text"
+        }
+    } else {
+        markup
+    };
+
+    let inline = AstNode::new_ref(NodeClass::InlineMarkup);
+    AstNode::with_attr(&inline, "markup", effective_markup);
+    AstNode::with_text(&inline, tokens_to_text(&tokens[start_at + 1..inline_final]));
+    Ok((inline, inline_final + 1))
 }
 
 fn try_parse_plain(

@@ -23,7 +23,8 @@ pub enum FindElementError {
         expected: String,
         found: String,
     },
-    StrongMissingClosing {
+    InlineMissingClosing {
+        markup: String,
         start_at: usize,
     },
 }
