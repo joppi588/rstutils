@@ -51,19 +51,18 @@ impl NodeRefExt for NodeRef {
     }
 
     fn push_body_element(&self, body: NodeRef) -> NodeRef {
-        if matches!(
-            self.borrow().class,
-            NodeClass::Document | NodeClass::Section
-        ) {
-            self.push_child(body.clone());
-        } else {
-            let parent = self
-                .borrow()
-                .parent
-                .as_ref()
-                .and_then(Weak::upgrade)
-                .unwrap_or_else(|| self.clone());
-            parent.push_child(body.clone());
+        let class = self.borrow().class;
+        match class {
+            NodeClass::Document | NodeClass::Section => self.push_child(body.clone()),
+            _ => {
+                let parent = self
+                    .borrow()
+                    .parent
+                    .as_ref()
+                    .and_then(Weak::upgrade)
+                    .unwrap_or_else(|| self.clone()); // TODO: what does self.clone? Is that branch possible?
+                parent.push_child(body.clone());
+            }
         }
 
         body
