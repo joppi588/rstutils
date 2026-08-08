@@ -68,13 +68,17 @@ impl TokenCategory {
     pub const DIRECTIVE_LIKE: &'static [TokenKind] =
         &[TokenKind::DoubleDot, TokenKind::DoubleColon];
     pub const INLINE_MARKER: &'static [TokenKind] = &[
-        TokenKind::Strong,
-        TokenKind::Emphasis,
-        TokenKind::InterpretedText,
-        TokenKind::InlineLiteral,
+        TokenKind::StrongStart,
+        TokenKind::EmphasisStart,
+        TokenKind::InlineLiteralStart,
+        TokenKind::BackquoteStart,
+        TokenKind::InlineInternalTargetStart,
+    ];
+    pub const INLINE_TOKEN: &'static [TokenKind] = &[
         TokenKind::SubstitutionReference,
-        TokenKind::HyperlinkReference,
-        TokenKind::InlineInternalTarget,
+        TokenKind::FootnoteReference,
+        TokenKind::SimpleHyperlinkReference,
+        TokenKind::SimpleAnonymousHyperLinkReference,
     ];
     pub const STRUCTURAL: &'static [TokenKind] = &[TokenKind::Separator];
     pub const CONTROL: &'static [TokenKind] = &[
@@ -95,24 +99,29 @@ impl TokenCategory {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TokenKind {
     BlankLine,
+    BackquoteEnd,
+    BackquoteStart,
     Dedent,
     DoubleColon,
     DoubleDot,
-    Emphasis,
+    EmphasisEnd,
+    EmphasisStart,
     Field,
-    FootnoteReferenceClose,
-    FootnoteReferenceOpen,
-    HyperlinkReference,
+    FootnoteReference,
+    HyperlinkReferenceEnd,
+    SimpleHyperlinkReference,
+    SimpleAnonymousHyperLinkReference,
     Indent,
-    InlineInternalTarget,
-    InlineLiteral,
-    InterpretedText,
+    InlineInternalTargetStart,
+    InlineLiteralEnd,
+    InlineLiteralStart,
     LiteralChar,
     NewLine,
     Punctuation,
     Separator,
     Spaces,
-    Strong,
+    StrongEnd,
+    StrongStart,
     SubstitutionReference,
     TableHorizontal,
     Word,
@@ -140,15 +149,27 @@ impl TokenKind {
         (TableHorizontal, r"\n=+(?:\s+=+)+\s*\n"),
 
         // Inline
-        (Strong, format!(r"(?:{0}\*\*[^\s]|[^\s]\*\*{1})", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
-        (Emphasis, format!(r"(?:{0}\*[^\s]|[^\s]\*{1})", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
-        (InlineLiteral, format!(r"(?:{0}``[^\s]|[^\s]``{1})", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
-        (InterpretedText, format!(r"(?:{0}`[^\s]|[^\s]`{1})", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
-        (SubstitutionReference, format!(r"(?:{0}\|[^\s]|[^\s]\|{1})", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
-        (InlineInternalTarget, format!(r"{0}_`[^\s]", INLINE_PRE_CHARS)),
-        (FootnoteReferenceOpen, format!(r"{0}\[[^\s]", INLINE_PRE_CHARS)),
-        (FootnoteReferenceClose, format!(r"[^\s]\]_{0}", INLINE_POST_CHARS)),
-        (HyperlinkReference, format!(r"[^\s]_{0}", INLINE_POST_CHARS)),
+        // Keep recognition order aligned with the spec: strong before emphasis,
+        // inline literals and inline internal targets before backquote constructs.
+        (StrongStart, format!(r"{0}\*\*[^\s]", INLINE_PRE_CHARS)),
+        (StrongEnd, format!(r"[^\s]\*\*{0}", INLINE_POST_CHARS)),
+        (EmphasisStart, format!(r"{0}\*[^\s]", INLINE_PRE_CHARS)),
+        (EmphasisEnd, format!(r"[^\s]\*{0}", INLINE_POST_CHARS)),
+        (InlineLiteralStart, format!(r"{0}``[^\s]", INLINE_PRE_CHARS)),
+        (InlineLiteralEnd, format!(r"[^\s]``{0}", INLINE_POST_CHARS)),
+        (InlineInternalTargetStart, format!(r"{0}_`[^\s]", INLINE_PRE_CHARS)),
+        (BackquoteStart, format!(r"{0}`[^\s]", INLINE_PRE_CHARS)),
+        (BackquoteEnd, format!(r"[^\s]`{0}", INLINE_POST_CHARS)),
+
+        // Inline references
+        (SubstitutionReference, format!(r"{0}\|.+\|{1}", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
+        // SubsRefHyperLink rst l.3033
+        // SubRefAnonymousHyperlink
+        (FootnoteReference, format!(r"{0}\[.+\]_{1}", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
+        (HyperlinkReferenceEnd, format!(r"(?:[^\s]`_|[^\s]_){}", INLINE_POST_CHARS)),
+        (SimpleAnonymousHyperLinkReference,r"[\s\n]\w+__\s"),
+        (SimpleHyperlinkReference,r"[\s\n]\w+_\s"),
+
 
         // Plain text
         (Spaces, r"[^ \t\n][ \t]+[^ \t]"),
@@ -221,36 +242,45 @@ mod tests {
     }
 
     #[test]
-    fn bold_matches() {
-        assert!(TK::Strong.is_match(" **x"));
-        assert!(TK::Strong.is_match("x** "));
-    }
-
-    #[test]
-    fn bold_non_matching() {
-        assert!(!TK::Strong.is_match("*"));
+    fn strong_matches() {
+        assert!(TK::StrongStart.is_match(" **x"));
+        assert!(TK::StrongEnd.is_match("x** "));
+        assert!(!TK::StrongStart.is_match("*"));
+        assert!(!TK::StrongEnd.is_match("*"));
     }
 
     #[test]
     fn inline_markup_tokens_match_common_delimiters() {
-        assert!(TK::Emphasis.is_match(" *x"));
-        assert!(TK::InterpretedText.is_match(" `x"));
-        assert!(TK::InlineLiteral.is_match(" ``x"));
-        assert!(TK::SubstitutionReference.is_match(" |x"));
-        assert!(TK::HyperlinkReference.is_match("x_ "));
-        assert!(TK::FootnoteReferenceOpen.is_match(" [x"));
+        assert!(TK::EmphasisStart.is_match(" *x"));
+        assert!(TK::EmphasisEnd.is_match("x* "));
+        assert!(TK::BackquoteStart.is_match(" `x"));
+        assert!(TK::BackquoteEnd.is_match("x` "));
+        assert!(TK::InlineLiteralStart.is_match(" ``x"));
+        assert!(TK::InlineLiteralEnd.is_match("x`` "));
+    }
+
+    #[test]
+    fn inline_references() {
+        assert!(TK::SubstitutionReference.is_match(" |x| "));
+        assert!(TK::HyperlinkReferenceEnd.is_match("x_ "));
+        assert!(TK::HyperlinkReferenceEnd.is_match("x`_ "));
+        assert!(TK::FootnoteReference.is_match(" [x]_ "));
+        assert_eq!(
+            TK::SimpleHyperlinkReference.find_lexeme(" simple_ref_ text"),
+            Some("simple_ref_")
+        );
     }
 
     // TODO: exclude escaped characters
 
     #[test]
     fn emphasis_non_matching_for_strong_delimiters() {
-        assert!(!TK::Emphasis.is_match("**"));
+        assert!(!TK::EmphasisStart.is_match("**"));
     }
 
     #[test]
     fn interpreted_text_non_matching_for_double_backticks() {
-        assert!(!TK::InterpretedText.is_match("``"));
+        assert!(!TK::BackquoteStart.is_match("``"));
     }
 
     #[test]
@@ -328,7 +358,7 @@ mod tests {
 
     #[test]
     fn kind_is_matches_category_membership() {
-        assert!(TK::Strong.is(TokenCategory::INLINE_MARKER));
+        assert!(TK::StrongStart.is(TokenCategory::INLINE_MARKER));
         assert!(TK::Word.is(TokenCategory::PLAIN));
         assert!(TK::Punctuation.is(TokenCategory::PLAIN));
         assert!(!TK::Separator.is(TokenCategory::PLAIN));
