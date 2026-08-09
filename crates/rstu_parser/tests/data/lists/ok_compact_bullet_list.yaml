@@ -22,4 +22,4 @@ children:
           children:
             - class: PlainText
               text: "Second item\n"
-        - class: Blankline
+        - class: BlankLine
