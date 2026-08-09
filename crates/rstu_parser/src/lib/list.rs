@@ -31,8 +31,7 @@ pub(crate) fn try_parse_bullet_list(
             list.with_attr("marker", current_marker.clone());
         }
 
-        let body_start = skip_kinds(tokens, &[TK::Spaces], index + 1).unwrap_or(index + 1);
-        let (paragraph, next_index) = paragraph::try_parse_paragraph(tokens, body_start)?;
+        let (paragraph, next_index) = paragraph::try_parse_paragraph(tokens, index + 2)?;
         list.push_child(paragraph);
 
         index = next_index;
