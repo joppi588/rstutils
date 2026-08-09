@@ -16,7 +16,7 @@ pub(crate) fn try_parse_bullet_list(
     let list = AstNode::new_ref(NodeClass::BulletList);
     let mut index = start_at;
 
-    while index < tokens.len() && tokens[index].kind == TK::BulletListMarker {
+    while tokens[index].kind == TK::BulletListMarker {
         if !list.borrow().attributes.contains_key("marker") {
             list.with_attr("marker", tokens[index].lexeme.clone());
         }
