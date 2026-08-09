@@ -1,0 +1,16 @@
+class: Document
+children:
+  - class: Paragraph
+    children:
+      - class: PlainText
+        text: "This is a bullet list:\n"
+  - class: List
+    children:
+      - class: Paragraph
+        children:
+          - class: PlainText
+            text: "First item\n"
+      - class: Paragraph
+        children:
+          - class: PlainText
+            text: "Second item\n"
