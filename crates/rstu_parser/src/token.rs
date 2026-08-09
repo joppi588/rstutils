@@ -172,7 +172,7 @@ impl TokenKind {
         (SimpleHyperlinkReference,r"[\s\n]\w+_\s"),
 
         // Lists
-        (BulletListMarker, r"(.|\n)[\-\+\*•‣⁃][\s]"),
+        (BulletListMarker, r"(\s|\n)[\-\+\*•‣⁃][\s]"),
 
 
         // Plain text
