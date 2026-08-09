@@ -4,6 +4,12 @@
 
 use crate::token::{Token, TokenKind as TK};
 
+macro_rules! space {
+    ($n:expr) => {
+        " ".repeat($n)
+    };
+}
+
 pub fn tokenize(input: &str) -> Vec<Token> {
     let input = format!("\n\n{input}\n\n"); // leading and trailing blank line
     let mut tokens: Vec<Token> = Vec::new();
@@ -22,12 +28,10 @@ pub fn tokenize(input: &str) -> Vec<Token> {
             (TK::NewLine | TK::BlankLine, TK::Indent) => {
                 let new_indent = lexeme.len();
                 if new_indent > current_indent {
-                    let indent_token =
-                        Token::new(TK::Indent, " ".repeat(new_indent - current_indent));
+                    let indent_token = Token::new(TK::Indent, space!(new_indent - current_indent));
                     tokens.push(indent_token);
                 } else if new_indent < current_indent {
-                    let dedent_token =
-                        Token::new(TK::Dedent, " ".repeat(current_indent - new_indent));
+                    let dedent_token = Token::new(TK::Dedent, space!(current_indent - new_indent));
                     tokens.push(dedent_token);
                 }
                 current_indent = new_indent;
@@ -35,7 +39,7 @@ pub fn tokenize(input: &str) -> Vec<Token> {
             (TK::NewLine | TK::BlankLine, TK::BlankLine) => tokens.push(new_token), // Blank line does not change indent
             (TK::NewLine | TK::BlankLine, _) => {
                 if current_indent > 0 {
-                    let dedent_token = Token::new(TK::Dedent, " ".repeat(current_indent));
+                    let dedent_token = Token::new(TK::Dedent, space!(current_indent));
                     tokens.push(dedent_token);
                 }
                 current_indent = 0;
@@ -55,7 +59,7 @@ pub fn tokenize(input: &str) -> Vec<Token> {
         index += lexeme.len();
     }
     if current_indent > 0 {
-        tokens.push(Token::new(TK::Dedent, " ".repeat(current_indent)))
+        tokens.push(Token::new(TK::Dedent, space!(current_indent)))
     };
     tokens
 }
