@@ -42,11 +42,11 @@ pub fn tokenize(input: &str) -> Vec<Token> {
                 tokens.push(new_token);
             }
             (_, TK::BulletListMarker) => {
-                if last_token_kind.is(&[TK::Indent, TK::Dedent]) {
-                    tokens.push(new_token);
+                tokens.push(if last_token_kind.is(&[TK::Indent, TK::Dedent]) {
+                    new_token
                 } else {
-                    tokens.push(Token::new(TK::Punctuation, lexeme));
-                }
+                    Token::new(TK::Punctuation, lexeme)
+                });
             }
             _ => tokens.push(new_token),
         }
