@@ -4,9 +4,9 @@ children:
     children:
       - class: PlainText
         text: "This is a bullet list:\n"
-  - class: List
+  - class: BulletList
     attributes:
-      - marker: "-"
+      marker: "-"
     children:
       - class: Paragraph
         children:

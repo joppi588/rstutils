@@ -13,8 +13,16 @@ pub fn tokenize(input: &str) -> Vec<Token> {
     let mut index: usize = 1;
     while index < input.len() - 1 {
         let sub_str = &input[index - 1..];
-        let (token_kind, lexeme) = TK::match_token(sub_str)
+        let (mut token_kind, lexeme) = TK::match_token(sub_str)
             .unwrap_or_else(|| panic!("No token matched input: {sub_str:?}"));
+        if token_kind == TK::BulletListMarker
+            && !matches!(
+                last_token_kind,
+                TK::BlankLine | TK::NewLine | TK::Indent | TK::Dedent
+            )
+        {
+            token_kind = TK::Punctuation;
+        }
         let new_token = Token::new(token_kind, lexeme);
         match (last_token_kind, token_kind) {
             (TK::NewLine | TK::BlankLine, TK::Indent) => {

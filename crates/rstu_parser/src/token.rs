@@ -98,9 +98,10 @@ impl TokenCategory {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TokenKind {
-    BlankLine,
     BackquoteEnd,
     BackquoteStart,
+    BlankLine,
+    BulletListMarker,
     Dedent,
     DoubleColon,
     DoubleDot,
@@ -109,8 +110,6 @@ pub enum TokenKind {
     Field,
     FootnoteReference,
     HyperlinkReferenceEnd,
-    SimpleHyperlinkReference,
-    SimpleAnonymousHyperLinkReference,
     Indent,
     InlineInternalTargetStart,
     InlineLiteralEnd,
@@ -119,6 +118,8 @@ pub enum TokenKind {
     NewLine,
     Punctuation,
     Separator,
+    SimpleAnonymousHyperLinkReference,
+    SimpleHyperlinkReference,
     Spaces,
     StrongEnd,
     StrongStart,
@@ -169,6 +170,9 @@ impl TokenKind {
         (HyperlinkReferenceEnd, format!(r"(?:[^\s]`_|[^\s]_){}", INLINE_POST_CHARS)),
         (SimpleAnonymousHyperLinkReference,r"[\s\n]\w+__\s"),
         (SimpleHyperlinkReference,r"[\s\n]\w+_\s"),
+
+        // Lists
+        (BulletListMarker, r"(.|\n)[\-\+\*•‣⁃][\s]"),
 
 
         // Plain text
@@ -301,6 +305,17 @@ mod tests {
     #[test]
     fn doubledot_non_matching() {
         assert!(!TK::DoubleDot.is_match("\nwarning...\n"));
+    }
+
+    #[test]
+    fn bullet_list_marker_matches() {
+        assert!(TK::BulletListMarker.is_match("\n- item\n"));
+        assert!(TK::BulletListMarker.is_match("\n+ item\n"));
+    }
+
+    #[test]
+    fn bullet_list_marker_non_matching() {
+        assert!(!TK::BulletListMarker.is_match("x-y"));
     }
 
     #[test]
