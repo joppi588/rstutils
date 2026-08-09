@@ -9,6 +9,9 @@
   "forwardPorts": [],
   "customizations": {
     "vscode": {
+      "settings": {
+        "todo-tree.ripgrep.ripgrep": "/usr/bin/rg"
+      },
       "extensions": [
         "rust-lang.rust-analyzer",
         "eamodio.gitlens",
