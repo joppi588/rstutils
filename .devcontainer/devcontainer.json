@@ -1,10 +1,13 @@
 {
   "name": "Rust Dev Container",
   "build": {
-    "dockerfile": "Dockerfile"
+    "dockerfile": "Dockerfile",
   },
   "mounts": [
     "source=rstutils-zsh-history,target=/commandhistory,type=volume"
+  ],
+  "runArgs": [
+    "--network=host"
   ],
   "forwardPorts": [],
   "customizations": {
