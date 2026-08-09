@@ -11,6 +11,7 @@ pub enum NodeClass {
     Document,
     FieldListItem,
     IndentedBlock,
+    IndentedBlockHanging,
     InlineMarkup,
     List,
     Paragraph,
