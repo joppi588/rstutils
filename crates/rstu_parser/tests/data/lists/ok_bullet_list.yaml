@@ -5,14 +5,20 @@ children:
       - class: PlainText
         text: "This is a bullet list:\n"
   - class: BulletList
-    attributes:
-      marker: "-"
     children:
-      - class: Paragraph
+      - class: BulletListItem
+        attributes:
+          marker: "-"
         children:
-          - class: PlainText
-            text: "First item\n"
-      - class: Paragraph
+        - class: Paragraph
+          children:
+            - class: PlainText
+              text: "First item\n"
+      - class: BulletListItem
+        attributes:
+          marker: "-"
         children:
-          - class: PlainText
-            text: "Second item\n"
+        - class: Paragraph
+          children:
+            - class: PlainText
+              text: "Second item\n"

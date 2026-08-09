@@ -17,7 +17,7 @@ pub(crate) fn try_parse_bullet_list(
     let mut index = start_at;
     let mut marker: Option<String> = None;
 
-    while index < tokens.len() && tokens[index].kind == TK::BulletListMarker {
+    while tokens[index].kind == TK::BulletListMarker {
         let current_marker = tokens[index].lexeme.clone();
         if let Some(existing_marker) = &marker {
             if existing_marker != &current_marker {
@@ -35,9 +35,6 @@ pub(crate) fn try_parse_bullet_list(
         list.push_child(paragraph);
 
         index = next_index;
-        while index < tokens.len() && tokens[index].kind == TK::BlankLine {
-            index += 1;
-        }
     }
 
     Ok((list, index))
