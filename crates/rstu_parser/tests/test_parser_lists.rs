@@ -13,6 +13,7 @@ mod test_parser;
 #[rstest]
 #[case("lists", "ok_field_list.rst", "ok_field_list.yaml")]
 #[case("lists", "ok_bullet_list.rst", "ok_bullet_list.yaml")]
+#[case("lists", "ok_compact_bullet_list.rst", "ok_compact_bullet_list.yaml")]
 fn parses_directives_and_matches_yaml_fixture(
     #[case] directory: &str,
     #[case] rst_filename: &str,

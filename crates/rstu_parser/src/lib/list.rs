@@ -7,6 +7,7 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 use crate::paragraph;
 use crate::parser_errors::FindElementError;
 use crate::token::{Token, TokenKind as TK};
+use crate::token_slice::skip_kinds;
 
 pub(crate) fn try_parse_bullet_list(
     tokens: &[Token],
@@ -31,14 +32,14 @@ pub(crate) fn try_parse_bullet_list(
             marker = Some(current_marker.clone());
         }
 
-        let (paragraph, next_index) = paragraph::try_parse_paragraph(tokens, index + 2)?;
+        let (paragraph, new_index) = paragraph::try_parse_paragraph(tokens, index + 2)?;
+        index = new_index;
         item.push_child(paragraph);
-        list.push_child(item);
-
-        index = next_index;
-        while index < tokens.len() && tokens[index].kind == TK::BlankLine {
-            index += 1;
+        if tokens[index].kind == TK::BlankLine {
+            index = skip_kinds(tokens, &[TK::BlankLine], index);
+            item.push_child(AstNode::new_ref(NodeClass::BlankLine))
         }
+        list.push_child(item);
     }
 
     Ok((list, index))

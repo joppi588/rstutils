@@ -122,8 +122,8 @@ macro_rules! rst_vs_yaml {
             let expected_lines: Vec<&str> = expected_canonical.lines().collect();
             let actual_line = line_at(&actual_lines, diff_line);
             let expected_line = line_at(&expected_lines, diff_line);
-            let actual_context = format_context(&actual_canonical, diff_line, 5);
-            let expected_context = format_context(&expected_canonical, diff_line, 5);
+            let actual_context = format_context(&actual_canonical, diff_line, 10);
+            let expected_context = format_context(&expected_canonical, diff_line, 10);
 
             panic!(
                 "Unexpected parse output for {}\n\nFirst deviation at canonicalized line {}\nActual line: {}\nExpected line: {}\n\nActual context\n{}\n\nExpected context\n{}",
