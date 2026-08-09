@@ -15,10 +15,20 @@ pub(crate) fn try_parse_bullet_list(
 ) -> Result<(NodeRef, usize), FindElementError> {
     let list = AstNode::new_ref(NodeClass::BulletList);
     let mut index = start_at;
+    let mut marker: Option<String> = None;
 
-    while tokens[index].kind == TK::BulletListMarker {
-        if !list.borrow().attributes.contains_key("marker") {
-            list.with_attr("marker", tokens[index].lexeme.clone());
+    while index < tokens.len() && tokens[index].kind == TK::BulletListMarker {
+        let current_marker = tokens[index].lexeme.clone();
+        if let Some(existing_marker) = &marker {
+            if existing_marker != &current_marker {
+                return Err(FindElementError::ListStyleError {
+                    marker: existing_marker.clone(),
+                    conflicting_marker: current_marker,
+                });
+            }
+        } else {
+            marker = Some(current_marker.clone());
+            list.with_attr("marker", current_marker.clone());
         }
 
         let body_start = skip_kinds(tokens, &[TK::Spaces], index + 1).unwrap_or(index + 1);
