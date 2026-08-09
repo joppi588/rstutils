@@ -7,7 +7,6 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 use crate::paragraph;
 use crate::parser_errors::FindElementError;
 use crate::token::{Token, TokenKind as TK};
-use crate::token_slice::skip_kinds;
 
 pub(crate) fn try_parse_bullet_list(
     tokens: &[Token],
@@ -17,7 +16,9 @@ pub(crate) fn try_parse_bullet_list(
     let mut index = start_at;
     let mut marker: Option<String> = None;
 
-    while tokens[index].kind == TK::BulletListMarker {
+    while index < tokens.len() && tokens[index].kind == TK::BulletListMarker {
+        let item = AstNode::new_ref(NodeClass::BulletListItem);
+        item.with_attr("marker", tokens[index].lexeme.clone());
         let current_marker = tokens[index].lexeme.clone();
         if let Some(existing_marker) = &marker {
             if existing_marker != &current_marker {
@@ -28,13 +29,16 @@ pub(crate) fn try_parse_bullet_list(
             }
         } else {
             marker = Some(current_marker.clone());
-            list.with_attr("marker", current_marker.clone());
         }
 
         let (paragraph, next_index) = paragraph::try_parse_paragraph(tokens, index + 2)?;
-        list.push_child(paragraph);
+        item.push_child(paragraph);
+        list.push_child(item);
 
         index = next_index;
+        while index < tokens.len() && tokens[index].kind == TK::BlankLine {
+            index += 1;
+        }
     }
 
     Ok((list, index))
@@ -56,8 +60,7 @@ pub(crate) fn try_parse_field_list(
             .to_string();
         item.with_attr("fieldname", field_name);
 
-        let body_start = skip_kinds(tokens, &[TK::Spaces], index + 1).unwrap_or(index + 1);
-        let (paragraph, next_index) = paragraph::try_parse_paragraph(tokens, body_start)?;
+        let (paragraph, next_index) = paragraph::try_parse_paragraph(tokens, index + 2)?;
         item.push_child(paragraph);
         list.push_child(item);
 

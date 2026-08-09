@@ -9,6 +9,7 @@ pub enum NodeClass {
     Comment,
     Directive,
     Document,
+    BulletListItem,
     BulletList,
     FieldListItem,
     FieldList,
