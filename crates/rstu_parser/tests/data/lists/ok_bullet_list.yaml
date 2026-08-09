@@ -14,7 +14,7 @@ children:
           children:
             - class: PlainText
               text: "First item\n"
-        - class: Blankline
+        - class: BlankLine
       - class: BulletListItem
         attributes:
           marker: "-"
