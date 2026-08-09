@@ -26,7 +26,7 @@ fn rejects_mixed_bullet_list_markers_fixture() {
     let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tests/data")
         .join("lists")
-        .join("mixed_bullet_list_markers.rst");
+        .join("nok_mixed_bullet_list_markers.rst");
     let rst_contents = fs::read_to_string(&rst_path)
         .unwrap_or_else(|_| panic!("failed to read fixture file: {}", rst_path.display()));
 
