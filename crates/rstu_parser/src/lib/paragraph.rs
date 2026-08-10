@@ -11,6 +11,7 @@ use crate::token_slice::{find_next_kind, tokens_to_text};
 pub(crate) fn try_parse_paragraph(
     tokens: &[Token],
     start_at: usize,
+    skip_index: Option<usize>,
 ) -> Result<(NodeRef, usize), FindElementError> {
     let paragraph_end = find_next_kind(
         tokens,
@@ -28,11 +29,16 @@ pub(crate) fn try_parse_paragraph(
     let paragraph = AstNode::new_ref(NodeClass::Paragraph);
     let mut index = start_at;
     while index < paragraph_end {
+        if skip_index == Some(index) {
+            index += 1;
+            continue;
+        }
+
         let (node, new_index) = match tokens[index].kind {
             kind if kind.is(TC::INLINE_MARKER) => try_parse_inline(&tokens, index)?,
             kind if kind.is(TC::INLINE_TOKEN) => try_parse_inline_token(&tokens, index)?,
             kind if kind.is(TC::PLAIN) || kind == TK::Punctuation => {
-                try_parse_plain(&tokens, index)?
+                try_parse_plain(&tokens, index, skip_index)?
             }
             kind if kind.is(TC::CONTROL) => {
                 index += 1;
@@ -131,10 +137,19 @@ pub(crate) fn try_parse_inline(
 fn try_parse_plain(
     tokens: &[Token],
     start_at: usize,
+    skip_index: Option<usize>,
 ) -> Result<(NodeRef, usize), FindElementError> {
     let mut plain_tokens = start_at;
     let mut text = String::new();
-    while tokens[plain_tokens].is(&[TK::Word, TK::Spaces, TK::Punctuation, TK::NewLine]) {
+    while plain_tokens < tokens.len() {
+        if skip_index == Some(plain_tokens) {
+            break;
+        }
+
+        if !tokens[plain_tokens].is(&[TK::Word, TK::Spaces, TK::Punctuation, TK::NewLine]) {
+            break;
+        }
+
         text.push_str(&tokens[plain_tokens].lexeme);
         plain_tokens += 1;
     }
@@ -142,4 +157,26 @@ fn try_parse_plain(
     let sentence = AstNode::new_ref(NodeClass::PlainText);
     sentence.with_text(text);
     Ok((sentence, plain_tokens))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::try_parse_paragraph;
+    use crate::token::{Token, TokenKind as TK};
+
+    #[test]
+    fn try_parse_paragraph_skips_the_requested_index() {
+        let tokens = vec![
+            Token::new(TK::Word, "hello"),
+            Token::new(TK::Word, "world"),
+            Token::new(TK::Word, "again"),
+            Token::new(TK::BlankLine, "\n"),
+        ];
+
+        let (paragraph, next_index) =
+            try_parse_paragraph(&tokens, 0, Some(1)).expect("paragraph parsing should succeed");
+
+        assert_eq!(next_index, 3);
+        assert_eq!(paragraph.borrow().children.len(), 2);
+    }
 }
