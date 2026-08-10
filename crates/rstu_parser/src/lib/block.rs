@@ -25,6 +25,6 @@ pub(crate) fn parse_indented_block_hanging(
         block.push_child(paragraph);
         Ok((block, new_index))
     } else {
-        paragraph::try_parse_paragraph(tokens, start_at + 2, None)
+        paragraph::try_parse_paragraph(tokens, start_at, None)
     }
 }
