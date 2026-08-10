@@ -27,6 +27,10 @@ pub enum FindElementError {
         markup: String,
         start_at: usize,
     },
+    ListStyleError {
+        marker: String,
+        conflicting_marker: String,
+    },
 }
 
 pub(crate) static EXPECT_NEWLINE: &str = "There is at least one newline at the end of tokens.";

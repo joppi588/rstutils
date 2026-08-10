@@ -1,0 +1,6 @@
+class: Document
+children:
+  - class: Paragraph
+    children:
+      - class: PlainText
+        text: "This list item\n- is interpreted as punctuation"

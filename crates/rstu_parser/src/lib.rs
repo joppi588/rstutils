@@ -53,6 +53,12 @@ pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
                 index = next_start;
             }
 
+            (TK::BulletListMarker, _) => {
+                let (bullet_list, next_start) = list::try_parse_bullet_list(&tokens, index)?;
+                current_node.push_body_element(bullet_list);
+                index = next_start;
+            }
+
             (TK::Field, _) => {
                 let (field_list, next_start) = list::try_parse_field_list(&tokens, index)?;
                 current_node.push_body_element(field_list);

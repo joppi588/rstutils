@@ -4,7 +4,7 @@ children:
     children:
     - class: PlainText
       text: "This is a field list:\n"
-  - class: List
+  - class: FieldList
     children:
       - class: FieldListItem
         attributes:
