@@ -20,6 +20,7 @@ pub(crate) fn try_parse_paragraph(
             TK::Separator,
             TK::Dedent,
             TK::Field,
+            TK::BulletListMarker,
         ],
         start_at,
     )
