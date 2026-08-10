@@ -18,7 +18,8 @@ pub(crate) fn try_parse_bullet_list(
     let mut marker: Option<String> = None;
 
     // TODO
-    // list starts by blankline + (optional indent) + Bullet
+    // list starts by blankline Bullet (in lib.rs)
+    // Test case for indented bullet list
     // List ends by blankline+dedent
     // Wrong indent causes error
     while index < tokens.len() && tokens[index].kind == TK::BulletListMarker {
