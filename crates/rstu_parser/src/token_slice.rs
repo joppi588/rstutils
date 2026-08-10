@@ -7,6 +7,7 @@ use crate::token::{Token, TokenKind};
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum TokenSliceError {
     TokenNotFound { kinds: Vec<TokenKind> },
+    NoRemainingToken,
 }
 
 pub fn tokens_to_text(tokens: &[Token]) -> String {
@@ -60,19 +61,13 @@ pub fn find_next_kind_interrupt(
         })
 }
 
-pub fn skip_kinds(
-    tokens: &[Token],
-    kinds: &[TokenKind],
-    start_at: usize,
-) -> Result<usize, TokenSliceError> {
+pub fn skip_kinds(tokens: &[Token], kinds: &[TokenKind], start_at: usize) -> usize {
     tokens
         .iter()
         .enumerate()
         .skip(start_at)
         .find_map(|(index, token)| (!kinds.contains(&token.kind)).then_some(index))
-        .ok_or(TokenSliceError::TokenNotFound {
-            kinds: kinds.to_vec(),
-        })
+        .unwrap_or(tokens.len())
 }
 
 #[cfg(test)]
@@ -103,7 +98,7 @@ mod tests {
 
         let found = skip_kinds(&tokens, &[TokenKind::Spaces, TokenKind::NewLine], 0);
 
-        assert_eq!(found, Ok(2));
+        assert_eq!(found, 2);
     }
 
     #[test]
@@ -113,14 +108,9 @@ mod tests {
             Token::new(TokenKind::NewLine, "\n"),
         ];
 
-        let found = skip_kinds(&tokens, &[TokenKind::Spaces, TokenKind::NewLine], 0);
+        let next_index = skip_kinds(&tokens, &[TokenKind::Spaces, TokenKind::NewLine], 0);
 
-        assert_eq!(
-            found,
-            Err(super::TokenSliceError::TokenNotFound {
-                kinds: vec![TokenKind::Spaces, TokenKind::NewLine],
-            })
-        );
+        assert_eq!(next_index, 2);
     }
 
     #[test]

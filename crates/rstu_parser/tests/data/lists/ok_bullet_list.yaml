@@ -1,0 +1,26 @@
+class: Document
+children:
+  - class: Paragraph
+    children:
+      - class: PlainText
+        text: "This is a bullet list:\n"
+  - class: BulletList
+    children:
+      - class: BulletListItem
+        attributes:
+          marker: "-"
+        children:
+        - class: Paragraph
+          children:
+            - class: PlainText
+              text: "First item\n"
+        - class: BlankLine
+      - class: BulletListItem
+        attributes:
+          marker: "-"
+        children:
+        - class: Paragraph
+          children:
+            - class: PlainText
+              text: "Second item\n"
+        - class: BlankLine

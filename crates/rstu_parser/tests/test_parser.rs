@@ -5,10 +5,12 @@
 #[macro_export]
 macro_rules! rst_vs_yaml {
     ($directory:expr, $rst_filename: expr,$yaml_filename:expr) => {{
-        fn yaml_sort_key(key: &serde_yaml::Value) -> String {
+        fn yaml_field_order(key: &serde_yaml::Value) -> usize {
             match key {
-                serde_yaml::Value::String(s) => format!("s:{s}"),
-                _ => serde_yaml::to_string(key).unwrap_or_else(|_| format!("{key:?}")),
+                serde_yaml::Value::String(s) if s == "class" => 0,
+                serde_yaml::Value::String(s) if s == "attributes" => 1,
+                serde_yaml::Value::String(s) if s == "children" => 2,
+                _ => 3,
             }
         }
 
@@ -24,7 +26,9 @@ macro_rules! rst_vs_yaml {
                         canonicalize_yaml(v);
                     }
 
-                    entries.sort_by(|(ka, _), (kb, _)| yaml_sort_key(ka).cmp(&yaml_sort_key(kb)));
+                    entries.sort_by(|(ka, _), (kb, _)| {
+                        yaml_field_order(ka).cmp(&yaml_field_order(kb))
+                    });
 
                     mapping.clear();
                     for (k, v) in entries {
