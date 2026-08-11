@@ -21,10 +21,13 @@ pub(crate) fn parse_indented_block_hanging(
     {
         let block = AstNode::new_ref(NodeClass::IndentedBlockHanging);
         block.with_attr("indent", tokens[line_end_index + 1].lexeme.len());
-        let (paragraph, new_index) = paragraph::try_parse_paragraph(tokens, start_at + 2, None)?;
+        let (paragraph, new_index) =
+            paragraph::try_parse_paragraph(tokens, start_at + 2, Some(line_end_index + 1))?;
         block.push_child(paragraph);
         Ok((block, new_index))
     } else {
+        // TODO: try parse_paragraph does not know that it is inside a list and should stop at the next bullet marker
+        // Can we make this a special case in the lexer?.
         paragraph::try_parse_paragraph(tokens, start_at, None)
     }
 }

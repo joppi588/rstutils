@@ -21,7 +21,6 @@ pub(crate) fn try_parse_paragraph(
             TK::Separator,
             TK::Dedent,
             TK::Field,
-            TK::BulletListMarker,
         ],
         start_at,
     )
@@ -37,7 +36,7 @@ pub(crate) fn try_parse_paragraph(
         let (node, new_index) = match tokens[index].kind {
             kind if kind.is(TC::INLINE_MARKER) => try_parse_inline(&tokens, index)?,
             kind if kind.is(TC::INLINE_TOKEN) => try_parse_inline_token(&tokens, index)?,
-            kind if kind.is(TC::PLAIN) || kind == TK::Punctuation => {
+            kind if kind.is(TC::PLAIN) || kind == TK::BulletListMarker => {
                 try_parse_plain(&tokens, index, skip_index)?
             }
             kind if kind.is(TC::CONTROL) => {
@@ -145,8 +144,14 @@ fn try_parse_plain(
         if skip_index == Some(plain_tokens) {
             break;
         }
-
-        if !tokens[plain_tokens].is(&[TK::Word, TK::Spaces, TK::Punctuation, TK::NewLine]) {
+        // TODO: Use TC::PLAIN
+        if !tokens[plain_tokens].is(&[
+            TK::Word,
+            TK::Spaces,
+            TK::Punctuation,
+            TK::NewLine,
+            TK::BulletListMarker,
+        ]) {
             break;
         }
 
