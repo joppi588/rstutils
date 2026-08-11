@@ -66,7 +66,8 @@ pub(crate) fn try_parse_field_list(
             .to_string();
         item.with_attr("fieldname", field_name);
 
-        let (paragraph, next_index) = paragraph::try_parse_paragraph(tokens, index + 2, None)?;
+        let (paragraph, next_index) =
+            paragraph::try_parse_paragraph(tokens, index + 2, None, None)?;
         item.push_child(paragraph);
         list.push_child(item);
 

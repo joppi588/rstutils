@@ -11,20 +11,23 @@ use crate::token_slice::{find_next_kind, tokens_to_text};
 pub(crate) fn try_parse_paragraph(
     tokens: &[Token],
     start_at: usize,
+    stop_before: Option<usize>,
     skip_index: Option<usize>,
 ) -> Result<(NodeRef, usize), FindElementError> {
-    let paragraph_end = find_next_kind(
-        tokens,
-        &[
-            TK::BlankLine,
-            TK::Indent,
-            TK::Separator,
-            TK::Dedent,
-            TK::Field,
-        ],
-        start_at,
-    )
-    .expect("Paragraph must end somewhere.");
+    let paragraph_end = stop_before.unwrap_or(
+        find_next_kind(
+            tokens,
+            &[
+                TK::BlankLine,
+                TK::Indent,
+                TK::Separator,
+                TK::Dedent,
+                TK::Field, // TODO: This is the "single line case" again, use the stop_at
+            ],
+            start_at,
+        )
+        .expect("Paragraph must end somewhere."),
+    );
     let paragraph = AstNode::new_ref(NodeClass::Paragraph);
     let mut index = start_at;
     while index < paragraph_end {
@@ -37,7 +40,7 @@ pub(crate) fn try_parse_paragraph(
             kind if kind.is(TC::INLINE_MARKER) => try_parse_inline(&tokens, index)?,
             kind if kind.is(TC::INLINE_TOKEN) => try_parse_inline_token(&tokens, index)?,
             kind if kind.is(TC::PLAIN) || kind == TK::BulletListMarker => {
-                try_parse_plain(&tokens, index, skip_index)?
+                try_parse_plain(&tokens, index, paragraph_end, skip_index)?
             }
             kind if kind.is(TC::CONTROL) => {
                 index += 1;
@@ -136,16 +139,18 @@ pub(crate) fn try_parse_inline(
 fn try_parse_plain(
     tokens: &[Token],
     start_at: usize,
+    stop_before: usize,
     skip_index: Option<usize>,
 ) -> Result<(NodeRef, usize), FindElementError> {
-    let mut plain_tokens = start_at;
+    let mut index = start_at;
     let mut text = String::new();
-    while plain_tokens < tokens.len() {
-        if skip_index == Some(plain_tokens) {
-            break;
+    while index < stop_before {
+        if skip_index == Some(index) {
+            index += 1;
+            continue;
         }
         // TODO: Use TC::PLAIN
-        if !tokens[plain_tokens].is(&[
+        if !tokens[index].is(&[
             TK::Word,
             TK::Spaces,
             TK::Punctuation,
@@ -155,13 +160,13 @@ fn try_parse_plain(
             break;
         }
 
-        text.push_str(&tokens[plain_tokens].lexeme);
-        plain_tokens += 1;
+        text.push_str(&tokens[index].lexeme);
+        index += 1;
     }
 
     let sentence = AstNode::new_ref(NodeClass::PlainText);
     sentence.with_text(text);
-    Ok((sentence, plain_tokens))
+    Ok((sentence, index))
 }
 
 #[cfg(test)]
@@ -178,10 +183,13 @@ mod tests {
             Token::new(TK::BlankLine, "\n"),
         ];
 
-        let (paragraph, next_index) =
-            try_parse_paragraph(&tokens, 0, Some(1)).expect("paragraph parsing should succeed");
+        let (paragraph, next_index) = try_parse_paragraph(&tokens, 0, None, Some(1))
+            .expect("paragraph parsing should succeed");
 
         assert_eq!(next_index, 3);
-        assert_eq!(paragraph.borrow().children.len(), 2);
+        assert_eq!(
+            paragraph.borrow().children[0].borrow().text,
+            Some("helloagain".into())
+        );
     }
 }
