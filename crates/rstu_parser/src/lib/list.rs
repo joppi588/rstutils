@@ -3,7 +3,8 @@
 // SPDX-License-Identifier: MIT
 
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
-
+#[path = "block.rs"]
+mod block;
 use crate::paragraph;
 use crate::parser_errors::FindElementError;
 use crate::token::{Token, TokenKind as TK};
@@ -36,10 +37,9 @@ pub(crate) fn try_parse_bullet_list(
         } else {
             marker = Some(current_marker.clone());
         }
-
-        let (paragraph, new_index) = paragraph::try_parse_paragraph(tokens, index + 2)?;
+        let (block, new_index) = block::parse_indented_block_hanging(tokens, index + 2)?;
         index = new_index;
-        item.push_child(paragraph);
+        item.push_child(block);
         if tokens[index].kind == TK::BlankLine {
             index = skip_kinds(tokens, &[TK::BlankLine], index);
             item.push_child(AstNode::new_ref(NodeClass::BlankLine))
@@ -66,7 +66,8 @@ pub(crate) fn try_parse_field_list(
             .to_string();
         item.with_attr("fieldname", field_name);
 
-        let (paragraph, next_index) = paragraph::try_parse_paragraph(tokens, index + 2)?;
+        let (paragraph, next_index) =
+            paragraph::try_parse_paragraph(tokens, index + 2, None, None)?;
         item.push_child(paragraph);
         list.push_child(item);
 

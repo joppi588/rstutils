@@ -32,7 +32,7 @@ pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
     while index < tokens.len() - 2 {
         // final two tokens are always Newline+Blankline
         let index_line_end = find_next_kind(&tokens, &[TK::NewLine], index)
-            .expect("Token stream shall end with a newline.");
+            .expect("Token stream ends with a newline.");
         match (tokens[index].kind, tokens[index_line_end + 1].kind) {
             (token1, token2)
                 if (token1, token2) == (TK::Separator, TK::Indent)
@@ -75,7 +75,8 @@ pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
                     || kind.is(TC::INLINE_TOKEN)
                     || kind.is(TC::PLAIN) =>
             {
-                let (paragraph, next_start) = paragraph::try_parse_paragraph(&tokens, index)?;
+                let (paragraph, next_start) =
+                    paragraph::try_parse_paragraph(&tokens, index, None, None)?;
                 current_node.push_child(paragraph.clone());
                 index = next_start;
             }
@@ -214,7 +215,7 @@ fn try_parse_directive(
 
     let indented_block = AstNode::new_ref(NodeClass::IndentedBlock);
     indented_block.with_attr("indentation", indentation);
-    let (paragraph, index) = paragraph::try_parse_paragraph(&tokens, index + 1)?;
+    let (paragraph, index) = paragraph::try_parse_paragraph(&tokens, index + 1, None, None)?;
     indented_block.push_child(paragraph);
     directive.push_child(indented_block);
 
