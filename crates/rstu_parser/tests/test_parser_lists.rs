@@ -19,7 +19,7 @@ mod test_parser;
     "nok_missing_blanklines_bulletlist1.rst",
     "nok_missing_blanklines_bulletlist1.yaml"
 )]
-fn parses_directives_and_matches_yaml_fixture(
+fn parses_list_and_matches_yaml_fixture(
     #[case] directory: &str,
     #[case] rst_filename: &str,
     #[case] yaml_filename: &str,
