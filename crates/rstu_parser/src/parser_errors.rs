@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum FindElementError {
+pub enum ParserError {
     StartAtOutOfBounds {
         start_at: usize,
         token_count: usize,

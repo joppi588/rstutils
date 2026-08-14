@@ -4,7 +4,7 @@
 
 use rstest::rstest;
 use rstu_ast::AstNode;
-use rstu_parser::{parse, parser_errors::FindElementError};
+use rstu_parser::{parse, parser_errors::ParserError};
 use std::fs;
 use std::path::Path;
 
@@ -32,7 +32,7 @@ fn rejects_mixed_bullet_list_markers_fixture() {
 
     let err = parse(&rst_contents).unwrap_err();
 
-    assert!(matches!(err, FindElementError::ListStyleError { .. }));
+    assert!(matches!(err, ParserError::ListStyleError { .. }));
 }
 
 #[rstest]

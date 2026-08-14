@@ -4,7 +4,7 @@
 
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
-use crate::parser_errors::FindElementError;
+use crate::parser_errors::ParserError;
 use crate::token::{Token, TokenCategory as TC, TokenKind as TK};
 use crate::token_slice::{find_next_kind, tokens_to_text};
 
@@ -13,7 +13,7 @@ pub(crate) fn try_parse_paragraph(
     start_at: usize,
     stop_before: Option<usize>,
     skip_index: Option<usize>,
-) -> Result<(NodeRef, usize), FindElementError> {
+) -> Result<(NodeRef, usize), ParserError> {
     let paragraph_end = stop_before.unwrap_or(
         find_next_kind(
             tokens,
@@ -47,7 +47,7 @@ pub(crate) fn try_parse_paragraph(
                 continue;
             }
             _ => {
-                return Err(FindElementError::UnexpectedToken {
+                return Err(ParserError::UnexpectedToken {
                     expected: "Inline/plain".to_owned(),
                     found: format!("{:?}", tokens[index].kind),
                 });
@@ -62,7 +62,7 @@ pub(crate) fn try_parse_paragraph(
 pub(crate) fn try_parse_inline_token(
     tokens: &[Token],
     at: usize,
-) -> Result<(NodeRef, usize), FindElementError> {
+) -> Result<(NodeRef, usize), ParserError> {
     let node = AstNode::new_ref(NodeClass::Reference);
     let kind = tokens[at].kind;
     let lexeme = &tokens[at].lexeme;
@@ -85,7 +85,7 @@ pub(crate) fn try_parse_inline_token(
         }
 
         _ => {
-            return Err(FindElementError::UnexpectedToken {
+            return Err(ParserError::UnexpectedToken {
                 expected: "Reference token".to_owned(),
                 found: format!("{:?}", kind),
             });
@@ -97,7 +97,7 @@ pub(crate) fn try_parse_inline_token(
 pub(crate) fn try_parse_inline(
     tokens: &[Token],
     start_at: usize,
-) -> Result<(NodeRef, usize), FindElementError> {
+) -> Result<(NodeRef, usize), ParserError> {
     let kind = tokens[start_at].kind;
     let (markup, end_kind_candidates): (&str, &[TK]) = match kind {
         TK::StrongStart => ("strong", &[TK::StrongEnd]),
@@ -109,7 +109,7 @@ pub(crate) fn try_parse_inline(
             &[TK::BackquoteEnd, TK::HyperlinkReferenceEnd],
         ),
         _ => {
-            return Err(FindElementError::UnexpectedToken {
+            return Err(ParserError::UnexpectedToken {
                 expected: "Inline start token".to_owned(),
                 found: format!("{:?}", kind),
             });
@@ -117,7 +117,7 @@ pub(crate) fn try_parse_inline(
     };
 
     let inline_final = find_next_kind(tokens, end_kind_candidates, start_at + 1).map_err(|_| {
-        FindElementError::InlineMissingClosing {
+        ParserError::InlineMissingClosing {
             markup: markup.to_owned(),
             start_at,
         }
@@ -141,7 +141,7 @@ fn try_parse_plain(
     start_at: usize,
     stop_before: usize,
     skip_index: Option<usize>,
-) -> Result<(NodeRef, usize), FindElementError> {
+) -> Result<(NodeRef, usize), ParserError> {
     let mut index = start_at;
     let mut text = String::new();
     while index < stop_before {

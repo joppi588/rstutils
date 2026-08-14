@@ -16,14 +16,14 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use crate::lexer::tokenize;
 use crate::token::{Token, TokenCategory as TC, TokenKind as TK};
-use parser_errors::{FindElementError, EXPECT_NEWLINE};
+use parser_errors::{ParserError, EXPECT_NEWLINE};
 use token_slice::{find_next_kind, tokens_to_text};
 
 // static DEDENT_GRACE: usize = 1;
 
 /// Parser implementation:
 /// Lookahead one line -> Decide on element.
-pub fn parse(input: &str) -> Result<NodeRef, FindElementError> {
+pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
     let tokens = tokenize(input);
     let doc = AstNode::new_ref(NodeClass::Document);
     let mut index: usize = 0;
@@ -96,10 +96,10 @@ pub fn try_match_section_header(
     tokens: &[Token],
     start_at: usize,
     has_overline: bool,
-) -> Result<(NodeRef, usize), FindElementError> {
+) -> Result<(NodeRef, usize), ParserError> {
     let title_start = start_at + 2 * usize::from(has_overline);
     let title_end = find_next_kind(tokens, &[TK::NewLine], title_start).map_err(|_| {
-        FindElementError::SectionTitleMissingClosingAfterOpening {
+        ParserError::SectionTitleMissingClosingAfterOpening {
             opening_index: start_at,
         }
     })?;
@@ -107,7 +107,7 @@ pub fn try_match_section_header(
     let closing_index = title_end + 1;
     let closing_token = &tokens[closing_index];
     if (closing_index >= tokens.len()) || (closing_token.kind != TK::Separator) {
-        return Err(FindElementError::SectionTitleMissingClosingAfterOpening {
+        return Err(ParserError::SectionTitleMissingClosingAfterOpening {
             opening_index: start_at,
         });
     }
@@ -118,7 +118,7 @@ pub fn try_match_section_header(
         let opening_token = &tokens[start_at];
         let opening_style = opening_token.lexeme[..1].to_string();
         if opening_style != closing_style {
-            return Err(FindElementError::SectionTitleUnbalancedStyle {
+            return Err(ParserError::SectionTitleUnbalancedStyle {
                 opening_index: start_at,
                 opening_style,
                 closing_style,
@@ -146,7 +146,7 @@ pub fn try_match_section_header(
 fn try_parse_directive_like(
     tokens: &[Token],
     start_at: usize,
-) -> Result<(NodeRef, usize), FindElementError> {
+) -> Result<(NodeRef, usize), ParserError> {
     let index = find_next_kind(
         tokens,
         &[
@@ -171,7 +171,7 @@ fn try_parse_comment(
     tokens: &[Token],
     start_at: usize,
     first_line_end: usize,
-) -> Result<(NodeRef, usize), FindElementError> {
+) -> Result<(NodeRef, usize), ParserError> {
     let mut index = first_line_end;
     if tokens[index + 1].kind == TK::Indent {
         index = find_next_kind(tokens, &[TK::Dedent], index + 1)
@@ -191,7 +191,7 @@ fn try_parse_directive(
     tokens: &[Token],
     start_at: usize,
     directive_colon_index: usize,
-) -> Result<(NodeRef, usize), FindElementError> {
+) -> Result<(NodeRef, usize), ParserError> {
     let first_line_end =
         find_next_kind(tokens, &[TK::NewLine], directive_colon_index).expect(EXPECT_NEWLINE);
 
