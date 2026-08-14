@@ -17,14 +17,9 @@ pub(crate) fn try_parse_paragraph(
     let paragraph_end = stop_before.unwrap_or(
         find_next_kind(
             tokens,
-            &[
-                TK::BlankLine,
-                TK::Indent,
-                TK::Separator,
-                TK::Dedent,
-                TK::Field, // TODO: This is the "single line case" again, use the stop_at
-            ],
+            &[TK::BlankLine, TK::Indent, TK::Separator, TK::Dedent],
             start_at,
+            skip_index,
         )
         .expect("Paragraph must end somewhere."),
     );
@@ -39,17 +34,16 @@ pub(crate) fn try_parse_paragraph(
         let (node, new_index) = match tokens[index].kind {
             kind if kind.is(TC::INLINE_MARKER) => try_parse_inline(&tokens, index)?,
             kind if kind.is(TC::INLINE_TOKEN) => try_parse_inline_token(&tokens, index)?,
-            kind if kind.is(TC::PLAIN) || kind == TK::BulletListMarker => {
+            //TODO: Concatenate TC::PLAIN and tokens to a new list
+            kind if kind.is(TC::PLAIN) || kind == TK::BulletListMarker || kind == TK::NewLine => {
                 try_parse_plain(&tokens, index, paragraph_end, skip_index)?
             }
-            kind if kind.is(TC::CONTROL) => {
-                index += 1;
-                continue;
-            }
+
             _ => {
                 return Err(ParserError::UnexpectedToken {
                     expected: "Inline/plain".to_owned(),
                     found: format!("{:?}", tokens[index].kind),
+                    index: index,
                 });
             }
         };
@@ -88,6 +82,7 @@ pub(crate) fn try_parse_inline_token(
             return Err(ParserError::UnexpectedToken {
                 expected: "Reference token".to_owned(),
                 found: format!("{:?}", kind),
+                index: at,
             });
         }
     };
@@ -112,16 +107,18 @@ pub(crate) fn try_parse_inline(
             return Err(ParserError::UnexpectedToken {
                 expected: "Inline start token".to_owned(),
                 found: format!("{:?}", kind),
+                index: start_at,
             });
         }
     };
 
-    let inline_final = find_next_kind(tokens, end_kind_candidates, start_at + 1).map_err(|_| {
-        ParserError::InlineMissingClosing {
-            markup: markup.to_owned(),
-            start_at,
-        }
-    })?;
+    let inline_final =
+        find_next_kind(tokens, end_kind_candidates, start_at + 1, None).map_err(|_| {
+            ParserError::InlineMissingClosing {
+                markup: markup.to_owned(),
+                start_at,
+            }
+        })?;
 
     let effective_markup = match (kind, tokens[inline_final].kind) {
         (TK::BackquoteStart, TK::HyperlinkReferenceEnd) => "hyperlink_reference",

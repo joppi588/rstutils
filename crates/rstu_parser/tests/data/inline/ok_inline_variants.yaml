@@ -32,6 +32,8 @@ children:
             text: interp
             attributes:
               markup: interpreted_text
+          - class: PlainText
+            text: "\n"
   - class: Section
     attributes:
       marker_len: 17
@@ -70,6 +72,9 @@ children:
             text: "sub"
             attributes:
               type: sub
+          - class: PlainText
+            text: "\n"
+
   - class: Section
     attributes:
       marker_len: 23
@@ -84,3 +89,5 @@ children:
             text: target
             attributes:
               markup: inline_internal_target
+          - class: PlainText
+            text: "\n"

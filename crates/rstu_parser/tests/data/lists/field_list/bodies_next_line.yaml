@@ -1,0 +1,57 @@
+class: Document
+children:
+  - class: Paragraph
+    children:
+      - class: PlainText
+        text: "Field bodies starting on the next line:\n"
+  - class: FieldList
+    children:
+      - class: FieldListItem
+        attributes:
+          fieldname: Author
+        children:
+          - class: IndentedBlockHanging
+            attributes:
+              indent: 2
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    text: "\nMe\n"
+      - class: FieldListItem
+        attributes:
+          fieldname: Version
+        children:
+          - class: IndentedBlockHanging
+            attributes:
+              indent: 2
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    text: "\n1\n"
+      - class: FieldListItem
+        attributes:
+          fieldname: Date
+        children:
+          - class: IndentedBlockHanging
+            attributes:
+              indent: 2
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    text: "\n2001-08-11\n"
+      - class: FieldListItem
+        attributes:
+          fieldname: Parameter i
+        children:
+          - class: IndentedBlockHanging
+            attributes:
+              indent: 2
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    text: "\ninteger\n"
+              - class: BlankLine
