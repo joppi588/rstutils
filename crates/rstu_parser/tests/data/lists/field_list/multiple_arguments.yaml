@@ -1,0 +1,13 @@
+class: Document
+children:
+  - class: FieldList
+    children:
+      - class: FieldListItem
+        attributes:
+          fieldname: Parameter i j k
+        children:
+          - class: Paragraph
+            children:
+              - class: PlainText
+                text: "multiple arguments\n"
+      - class: BlankLine

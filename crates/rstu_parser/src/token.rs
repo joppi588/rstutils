@@ -145,7 +145,7 @@ impl TokenKind {
         (DoubleColon, r"(.|\n)::(.|\n)"),
 
         // Lists
-        (Field,r"[\n\s]:\w+:[\n\s]"),
+        (Field,r"[\n\s]:[\w\s]+:[\n\s]"),
 
         (TableHorizontal, r"\n=+(?:\s+=+)+\s*\n"),
 

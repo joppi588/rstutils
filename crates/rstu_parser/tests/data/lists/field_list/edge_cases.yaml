@@ -1,0 +1,98 @@
+class: Document
+children:
+  - class: Paragraph
+    children:
+      - class: PlainText
+        text: "Some edge cases:\n"
+  - class: FieldList
+    children:
+      - class: FieldListItem
+        attributes:
+          fieldname: Empty
+        children: []
+      - class: FieldListItem
+        attributes:
+          fieldname: Author
+        children:
+          - class: Paragraph
+            children:
+              - class: PlainText
+                text: "Me\n"
+  - class: Paragraph
+    children:
+      - class: PlainText
+        text: "No blank line before this paragraph.\n"
+  - class: Paragraph
+    children:
+      - class: PlainText
+        text: ": Field: marker must not begin with whitespace.\n"
+  - class: Paragraph
+    children:
+      - class: PlainText
+        text: ":Field : marker must not end with whitespace.\n"
+  - class: Paragraph
+    children:
+      - class: PlainText
+        text: "Field: marker is missing its open-colon.\n"
+  - class: Paragraph
+    children:
+      - class: PlainText
+        text: ":Field marker is missing its close-colon.\n"
+  - class: FieldList
+    children:
+      - class: FieldListItem
+        attributes:
+          fieldname: 'Field\: names\: with\: colons\:'
+        children:
+          - class: Paragraph
+            children:
+              - class: PlainText
+                text: "are possible.\n"
+      - class: FieldListItem
+        attributes:
+          fieldname: \\Field\  names with backslashes\\
+        children:
+          - class: Paragraph
+            children:
+              - class: PlainText
+                text: "are possible, too.\n"
+      - class: FieldListItem
+        attributes:
+          fieldname: \\
+        children:
+          - class: Paragraph
+            children:
+              - class: PlainText
+                text: "A backslash.\n"
+  - class: Paragraph
+    children:
+      - class: PlainText
+        text: ':Not a\\\: field list.
+
+          '
+  - class: Paragraph
+    children:
+      - class: PlainText
+        text: ':Not a \: field list either.
+
+          '
+  - class: Paragraph
+    children:
+      - class: PlainText
+        text: ':\: Not a field list either.
+
+          '
+  - class: Paragraph
+    children:
+      - class: PlainText
+        text: ':\:
+
+          '
+  - class: IndentedBlock
+    attributes:
+      indentation: "  "
+    children:
+      - class: Paragraph
+        children:
+          - class: PlainText
+            text: "A definition list, not a field list.\n"
