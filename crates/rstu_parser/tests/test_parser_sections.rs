@@ -5,7 +5,7 @@
 use rstest::rstest;
 use rstu_ast::AstNode;
 use rstu_parser::parse;
-use rstu_parser::parser_errors::FindElementError;
+use rstu_parser::parser_errors::ParserError;
 use std::fs;
 use std::path::Path;
 mod test_parser;
@@ -37,7 +37,7 @@ fn test_missing_closing() {
     let result = parse(&contents);
 
     match result {
-        Err(FindElementError::SectionTitleMissingClosingAfterOpening { .. }) => {}
+        Err(ParserError::SectionTitleMissingClosingAfterOpening { .. }) => {}
         other => panic!("expected SectionTitleMissingClosingAfterOpening error, got: {other:?}"),
     }
 }
@@ -51,7 +51,7 @@ fn test_unbalanced_section_style() {
     let result = parse(&contents);
 
     match result {
-        Err(FindElementError::SectionTitleUnbalancedStyle {
+        Err(ParserError::SectionTitleUnbalancedStyle {
             opening_style,
             closing_style,
             ..
