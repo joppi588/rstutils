@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-use crate::parser_errors::FindElementError;
+use crate::parser_errors::ParserError;
 use crate::token::{Token, TokenKind};
 use crate::{paragraph, token_slice::find_next_kind};
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
@@ -10,7 +10,7 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 pub(crate) fn parse_indented_block_hanging(
     tokens: &[Token],
     start_at: usize,
-) -> Result<(NodeRef, usize), FindElementError> {
+) -> Result<(NodeRef, usize), ParserError> {
     // TODO: Having this logic one level above, we could differenciate between paragraph continuation and new list item
     let line_end_index = find_next_kind(tokens, &[TokenKind::NewLine], start_at)
         .expect("Token stream ends with a newline.");
