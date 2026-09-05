@@ -44,6 +44,6 @@ pub(crate) fn parse_indented_block_hanging(
         {
             paragraph::try_parse_paragraph(tokens, start_at, Some(line_end_index + 1), None)
         }
-        _ => Err(FindElementError::ListEndError {}),
+        _ => Err(ParserError::ListEndError {}),
     }
 }

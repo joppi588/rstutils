@@ -75,5 +75,5 @@ fn field_lists_doesnt_end_in_blankline() {
 
     let err = parse(&rst_contents).unwrap_err();
 
-    assert!(matches!(err, FindElementError::ListEndError { .. }));
+    assert!(matches!(err, ParserError::ListEndError { .. }));
 }
