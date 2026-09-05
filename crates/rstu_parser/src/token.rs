@@ -144,8 +144,7 @@ impl TokenKind {
         (DoubleDot, r"[\n\s]\.\.[\n\s]"),
         (DoubleColon, r"(.|\n)::(.|\n)"),
 
-        // Lists
-        (Field,r"[\n\s]:[\w\s]+:[\n\s]"),
+
 
         (TableHorizontal, r"\n=+(?:\s+=+)+\s*\n"),
 
@@ -172,6 +171,7 @@ impl TokenKind {
         (SimpleHyperlinkReference,r"[\s\n]\w+_\s"),
 
         // Lists
+        (Field,r"[\n\s]:[\w\s]+:[\n\s]"),
         (BulletListMarker, r"(\s|\n)[\-\+\*•‣⁃]\s"),
 
 
