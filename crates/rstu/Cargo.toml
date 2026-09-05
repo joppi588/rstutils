@@ -5,3 +5,6 @@ edition = "2024"
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }
+rstu_ast = { version = "0.1.0", path = "../rstu_ast" }
+rstu_parser = { version = "0.1.0", path = "../rstu_parser" }
+serde_json = "1"

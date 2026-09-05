@@ -45,3 +45,24 @@ fn format_with_json_output_prints_option_value() {
         "Subcommand format, option file=sample.rst, output=json"
     );
 }
+
+/// GIVEN an rst file containing a single paragraph
+/// WHEN running `rstu parse <file>`
+/// THEN the AST is written as JSON to stdout
+#[test]
+fn parse_prints_ast_as_json() {
+    let file_path =
+        std::env::temp_dir().join(format!("rstu-parse-test-{}.rst", std::process::id()));
+    std::fs::write(&file_path, "Hello\n").expect("failed to write rst fixture");
+
+    let stdout = run_rstu(&[
+        "parse",
+        file_path.to_str().expect("fixture path should be UTF-8"),
+    ]);
+
+    let _ = std::fs::remove_file(&file_path);
+    assert_eq!(
+        stdout,
+        r#"{"children":[{"children":[{"class":"PlainText","text":"Hello\n"}],"class":"Paragraph"}],"class":"Document"}"#
+    );
+}

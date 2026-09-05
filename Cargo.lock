@@ -325,6 +325,9 @@ name = "rstu"
 version = "0.1.0"
 dependencies = [
  "clap",
+ "rstu_ast",
+ "rstu_parser",
+ "serde_json",
 ]
 
 [[package]]

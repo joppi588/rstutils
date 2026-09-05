@@ -21,6 +21,9 @@ enum Commands {
         #[arg(long)]
         output: Option<OutputFormat>,
     },
+    Parse {
+        file: String,
+    },
 }
 
 #[derive(Clone, Debug, ValueEnum)]
@@ -41,6 +44,24 @@ fn main() {
                 .unwrap_or_else(|| "none".to_string());
 
             println!("Subcommand format, option file={file}, output={option_value}");
+        }
+        Commands::Parse { file } => {
+            let input = std::fs::read_to_string(&file).unwrap_or_else(|error| {
+                eprintln!("error: cannot read {file}: {error}");
+                std::process::exit(1);
+            });
+
+            match rstu_parser::parse(&input) {
+                Ok(document) => {
+                    let json = serde_json::to_string(&rstu_ast::AstNode::to_json(&document))
+                        .expect("AST serialization should not fail");
+                    println!("{json}");
+                }
+                Err(error) => {
+                    eprintln!("error: failed to parse {file}: {error:?}");
+                    std::process::exit(1);
+                }
+            }
         }
     }
 }
