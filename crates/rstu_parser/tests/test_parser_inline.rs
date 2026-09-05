@@ -12,10 +12,6 @@ use std::path::Path;
 #[rstest]
 #[case("inline", "ok_strong.rst", "ok_strong.yaml")]
 #[case("inline", "ok_inline_variants.rst", "ok_inline_variants.yaml")]
-fn parses_sections_and_matches_yaml_fixture(
-    #[case] directory: &str,
-    #[case] rst_filename: &str,
-    #[case] yaml_filename: &str,
-) {
+fn parse_inline(#[case] directory: &str, #[case] rst_filename: &str, #[case] yaml_filename: &str) {
     rst_vs_yaml!(directory, rst_filename, yaml_filename)
 }

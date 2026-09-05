@@ -2,8 +2,8 @@ class: Document
 children:
   - class: Paragraph
     children:
-    - class: PlainText
-      text: "This is a field list:\n"
+      - class: PlainText
+        text: "This is a field list:\n"
   - class: FieldList
     children:
       - class: FieldListItem
@@ -22,3 +22,55 @@ children:
             children:
               - class: PlainText
                 text: "More Text\n"
+      - class: BlankLine
+  - class: Paragraph
+    children:
+      - class: PlainText
+        text: "A field list with hanging indent:\n"
+  - class: FieldList
+    children:
+      - class: FieldListItem
+        attributes:
+          fieldname: long_field_name
+        children:
+          - class: IndentedBlockHanging
+            attributes:
+              indent: 4
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    text: "Text here\nreads better if\nwrapped around.\n"
+      - class: FieldListItem
+        attributes:
+          fieldname: field_2
+        children:
+          - class: Paragraph
+            children:
+              - class: PlainText
+                text: "more Text\n"
+      - class: BlankLine
+  - class: Paragraph
+    children:
+      - class: PlainText
+        text: "In field lists\n"
+  - class: FieldList
+    children:
+      - class: FieldListItem
+        attributes:
+          fieldname: field_1
+        children:
+          - class: Paragraph
+            children:
+              - class: PlainText
+                text: "Blank lines\n"
+      - class: BlankLine
+      - class: FieldListItem
+        attributes:
+          fieldname: field_2
+        children:
+          - class: Paragraph
+            children:
+              - class: PlainText
+                text: "will not start a new list\n"
+      - class: BlankLine

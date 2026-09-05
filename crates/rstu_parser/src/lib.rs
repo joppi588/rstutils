@@ -31,7 +31,7 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
 
     while index < tokens.len() - 2 {
         // final two tokens are always Newline+Blankline
-        let index_line_end = find_next_kind(&tokens, &[TK::NewLine], index)
+        let index_line_end = find_next_kind(&tokens, &[TK::NewLine], index, None)
             .expect("Token stream ends with a newline.");
         match (tokens[index].kind, tokens[index_line_end + 1].kind) {
             (token1, token2)
@@ -98,7 +98,7 @@ pub fn try_match_section_header(
     has_overline: bool,
 ) -> Result<(NodeRef, usize), ParserError> {
     let title_start = start_at + 2 * usize::from(has_overline);
-    let title_end = find_next_kind(tokens, &[TK::NewLine], title_start).map_err(|_| {
+    let title_end = find_next_kind(tokens, &[TK::NewLine], title_start, None).map_err(|_| {
         ParserError::SectionTitleMissingClosingAfterOpening {
             opening_index: start_at,
         }
@@ -157,6 +157,7 @@ fn try_parse_directive_like(
             TK::SubstitutionReference,
         ],
         start_at,
+        None,
     )
     .expect(EXPECT_NEWLINE);
     let (directive, new_index) = match &tokens[index].kind {
@@ -174,7 +175,7 @@ fn try_parse_comment(
 ) -> Result<(NodeRef, usize), ParserError> {
     let mut index = first_line_end;
     if tokens[index + 1].kind == TK::Indent {
-        index = find_next_kind(tokens, &[TK::Dedent], index + 1)
+        index = find_next_kind(tokens, &[TK::Dedent], index + 1, None)
             .expect("There is always a final dedent.");
     }
 
@@ -193,7 +194,7 @@ fn try_parse_directive(
     directive_colon_index: usize,
 ) -> Result<(NodeRef, usize), ParserError> {
     let first_line_end =
-        find_next_kind(tokens, &[TK::NewLine], directive_colon_index).expect(EXPECT_NEWLINE);
+        find_next_kind(tokens, &[TK::NewLine], directive_colon_index, None).expect(EXPECT_NEWLINE);
 
     let directive_type = tokens_to_text(&tokens[start_at + 1..directive_colon_index])
         .trim()

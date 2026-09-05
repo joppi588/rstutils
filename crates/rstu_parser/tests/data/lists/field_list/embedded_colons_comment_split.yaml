@@ -1,0 +1,49 @@
+class: Document
+children:
+  - class: FieldList
+    children:
+      - class: FieldListItem
+        attributes:
+          fieldname: first
+        children:
+          - class: Paragraph
+            children:
+              - class: PlainText
+                text: "field\n"
+      - class: FieldListItem
+        attributes:
+          fieldname: field:name:with:embedded:colons
+        children:
+          - class: Paragraph
+            children:
+              - class: PlainText
+                text: "unambiguous, no need for escapes\n"
+          - class: BlankLine
+  - class: Comment
+    text: "\n"
+  - class: FieldList
+    children:
+      - class: FieldListItem
+        attributes:
+          fieldname: embedded:colons
+        children:
+          - class: Paragraph
+            children:
+              - class: PlainText
+                text: "in first field name\n"
+      - class: FieldListItem
+        attributes:
+          fieldname: field:\`:name
+        children:
+          - class: Paragraph
+            children:
+              - class: PlainText
+                text: "not interpreted text\n"
+      - class: FieldListItem
+        attributes:
+          fieldname: field:\`name
+        children:
+          - class: Paragraph
+            children:
+              - class: PlainText
+                text: "not interpreted text\n"

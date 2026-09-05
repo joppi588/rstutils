@@ -1,0 +1,66 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    text: 'Nested field lists on one line:
+
+      '
+- class: FieldList
+  children:
+  - class: FieldListItem
+    attributes:
+      fieldname: field1
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        text: ':field2: :field3: body
+
+          '
+  - class: FieldListItem
+    attributes:
+      fieldname: field4
+    children:
+    - class: IndentedBlockHanging
+      attributes:
+        indent: 9
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          text: ':field5: :field6: body
+
+            '
+      - class: FieldList
+        children:
+        - class: FieldListItem
+          attributes:
+            fieldname: field7
+          children:
+          - class: Paragraph
+            children:
+            - class: PlainText
+              text: 'body
+
+                '
+      - class: FieldList
+        children:
+        - class: FieldListItem
+          attributes:
+            fieldname: field8
+          children:
+          - class: Paragraph
+            children:
+            - class: PlainText
+              text: 'body
+
+                '
+        - class: FieldListItem
+          attributes:
+            fieldname: field9
+          children:
+          - class: Paragraph
+            children:
+            - class: PlainText
+              text: "body line 1\n  body line 2\n"

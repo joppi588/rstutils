@@ -22,6 +22,7 @@ pub enum ParserError {
     UnexpectedToken {
         expected: String,
         found: String,
+        index: usize,
     },
     InlineMissingClosing {
         markup: String,
@@ -31,6 +32,7 @@ pub enum ParserError {
         marker: String,
         conflicting_marker: String,
     },
+    ListEndError {},
 }
 
 pub(crate) static EXPECT_NEWLINE: &str = "There is at least one newline at the end of tokens.";
