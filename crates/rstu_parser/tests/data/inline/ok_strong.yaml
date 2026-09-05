@@ -2,9 +2,9 @@ class: Document
 children:
   - class: Section
     attributes:
-      section_marker: "-"
       marker_len: 31
       marker_len_opening: 0
+      section_marker: "-"
     children:
       - class: Title
         text: "Short text with strong elements"
@@ -14,6 +14,8 @@ children:
             text: print this in bold text.
             attributes:
               markup: strong
+          - class: PlainText
+            text: "\n"
       - class: Paragraph
         children:
           - class: PlainText

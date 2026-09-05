@@ -1,0 +1,49 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    text: 'One-liners:
+
+      '
+- class: FieldList
+  children:
+  - class: FieldListItem
+    attributes:
+      fieldname: Author
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        text: 'Me
+
+          '
+    - class: BlankLine
+  - class: FieldListItem
+    attributes:
+      fieldname: Version
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        text: '1
+
+          '
+    - class: BlankLine
+  - class: FieldListItem
+    attributes:
+      fieldname: Date
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        text: '2001-08-11
+
+          '
+    - class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    text: ':Parameter i: integer
+
+      '

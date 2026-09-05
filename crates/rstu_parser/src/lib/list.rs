@@ -5,7 +5,6 @@
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 #[path = "block.rs"]
 mod block;
-use crate::paragraph;
 use crate::parser_errors::ParserError;
 use crate::token::{Token, TokenKind as TK};
 use crate::token_slice::skip_kinds;
@@ -66,12 +65,19 @@ pub(crate) fn try_parse_field_list(
             .to_string();
         item.with_attr("fieldname", field_name);
 
-        let (paragraph, next_index) =
-            paragraph::try_parse_paragraph(tokens, index + 2, None, None)?;
-        item.push_child(paragraph);
-        list.push_child(item);
+        let (block, new_index) = block::parse_indented_block_hanging(
+            tokens,
+            skip_kinds(tokens, &[TK::Spaces], index + 1),
+        )?;
+        item.push_child(block);
+        index = new_index;
 
-        index = next_index;
+        list.push_child(item);
+        if index < tokens.len() && tokens[index].kind == TK::BlankLine {
+            // TODO: blankline should be pushed by block parser (introduce single line block)
+            index = skip_kinds(tokens, &[TK::BlankLine], index);
+            list.push_child(AstNode::new_ref(NodeClass::BlankLine))
+        }
     }
 
     Ok((list, index))

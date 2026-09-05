@@ -1,0 +1,12 @@
+class: Document
+children:
+  - class: Paragraph
+    children:
+      - class: PlainText
+        text: ":Field name with "
+      - class: InlineMarkup
+        attributes:
+          markup: emphasis
+        text: ""
+      - class: PlainText
+        text: "bad inline markup: should generate warning.\n"

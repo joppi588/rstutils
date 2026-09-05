@@ -30,9 +30,12 @@ pub fn find_next_kind(
     tokens: &[Token],
     kinds: &[TokenKind],
     start_at: usize,
+    skip_index: Option<usize>,
 ) -> Result<usize, TokenSliceError> {
-    Ok(find_next_kind_interrupt(tokens, kinds, &[], start_at)?
-        .expect("interrupt_kinds is empty, so None is unreachable"))
+    Ok(
+        find_next_kind_interrupt(tokens, kinds, &[], start_at, skip_index)?
+            .expect("interrupt_kinds is empty, so None is unreachable"),
+    )
 }
 
 // TODO: remove if not used finally
@@ -42,12 +45,16 @@ pub fn find_next_kind_interrupt(
     kinds: &[TokenKind],
     interrupt_kinds: &[TokenKind],
     start_at: usize,
+    skip_index: Option<usize>,
 ) -> Result<Option<usize>, TokenSliceError> {
     tokens
         .iter()
         .enumerate()
         .skip(start_at)
         .find_map(|(index, token)| {
+            if skip_index == Some(index) {
+                return None;
+            }
             if (&token.kind).is(kinds) {
                 return Some(Some(index));
             }
@@ -83,9 +90,33 @@ mod tests {
             Token::new(TokenKind::NewLine, "\n"),
         ];
 
-        let found = find_next_kind(&tokens, &[TokenKind::BlankLine, TokenKind::NewLine], 0);
+        let found = find_next_kind(
+            &tokens,
+            &[TokenKind::BlankLine, TokenKind::NewLine],
+            0,
+            None,
+        );
 
         assert_eq!(found, Ok(2));
+    }
+
+    #[test]
+    fn find_next_kind_skips_the_requested_index() {
+        let tokens = vec![
+            Token::new(TokenKind::Word, "one"),
+            Token::new(TokenKind::Spaces, " "),
+            Token::new(TokenKind::Word, "two"),
+            Token::new(TokenKind::BlankLine, "\n"),
+        ];
+
+        let found = find_next_kind(
+            &tokens,
+            &[TokenKind::BlankLine, TokenKind::Word],
+            1,
+            Some(2),
+        );
+
+        assert_eq!(found, Ok(3));
     }
 
     #[test]

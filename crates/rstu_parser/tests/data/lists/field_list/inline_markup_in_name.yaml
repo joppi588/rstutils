@@ -1,0 +1,34 @@
+class: Document
+children:
+  - class: Paragraph
+    children:
+      - class: PlainText
+        text: ":Field "
+      - class: InlineMarkup
+        attributes:
+          markup: emphasis
+        text: name
+      - class: PlainText
+        text: " "
+      - class: InlineMarkup
+        attributes:
+          markup: interpreted_text
+        text: with
+      - class: PlainText
+        text: " "
+      - class: InlineMarkup
+        attributes:
+          markup: strong
+        text: inline
+      - class: PlainText
+        text: " "
+      - class: InlineMarkup
+        attributes:
+          markup: inline_literal
+        text: markup
+      - class: PlainText
+        text: ": inline markup in\n"
+  - class: Paragraph
+    children:
+      - class: PlainText
+        text: "field name is parsed.\n"
