@@ -69,11 +69,6 @@ pub(crate) fn parse_field_list(
         index = new_index;
 
         list.push_child(item);
-        if index < tokens.len() && tokens[index].kind == TK::BlankLine {
-            // TODO: blankline should be pushed by block parser (introduce single line block)!
-            index = skip_kinds(tokens, &[TK::BlankLine], index);
-            list.push_child(AstNode::new_ref(NodeClass::BlankLine))
-        }
     }
 
     Ok((list, index))
