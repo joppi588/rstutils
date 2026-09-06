@@ -42,7 +42,7 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
                     || (token1, token2) == (TK::Word, TK::Separator) =>
             {
                 let (section, next_start) =
-                    try_match_section_header(&tokens, index, token1.is(&[TK::Separator]))?;
+                    match_section_header(&tokens, index, token1.is(&[TK::Separator]))?;
                 current_node.push_section_ref(section.clone());
                 current_node = section;
                 index = next_start;
@@ -94,7 +94,7 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
     Ok(doc)
 }
 
-pub fn try_match_section_header(
+pub fn match_section_header(
     tokens: &[Token],
     start_at: usize,
     has_overline: bool,
