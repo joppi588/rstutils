@@ -2,8 +2,8 @@ class: Document
 children:
   - class: Directive
     attributes:
+      directive_arguments: " https://example.com/sample.png"
       directive_type: image
-    text: " https://example.com/sample.png"
     children:
       - class: FieldList
         children:
