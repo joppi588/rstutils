@@ -20,18 +20,47 @@ fn parse_bullet_list(#[case] rst_filename: &str, #[case] yaml_filename: &str) {
     rst_vs_yaml!("lists/bullet_list", rst_filename, yaml_filename)
 }
 
-#[test]
-fn rejects_mixed_bullet_list_markers_fixture() {
+#[rstest]
+#[case("docutils_bullet_00.rst", "docutils_bullet_00.yaml")]
+#[case("docutils_bullet_01.rst", "docutils_bullet_01.yaml")]
+#[case("docutils_bullet_02.rst", "docutils_bullet_02.yaml")]
+#[case("docutils_bullet_03.rst", "docutils_bullet_03.yaml")]
+#[case("docutils_bullet_04.rst", "docutils_bullet_04.yaml")]
+#[case("docutils_bullet_07.rst", "docutils_bullet_07.yaml")]
+#[case("docutils_bullet_08.rst", "docutils_bullet_08.yaml")]
+#[case("docutils_bullet_09.rst", "docutils_bullet_09.yaml")]
+fn parse_docutils_bullet_list(#[case] rst_filename: &str, #[case] yaml_filename: &str) {
+    rst_vs_yaml!("lists/bullet_list", rst_filename, yaml_filename)
+}
+
+#[rstest]
+#[case("docutils_bullet_05.rst")]
+fn rejects_docutils_bullet_list_style(#[case] rst_filename: &str) {
     let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tests/data")
         .join("lists/bullet_list")
-        .join("nok_mixed_bullet_list_markers.rst");
+        .join(rst_filename);
     let rst_contents = fs::read_to_string(&rst_path)
         .unwrap_or_else(|_| panic!("failed to read fixture file: {}", rst_path.display()));
 
     let err = parse(&rst_contents).unwrap_err();
 
     assert!(matches!(err, ParserError::ListStyleError { .. }));
+}
+
+#[rstest]
+#[case("docutils_bullet_06.rst")]
+fn rejects_docutils_bullet_list_end(#[case] rst_filename: &str) {
+    let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("tests/data")
+        .join("lists/bullet_list")
+        .join(rst_filename);
+    let rst_contents = fs::read_to_string(&rst_path)
+        .unwrap_or_else(|_| panic!("failed to read fixture file: {}", rst_path.display()));
+
+    let err = parse(&rst_contents).unwrap_err();
+
+    assert!(matches!(err, ParserError::ListEndError { .. }));
 }
 
 #[rstest]

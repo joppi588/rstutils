@@ -14,3 +14,7 @@ For each test file, create two new rust test functions:
     Ok: Otherwise assert that the parsing result mathes the yaml fixture
 For each test case in the test file, create rst and yaml fixtures, and a test case for rstest.
 Delete test functions without associated test cases.
+
+Comment out test cases that use features not implemented so far.
+
+Run the tests, but allow the test cases to fail.
