@@ -47,20 +47,20 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
             }
 
             (TK::DoubleDot, _) => {
-                let (directive, next_start) = try_parse_directive_like(&tokens, index)?;
+                let (directive, next_start) = parse_directive_like(&tokens, index)?;
                 current_node.push_body_element(directive.clone());
                 current_node = directive;
                 index = next_start;
             }
 
             (TK::BulletListMarker, _) => {
-                let (bullet_list, next_start) = list::try_parse_bullet_list(&tokens, index)?;
+                let (bullet_list, next_start) = list::parse_bullet_list(&tokens, index)?;
                 current_node.push_body_element(bullet_list);
                 index = next_start;
             }
 
             (TK::Field, _) => {
-                let (field_list, next_start) = list::try_parse_field_list(&tokens, index)?;
+                let (field_list, next_start) = list::parse_field_list(&tokens, index)?;
                 current_node.push_body_element(field_list);
                 index = next_start;
             }
@@ -76,7 +76,7 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
                     || kind.is(TC::PLAIN) =>
             {
                 let (paragraph, next_start) =
-                    paragraph::try_parse_paragraph(&tokens, index, None, None)?;
+                    paragraph::parse_paragraph(&tokens, index, None, None)?;
                 current_node.push_child(paragraph.clone());
                 index = next_start;
             }
@@ -143,7 +143,7 @@ pub fn try_match_section_header(
 }
 
 /// Parse directives, comments, citations, substitutions
-fn try_parse_directive_like(
+fn parse_directive_like(
     tokens: &[Token],
     start_at: usize,
 ) -> Result<(NodeRef, usize), ParserError> {
@@ -161,14 +161,14 @@ fn try_parse_directive_like(
     )
     .expect(EXPECT_NEWLINE);
     let (directive, new_index) = match &tokens[index].kind {
-        TK::NewLine => try_parse_comment(tokens, start_at, index)?,
-        TK::DoubleColon => try_parse_directive(tokens, start_at, index)?,
+        TK::NewLine => parse_comment(tokens, start_at, index)?,
+        TK::DoubleColon => parse_directive(tokens, start_at, index)?,
         _ => panic!("Not implemented directive-like structure."),
     };
     Ok((directive, new_index))
 }
 
-fn try_parse_comment(
+fn parse_comment(
     tokens: &[Token],
     start_at: usize,
     first_line_end: usize,
@@ -188,7 +188,7 @@ fn try_parse_comment(
     Ok((comment, index + 1))
 }
 
-fn try_parse_directive(
+fn parse_directive(
     tokens: &[Token],
     start_at: usize,
     directive_colon_index: usize,
@@ -216,7 +216,7 @@ fn try_parse_directive(
 
     let indented_block = AstNode::new_ref(NodeClass::IndentedBlock);
     indented_block.with_attr("indentation", indentation);
-    let (paragraph, index) = paragraph::try_parse_paragraph(&tokens, index + 1, None, None)?;
+    let (paragraph, index) = paragraph::parse_paragraph(&tokens, index + 1, None, None)?;
     indented_block.push_child(paragraph);
     directive.push_child(indented_block);
 

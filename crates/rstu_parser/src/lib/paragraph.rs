@@ -8,7 +8,7 @@ use crate::parser_errors::ParserError;
 use crate::token::{Token, TokenCategory as TC, TokenKind as TK};
 use crate::token_slice::{find_next_kind, tokens_to_text};
 
-pub(crate) fn try_parse_paragraph(
+pub(crate) fn parse_paragraph(
     tokens: &[Token],
     start_at: usize,
     stop_before: Option<usize>,
@@ -32,11 +32,11 @@ pub(crate) fn try_parse_paragraph(
         }
 
         let (node, new_index) = match tokens[index].kind {
-            kind if kind.is(TC::INLINE_MARKER) => try_parse_inline(&tokens, index)?,
-            kind if kind.is(TC::INLINE_TOKEN) => try_parse_inline_token(&tokens, index)?,
+            kind if kind.is(TC::INLINE_MARKER) => parse_inline(&tokens, index)?,
+            kind if kind.is(TC::INLINE_TOKEN) => parse_inline_token(&tokens, index)?,
             //TODO: Concatenate TC::PLAIN and tokens to a new list
             kind if kind.is(TC::PLAIN) || kind == TK::BulletListMarker || kind == TK::NewLine => {
-                try_parse_plain(&tokens, index, paragraph_end, skip_index)?
+                parse_plain(&tokens, index, paragraph_end, skip_index)?
             }
 
             _ => {
@@ -53,7 +53,7 @@ pub(crate) fn try_parse_paragraph(
     Ok((paragraph, index))
 }
 
-pub(crate) fn try_parse_inline_token(
+pub(crate) fn parse_inline_token(
     tokens: &[Token],
     at: usize,
 ) -> Result<(NodeRef, usize), ParserError> {
@@ -89,7 +89,7 @@ pub(crate) fn try_parse_inline_token(
     Ok((node, at + 1))
 }
 
-pub(crate) fn try_parse_inline(
+pub(crate) fn parse_inline(
     tokens: &[Token],
     start_at: usize,
 ) -> Result<(NodeRef, usize), ParserError> {
@@ -133,7 +133,7 @@ pub(crate) fn try_parse_inline(
     Ok((inline, inline_final + 1))
 }
 
-fn try_parse_plain(
+fn parse_plain(
     tokens: &[Token],
     start_at: usize,
     stop_before: usize,
@@ -168,11 +168,11 @@ fn try_parse_plain(
 
 #[cfg(test)]
 mod tests {
-    use super::try_parse_paragraph;
+    use super::parse_paragraph;
     use crate::token::{Token, TokenKind as TK};
 
     #[test]
-    fn try_parse_paragraph_skips_the_requested_index() {
+    fn parse_paragraph_skips_the_requested_index() {
         let tokens = vec![
             Token::new(TK::Word, "hello"),
             Token::new(TK::Word, "world"),
@@ -180,8 +180,8 @@ mod tests {
             Token::new(TK::BlankLine, "\n"),
         ];
 
-        let (paragraph, next_index) = try_parse_paragraph(&tokens, 0, None, Some(1))
-            .expect("paragraph parsing should succeed");
+        let (paragraph, next_index) =
+            parse_paragraph(&tokens, 0, None, Some(1)).expect("paragraph parsing should succeed");
 
         assert_eq!(next_index, 3);
         assert_eq!(
