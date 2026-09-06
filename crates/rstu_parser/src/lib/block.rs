@@ -34,7 +34,7 @@ pub(crate) fn parse_indented_block_hanging(
     let block = AstNode::new_ref(NodeClass::IndentedBlockHanging);
     block.with_attr("indent", tokens[indent_position].lexeme.len());
     let mut index = start_at;
-    // TODO: Recursion comes here.
+    // TODO: Recursion/loop comes here.
     let (paragraph, new_index) =
         paragraph::parse_paragraph(tokens, index, None, Some(indent_position))?;
     block.push_child(paragraph);

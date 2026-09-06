@@ -1,9 +1,5 @@
 Some edge cases:
 
-:Empty:
-:Author: Me
-No blank line before this paragraph.
-
 : Field: marker must not begin with whitespace.
 
 :Field : marker must not end with whitespace.

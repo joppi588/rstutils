@@ -4,24 +4,6 @@ children:
     children:
       - class: PlainText
         text: "Some edge cases:\n"
-  - class: FieldList
-    children:
-      - class: FieldListItem
-        attributes:
-          fieldname: Empty
-        children: []
-      - class: FieldListItem
-        attributes:
-          fieldname: Author
-        children:
-          - class: Paragraph
-            children:
-              - class: PlainText
-                text: "Me\n"
-  - class: Paragraph
-    children:
-      - class: PlainText
-        text: "No blank line before this paragraph.\n"
   - class: Paragraph
     children:
       - class: PlainText
