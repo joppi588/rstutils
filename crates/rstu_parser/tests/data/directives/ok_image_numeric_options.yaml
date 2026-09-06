@@ -1,0 +1,36 @@
+class: Document
+children:
+  - class: Directive
+    attributes:
+      directive_type: image
+    text: " https://example.com/sample.png"
+    children:
+      - class: FieldList
+        children:
+          - class: FieldListItem
+            attributes:
+              fieldname: height
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    text: "20mm\n"
+          - class: FieldListItem
+            attributes:
+              fieldname: width
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    text: "300px\n"
+          - class: FieldListItem
+            attributes:
+              fieldname: scale
+            children:
+              - class: Block
+                children:
+                  - class: Paragraph
+                    children:
+                      - class: PlainText
+                        text: "75\n"
+                  - class: BlankLine
