@@ -21,6 +21,7 @@ pub(crate) fn parse_block(
         TK::Field | TK::BulletListMarker | TK::BlankLine => {
             parse_single_line_block(tokens, start_at, line_end_index + 1)
         }
+        // TODO: ListEndError does not fit here.
         _ => Err(ParserError::ListEndError {}),
     }
 }
