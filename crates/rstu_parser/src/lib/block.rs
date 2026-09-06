@@ -19,7 +19,7 @@ pub(crate) fn parse_block(
     match tokens[line_end_index + 1].kind {
         TK::Indent => parse_indented_block_hanging(tokens, start_at, line_end_index + 1),
         TK::BlankLine => parse_compound_block(tokens, start_at, line_end_index + 1),
-        TK::Field | TK::BulletListMarker => {
+        TK::Dedent | TK::Field | TK::BulletListMarker => {
             parse_single_line_block(tokens, start_at, line_end_index + 1)
         }
         _ => Err(ParserError::UnexpectedBlockEndError {}),
