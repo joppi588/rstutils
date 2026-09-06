@@ -9,7 +9,7 @@ use crate::parser_errors::ParserError;
 use crate::token::{Token, TokenKind as TK};
 use crate::token_slice::skip_kinds;
 
-pub(crate) fn try_parse_bullet_list(
+pub(crate) fn parse_bullet_list(
     tokens: &[Token],
     start_at: usize,
 ) -> Result<(NodeRef, usize), ParserError> {
@@ -49,7 +49,7 @@ pub(crate) fn try_parse_bullet_list(
     Ok((list, index))
 }
 
-pub(crate) fn try_parse_field_list(
+pub(crate) fn parse_field_list(
     tokens: &[Token],
     start_at: usize,
 ) -> Result<(NodeRef, usize), ParserError> {
