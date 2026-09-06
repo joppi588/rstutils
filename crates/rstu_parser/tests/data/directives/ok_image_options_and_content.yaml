@@ -2,7 +2,7 @@ class: Document
 children:
   - class: Directive
     attributes:
-      directive_arguments: " https://example.com/sample.png"
+      directive_arguments: "https://example.com/sample.png"
       directive_type: image
     children:
       - class: FieldList
@@ -18,7 +18,10 @@ children:
                       - class: PlainText
                         text: "20mm\n"
                   - class: BlankLine
-      - class: Paragraph
+      - class: Block
         children:
-          - class: PlainText
-            text: "This image has a caption.\n"
+          - class: Paragraph
+            children:
+              - class: PlainText
+                text: "This image has a caption.\n"
+          - class: BlankLine

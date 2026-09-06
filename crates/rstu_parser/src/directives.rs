@@ -17,14 +17,15 @@ pub(crate) fn parse_directive(
     let first_line_end =
         find_next_kind(tokens, &[TK::NewLine], directive_colon_index, None).expect(EXPECT_NEWLINE);
 
+    let directive = AstNode::new_ref(NodeClass::Directive);
     let directive_type = tokens_to_text(&tokens[start_at + 1..directive_colon_index])
         .trim()
         .to_string();
-    let directive_arguments = tokens_to_text(&tokens[directive_colon_index + 1..first_line_end]);
-
-    let directive = AstNode::new_ref(NodeClass::Directive);
     directive.with_attr("directive_type", directive_type);
-    if !directive_arguments.is_empty() {
+
+    if first_line_end > directive_colon_index + 1 {
+        let directive_arguments =
+            tokens_to_text(&tokens[directive_colon_index + 2..first_line_end]);
         directive.with_attr("directive_arguments", directive_arguments);
     }
 
