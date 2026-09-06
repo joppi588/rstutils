@@ -18,11 +18,30 @@ pub(crate) fn parse_block(
         .expect("Token stream ends with a newline.");
     match tokens[line_end_index + 1].kind {
         TK::Indent => parse_indented_block_hanging(tokens, start_at, line_end_index + 1),
-        TK::Field | TK::BulletListMarker | TK::BlankLine => {
+        TK::BlankLine => parse_compound_block(tokens, start_at, line_end_index + 1),
+        TK::Field | TK::BulletListMarker => {
             parse_single_line_block(tokens, start_at, line_end_index + 1)
         }
         _ => Err(ParserError::UnexpectedBlockEndError {}),
     }
+}
+
+pub(crate) fn parse_compound_block(
+    tokens: &[Token],
+    start_at: usize,
+    stop_before: usize,
+) -> Result<(NodeRef, usize), ParserError> {
+    let block = AstNode::new_ref(NodeClass::IndentedBlock);
+    let mut index = start_at;
+    let (paragraph, new_index) =
+        paragraph::parse_paragraph(tokens, index, Some(stop_before), None)?;
+    block.push_child(paragraph);
+    index = new_index;
+    if index < tokens.len() && tokens[index].kind == TK::BlankLine {
+        index = skip_kinds(tokens, &[TK::BlankLine], index);
+        block.push_child(AstNode::new_ref(NodeClass::BlankLine));
+    }
+    Ok((block, index))
 }
 
 pub(crate) fn parse_indented_block_hanging(
@@ -56,15 +75,6 @@ pub(crate) fn parse_single_line_block(
     start_at: usize,
     stop_before: usize,
 ) -> Result<(NodeRef, usize), ParserError> {
-    let block = AstNode::new_ref(NodeClass::IndentedBlock);
-    let mut index = start_at;
-    let (paragraph, new_index) =
-        paragraph::parse_paragraph(tokens, index, Some(stop_before), None)?;
-    block.push_child(paragraph);
-    index = new_index;
-    if index < tokens.len() && tokens[index].kind == TK::BlankLine {
-        index = skip_kinds(tokens, &[TK::BlankLine], index);
-        block.push_child(AstNode::new_ref(NodeClass::BlankLine));
-    }
-    Ok((block, index))
+    let (paragraph, index) = paragraph::parse_paragraph(tokens, start_at, Some(stop_before), None)?;
+    Ok((paragraph, index))
 }

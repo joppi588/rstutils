@@ -10,12 +10,10 @@ children:
         attributes:
           marker: "-"
         children:
-          - class: IndentedBlock
+          - class: Paragraph
             children:
-              - class: Paragraph
-                children:
-                  - class: PlainText
-                    text: "First item\n"
+              - class: PlainText
+                text: "First item\n"
       - class: BulletListItem
         attributes:
           marker: "-"
