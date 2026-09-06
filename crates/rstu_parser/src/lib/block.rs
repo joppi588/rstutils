@@ -24,7 +24,7 @@ pub(crate) fn parse_indented_block_hanging(
             let mut index = start_at;
             // TODO: Recursion comes here.
             let (paragraph, new_index) =
-                paragraph::try_parse_paragraph(tokens, index, None, Some(line_end_index + 1))?;
+                paragraph::parse_paragraph(tokens, index, None, Some(line_end_index + 1))?;
             block.push_child(paragraph);
             index = new_index;
             if tokens[index].kind == TK::BlankLine {
@@ -42,7 +42,7 @@ pub(crate) fn parse_indented_block_hanging(
         TK::Field | TK::BulletListMarker | TK::BlankLine =>
         // Single line case
         {
-            paragraph::try_parse_paragraph(tokens, start_at, Some(line_end_index + 1), None)
+            paragraph::parse_paragraph(tokens, start_at, Some(line_end_index + 1), None)
         }
         _ => Err(ParserError::ListEndError {}),
     }
