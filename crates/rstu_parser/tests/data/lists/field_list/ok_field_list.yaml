@@ -10,19 +10,23 @@ children:
         attributes:
           fieldname: field_1
         children:
-          - class: Paragraph
+          - class: IndentedBlock
             children:
-              - class: PlainText
-                text: "Some Text\n"
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    text: "Some Text\n"
       - class: FieldListItem
         attributes:
           fieldname: field_2
         children:
-          - class: Paragraph
+          - class: IndentedBlock
             children:
-              - class: PlainText
-                text: "More Text\n"
-      - class: BlankLine
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    text: "More Text\n"
+              - class: BlankLine
   - class: Paragraph
     children:
       - class: PlainText
@@ -45,11 +49,13 @@ children:
         attributes:
           fieldname: field_2
         children:
-          - class: Paragraph
+          - class: IndentedBlock
             children:
-              - class: PlainText
-                text: "more Text\n"
-      - class: BlankLine
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    text: "more Text\n"
+              - class: BlankLine
   - class: Paragraph
     children:
       - class: PlainText
@@ -60,17 +66,21 @@ children:
         attributes:
           fieldname: field_1
         children:
-          - class: Paragraph
+          - class: IndentedBlock
             children:
-              - class: PlainText
-                text: "Blank lines\n"
-      - class: BlankLine
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    text: "Blank lines\n"
+              - class: BlankLine
       - class: FieldListItem
         attributes:
           fieldname: field_2
         children:
-          - class: Paragraph
+          - class: IndentedBlock
             children:
-              - class: PlainText
-                text: "will not start a new list\n"
-      - class: BlankLine
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    text: "will not start a new list\n"
+              - class: BlankLine

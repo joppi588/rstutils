@@ -40,10 +40,6 @@ pub(crate) fn parse_bullet_list(
             block::parse_block(tokens, index + 2).map_err(|_| ParserError::ListEndError {})?;
         index = new_index;
         item.push_child(block);
-        if tokens[index].kind == TK::BlankLine {
-            index = skip_kinds(tokens, &[TK::BlankLine], index);
-            item.push_child(AstNode::new_ref(NodeClass::BlankLine))
-        }
         list.push_child(item);
     }
 

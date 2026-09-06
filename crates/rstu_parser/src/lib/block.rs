@@ -56,5 +56,15 @@ pub(crate) fn parse_single_line_block(
     start_at: usize,
     stop_before: usize,
 ) -> Result<(NodeRef, usize), ParserError> {
-    paragraph::parse_paragraph(tokens, start_at, Some(stop_before), None)
+    let block = AstNode::new_ref(NodeClass::IndentedBlock);
+    let mut index = start_at;
+    let (paragraph, new_index) =
+        paragraph::parse_paragraph(tokens, index, Some(stop_before), None)?;
+    block.push_child(paragraph);
+    index = new_index;
+    if index < tokens.len() && tokens[index].kind == TK::BlankLine {
+        index = skip_kinds(tokens, &[TK::BlankLine], index);
+        block.push_child(AstNode::new_ref(NodeClass::BlankLine));
+    }
+    Ok((block, index))
 }
