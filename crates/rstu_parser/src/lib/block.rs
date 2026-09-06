@@ -10,40 +10,71 @@ use crate::{
 };
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
-pub(crate) fn parse_indented_block_hanging(
+pub(crate) fn parse_block(
     tokens: &[Token],
     start_at: usize,
 ) -> Result<(NodeRef, usize), ParserError> {
-    // TODO: Having this logic one level above, we need to differenciate between paragraph continuation and new list item
     let line_end_index = find_next_kind(tokens, &[TK::NewLine], start_at, None)
         .expect("Token stream ends with a newline.");
     match tokens[line_end_index + 1].kind {
-        TK::Indent => {
-            let block = AstNode::new_ref(NodeClass::IndentedBlockHanging);
-            block.with_attr("indent", tokens[line_end_index + 1].lexeme.len());
-            let mut index = start_at;
-            // TODO: Recursion comes here.
-            let (paragraph, new_index) =
-                paragraph::parse_paragraph(tokens, index, None, Some(line_end_index + 1))?;
-            block.push_child(paragraph);
-            index = new_index;
-            if tokens[index].kind == TK::BlankLine {
-                index = skip_kinds(tokens, &[TK::BlankLine], index);
-                block.push_child(AstNode::new_ref(NodeClass::BlankLine))
-            }
-            if tokens[index].kind == TK::Dedent {
-                // TODO: Only dedent the indent, modify the dedent token in place.
-                index += 1;
-            } else {
-                panic!("Expected a dedent at {index}")
-            }
-            Ok((block, index))
+        TK::Indent => parse_indented_block_hanging(tokens, start_at, line_end_index + 1),
+        TK::BlankLine => parse_compound_block(tokens, start_at, line_end_index + 1),
+        TK::Field | TK::BulletListMarker => {
+            parse_single_line_block(tokens, start_at, line_end_index + 1)
         }
-        TK::Field | TK::BulletListMarker | TK::BlankLine =>
-        // Single line case
-        {
-            paragraph::parse_paragraph(tokens, start_at, Some(line_end_index + 1), None)
-        }
-        _ => Err(ParserError::ListEndError {}),
+        _ => Err(ParserError::UnexpectedBlockEndError {}),
     }
+}
+
+pub(crate) fn parse_compound_block(
+    tokens: &[Token],
+    start_at: usize,
+    stop_before: usize,
+) -> Result<(NodeRef, usize), ParserError> {
+    let block = AstNode::new_ref(NodeClass::Block);
+    let mut index = start_at;
+    let (paragraph, new_index) =
+        paragraph::parse_paragraph(tokens, index, Some(stop_before), None)?;
+    block.push_child(paragraph);
+    index = new_index;
+    if index < tokens.len() && tokens[index].kind == TK::BlankLine {
+        index = skip_kinds(tokens, &[TK::BlankLine], index);
+        block.push_child(AstNode::new_ref(NodeClass::BlankLine));
+    }
+    Ok((block, index))
+}
+
+pub(crate) fn parse_indented_block_hanging(
+    tokens: &[Token],
+    start_at: usize,
+    indent_position: usize,
+) -> Result<(NodeRef, usize), ParserError> {
+    let block = AstNode::new_ref(NodeClass::BlockHangingIndent);
+    block.with_attr("indent", tokens[indent_position].lexeme.len());
+    let mut index = start_at;
+    // TODO: Recursion/loop comes here.
+    let (paragraph, new_index) =
+        paragraph::parse_paragraph(tokens, index, None, Some(indent_position))?;
+    block.push_child(paragraph);
+    index = new_index;
+    if tokens[index].kind == TK::BlankLine {
+        index = skip_kinds(tokens, &[TK::BlankLine], index);
+        block.push_child(AstNode::new_ref(NodeClass::BlankLine))
+    }
+    if tokens[index].kind == TK::Dedent {
+        // TODO: Only dedent the indent, modify the dedent token in place.
+        index += 1;
+    } else {
+        panic!("Expected a dedent at {index}")
+    }
+    Ok((block, index))
+}
+
+pub(crate) fn parse_single_line_block(
+    tokens: &[Token],
+    start_at: usize,
+    stop_before: usize,
+) -> Result<(NodeRef, usize), ParserError> {
+    let (paragraph, index) = paragraph::parse_paragraph(tokens, start_at, Some(stop_before), None)?;
+    Ok((paragraph, index))
 }

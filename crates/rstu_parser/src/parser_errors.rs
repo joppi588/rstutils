@@ -33,6 +33,7 @@ pub enum ParserError {
         conflicting_marker: String,
     },
     ListEndError {},
+    UnexpectedBlockEndError {},
 }
 
 pub(crate) static EXPECT_NEWLINE: &str = "There is at least one newline at the end of tokens.";

@@ -41,7 +41,7 @@ children:
         attributes:
           fieldname: Abstract
         children:
-          - class: IndentedBlockHanging
+          - class: BlockHangingIndent
             attributes:
               indent: 4
             children:

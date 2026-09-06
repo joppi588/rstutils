@@ -34,8 +34,10 @@ children:
         attributes:
           fieldname: Parameter i
         children:
-          - class: Paragraph
+          - class: Block
             children:
-              - class: PlainText
-                text: "integer\n"
-      - class: BlankLine
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    text: "integer\n"
+              - class: BlankLine
