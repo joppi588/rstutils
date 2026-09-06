@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: MIT
 
+#[path = "lib/block.rs"]
+mod block;
 mod comments;
 mod directives;
 pub mod lexer;

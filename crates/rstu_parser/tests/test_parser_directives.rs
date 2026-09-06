@@ -18,6 +18,11 @@ mod test_parser;
     "ok_image_numeric_options.rst",
     "ok_image_numeric_options.yaml"
 )]
+#[case(
+    "directives",
+    "ok_image_options_and_content.rst",
+    "ok_image_options_and_content.yaml"
+)]
 fn parses_directives_and_matches_yaml_fixture(
     #[case] directory: &str,
     #[case] rst_filename: &str,
