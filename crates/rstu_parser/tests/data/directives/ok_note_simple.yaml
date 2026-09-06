@@ -4,7 +4,7 @@ children:
     attributes:
       directive_type: note
     children:
-      - class: IndentedBlock
+      - class: Block
         attributes:
           indentation: "   "
         children:

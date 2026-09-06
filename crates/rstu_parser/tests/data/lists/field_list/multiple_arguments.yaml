@@ -6,8 +6,10 @@ children:
         attributes:
           fieldname: Parameter i j k
         children:
-          - class: Paragraph
+          - class: Block
             children:
-              - class: PlainText
-                text: "multiple arguments\n"
-      - class: BlankLine
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    text: "multiple arguments\n"
+              - class: BlankLine

@@ -18,11 +18,13 @@ children:
         attributes:
           fieldname: field_2
         children:
-          - class: Paragraph
+          - class: Block
             children:
-              - class: PlainText
-                text: "More Text\n"
-      - class: BlankLine
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    text: "More Text\n"
+              - class: BlankLine
   - class: Paragraph
     children:
       - class: PlainText
@@ -33,7 +35,7 @@ children:
         attributes:
           fieldname: long_field_name
         children:
-          - class: IndentedBlockHanging
+          - class: BlockHangingIndent
             attributes:
               indent: 4
             children:
@@ -45,11 +47,13 @@ children:
         attributes:
           fieldname: field_2
         children:
-          - class: Paragraph
+          - class: Block
             children:
-              - class: PlainText
-                text: "more Text\n"
-      - class: BlankLine
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    text: "more Text\n"
+              - class: BlankLine
   - class: Paragraph
     children:
       - class: PlainText
@@ -60,17 +64,21 @@ children:
         attributes:
           fieldname: field_1
         children:
-          - class: Paragraph
+          - class: Block
             children:
-              - class: PlainText
-                text: "Blank lines\n"
-      - class: BlankLine
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    text: "Blank lines\n"
+              - class: BlankLine
       - class: FieldListItem
         attributes:
           fieldname: field_2
         children:
-          - class: Paragraph
+          - class: Block
             children:
-              - class: PlainText
-                text: "will not start a new list\n"
-      - class: BlankLine
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    text: "will not start a new list\n"
+              - class: BlankLine

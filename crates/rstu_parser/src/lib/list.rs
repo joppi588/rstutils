@@ -36,13 +36,10 @@ pub(crate) fn parse_bullet_list(
         } else {
             marker = Some(current_marker.clone());
         }
-        let (block, new_index) = block::parse_indented_block_hanging(tokens, index + 2)?;
+        let (block, new_index) =
+            block::parse_block(tokens, index + 2).map_err(|_| ParserError::ListEndError {})?;
         index = new_index;
         item.push_child(block);
-        if tokens[index].kind == TK::BlankLine {
-            index = skip_kinds(tokens, &[TK::BlankLine], index);
-            item.push_child(AstNode::new_ref(NodeClass::BlankLine))
-        }
         list.push_child(item);
     }
 
@@ -65,19 +62,13 @@ pub(crate) fn parse_field_list(
             .to_string();
         item.with_attr("fieldname", field_name);
 
-        let (block, new_index) = block::parse_indented_block_hanging(
-            tokens,
-            skip_kinds(tokens, &[TK::Spaces], index + 1),
-        )?;
+        let (block, new_index) =
+            block::parse_block(tokens, skip_kinds(tokens, &[TK::Spaces], index + 1))
+                .map_err(|_| ParserError::ListEndError {})?;
         item.push_child(block);
         index = new_index;
 
         list.push_child(item);
-        if index < tokens.len() && tokens[index].kind == TK::BlankLine {
-            // TODO: blankline should be pushed by block parser (introduce single line block)
-            index = skip_kinds(tokens, &[TK::BlankLine], index);
-            list.push_child(AstNode::new_ref(NodeClass::BlankLine))
-        }
     }
 
     Ok((list, index))

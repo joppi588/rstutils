@@ -10,17 +10,21 @@ children:
         attributes:
           marker: "-"
         children:
-        - class: Paragraph
-          children:
-            - class: PlainText
-              text: "First item\n"
-        - class: BlankLine
+          - class: Block
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    text: "First item\n"
+              - class: BlankLine
       - class: BulletListItem
         attributes:
           marker: "-"
         children:
-        - class: Paragraph
-          children:
-            - class: PlainText
-              text: "Second item\n"
-        - class: BlankLine
+          - class: Block
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    text: "Second item\n"
+              - class: BlankLine
