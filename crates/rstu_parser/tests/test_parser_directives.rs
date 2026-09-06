@@ -13,6 +13,16 @@ mod test_parser;
 #[rstest]
 #[case("directives", "ok_note_simple.rst", "ok_note_simple.yaml")]
 #[case("directives", "ok_comment.rst", "ok_comment.yaml")]
+#[case(
+    "directives",
+    "ok_image_numeric_options.rst",
+    "ok_image_numeric_options.yaml"
+)]
+#[case(
+    "directives",
+    "ok_image_options_and_content.rst",
+    "ok_image_options_and_content.yaml"
+)]
 fn parses_directives_and_matches_yaml_fixture(
     #[case] directory: &str,
     #[case] rst_filename: &str,

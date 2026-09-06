@@ -5,10 +5,9 @@ children:
       directive_type: note
     children:
       - class: Block
-        attributes:
-          indentation: "   "
         children:
           - class: Paragraph
             children:
               - class: PlainText
                 text: "This is a simple note directive.\n"
+          - class: BlankLine
