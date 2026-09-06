@@ -214,7 +214,7 @@ fn parse_directive(
 
     let indentation = tokens[index].lexeme.clone();
 
-    let indented_block = AstNode::new_ref(NodeClass::IndentedBlock);
+    let indented_block = AstNode::new_ref(NodeClass::Block);
     indented_block.with_attr("indentation", indentation);
     let (paragraph, index) = paragraph::parse_paragraph(&tokens, index + 1, None, None)?;
     indented_block.push_child(paragraph);

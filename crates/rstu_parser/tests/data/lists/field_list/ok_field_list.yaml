@@ -18,7 +18,7 @@ children:
         attributes:
           fieldname: field_2
         children:
-          - class: IndentedBlock
+          - class: Block
             children:
               - class: Paragraph
                 children:
@@ -35,7 +35,7 @@ children:
         attributes:
           fieldname: long_field_name
         children:
-          - class: IndentedBlockHanging
+          - class: BlockHangingIndent
             attributes:
               indent: 4
             children:
@@ -47,7 +47,7 @@ children:
         attributes:
           fieldname: field_2
         children:
-          - class: IndentedBlock
+          - class: Block
             children:
               - class: Paragraph
                 children:
@@ -64,7 +64,7 @@ children:
         attributes:
           fieldname: field_1
         children:
-          - class: IndentedBlock
+          - class: Block
             children:
               - class: Paragraph
                 children:
@@ -75,7 +75,7 @@ children:
         attributes:
           fieldname: field_2
         children:
-          - class: IndentedBlock
+          - class: Block
             children:
               - class: Paragraph
                 children:

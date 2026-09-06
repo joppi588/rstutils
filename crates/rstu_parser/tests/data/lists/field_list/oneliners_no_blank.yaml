@@ -34,7 +34,7 @@ children:
         attributes:
           fieldname: Parameter i
         children:
-          - class: IndentedBlock
+          - class: Block
             children:
               - class: Paragraph
                 children:

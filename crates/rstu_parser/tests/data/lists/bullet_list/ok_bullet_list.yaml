@@ -10,7 +10,7 @@ children:
         attributes:
           marker: "-"
         children:
-          - class: IndentedBlock
+          - class: Block
             children:
               - class: Paragraph
                 children:
@@ -21,7 +21,7 @@ children:
         attributes:
           marker: "-"
         children:
-          - class: IndentedBlock
+          - class: Block
             children:
               - class: Paragraph
                 children:

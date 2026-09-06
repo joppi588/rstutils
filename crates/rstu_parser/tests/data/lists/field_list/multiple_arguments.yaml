@@ -6,7 +6,7 @@ children:
         attributes:
           fieldname: Parameter i j k
         children:
-          - class: IndentedBlock
+          - class: Block
             children:
               - class: Paragraph
                 children:

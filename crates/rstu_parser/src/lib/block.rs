@@ -31,7 +31,7 @@ pub(crate) fn parse_compound_block(
     start_at: usize,
     stop_before: usize,
 ) -> Result<(NodeRef, usize), ParserError> {
-    let block = AstNode::new_ref(NodeClass::IndentedBlock);
+    let block = AstNode::new_ref(NodeClass::Block);
     let mut index = start_at;
     let (paragraph, new_index) =
         paragraph::parse_paragraph(tokens, index, Some(stop_before), None)?;
@@ -49,7 +49,7 @@ pub(crate) fn parse_indented_block_hanging(
     start_at: usize,
     indent_position: usize,
 ) -> Result<(NodeRef, usize), ParserError> {
-    let block = AstNode::new_ref(NodeClass::IndentedBlockHanging);
+    let block = AstNode::new_ref(NodeClass::BlockHangingIndent);
     block.with_attr("indent", tokens[indent_position].lexeme.len());
     let mut index = start_at;
     // TODO: Recursion/loop comes here.
