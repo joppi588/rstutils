@@ -20,6 +20,7 @@ fn parse_bullet_list(#[case] rst_filename: &str, #[case] yaml_filename: &str) {
     rst_vs_yaml!("lists/bullet_list", rst_filename, yaml_filename)
 }
 
+// TODO: Activate tests
 #[rstest]
 #[case("docutils_bullet_00.rst", "docutils_bullet_00.yaml")]
 #[case("docutils_bullet_01.rst", "docutils_bullet_01.yaml")]
