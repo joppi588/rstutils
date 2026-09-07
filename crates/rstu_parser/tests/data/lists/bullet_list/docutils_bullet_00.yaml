@@ -1,0 +1,15 @@
+class: Document
+children:
+  - class: BulletList
+    children:
+      - class: BulletListItem
+        attributes:
+          marker: "-"
+        children:
+          - class: Block
+            children:
+            - class: Paragraph
+              children:
+                - class: PlainText
+                  text: "item\n"
+            - class: BlankLine

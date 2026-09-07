@@ -1,4 +1,5 @@
 .reuse
+docutils
 
 # Added by cargo
 target

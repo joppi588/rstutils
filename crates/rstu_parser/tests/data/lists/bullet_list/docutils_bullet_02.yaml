@@ -1,0 +1,24 @@
+class: Document
+children:
+  - class: Paragraph
+    children:
+      - class: PlainText
+        text: "No blank line between:\n"
+  - class: BulletList
+    children:
+      - class: BulletListItem
+        attributes:
+          marker: "+"
+        children:
+          - class: Paragraph
+            children:
+              - class: PlainText
+                text: "item 1\n"
+      - class: BulletListItem
+        attributes:
+          marker: "+"
+        children:
+          - class: Paragraph
+            children:
+              - class: PlainText
+                text: "item 2\n"
