@@ -10,15 +10,10 @@ use std::path::Path;
 
 mod test_parser;
 #[rstest]
-#[case("ok_bullet_list")]
-#[case("ok_compact_bullet_list")]
-#[case("nok_missing_blanklines_bulletlist1")]
-fn parse_bullet_list(#[case] filename_stem: &str) {
-    rst_vs_yaml!("lists/bullet_list", filename_stem)
-}
-
 // TODO: Activate tests
 #[rstest]
+#[case("ok_bullet_list")]
+#[case("ok_compact_bullet_list")]
 #[case("docutils_bullet_00")]
 #[case("docutils_bullet_01")]
 // #[case("docutils_bullet_02")] compound body
@@ -26,7 +21,7 @@ fn parse_bullet_list(#[case] filename_stem: &str) {
 // #[case("docutils_bullet_04")]
 #[case("docutils_bullet_07")]
 // #[case("docutils_bullet_09")]
-fn parse_docutils_bullet_list(#[case] filename_stem: &str) {
+fn parse_bullet_list(#[case] filename_stem: &str) {
     rst_vs_yaml!("lists/bullet_list", filename_stem)
 }
 
