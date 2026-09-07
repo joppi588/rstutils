@@ -1,0 +1,7 @@
+Unicode bullets:
+
+• BULLET
+
+‣ TRIANGULAR BULLET
+
+⁃ HYPHEN BULLET

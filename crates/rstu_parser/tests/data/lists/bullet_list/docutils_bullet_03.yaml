@@ -1,0 +1,31 @@
+class: Document
+children:
+  - class: BulletList
+    children:
+      - class: BulletListItem
+        attributes:
+          marker: "-"
+        children:
+          - class: Block
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    text: "item 1, para 1.\n"
+              - class: BlankLine
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    text: "item 1, para 2.\n"
+              - class: BlankLine
+      - class: BulletListItem
+        attributes:
+          marker: "-"
+        children:
+          - class: Block
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    text: "item 2\n"
+              - class: BlankLine

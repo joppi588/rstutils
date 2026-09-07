@@ -1,0 +1,41 @@
+class: Document
+children:
+  - class: Paragraph
+    children:
+      - class: PlainText
+        text: "Unicode bullets:\n"
+  - class: BulletList
+    children:
+      - class: BulletListItem
+        attributes:
+          marker: "•"
+        children:
+          - class: Block
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    text: "BULLET\n"
+              - class: BlankLine
+      - class: BulletListItem
+        attributes:
+          marker: "‣"
+        children:
+          - class: Block
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    text: "TRIANGULAR BULLET\n"
+              - class: BlankLine
+      - class: BulletListItem
+        attributes:
+          marker: "⁃"
+        children:
+          - class: Block
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    text: "HYPHEN BULLET\n"
+              - class: BlankLine
