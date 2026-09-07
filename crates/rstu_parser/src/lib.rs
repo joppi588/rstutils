@@ -4,7 +4,9 @@
 
 #[path = "lib/block.rs"]
 mod block;
+#[path = "lib/comments.rs"]
 mod comments;
+#[path = "lib/directives.rs"]
 mod directives;
 pub mod lexer;
 #[path = "lib/list.rs"]
