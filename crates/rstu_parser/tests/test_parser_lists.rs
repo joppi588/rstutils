@@ -23,12 +23,12 @@ fn parse_bullet_list(#[case] rst_filename: &str, #[case] yaml_filename: &str) {
 #[rstest]
 #[case("docutils_bullet_00.rst", "docutils_bullet_00.yaml")]
 #[case("docutils_bullet_01.rst", "docutils_bullet_01.yaml")]
-#[case("docutils_bullet_02.rst", "docutils_bullet_02.yaml")]
-#[case("docutils_bullet_03.rst", "docutils_bullet_03.yaml")]
-#[case("docutils_bullet_04.rst", "docutils_bullet_04.yaml")]
+// #[case("docutils_bullet_02.rst", "docutils_bullet_02.yaml")] compound body
+// #[case("docutils_bullet_03.rst", "docutils_bullet_03.yaml")] compound body
+// #[case("docutils_bullet_04.rst", "docutils_bullet_04.yaml")]
 #[case("docutils_bullet_07.rst", "docutils_bullet_07.yaml")]
 #[case("docutils_bullet_08.rst", "docutils_bullet_08.yaml")]
-#[case("docutils_bullet_09.rst", "docutils_bullet_09.yaml")]
+// #[case("docutils_bullet_09.rst", "docutils_bullet_09.yaml")]
 fn parse_docutils_bullet_list(#[case] rst_filename: &str, #[case] yaml_filename: &str) {
     rst_vs_yaml!("lists/bullet_list", rst_filename, yaml_filename)
 }

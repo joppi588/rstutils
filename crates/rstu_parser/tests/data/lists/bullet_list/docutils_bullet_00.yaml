@@ -6,7 +6,10 @@ children:
         attributes:
           marker: "-"
         children:
-          - class: Paragraph
+          - class: Block
             children:
-              - class: PlainText
-                text: "item\n"
+            - class: Paragraph
+              children:
+                - class: PlainText
+                  text: "item\n"
+            - class: BlankLine

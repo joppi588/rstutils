@@ -12,6 +12,7 @@ children:
                 children:
                   - class: PlainText
                     text: "item 1, para 1.\n"
+              - class: BlankLine
               - class: Paragraph
                 children:
                   - class: PlainText
@@ -27,3 +28,4 @@ children:
                 children:
                   - class: PlainText
                     text: "item 2\n"
+              - class: BlankLine
