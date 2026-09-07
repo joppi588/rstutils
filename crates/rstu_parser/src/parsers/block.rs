@@ -15,7 +15,7 @@ pub(crate) fn parse_block(
     let line_end_index = find_next_kind(tokens, &[TK::NewLine], start_at, None)
         .expect("Token stream ends with a newline.");
     match tokens[line_end_index + 1].kind {
-        TK::Indent => parse_indented_block_hanging(tokens, start_at, line_end_index + 1),
+        TK::Indent => parse_block_hanging_indent(tokens, start_at, line_end_index + 1),
         TK::BlankLine => parse_compound_block(tokens, start_at, line_end_index + 1),
         TK::Dedent | TK::Field | TK::BulletListMarker => {
             parse_single_line_block(tokens, start_at, line_end_index + 1)
@@ -38,7 +38,7 @@ pub(crate) fn parse_compound_block(
     Ok((block, index))
 }
 
-pub(crate) fn parse_indented_block_hanging(
+pub(crate) fn parse_block_hanging_indent(
     tokens: &[Token],
     start_at: usize,
     indent_position: usize,
