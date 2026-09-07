@@ -20,8 +20,8 @@ fn data_path(directory: &str, filename: &str) -> std::path::PathBuf {
 #[rstest]
 #[case("sections", "ok_sections_type1")]
 #[case("sections", "ok_sections_type2")]
-fn parses_sections_and_matches_yaml_fixture(#[case] directory: &str, #[case] filename_stem: &str) {
-    rst_vs_yaml!(directory, filename_stem)
+fn parses_sections_and_matches_yaml_fixture(#[case] directory: &str, #[case] test_case: &str) {
+    rst_vs_yaml!(directory, test_case)
 }
 
 #[test]

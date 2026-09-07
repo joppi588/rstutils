@@ -12,6 +12,6 @@ use std::path::Path;
 #[rstest]
 #[case("inline", "ok_strong")]
 #[case("inline", "ok_inline_variants")]
-fn parse_inline(#[case] directory: &str, #[case] filename_stem: &str) {
-    rst_vs_yaml!(directory, filename_stem)
+fn parse_inline(#[case] directory: &str, #[case] test_case: &str) {
+    rst_vs_yaml!(directory, test_case)
 }

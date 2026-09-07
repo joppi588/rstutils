@@ -21,8 +21,8 @@ mod test_parser;
 // #[case("docutils_bullet_04")]
 #[case("docutils_bullet_07")]
 // #[case("docutils_bullet_09")]
-fn parse_bullet_list(#[case] filename_stem: &str) {
-    rst_vs_yaml!("lists/bullet_list", filename_stem)
+fn parse_bullet_list(#[case] test_case: &str) {
+    rst_vs_yaml!("lists/bullet_list", test_case)
 }
 
 #[rstest]
@@ -72,12 +72,12 @@ fn rejects_docutils_bullet_list_end(#[case] rst_filename: &str) {
 // #[case("embedded_colons_comment_split")]
 // #[case("embedded_colons_interpreted_text")]
 
-fn parse_field_list(#[case] filename_stem: &str) {
+fn parse_field_list(#[case] test_case: &str) {
     // GIVEN field-list examples
     // WHEN we parse and compare them against YAML snapshots
     // THEN this acts as a compatibility porting test surface (expected to fail for now)
 
-    rst_vs_yaml!("lists/field_list", filename_stem);
+    rst_vs_yaml!("lists/field_list", test_case);
 }
 
 #[test]
