@@ -10,27 +10,24 @@ use std::path::Path;
 
 mod test_parser;
 #[rstest]
-#[case("ok_bullet_list.rst", "ok_bullet_list.yaml")]
-#[case("ok_compact_bullet_list.rst", "ok_compact_bullet_list.yaml")]
-#[case(
-    "nok_missing_blanklines_bulletlist1.rst",
-    "nok_missing_blanklines_bulletlist1.yaml"
-)]
-fn parse_bullet_list(#[case] rst_filename: &str, #[case] yaml_filename: &str) {
-    rst_vs_yaml!("lists/bullet_list", rst_filename, yaml_filename)
+#[case("ok_bullet_list")]
+#[case("ok_compact_bullet_list")]
+#[case("nok_missing_blanklines_bulletlist1")]
+fn parse_bullet_list(#[case] filename_stem: &str) {
+    rst_vs_yaml!("lists/bullet_list", filename_stem)
 }
 
 // TODO: Activate tests
 #[rstest]
-#[case("docutils_bullet_00.rst", "docutils_bullet_00.yaml")]
-#[case("docutils_bullet_01.rst", "docutils_bullet_01.yaml")]
-// #[case("docutils_bullet_02.rst", "docutils_bullet_02.yaml")] compound body
-// #[case("docutils_bullet_03.rst", "docutils_bullet_03.yaml")] compound body
-// #[case("docutils_bullet_04.rst", "docutils_bullet_04.yaml")]
-#[case("docutils_bullet_07.rst", "docutils_bullet_07.yaml")]
-// #[case("docutils_bullet_09.rst", "docutils_bullet_09.yaml")]
-fn parse_docutils_bullet_list(#[case] rst_filename: &str, #[case] yaml_filename: &str) {
-    rst_vs_yaml!("lists/bullet_list", rst_filename, yaml_filename)
+#[case("docutils_bullet_00")]
+#[case("docutils_bullet_01")]
+// #[case("docutils_bullet_02")] compound body
+// #[case("docutils_bullet_03")] compound body
+// #[case("docutils_bullet_04")]
+#[case("docutils_bullet_07")]
+// #[case("docutils_bullet_09")]
+fn parse_docutils_bullet_list(#[case] filename_stem: &str) {
+    rst_vs_yaml!("lists/bullet_list", filename_stem)
 }
 
 #[rstest]
@@ -65,33 +62,27 @@ fn rejects_docutils_bullet_list_end(#[case] rst_filename: &str) {
 }
 
 #[rstest]
-#[case("ok_field_list.rst", "ok_field_list.yaml")]
-#[case("bodies_next_line.rst", "bodies_next_line.yaml")]
-#[case("multiline_aligned.rst", "multiline_aligned.yaml")]
-#[case("multiline_not_lined_up.rst", "multiline_not_lined_up.yaml")]
-#[case("multiple_arguments.rst", "multiple_arguments.yaml")]
-#[case("oneliners_no_blank.rst", "oneliners_no_blank.yaml")]
+#[case("ok_field_list")]
+#[case("bodies_next_line")]
+#[case("multiline_aligned")]
+#[case("multiline_not_lined_up")]
+#[case("multiple_arguments")]
+#[case("oneliners_no_blank")]
 // NOT IMPLEMENTED:
-// #[case("multiple_body_elements.rst", "multiple_body_elements.yaml")]
-// #[case("nested_one_line.rst", "nested_one_line.yaml")]
-// #[case("inline_markup_in_name.rst", "inline_markup_in_name.yaml")]
-// #[case("bad_inline_markup.rst", "bad_inline_markup.yaml")]
-// #[case("edge_cases.rst", "edge_cases.yaml")]
-// #[case(
-//     "embedded_colons_comment_split.rst",
-//     "embedded_colons_comment_split.yaml"
-// )]
-// #[case(
-//     "embedded_colons_interpreted_text.rst",
-//     "embedded_colons_interpreted_text.yaml"
-// )]
+// #[case("multiple_body_elements")]
+// #[case("nested_one_line")]
+// #[case("inline_markup_in_name")]
+// #[case("bad_inline_markup")]
+// #[case("edge_cases")]
+// #[case("embedded_colons_comment_split")]
+// #[case("embedded_colons_interpreted_text")]
 
-fn parse_field_list(#[case] rst_filename: &str, #[case] yaml_filename: &str) {
+fn parse_field_list(#[case] filename_stem: &str) {
     // GIVEN field-list examples
     // WHEN we parse and compare them against YAML snapshots
     // THEN this acts as a compatibility porting test surface (expected to fail for now)
 
-    rst_vs_yaml!("lists/field_list", rst_filename, yaml_filename);
+    rst_vs_yaml!("lists/field_list", filename_stem);
 }
 
 #[test]

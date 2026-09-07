@@ -4,7 +4,7 @@
 
 #[macro_export]
 macro_rules! rst_vs_yaml {
-    ($directory:expr, $rst_filename: expr,$yaml_filename:expr) => {{
+    ($directory:expr, $filename_stem:expr) => {{
         fn yaml_field_order(key: &serde_yaml::Value) -> usize {
             match key {
                 serde_yaml::Value::String(s) if s == "class" => 0,
@@ -92,9 +92,9 @@ macro_rules! rst_vs_yaml {
         let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
             .join("tests/data")
             .join($directory)
-            .join($rst_filename);
+            .join(format!("{}.rst", $filename_stem));
         let rst_contents = fs::read_to_string(&rst_path)
-            .unwrap_or_else(|_| panic!("failed to read sections test file: {}", $rst_filename));
+            .unwrap_or_else(|_| panic!("failed to read sections test file: {}", $filename_stem));
 
         let parsed = parse(&rst_contents).expect("expected parse to succeed");
         let actual_yaml =
@@ -103,9 +103,9 @@ macro_rules! rst_vs_yaml {
         let expected_path = Path::new(env!("CARGO_MANIFEST_DIR"))
             .join("tests/data")
             .join($directory)
-            .join($yaml_filename);
+            .join(format!("{}.yaml", $filename_stem));
         let expected_yaml = fs::read_to_string(&expected_path)
-            .unwrap_or_else(|_| panic!("failed to read expected yaml fixture: {}", $yaml_filename));
+            .unwrap_or_else(|_| panic!("failed to read expected yaml fixture: {}", $filename_stem));
 
         let mut actual_value: serde_yaml::Value =
             serde_yaml::from_str(&actual_yaml).expect("failed to parse generated yaml");
@@ -131,7 +131,7 @@ macro_rules! rst_vs_yaml {
 
             panic!(
                 "Unexpected parse output for {}\n\nFirst deviation at canonicalized line {}\nActual line: {}\nExpected line: {}\n\nActual context\n{}\n\nExpected context\n{}",
-                $rst_filename,
+                $filename_stem,
                 diff_line,
                 actual_line,
                 expected_line,
@@ -143,7 +143,7 @@ macro_rules! rst_vs_yaml {
         assert_eq!(
             actual_value, expected_value,
             "Unexpected parse output for {}",
-            $rst_filename
+            $filename_stem
         );
     }};
 }
