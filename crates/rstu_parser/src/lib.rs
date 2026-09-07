@@ -2,15 +2,8 @@
 //
 // SPDX-License-Identifier: MIT
 
-#[path = "lib/block.rs"]
-mod block;
-mod comments;
-mod directives;
 pub mod lexer;
-#[path = "lib/list.rs"]
-mod list;
-#[path = "lib/paragraph.rs"]
-mod paragraph;
+mod parsers;
 
 pub mod parser_errors;
 pub mod token;
@@ -58,13 +51,13 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
             }
 
             (TK::BulletListMarker, _) => {
-                let (bullet_list, next_start) = list::parse_bullet_list(&tokens, index)?;
+                let (bullet_list, next_start) = parsers::list::parse_bullet_list(&tokens, index)?;
                 current_node.push_body_element(bullet_list);
                 index = next_start;
             }
 
             (TK::Field, _) => {
-                let (field_list, next_start) = list::parse_field_list(&tokens, index)?;
+                let (field_list, next_start) = parsers::list::parse_field_list(&tokens, index)?;
                 current_node.push_body_element(field_list);
                 index = next_start;
             }
@@ -80,7 +73,7 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
                     || kind.is(TC::PLAIN) =>
             {
                 let (paragraph, next_start) =
-                    paragraph::parse_paragraph(&tokens, index, None, None)?;
+                    parsers::paragraph::parse_paragraph(&tokens, index, None, None)?;
                 current_node.push_child(paragraph.clone());
                 index = next_start;
             }
@@ -165,8 +158,8 @@ fn parse_directive_like(
     )
     .expect(EXPECT_NEWLINE);
     let (directive, new_index) = match &tokens[index].kind {
-        TK::NewLine => comments::parse_comment(tokens, start_at, index)?,
-        TK::DoubleColon => directives::parse_directive(tokens, start_at, index)?,
+        TK::NewLine => parsers::comments::parse_comment(tokens, start_at, index)?,
+        TK::DoubleColon => parsers::directives::parse_directive(tokens, start_at, index)?,
         _ => panic!("Not implemented directive-like structure."),
     };
     Ok((directive, new_index))

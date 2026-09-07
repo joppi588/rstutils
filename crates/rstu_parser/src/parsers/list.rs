@@ -2,12 +2,11 @@
 //
 // SPDX-License-Identifier: MIT
 
-use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
-#[path = "block.rs"]
-mod block;
+use super::block;
 use crate::parser_errors::ParserError;
 use crate::token::{Token, TokenKind as TK};
 use crate::token_slice::skip_kinds;
+use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 pub(crate) fn parse_bullet_list(
     tokens: &[Token],

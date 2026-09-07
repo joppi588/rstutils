@@ -11,22 +11,10 @@ use std::path::Path;
 mod test_parser;
 
 #[rstest]
-#[case("directives", "ok_note_simple.rst", "ok_note_simple.yaml")]
-#[case("directives", "ok_comment.rst", "ok_comment.yaml")]
-#[case(
-    "directives",
-    "ok_image_numeric_options.rst",
-    "ok_image_numeric_options.yaml"
-)]
-#[case(
-    "directives",
-    "ok_image_options_and_content.rst",
-    "ok_image_options_and_content.yaml"
-)]
-fn parses_directives_and_matches_yaml_fixture(
-    #[case] directory: &str,
-    #[case] rst_filename: &str,
-    #[case] yaml_filename: &str,
-) {
-    rst_vs_yaml!(directory, rst_filename, yaml_filename)
+#[case("ok_note_simple")]
+#[case("ok_comment")]
+#[case("ok_image_numeric_options")]
+#[case("ok_image_options_and_content")]
+fn parses_directives_and_matches_yaml_fixture(#[case] test_case: &str) {
+    rst_vs_yaml!("directives", test_case)
 }

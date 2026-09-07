@@ -18,14 +18,10 @@ fn data_path(directory: &str, filename: &str) -> std::path::PathBuf {
 }
 
 #[rstest]
-#[case("sections", "ok_sections_type1.rst", "ok_sections_type1.yaml")]
-#[case("sections", "ok_sections_type2.rst", "ok_sections_type2.yaml")]
-fn parses_sections_and_matches_yaml_fixture(
-    #[case] directory: &str,
-    #[case] rst_filename: &str,
-    #[case] yaml_filename: &str,
-) {
-    rst_vs_yaml!(directory, rst_filename, yaml_filename)
+#[case("ok_sections_type1")]
+#[case("ok_sections_type2")]
+fn parses_sections_and_matches_yaml_fixture(#[case] test_case: &str) {
+    rst_vs_yaml!("sections", test_case)
 }
 
 #[test]
