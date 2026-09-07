@@ -4,10 +4,10 @@
 
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
+use super::{block, list};
 use crate::parser_errors::{ParserError, EXPECT_NEWLINE};
 use crate::token::{Token, TokenKind as TK};
 use crate::token_slice::{find_next_kind, tokens_to_text};
-use crate::{block, list};
 
 pub(crate) fn parse_directive(
     tokens: &[Token],

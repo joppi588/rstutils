@@ -2,12 +2,10 @@
 //
 // SPDX-License-Identifier: MIT
 
+use super::paragraph;
 use crate::parser_errors::ParserError;
 use crate::token::{Token, TokenKind as TK};
-use crate::{
-    paragraph,
-    token_slice::{find_next_kind, skip_kinds},
-};
+use crate::token_slice::{find_next_kind, skip_kinds};
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 pub(crate) fn parse_block(
