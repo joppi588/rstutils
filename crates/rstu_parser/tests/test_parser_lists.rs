@@ -27,7 +27,6 @@ fn parse_bullet_list(#[case] rst_filename: &str, #[case] yaml_filename: &str) {
 // #[case("docutils_bullet_03.rst", "docutils_bullet_03.yaml")] compound body
 // #[case("docutils_bullet_04.rst", "docutils_bullet_04.yaml")]
 #[case("docutils_bullet_07.rst", "docutils_bullet_07.yaml")]
-#[case("docutils_bullet_08.rst", "docutils_bullet_08.yaml")]
 // #[case("docutils_bullet_09.rst", "docutils_bullet_09.yaml")]
 fn parse_docutils_bullet_list(#[case] rst_filename: &str, #[case] yaml_filename: &str) {
     rst_vs_yaml!("lists/bullet_list", rst_filename, yaml_filename)
@@ -50,6 +49,7 @@ fn rejects_docutils_bullet_list_style(#[case] rst_filename: &str) {
 
 #[rstest]
 #[case("docutils_bullet_06.rst")]
+#[case("docutils_bullet_08.rst")]
 fn rejects_docutils_bullet_list_end(#[case] rst_filename: &str) {
     let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tests/data")

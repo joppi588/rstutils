@@ -37,7 +37,8 @@ pub(crate) fn parse_bullet_list(
             marker = Some(current_marker.clone());
         }
         let (block, new_index) =
-            block::parse_block(tokens, index + 2).map_err(|_| ParserError::ListEndError {})?;
+            block::parse_block(tokens, skip_kinds(tokens, &[TK::Spaces], index + 1))
+                .map_err(|_| ParserError::ListEndError {})?;
         index = new_index;
         item.push_child(block);
         list.push_child(item);

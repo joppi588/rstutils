@@ -172,7 +172,7 @@ impl TokenKind {
 
         // Lists
         (Field,r"[\n\s]:[\w\s]+:[\n\s]"),
-        (BulletListMarker, r"(\s|\n)[\-\+\*•‣⁃]\s"),
+        (BulletListMarker, r"(\s|\n)[\-\+\*•‣⁃](\s|\n)"),
 
 
         // Plain text
