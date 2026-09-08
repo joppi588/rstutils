@@ -15,6 +15,6 @@ mod test_parser;
 #[case("ok_comment")]
 #[case("ok_image_numeric_options")]
 #[case("ok_image_options_and_content")]
-fn parses_directives_and_matches_yaml_fixture(#[case] test_case: &str) {
+fn parse_directive(#[case] test_case: &str) {
     rst_vs_yaml!("directives", test_case)
 }

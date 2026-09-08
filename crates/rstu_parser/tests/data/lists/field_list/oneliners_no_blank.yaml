@@ -40,4 +40,4 @@ children:
                 children:
                   - class: PlainText
                     text: "integer\n"
-              - class: BlankLine
+      - class: BlankLine

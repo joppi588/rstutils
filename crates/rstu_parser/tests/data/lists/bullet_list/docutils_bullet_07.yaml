@@ -12,7 +12,7 @@ children:
             children:
             - class: PlainText
               text: "\n"
-          - class: BlankLine
+      - class: BlankLine
   - class: Paragraph
     children:
       - class: PlainText
