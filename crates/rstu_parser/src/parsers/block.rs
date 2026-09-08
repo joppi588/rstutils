@@ -4,6 +4,7 @@
 
 use super::paragraph;
 use crate::parser_errors::ParserError;
+use crate::parsers::paragraph::parse_paragraph;
 use crate::token::{Token, TokenKind as TK};
 use crate::token_slice::{find_next_kind, skip_kinds};
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
@@ -17,9 +18,10 @@ pub(crate) fn parse_block(
     let following_index = skip_kinds(tokens, &[TK::BlankLine], line_end_index + 1);
     match tokens[following_index].kind {
         TK::Indent => parse_compound_block(tokens, start_at, following_index),
-        TK::Field | TK::BulletListMarker | TK::Dedent | TK::EOF => {
-            parse_compound_block(tokens, start_at, start_at - 1)
+        TK::Field | TK::BulletListMarker => {
+            parse_paragraph(tokens, start_at, Some(following_index), None)
         }
+        TK::Dedent | TK::EOF => parse_compound_block(tokens, start_at, start_at - 1),
         _ => Err(ParserError::UnexpectedBlockEndError {}),
     }
 }
