@@ -17,13 +17,7 @@ pub(crate) fn parse_paragraph(
     let paragraph_end = stop_before.unwrap_or(
         find_next_kind(
             tokens,
-            &[
-                TK::BlankLine,
-                TK::Indent,
-                TK::Separator,
-                TK::Dedent,
-                TK::EOF,
-            ],
+            &[TK::BlankLine, TK::Indent, TK::Separator, TK::Dedent],
             start_at,
             skip_index,
         )

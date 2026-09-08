@@ -21,7 +21,7 @@ pub(crate) fn parse_block(
         TK::Field | TK::BulletListMarker => {
             parse_paragraph(tokens, start_at, Some(following_index), None)
         }
-        TK::Dedent | TK::EOF => parse_compound_block(tokens, start_at, start_at - 1),
+        TK::Dedent => parse_compound_block(tokens, start_at, start_at - 1),
         _ => Err(ParserError::UnexpectedBlockEndError {}),
     }
 }

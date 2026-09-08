@@ -107,7 +107,6 @@ pub enum TokenKind {
     DoubleDot,
     EmphasisEnd,
     EmphasisStart,
-    EOF,
     Field,
     FootnoteReference,
     HyperlinkReferenceEnd,
@@ -183,7 +182,6 @@ impl TokenKind {
 
         (Dedent, r"\b\B"), // never matches, assigned by the lexer
         (LiteralChar, r"(.|\n).(.|\n)"),
-        (EOF,r"\b\B"), // never matches, assigned by the lexer
     );
 
     pub fn is(self, kinds: &[TokenKind]) -> bool {
