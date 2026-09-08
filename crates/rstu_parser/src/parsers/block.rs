@@ -14,11 +14,12 @@ pub(crate) fn parse_block(
 ) -> Result<(NodeRef, usize), ParserError> {
     let line_end_index = find_next_kind(tokens, &[TK::NewLine], start_at, None)
         .expect("Token stream ends with a newline.");
-    match tokens[line_end_index + 1].kind {
-        TK::Indent => parse_block_hanging_indent(tokens, start_at, line_end_index + 1),
-        TK::BlankLine => parse_compound_block(tokens, start_at, line_end_index + 1),
+    let following_index = skip_kinds(tokens, &[TK::BlankLine], line_end_index + 1);
+    match tokens[following_index].kind {
+        TK::Indent => parse_block_hanging_indent(tokens, start_at, following_index),
+        TK::BlankLine => parse_compound_block(tokens, start_at, following_index),
         TK::Dedent | TK::Field | TK::BulletListMarker => {
-            parse_single_line_block(tokens, start_at, line_end_index + 1)
+            parse_single_line_block(tokens, start_at, following_index)
         }
         _ => Err(ParserError::UnexpectedBlockEndError {}),
     }
