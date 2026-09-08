@@ -28,9 +28,11 @@ children:
               fieldname: scale
             children:
               - class: Block
+                attributes:
+                  indent: 1
                 children:
                   - class: Paragraph
                     children:
                       - class: PlainText
                         text: "75\n"
-          - class: BlankLine
+                  - class: BlankLine
