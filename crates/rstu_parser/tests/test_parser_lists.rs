@@ -19,8 +19,8 @@ mod test_parser;
 // #[case("docutils_bullet_02")] compound body
 // #[case("docutils_bullet_03")] compound body
 // #[case("docutils_bullet_04")]
-#[case("docutils_bullet_07")]
 // #[case("docutils_bullet_09")]
+#[case("docutils_bullet_07")]
 fn parse_bullet_list(#[case] test_case: &str) {
     rst_vs_yaml!("lists/bullet_list", test_case)
 }

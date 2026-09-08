@@ -10,4 +10,3 @@ children:
             children:
               - class: PlainText
                 text: "This is a simple note directive.\n"
-          - class: BlankLine

@@ -12,4 +12,4 @@ children:
                 children:
                   - class: PlainText
                     text: "multiple arguments\n"
-              - class: BlankLine
+      - class: BlankLine
