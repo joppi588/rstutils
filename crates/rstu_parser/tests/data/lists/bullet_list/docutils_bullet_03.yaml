@@ -6,7 +6,7 @@ children:
         attributes:
           marker: "-"
         children:
-          - class: BlockHangingIndent
+          - class: Block
             attributes:
               indent: 2
             children:

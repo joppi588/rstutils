@@ -35,7 +35,7 @@ children:
         attributes:
           fieldname: long_field_name
         children:
-          - class: BlockHangingIndent
+          - class: Block
             attributes:
               indent: 4
             children:

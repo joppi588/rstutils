@@ -10,7 +10,7 @@ children:
         attributes:
           fieldname: Author
         children:
-          - class: BlockHangingIndent
+          - class: Block
             attributes:
               indent: 2
             children:
@@ -22,7 +22,7 @@ children:
         attributes:
           fieldname: Version
         children:
-          - class: BlockHangingIndent
+          - class: Block
             attributes:
               indent: 2
             children:
@@ -34,7 +34,7 @@ children:
         attributes:
           fieldname: Date
         children:
-          - class: BlockHangingIndent
+          - class: Block
             attributes:
               indent: 2
             children:
@@ -46,7 +46,7 @@ children:
         attributes:
           fieldname: Parameter i
         children:
-          - class: BlockHangingIndent
+          - class: Block
             attributes:
               indent: 2
             children:
