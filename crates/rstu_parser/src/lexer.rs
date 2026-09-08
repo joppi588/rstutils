@@ -61,6 +61,7 @@ pub fn tokenize(input: &str) -> Vec<Token> {
     if current_indent > 0 {
         tokens.push(Token::new(TK::Dedent, space!(current_indent)))
     };
+    tokens.push(Token::new(TK::EOF, "EOF"));
     tokens
 }
 
@@ -79,6 +80,7 @@ mod tests {
             Token::new(TK::Word, "World"),
             Token::new(TK::NewLine, "\n"),
             Token::new(TK::BlankLine, "\n"),
+            Token::new(TK::EOF, "EOF"),
         ];
 
         assert_eq!(tokenize(input), expected);
@@ -94,6 +96,7 @@ mod tests {
             Token::new(TK::Word, "def"),
             Token::new(TK::NewLine, "\n"),
             Token::new(TK::BlankLine, "\n"),
+            Token::new(TK::EOF, "EOF"),
         ];
 
         assert_eq!(tokenize(input), expected);
@@ -121,7 +124,8 @@ mod tests {
                 (TK::Word, "dedented"),
                 (TK::NewLine, "\n"),
                 (TK::BlankLine, "\n"),
-                (TK::Dedent, "  ")
+                (TK::Dedent, "  "),
+                (TK::EOF, "EOF"),
             ]
         );
     }
@@ -148,6 +152,7 @@ mod tests {
                 (TK::Word, "plain"),
                 (TK::NewLine, "\n"),
                 (TK::BlankLine, "\n"),
+                (TK::EOF, "EOF"),
             ]
         );
     }

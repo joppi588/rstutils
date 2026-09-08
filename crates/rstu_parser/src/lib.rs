@@ -26,8 +26,8 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
     let mut index: usize = 0;
     let mut current_node = doc.clone();
 
-    while index < tokens.len() - 2 {
-        // final two tokens are always Newline+Blankline
+    while index < tokens.len() - 3 {
+        // final two tokens are always Blankline+EOF
         let index_line_end = find_next_kind(&tokens, &[TK::NewLine], index, None)
             .expect("Token stream ends with a newline.");
         match (tokens[index].kind, tokens[index_line_end + 1].kind) {

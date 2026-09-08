@@ -12,11 +12,11 @@ mod test_parser;
 #[rstest]
 // TODO: Activate tests
 #[rstest]
-#[case("docutils_bullet_03")]
 #[case("ok_bullet_list")]
 #[case("ok_compact_bullet_list")]
 #[case("docutils_bullet_00")]
 #[case("docutils_bullet_01")]
+#[case("docutils_bullet_03")]
 // #[case("docutils_bullet_02")] no blank lines
 // #[case("docutils_bullet_04")]
 #[case("docutils_bullet_07")]

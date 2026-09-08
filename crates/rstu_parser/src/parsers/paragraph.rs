@@ -17,7 +17,13 @@ pub(crate) fn parse_paragraph(
     let paragraph_end = stop_before.unwrap_or(
         find_next_kind(
             tokens,
-            &[TK::BlankLine, TK::Indent, TK::Separator, TK::Dedent],
+            &[
+                TK::BlankLine,
+                TK::Indent,
+                TK::Separator,
+                TK::Dedent,
+                TK::EOF,
+            ],
             start_at,
             skip_index,
         )
@@ -38,7 +44,6 @@ pub(crate) fn parse_paragraph(
             kind if kind.is(TC::PLAIN) || kind == TK::BulletListMarker || kind == TK::NewLine => {
                 parse_plain(&tokens, index, paragraph_end, skip_index)?
             }
-
             _ => {
                 return Err(ParserError::UnexpectedToken {
                     expected: "Inline/plain".to_owned(),

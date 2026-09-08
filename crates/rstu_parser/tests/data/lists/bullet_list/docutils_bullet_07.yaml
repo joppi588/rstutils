@@ -5,8 +5,6 @@ children:
       - class: BulletListItem
         attributes:
           marker: "-"
-        children:
-        - class: Block
           children:
           - class: Paragraph
             children:
