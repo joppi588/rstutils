@@ -24,4 +24,4 @@ children:
                 children:
                   - class: PlainText
                     text: "Second item\n"
-              - class: BlankLine
+      - class: BlankLine

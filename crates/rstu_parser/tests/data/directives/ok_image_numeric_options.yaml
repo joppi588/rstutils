@@ -33,4 +33,4 @@ children:
                     children:
                       - class: PlainText
                         text: "75\n"
-                  - class: BlankLine
+          - class: BlankLine

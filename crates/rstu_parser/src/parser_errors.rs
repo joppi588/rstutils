@@ -32,6 +32,7 @@ pub enum ParserError {
         marker: String,
         conflicting_marker: String,
     },
+    ListError {},
     ListEndError {},
     UnexpectedBlockEndError {},
 }

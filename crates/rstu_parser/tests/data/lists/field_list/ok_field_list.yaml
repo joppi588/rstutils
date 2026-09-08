@@ -24,7 +24,7 @@ children:
                 children:
                   - class: PlainText
                     text: "More Text\n"
-              - class: BlankLine
+      - class: BlankLine
   - class: Paragraph
     children:
       - class: PlainText
@@ -53,7 +53,7 @@ children:
                 children:
                   - class: PlainText
                     text: "more Text\n"
-              - class: BlankLine
+      - class: BlankLine
   - class: Paragraph
     children:
       - class: PlainText
@@ -70,7 +70,7 @@ children:
                 children:
                   - class: PlainText
                     text: "Blank lines\n"
-              - class: BlankLine
+      - class: BlankLine
       - class: FieldListItem
         attributes:
           fieldname: field_2
@@ -81,4 +81,4 @@ children:
                 children:
                   - class: PlainText
                     text: "will not start a new list\n"
-              - class: BlankLine
+      - class: BlankLine

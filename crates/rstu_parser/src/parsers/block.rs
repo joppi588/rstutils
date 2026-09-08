@@ -5,7 +5,7 @@
 use super::paragraph;
 use crate::parser_errors::ParserError;
 use crate::token::{Token, TokenKind as TK};
-use crate::token_slice::{find_next_kind, skip_kinds};
+use crate::token_slice::find_next_kind;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 pub(crate) fn parse_block(
@@ -35,10 +35,6 @@ pub(crate) fn parse_compound_block(
         paragraph::parse_paragraph(tokens, index, Some(stop_before), None)?;
     block.push_child(paragraph);
     index = new_index;
-    if index < tokens.len() && tokens[index].kind == TK::BlankLine {
-        index = skip_kinds(tokens, &[TK::BlankLine], index);
-        block.push_child(AstNode::new_ref(NodeClass::BlankLine));
-    }
     Ok((block, index))
 }
 
@@ -56,8 +52,8 @@ pub(crate) fn parse_indented_block_hanging(
     block.push_child(paragraph);
     index = new_index;
     if tokens[index].kind == TK::BlankLine {
-        index = skip_kinds(tokens, &[TK::BlankLine], index);
-        block.push_child(AstNode::new_ref(NodeClass::BlankLine))
+        block.push_child(AstNode::new_ref(NodeClass::BlankLine));
+        index += 1;
     }
     if tokens[index].kind == TK::Dedent {
         // TODO: Only dedent the indent, modify the dedent token in place.

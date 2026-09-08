@@ -12,7 +12,7 @@ children:
                 children:
                   - class: PlainText
                     text: "item 1\n"
-              - class: BlankLine
+      - class: BlankLine
       - class: BulletListItem
         attributes:
           marker: "*"
@@ -23,4 +23,4 @@ children:
                 children:
                   - class: PlainText
                     text: "item 2\n"
-              - class: BlankLine
+      - class: BlankLine

@@ -17,11 +17,10 @@ children:
                     children:
                       - class: PlainText
                         text: "20mm\n"
-                  - class: BlankLine
+          - class: BlankLine
       - class: Block
         children:
           - class: Paragraph
             children:
               - class: PlainText
                 text: "This image has a caption.\n"
-          - class: BlankLine
