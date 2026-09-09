@@ -26,10 +26,10 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
     let mut index: usize = 0;
     let mut current_node = doc.clone();
 
-    while index < tokens.len() - 3 {
-        // final two tokens are always NewLine+Blankline
+    while index < tokens.len() - 2 {
+        // -2: final two tokens are always NewLine+Blankline(TODO: tbc)
         let index_line_end = find_next_kind(&tokens, &[TK::NewLine], index, None)
-            .expect("Token stream ends with a newline.");
+            .expect("Token stream ends with a newline."); // TODO: Integrate this in token stream.
         match (tokens[index].kind, tokens[index_line_end + 1].kind) {
             (token1, token2)
                 if (token1, token2) == (TK::Separator, TK::Indent)
