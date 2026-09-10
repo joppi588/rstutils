@@ -13,51 +13,67 @@ pub(crate) fn parse_block(
     tokens: &[Token],
     start_at: usize,
 ) -> Result<(NodeRef, usize), ParserError> {
-    let line_end_index = find_next_kind(tokens, &[TK::NewLine], start_at, None)
-        .expect("Token stream ends with a newline.");
-    let following_index = skip_kinds(tokens, &[TK::BlankLine], line_end_index + 1);
-    match tokens[following_index].kind {
-        TK::Indent => parse_compound_block(tokens, start_at, following_index),
-        TK::Field | TK::BulletListMarker => {
-            parse_paragraph(tokens, start_at, Some(following_index), None)
-        }
-        _ => parse_compound_block(tokens, start_at, start_at - 1),
-    }
+    let block = AstNode::new_ref(NodeClass::Block);
+    let (paragraph, new_index) = parse_paragraph(tokens, start_at, None, None)?;
+    block.push_child(paragraph);
+    Ok((block, new_index))
 }
 
-pub(crate) fn parse_compound_block(
+pub(crate) fn parse_block_hanging_indent(
     tokens: &[Token],
     start_at: usize,
-    indent_position: usize,
 ) -> Result<(NodeRef, usize), ParserError> {
     let block = AstNode::new_ref(NodeClass::Block);
-    block.with_attr("indent", tokens[indent_position].lexeme.len());
-    if indent_position >= start_at {
-        block.with_attr("hanging_indent", true);
-    }
+    let mut indent: Option<usize> = None;
     let mut index = start_at;
-    while index < tokens.len() {
-        if index == indent_position {
-            index += 1;
-        }; // TODO: include in token_slice
-        match tokens[index].kind {
-            TK::BlankLine => {
-                block.push_child(AstNode::new_ref(NodeClass::BlankLine));
-                index += 1;
-            }
-            TK::Dedent => {
-                // TODO: Only dedent the indent, modify the dedent token in place.
-                index += 1;
-                break;
-            }
-            _ => {
+    let index_line_end = find_next_kind(&tokens, &[TK::NewLine], index, None)
+        .expect("Token stream ends with a newline."); // TODO: Integrate this in token stream.
+
+    // Parse the first paragraph
+    match tokens[index_line_end + 1].kind {
+        TK::BlankLine => {
+            let (paragraph, new_index) = paragraph::parse_paragraph(tokens, index, None, None)?;
+            block.push_child(paragraph);
+            index = new_index;
+        }
+        TK::Indent => {
+            let (paragraph, new_index) =
+                paragraph::parse_paragraph(tokens, index, None, Some(index_line_end) + 1)?;
+            block.push_child(paragraph);
+            indent = Some(tokens[index_line_end + 1].lexeme.len());
+
+            index = new_index;
+        }
+        _ => return Err(ParserError::UnexpectedBlockEndError {}),
+    }
+
+    // Parse the rest
+    while index < tokens.len() - 2 {
+        let index_line_end = find_next_kind(&tokens, &[TK::NewLine], index, None)
+            .expect("Token stream ends with a newline.");
+        match (tokens[index].kind, tokens[index_line_end + 1].kind) {
+            (TK::Indent, _) => {
                 let (paragraph, new_index) =
-                    paragraph::parse_paragraph(tokens, index, None, Some(indent_position))?;
+                    paragraph::parse_paragraph(tokens, index + 1, None, None)?;
+                block.push_child(paragraph);
+                indent = Some(tokens[index_line_end + 1].lexeme.len());
+                index = new_index;
+            }
+            (TK::Word, _) => {
+                let (paragraph, new_index) = paragraph::parse_paragraph(tokens, index, None, None)?;
                 block.push_child(paragraph);
                 index = new_index;
             }
+            (TK::BlankLine, TK::BlankLine | TK::Indent) => {
+                block.push_child(AstNode::new_ref(NodeClass::BlankLine));
+                index = index + 1;
+            }
+            (_, _) => {
+                break;
+            }
         }
     }
 
+    block.with_attr("indent", indent.unwrap());
     Ok((block, index))
 }
