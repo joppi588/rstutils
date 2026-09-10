@@ -38,7 +38,7 @@ pub(crate) fn parse_block_hanging_indent(
         }
         TK::Indent => {
             let (paragraph, new_index) =
-                paragraph::parse_paragraph(tokens, index, None, Some(index_line_end) + 1)?;
+                paragraph::parse_paragraph(tokens, index, None, Some(index_line_end + 1))?;
             block.push_child(paragraph);
             indent = Some(tokens[index_line_end + 1].lexeme.len());
 
