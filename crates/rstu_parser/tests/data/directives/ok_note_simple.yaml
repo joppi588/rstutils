@@ -3,6 +3,7 @@ children:
   - class: Directive
     attributes:
       directive_type: note
+      indent: 3
     children:
       - class: Block
         attributes:
@@ -12,4 +13,3 @@ children:
             children:
               - class: PlainText
                 text: "This is a simple note directive.\n"
-          - class: BlankLine

@@ -4,6 +4,7 @@ children:
     attributes:
       directive_arguments: "https://example.com/sample.png"
       directive_type: image
+      indent: 3
     children:
       - class: FieldList
         children:

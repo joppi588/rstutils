@@ -6,7 +6,7 @@ use super::paragraph;
 use crate::parser_errors::ParserError;
 use crate::parsers::paragraph::parse_paragraph;
 use crate::token::{Token, TokenKind as TK};
-use crate::token_slice::{find_next_kind, skip_kinds};
+use crate::token_slice::find_next_kind;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 pub(crate) fn parse_block(
@@ -14,7 +14,12 @@ pub(crate) fn parse_block(
     start_at: usize,
 ) -> Result<(NodeRef, usize), ParserError> {
     let block = AstNode::new_ref(NodeClass::Block);
-    let (paragraph, new_index) = parse_paragraph(tokens, start_at, None, None)?;
+    let mut index = start_at;
+    if tokens[start_at].kind == TK::Indent {
+        block.with_attr("indent", tokens[start_at].lexeme.len());
+        index += 1;
+    }
+    let (paragraph, new_index) = parse_paragraph(tokens, index, None, None)?;
     block.push_child(paragraph);
     Ok((block, new_index))
 }
@@ -31,8 +36,9 @@ pub(crate) fn parse_block_hanging_indent(
 
     // Parse the first paragraph
     match tokens[index_line_end + 1].kind {
-        TK::BlankLine => {
-            let (paragraph, new_index) = paragraph::parse_paragraph(tokens, index, None, None)?;
+        TK::BlankLine | TK::Field | TK::BulletListMarker => {
+            let (paragraph, new_index) =
+                paragraph::parse_paragraph(tokens, index, Some(index_line_end + 1), None)?;
             block.push_child(paragraph);
             index = new_index;
         }
@@ -49,7 +55,7 @@ pub(crate) fn parse_block_hanging_indent(
 
     // Parse the rest
     while index < tokens.len() - 2 {
-        let index_line_end = find_next_kind(&tokens, &[TK::NewLine], index, None)
+        let index_line_end = find_next_kind(&tokens, &[TK::NewLine, TK::BlankLine], index, None)
             .expect("Token stream ends with a newline.");
         match (tokens[index].kind, tokens[index_line_end + 1].kind) {
             (TK::Indent, _) => {
@@ -74,6 +80,8 @@ pub(crate) fn parse_block_hanging_indent(
         }
     }
 
-    block.with_attr("indent", indent.unwrap());
+    if let Some(indent) = indent {
+        block.with_attr("indent", indent);
+    }
     Ok((block, index))
 }
