@@ -21,7 +21,7 @@ children:
         attributes:
           marker: "-"
         children:
-          - class: Paragraph
+          - class: Block
             children:
               - class: Paragraph
                 children:

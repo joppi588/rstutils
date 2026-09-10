@@ -17,6 +17,8 @@ children:
         attributes:
           marker: "*"
         children:
+          - class: Block
+            children:
               - class: Paragraph
                 children:
                   - class: PlainText

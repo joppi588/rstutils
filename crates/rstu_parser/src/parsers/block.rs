@@ -62,7 +62,7 @@ pub(crate) fn parse_block_hanging_indent(
                 let (paragraph, new_index) =
                     paragraph::parse_paragraph(tokens, index + 1, None, None)?;
                 block.push_child(paragraph);
-                indent = Some(tokens[index_line_end + 1].lexeme.len());
+                indent = Some(tokens[index].lexeme.len());
                 index = new_index;
             }
             (TK::Word, _) => {
@@ -70,12 +70,17 @@ pub(crate) fn parse_block_hanging_indent(
                 block.push_child(paragraph);
                 index = new_index;
             }
-            (TK::BlankLine, TK::BlankLine | TK::Indent) => {
+            (TK::BlankLine, TK::BlankLine | TK::Indent | TK::Dedent) => {
                 block.push_child(AstNode::new_ref(NodeClass::BlankLine));
-                index = index + 1;
+                index += 1;
+            }
+            (TK::Dedent, _) => {
+                // TODO: Do not dedent completely, modify token stream in place
+                index += 1;
+                break;
             }
             (_, _) => {
-                break;
+                break; // TODO: Should this be an error case?
             }
         }
     }
