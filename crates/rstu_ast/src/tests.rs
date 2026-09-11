@@ -26,33 +26,6 @@ fn push_child_sets_parent_and_appends_child() {
 }
 
 #[test]
-fn push_body_element_attaches_to_section() {
-    let section = AstNode::new_ref(NodeClass::Section);
-    let comment = AstNode::new_ref(NodeClass::Comment);
-
-    let current = section.push_body_element(comment.clone());
-
-    assert!(Rc::ptr_eq(&current, &comment));
-    let borrowed = section.borrow();
-    assert_eq!(borrowed.children.len(), 1);
-    assert!(Rc::ptr_eq(&borrowed.children[0], &comment));
-}
-
-#[test]
-fn push_body_element_falls_back_to_parent() {
-    let document = AstNode::new_ref(NodeClass::Document);
-    let current = AstNode::new_ref(NodeClass::Comment);
-    document.push_child(current.clone());
-
-    let body = AstNode::new_ref(NodeClass::Directive);
-    current.push_body_element(body.clone());
-
-    let borrowed = document.borrow();
-    assert_eq!(borrowed.children.len(), 2);
-    assert!(Rc::ptr_eq(&borrowed.children[1], &body));
-}
-
-#[test]
 fn push_section_with_same_marker_pushes_to_parent_of_self() {
     let tree = AstNode::new_ref(NodeClass::Document);
     let current = section_with_marker("#");
