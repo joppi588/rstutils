@@ -38,7 +38,6 @@ pub(crate) fn parse_paragraph(
             kind if kind.is(TC::PLAIN) || kind == TK::BulletListMarker || kind == TK::NewLine => {
                 parse_plain(&tokens, index, paragraph_end, skip_index)?
             }
-
             _ => {
                 return Err(ParserError::UnexpectedToken {
                     expected: "Inline/plain".to_owned(),

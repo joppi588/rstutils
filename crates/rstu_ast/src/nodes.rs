@@ -15,7 +15,6 @@ pub enum NodeClass {
     FieldListItem,
     FieldList,
     Block,
-    BlockHangingIndent,
     InlineMarkup,
     Paragraph,
     PlainText,

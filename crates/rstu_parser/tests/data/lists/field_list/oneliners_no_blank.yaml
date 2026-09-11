@@ -10,26 +10,32 @@ children:
         attributes:
           fieldname: Author
         children:
-          - class: Paragraph
+          - class: Block
             children:
-              - class: PlainText
-                text: "Me\n"
+            - class: Paragraph
+              children:
+                - class: PlainText
+                  text: "Me\n"
       - class: FieldListItem
         attributes:
           fieldname: Version
         children:
-          - class: Paragraph
+          - class: Block
             children:
-              - class: PlainText
-                text: "1\n"
+            - class: Paragraph
+              children:
+                - class: PlainText
+                  text: "1\n"
       - class: FieldListItem
         attributes:
           fieldname: Date
         children:
-          - class: Paragraph
+          - class: Block
             children:
-              - class: PlainText
-                text: "2001-08-11\n"
+            - class: Paragraph
+              children:
+                - class: PlainText
+                  text: "2001-08-11\n"
       - class: FieldListItem
         attributes:
           fieldname: Parameter i

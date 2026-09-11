@@ -14,7 +14,7 @@ children:
         attributes:
           fieldname: field\:`name`
         children:
-          - class: BlockHangingIndent
+          - class: Block
             attributes:
               indent: 16
             children:

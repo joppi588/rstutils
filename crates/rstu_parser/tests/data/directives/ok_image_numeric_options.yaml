@@ -4,6 +4,7 @@ children:
     attributes:
       directive_arguments: "https://example.com/sample.png"
       directive_type: image
+      indent: 3
     children:
       - class: FieldList
         children:
@@ -11,18 +12,22 @@ children:
             attributes:
               fieldname: height
             children:
-              - class: Paragraph
+              - class: Block
                 children:
-                  - class: PlainText
-                    text: "20mm\n"
+                - class: Paragraph
+                  children:
+                    - class: PlainText
+                      text: "20mm\n"
           - class: FieldListItem
             attributes:
               fieldname: width
             children:
-              - class: Paragraph
-                children:
-                  - class: PlainText
-                    text: "300px\n"
+            - class: Block
+              children:
+                - class: Paragraph
+                  children:
+                    - class: PlainText
+                      text: "300px\n"
           - class: FieldListItem
             attributes:
               fieldname: scale

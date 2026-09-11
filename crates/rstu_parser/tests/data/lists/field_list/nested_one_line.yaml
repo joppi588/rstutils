@@ -22,7 +22,7 @@ children:
     attributes:
       fieldname: field4
     children:
-    - class: BlockHangingIndent
+    - class: Block
       attributes:
         indent: 9
       children:
