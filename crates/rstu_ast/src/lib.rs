@@ -28,7 +28,6 @@ pub trait NodeRefExt {
     fn with_text(&self, text: impl Into<String>) -> NodeRef;
     fn with_attr(&self, key: impl Into<String>, value: impl Into<AttributeType>) -> NodeRef;
     fn push_child(&self, child: NodeRef);
-    fn push_body_element(&self, body: NodeRef) -> NodeRef;
     fn push_section_ref(&self, section: NodeRef) -> NodeRef;
 }
 
@@ -48,24 +47,6 @@ impl NodeRefExt for NodeRef {
     fn push_child(&self, child: NodeRef) {
         child.borrow_mut().parent = Some(Rc::downgrade(self));
         self.borrow_mut().children.push(child);
-    }
-
-    fn push_body_element(&self, body: NodeRef) -> NodeRef {
-        let class = self.borrow().class;
-        match class {
-            NodeClass::Document | NodeClass::Section => self.push_child(body.clone()),
-            _ => {
-                let parent = self
-                    .borrow()
-                    .parent
-                    .as_ref()
-                    .and_then(Weak::upgrade)
-                    .unwrap_or_else(|| self.clone()); // TODO: what does self.clone? Is that branch possible?
-                parent.push_child(body.clone());
-            }
-        }
-
-        body
     }
 
     fn push_section_ref(&self, section: NodeRef) -> NodeRef {

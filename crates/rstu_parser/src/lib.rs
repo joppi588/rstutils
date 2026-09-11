@@ -24,7 +24,7 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
     let tokens = tokenize(input);
     let doc = AstNode::new_ref(NodeClass::Document);
     let mut index: usize = 0;
-    let mut current_node = doc.clone();
+    let mut current_parent = doc.clone();
 
     while index < tokens.len() - 2 {
         // final two tokens are always NewLine+Blankline
@@ -38,27 +38,26 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
             {
                 let (section, next_start) =
                     match_section_header(&tokens, index, token1.is(&[TK::Separator]))?;
-                current_node.push_section_ref(section.clone());
-                current_node = section;
+                current_parent.push_section_ref(section.clone());
+                current_parent = section;
                 index = next_start;
             }
 
             (TK::DoubleDot, _) => {
                 let (directive, next_start) = parse_directive_like(&tokens, index)?;
-                current_node.push_body_element(directive.clone());
-                current_node = directive;
+                current_parent.push_child(directive);
                 index = next_start;
             }
 
             (TK::BulletListMarker, _) => {
                 let (bullet_list, next_start) = parsers::list::parse_bullet_list(&tokens, index)?;
-                current_node.push_body_element(bullet_list);
+                current_parent.push_child(bullet_list);
                 index = next_start;
             }
 
             (TK::Field, _) => {
                 let (field_list, next_start) = parsers::list::parse_field_list(&tokens, index)?;
-                current_node.push_body_element(field_list);
+                current_parent.push_child(field_list);
                 index = next_start;
             }
 
@@ -75,7 +74,7 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
             {
                 let (paragraph, next_start) =
                     parsers::paragraph::parse_paragraph(&tokens, index, None, None)?;
-                current_node.push_child(paragraph.clone());
+                current_parent.push_child(paragraph);
                 index = next_start;
             }
 
