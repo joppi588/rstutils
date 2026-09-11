@@ -80,12 +80,14 @@ fn parse_field_list(#[case] test_case: &str) {
     rst_vs_yaml!("lists/field_list", test_case);
 }
 
-#[test]
-fn field_lists_doesnt_end_in_blankline() {
+#[rstest]
+#[case("nok_empty_item_no_blank.rst")]
+#[case("nok_list_end_no_blank.rst")]
+fn rejects_docutils_field_list_end(#[case] rst_filename: &str) {
     let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tests/data")
         .join("lists/field_list")
-        .join("nok_empty_item_no_blank.rst");
+        .join(rst_filename);
     let rst_contents = fs::read_to_string(&rst_path)
         .unwrap_or_else(|_| panic!("failed to read fixture file: {}", rst_path.display()));
 
