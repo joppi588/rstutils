@@ -41,7 +41,7 @@ pub(crate) fn parse_bullet_list(
                     tokens,
                     skip_kinds(tokens, &[TK::Spaces], index + 1),
                 )
-                .map_err(|_| ParserError::ListEndError {})?; // TODO: Are spaces always one token?
+                .map_err(|_| ParserError::ListEndError {})?;
                 index = new_index;
                 item.push_child(block);
                 list.push_child(item);
