@@ -7,6 +7,8 @@ children:
           marker: "-"
         children:
           - class: Block
+            attributes:
+              indent: 2
             children:
               - class: Paragraph
                 children:
@@ -24,8 +26,8 @@ children:
         children:
           - class: Block
             children:
-              - class: Paragraph
-                children:
-                  - class: PlainText
-                    text: "item 2\n"
-              - class: BlankLine
+            - class: Paragraph
+              children:
+                - class: PlainText
+                  text: "item 2\n"
+      - class: BlankLine

@@ -32,6 +32,8 @@ pub(crate) fn parse_directive(
     let mut index = first_line_end + 1;
     if index >= tokens.len() || tokens[index].kind != TK::Indent {
         return Ok((directive, index));
+    } else {
+        directive.with_attr("indent", tokens[index].lexeme.len());
     }
 
     if tokens[index + 1].kind == TK::Field {
@@ -41,8 +43,7 @@ pub(crate) fn parse_directive(
     }
 
     if index < tokens.len() && tokens[index].kind != TK::Dedent {
-        let body_start = index + usize::from(tokens[index].kind == TK::Indent);
-        let (content, new_index) = block::parse_block(tokens, body_start)?;
+        let (content, new_index) = block::parse_block(tokens, index)?;
         directive.push_child(content);
         index = new_index;
     }

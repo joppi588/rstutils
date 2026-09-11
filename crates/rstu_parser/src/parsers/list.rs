@@ -37,9 +37,11 @@ pub(crate) fn parse_bullet_list(
                 } else {
                     marker = Some(current_marker.clone());
                 }
-                let (block, new_index) =
-                    block::parse_block(tokens, skip_kinds(tokens, &[TK::Spaces], index + 1))
-                        .map_err(|_| ParserError::ListEndError {})?;
+                let (block, new_index) = block::parse_block_hanging_indent(
+                    tokens,
+                    skip_kinds(tokens, &[TK::Spaces], index + 1),
+                )
+                .map_err(|_| ParserError::ListEndError {})?;
                 index = new_index;
                 item.push_child(block);
                 list.push_child(item);
@@ -76,9 +78,11 @@ pub(crate) fn parse_field_list(
                     .to_string();
                 item.with_attr("fieldname", field_name);
 
-                let (block, new_index) =
-                    block::parse_block(tokens, skip_kinds(tokens, &[TK::Spaces], index + 1))
-                        .map_err(|_| ParserError::ListEndError {})?;
+                let (block, new_index) = block::parse_block_hanging_indent(
+                    tokens,
+                    skip_kinds(tokens, &[TK::Spaces], index + 1),
+                )
+                .map_err(|_| ParserError::ListEndError {})?;
                 item.push_child(block);
                 index = new_index;
                 list.push_child(item);
