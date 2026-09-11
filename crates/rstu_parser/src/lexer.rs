@@ -121,7 +121,7 @@ mod tests {
                 (TK::Word, "dedented"),
                 (TK::NewLine, "\n"),
                 (TK::BlankLine, "\n"),
-                (TK::Dedent, "  "),
+                (TK::Dedent, "  ")
             ]
         );
     }
