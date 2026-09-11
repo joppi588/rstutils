@@ -4,6 +4,10 @@
 
 pub mod lexer;
 mod parsers;
+use parsers::comments::parse_comment;
+use parsers::directives::parse_directive;
+use parsers::list::{parse_bullet_list, parse_field_list};
+use parsers::paragraph::parse_paragraph;
 
 pub mod parser_errors;
 pub mod token;
@@ -50,13 +54,13 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
             }
 
             (TK::BulletListMarker, _) => {
-                let (bullet_list, next_start) = parsers::list::parse_bullet_list(&tokens, index)?;
+                let (bullet_list, next_start) = parse_bullet_list(&tokens, index)?;
                 current_parent.push_child(bullet_list);
                 index = next_start;
             }
 
             (TK::Field, _) => {
-                let (field_list, next_start) = parsers::list::parse_field_list(&tokens, index)?;
+                let (field_list, next_start) = parse_field_list(&tokens, index)?;
                 current_parent.push_child(field_list);
                 index = next_start;
             }
@@ -72,8 +76,7 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
                     || kind.is(TC::INLINE_TOKEN)
                     || kind.is(TC::PLAIN) =>
             {
-                let (paragraph, next_start) =
-                    parsers::paragraph::parse_paragraph(&tokens, index, None, None)?;
+                let (paragraph, next_start) = parse_paragraph(&tokens, index, None, None)?;
                 current_parent.push_child(paragraph);
                 index = next_start;
             }
@@ -158,8 +161,8 @@ fn parse_directive_like(
     )
     .expect(EXPECT_NEWLINE);
     let (directive, new_index) = match &tokens[index].kind {
-        TK::NewLine => parsers::comments::parse_comment(tokens, start_at, index)?,
-        TK::DoubleColon => parsers::directives::parse_directive(tokens, start_at, index)?,
+        TK::NewLine => parse_comment(tokens, start_at, index)?,
+        TK::DoubleColon => parse_directive(tokens, start_at, index)?,
         _ => panic!("Not implemented directive-like structure."),
     };
     Ok((directive, new_index))

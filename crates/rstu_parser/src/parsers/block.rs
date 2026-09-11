@@ -2,9 +2,8 @@
 //
 // SPDX-License-Identifier: MIT
 
-use super::paragraph;
+use super::paragraph::parse_paragraph;
 use crate::parser_errors::ParserError;
-use crate::parsers::paragraph::parse_paragraph;
 use crate::token::{Token, TokenKind as TK};
 use crate::token_slice::find_next_kind;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
@@ -38,13 +37,13 @@ pub(crate) fn parse_block_hanging_indent(
     match tokens[index_line_end + 1].kind {
         TK::BlankLine | TK::Field | TK::BulletListMarker => {
             let (paragraph, new_index) =
-                paragraph::parse_paragraph(tokens, index, Some(index_line_end + 1), None)?;
+                parse_paragraph(tokens, index, Some(index_line_end + 1), None)?;
             block.push_child(paragraph);
             index = new_index;
         }
         TK::Indent => {
             let (paragraph, new_index) =
-                paragraph::parse_paragraph(tokens, index, None, Some(index_line_end + 1))?;
+                parse_paragraph(tokens, index, None, Some(index_line_end + 1))?;
             block.push_child(paragraph);
             indent = Some(tokens[index_line_end + 1].lexeme.len());
 
@@ -59,14 +58,13 @@ pub(crate) fn parse_block_hanging_indent(
             .expect("Token stream ends with a newline.");
         match (tokens[index].kind, tokens[index_line_end + 1].kind) {
             (TK::Indent, _) => {
-                let (paragraph, new_index) =
-                    paragraph::parse_paragraph(tokens, index + 1, None, None)?;
+                let (paragraph, new_index) = parse_paragraph(tokens, index + 1, None, None)?;
                 block.push_child(paragraph);
                 indent = Some(tokens[index].lexeme.len());
                 index = new_index;
             }
             (TK::Word, _) => {
-                let (paragraph, new_index) = paragraph::parse_paragraph(tokens, index, None, None)?;
+                let (paragraph, new_index) = parse_paragraph(tokens, index, None, None)?;
                 block.push_child(paragraph);
                 index = new_index;
             }
