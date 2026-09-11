@@ -54,4 +54,4 @@ children:
                 children:
                   - class: PlainText
                     text: "\ninteger\n"
-              - class: BlankLine
+      - class: BlankLine

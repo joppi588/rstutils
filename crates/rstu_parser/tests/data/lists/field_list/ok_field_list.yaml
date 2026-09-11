@@ -10,10 +10,12 @@ children:
         attributes:
           fieldname: field_1
         children:
-          - class: Paragraph
+          - class: Block
             children:
-              - class: PlainText
-                text: "Some Text\n"
+            - class: Paragraph
+              children:
+                - class: PlainText
+                  text: "Some Text\n"
       - class: FieldListItem
         attributes:
           fieldname: field_2

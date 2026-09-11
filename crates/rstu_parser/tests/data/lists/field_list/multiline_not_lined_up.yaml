@@ -54,4 +54,4 @@ children:
                 children:
                   - class: PlainText
                     text: "counter\n(integer)\n"
-              - class: BlankLine
+      - class: BlankLine

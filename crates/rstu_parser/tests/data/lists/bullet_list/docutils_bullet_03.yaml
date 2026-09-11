@@ -30,3 +30,4 @@ children:
               children:
                 - class: PlainText
                   text: "item 2\n"
+      - class: BlankLine

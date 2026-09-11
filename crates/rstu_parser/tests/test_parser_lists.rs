@@ -16,8 +16,8 @@ mod test_parser;
 #[case("ok_compact_bullet_list")]
 #[case("docutils_bullet_00")]
 #[case("docutils_bullet_01")]
+#[case("docutils_bullet_02")]
 #[case("docutils_bullet_03")]
-// #[case("docutils_bullet_02")] no blank lines
 // #[case("docutils_bullet_04")]
 #[case("docutils_bullet_07")]
 // #[case("docutils_bullet_09")]
