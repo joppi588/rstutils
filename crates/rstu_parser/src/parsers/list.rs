@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-use super::block;
+use super::block::parse_block_hanging_indent;
 use crate::parser_errors::ParserError;
 use crate::token::{Token, TokenKind as TK};
 use crate::token_slice::skip_kinds;
@@ -37,7 +37,7 @@ pub(crate) fn parse_bullet_list(
                 } else {
                     marker = Some(current_marker.clone());
                 }
-                let (block, new_index) = block::parse_block_hanging_indent(
+                let (block, new_index) = parse_block_hanging_indent(
                     tokens,
                     skip_kinds(tokens, &[TK::Spaces], index + 1),
                 )
@@ -78,7 +78,7 @@ pub(crate) fn parse_field_list(
                     .to_string();
                 item.with_attr("fieldname", field_name);
 
-                let (block, new_index) = block::parse_block_hanging_indent(
+                let (block, new_index) = parse_block_hanging_indent(
                     tokens,
                     skip_kinds(tokens, &[TK::Spaces], index + 1),
                 )

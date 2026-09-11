@@ -4,7 +4,7 @@
 
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
-use super::{block, list};
+use super::{block::parse_block, list::parse_field_list};
 use crate::parser_errors::{ParserError, EXPECT_NEWLINE};
 use crate::token::{Token, TokenKind as TK};
 use crate::token_slice::{find_next_kind, tokens_to_text};
@@ -37,13 +37,13 @@ pub(crate) fn parse_directive(
     }
 
     if tokens[index + 1].kind == TK::Field {
-        let (options, new_index) = list::parse_field_list(tokens, index + 1)?;
+        let (options, new_index) = parse_field_list(tokens, index + 1)?;
         directive.push_child(options);
         index = new_index;
     }
 
     if index < tokens.len() && tokens[index].kind != TK::Dedent {
-        let (content, new_index) = block::parse_block(tokens, index)?;
+        let (content, new_index) = parse_block(tokens, index)?;
         directive.push_child(content);
         index = new_index;
     }
