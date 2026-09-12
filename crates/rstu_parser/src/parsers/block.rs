@@ -18,9 +18,31 @@ pub(crate) fn parse_block(
         block.with_attr("indent", tokens[start_at].lexeme.len());
         index += 1;
     }
-    let (paragraph, new_index) = parse_paragraph(tokens, index, None, None)?;
-    block.push_child(paragraph);
-    Ok((block, new_index))
+    while index < tokens.len() - 2 {
+        let index_line_end = find_next_kind(&tokens, &[TK::NewLine, TK::BlankLine], index, None)
+            .expect("Token stream ends with a newline.");
+        match (tokens[index].kind, tokens[index_line_end + 1].kind) {
+            (TK::Word, _) => {
+                let (paragraph, new_index) = parse_paragraph(tokens, index, None, None)?;
+                block.push_child(paragraph);
+                index = new_index;
+            }
+            (TK::BlankLine, TK::BlankLine | TK::Indent | TK::Word) => {
+                block.push_child(AstNode::new_ref(NodeClass::BlankLine));
+                index += 1;
+            }
+            (TK::Dedent, _) => {
+                // TODO: Do not dedent completely, modify token stream in place
+                index += 1;
+                break;
+            }
+            (_, _) => {
+                break; // TODO: Should this be an error case?
+            }
+        }
+    }
+
+    Ok((block, index))
 }
 
 pub(crate) fn parse_block_hanging_indent(
