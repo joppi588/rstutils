@@ -16,16 +16,17 @@ Rationale: ruff as reference implementation, cool language :)
 2. Make or buy
 Option 1: Build on top of rst_parser package
 Option 2: Start from Scratch
-Start from scratch while reading the existing packages
+Start from scratch while reading the existing packages.
 Rationale: Limited rust knowledge at project start, limitations of pest-parser approach (section stack, rst error detection)
 
 3. AST and Doctree
 We use first an abstract syntax tree to parse the structure of the document (e.g. directives, indented blocks,...).
-This step is beneficial since
+This step is beneficial since:
 - the doctree according to docutils is already at a semantic level.
   e.g. a bullet list with mixed markers shall be allowed and eventually re-formatted automatically.
   The doctree requires a uniform marker already
 - The AST shall allow round-trip (with minor limitations)
+- AST focusses on pure syntax representation. Validation can be separated.
 The transformation of AST into to a doctree is done by a later transformation step.
 
 Implementation:
@@ -38,11 +39,10 @@ Rationale: more simple AST definition
 Use a 1 character context before and after the token.
 
 5. Parser approach
-Top-down.
+Top-down. Lookahead one line.
 - Level 1: Document structure (sections)
-           Lookahead one line.
 - Level 2: Main blocks (directives, comments)
-- Level 3 (recursive): Body elements
+- Level 3: (recursive): Body elements
 This represents the language structure.
 
 # Architectural drivers
