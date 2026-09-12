@@ -71,21 +71,21 @@ impl NodeRefExt for NodeRef {
         );
 
         let section_marker = section.borrow().get_string_attr("section_marker");
+        let self_marker = self.borrow().get_string_attr("section_marker");
 
-        let target_parent = if self.get_parent().is_none() {
-            self.clone()
-        } else {
-            let self_marker = self.borrow().get_string_attr("section_marker");
-            if self_marker == section_marker {
-                self.get_parent().unwrap()
-            } else if let Some(ancestor) =
-                AstNode::closest_ancestor_section(self, section_marker.as_deref())
-            {
-                ancestor.get_parent().unwrap()
-            } else if let Some(closest) = AstNode::closest_ancestor_section(self, None) {
-                closest
-            } else {
-                self.get_root()
+        let target_parent = match self.get_parent() {
+            None => self.clone(),
+            Some(parent) if self_marker == section_marker => parent,
+            Some(_) => {
+                if let Some(ancestor) =
+                    AstNode::closest_ancestor_section(self, section_marker.as_deref())
+                {
+                    ancestor.get_parent().unwrap()
+                } else if let Some(closest) = AstNode::closest_ancestor_section(self, None) {
+                    closest
+                } else {
+                    self.get_root()
+                }
             }
         };
 
