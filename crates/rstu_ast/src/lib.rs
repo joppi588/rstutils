@@ -64,28 +64,21 @@ impl NodeRefExt for NodeRef {
             let self_marker = self.borrow().get_string_attr("section_marker");
             if self_marker == section_marker {
                 self.borrow()
-                    .parent
-                    .as_ref()
-                    .and_then(Weak::upgrade)
+                    .get_parent()
                     .expect("A section always has a parent.")
             } else if let Some(ancestor) =
                 AstNode::closest_ancestor_section(self, section_marker.as_deref())
             {
                 ancestor
                     .borrow()
-                    .parent
-                    .as_ref()
-                    .and_then(Weak::upgrade)
+                    .get_parent()
                     .expect("A section always has a parent.")
             } else if let Some(closest) = AstNode::closest_ancestor_section(self, None) {
                 closest
             } else {
                 let mut root = self.clone();
                 loop {
-                    let next = {
-                        let borrowed = root.borrow();
-                        borrowed.parent.as_ref().and_then(Weak::upgrade)
-                    };
+                    let next = root.borrow().get_parent();
                     match next {
                         Some(parent) => root = parent,
                         None => break,
@@ -116,6 +109,10 @@ impl AstNode {
             .get(key)
             .and_then(AttributeType::as_str)
             .map(str::to_owned)
+    }
+
+    fn get_parent(&self) -> Option<NodeRef> {
+        self.parent.as_ref().and_then(Weak::upgrade)
     }
 
     /// returns the current section the node is in
