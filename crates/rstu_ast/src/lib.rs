@@ -28,6 +28,7 @@ pub trait NodeRefExt {
     fn with_text(&self, text: impl Into<String>) -> NodeRef;
     fn with_attr(&self, key: impl Into<String>, value: impl Into<AttributeType>) -> NodeRef;
     fn push_child(&self, child: NodeRef);
+    fn get_parent(&self) -> Option<NodeRef>;
     fn push_section_ref(&self, section: NodeRef) -> NodeRef;
 }
 
@@ -49,6 +50,10 @@ impl NodeRefExt for NodeRef {
         self.borrow_mut().children.push(child);
     }
 
+    fn get_parent(&self) -> Option<NodeRef> {
+        self.borrow().parent.as_ref().and_then(Weak::upgrade)
+    }
+
     fn push_section_ref(&self, section: NodeRef) -> NodeRef {
         assert_eq!(
             section.borrow().class,
@@ -58,27 +63,22 @@ impl NodeRefExt for NodeRef {
 
         let section_marker = section.borrow().get_string_attr("section_marker");
 
-        let target_parent = if self.borrow().parent.is_none() {
+        let target_parent = if self.get_parent().is_none() {
             self.clone()
         } else {
             let self_marker = self.borrow().get_string_attr("section_marker");
             if self_marker == section_marker {
-                self.borrow()
-                    .get_parent()
-                    .expect("A section always has a parent.")
+                self.get_parent().unwrap()
             } else if let Some(ancestor) =
                 AstNode::closest_ancestor_section(self, section_marker.as_deref())
             {
-                ancestor
-                    .borrow()
-                    .get_parent()
-                    .expect("A section always has a parent.")
+                ancestor.get_parent().unwrap()
             } else if let Some(closest) = AstNode::closest_ancestor_section(self, None) {
                 closest
             } else {
                 let mut root = self.clone();
                 loop {
-                    let next = root.borrow().get_parent();
+                    let next = root.get_parent();
                     match next {
                         Some(parent) => root = parent,
                         None => break,
@@ -111,10 +111,6 @@ impl AstNode {
             .map(str::to_owned)
     }
 
-    fn get_parent(&self) -> Option<NodeRef> {
-        self.parent.as_ref().and_then(Weak::upgrade)
-    }
-
     /// returns the current section the node is in
     /// - with the given marker
     /// - the lowest section if no marker given.
@@ -134,11 +130,7 @@ impl AstNode {
             if matches {
                 return Some(current_node);
             }
-            current = current_node
-                .borrow()
-                .parent
-                .as_ref()
-                .and_then(Weak::upgrade);
+            current = current_node.get_parent();
         }
         None
     }
