@@ -3,7 +3,8 @@ children:
   - class: Paragraph
     children:
       - class: PlainText
-        text: "Multiple body elements:\n"
+        attributes:
+          text: "Multiple body elements:\n"
   - class: FieldList
     children:
       - class: FieldListItem
@@ -19,7 +20,8 @@ children:
                   - class: Paragraph
                     children:
                       - class: PlainText
-                        text: "Me\n"
+                        attributes:
+                          text: "Me\n"
               - class: BulletListItem
                 attributes:
                   marker: "-"
@@ -27,7 +29,8 @@ children:
                   - class: Paragraph
                     children:
                       - class: PlainText
-                        text: "Myself\n"
+                        attributes:
+                          text: "Myself\n"
               - class: BulletListItem
                 attributes:
                   marker: "-"
@@ -35,7 +38,8 @@ children:
                   - class: Paragraph
                     children:
                       - class: PlainText
-                        text: "I\n"
+                        attributes:
+                          text: "I\n"
           - class: BlankLine
       - class: FieldListItem
         attributes:
@@ -48,21 +52,25 @@ children:
               - class: Paragraph
                 children:
                   - class: PlainText
-                    text: "This is a field list item's body,
+                    attributes:
+                      text: "This is a field list item's body,
 
-                      containing multiple elements.\n"
+                        containing multiple elements.\n"
               - class: Paragraph
                 children:
                   - class: PlainText
-                    text: "Here's a literal block::\n"
+                    attributes:
+                      text: "Here's a literal block::\n"
               - class: Paragraph
                 children:
                   - class: PlainText
-                    text: "def f(x):\n    return x**2 + x\n"
+                    attributes:
+                      text: "def f(x):\n    return x**2 + x\n"
               - class: Paragraph
                 children:
                   - class: PlainText
-                    text: "Even nested field lists are possible:\n"
+                    attributes:
+                      text: "Even nested field lists are possible:\n"
               - class: FieldList
                 children:
                   - class: FieldListItem
@@ -72,7 +80,8 @@ children:
                       - class: Paragraph
                         children:
                           - class: PlainText
-                            text: "2001-08-11\n"
+                            attributes:
+                              text: "2001-08-11\n"
                   - class: FieldListItem
                     attributes:
                       fieldname: Day
@@ -80,7 +89,8 @@ children:
                       - class: Paragraph
                         children:
                           - class: PlainText
-                            text: "Saturday\n"
+                            attributes:
+                              text: "Saturday\n"
                   - class: FieldListItem
                     attributes:
                       fieldname: Time
@@ -88,4 +98,5 @@ children:
                       - class: Paragraph
                         children:
                           - class: PlainText
-                            text: "15:07\n"
+                            attributes:
+                              text: "15:07\n"

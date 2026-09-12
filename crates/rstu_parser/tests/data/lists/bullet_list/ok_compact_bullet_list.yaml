@@ -3,7 +3,8 @@ children:
   - class: Paragraph
     children:
       - class: PlainText
-        text: "This is a bullet list without blanklines:\n"
+        attributes:
+          text: "This is a bullet list without blanklines:\n"
   - class: BulletList
     children:
       - class: BulletListItem
@@ -15,7 +16,8 @@ children:
               - class: Paragraph
                 children:
                   - class: PlainText
-                    text: "First item\n"
+                    attributes:
+                      text: "First item\n"
       - class: BulletListItem
         attributes:
           marker: "-"
@@ -25,5 +27,6 @@ children:
               - class: Paragraph
                 children:
                   - class: PlainText
-                    text: "Second item\n"
+                    attributes:
+                      text: "Second item\n"
       - class: BlankLine

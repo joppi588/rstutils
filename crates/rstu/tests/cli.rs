@@ -63,6 +63,6 @@ fn parse_prints_ast_as_json() {
     let _ = std::fs::remove_file(&file_path);
     assert_eq!(
         stdout,
-        r#"{"children":[{"children":[{"class":"PlainText","text":"Hello\n"}],"class":"Paragraph"}],"class":"Document"}"#
+        r#"{"children":[{"children":[{"attributes":{"text":"Hello\n"},"class":"PlainText"}],"class":"Paragraph"}],"class":"Document"}"#
     );
 }

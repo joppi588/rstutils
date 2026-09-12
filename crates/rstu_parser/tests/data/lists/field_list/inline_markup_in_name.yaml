@@ -3,32 +3,38 @@ children:
   - class: Paragraph
     children:
       - class: PlainText
-        text: ":Field "
+        attributes:
+          text: ":Field "
       - class: InlineMarkup
         attributes:
           markup: emphasis
-        text: name
+          text: name
       - class: PlainText
-        text: " "
+        attributes:
+          text: " "
       - class: InlineMarkup
         attributes:
           markup: interpreted_text
-        text: with
+          text: with
       - class: PlainText
-        text: " "
+        attributes:
+          text: " "
       - class: InlineMarkup
         attributes:
           markup: strong
-        text: inline
+          text: inline
       - class: PlainText
-        text: " "
+        attributes:
+          text: " "
       - class: InlineMarkup
         attributes:
           markup: inline_literal
-        text: markup
+          text: markup
       - class: PlainText
-        text: ": inline markup in\n"
+        attributes:
+          text: ": inline markup in\n"
   - class: Paragraph
     children:
       - class: PlainText
-        text: "field name is parsed.\n"
+        attributes:
+          text: "field name is parsed.\n"

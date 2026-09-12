@@ -25,6 +25,6 @@ pub(crate) fn parse_comment(
         &tokens[start_at + 2..index + 1],
         &[TK::Indent, TK::Dedent],
     );
-    comment.with_text(token_slice::tokens_to_text(&comment_tokens));
+    comment.with_attr("text", token_slice::tokens_to_text(&comment_tokens));
     Ok((comment, index + 1))
 }

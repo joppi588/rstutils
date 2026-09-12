@@ -3,10 +3,12 @@ children:
   - class: Paragraph
     children:
       - class: PlainText
-        text: ":Field name with "
+        attributes:
+          text: ":Field name with "
       - class: InlineMarkup
         attributes:
           markup: emphasis
-        text: ""
+          text: ""
       - class: PlainText
-        text: "bad inline markup: should generate warning.\n"
+        attributes:
+          text: "bad inline markup: should generate warning.\n"
