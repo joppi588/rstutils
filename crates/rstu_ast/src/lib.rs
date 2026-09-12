@@ -46,11 +46,6 @@ impl NodeRefExt for NodeRef {
         self.clone()
     }
 
-    fn push_child(&self, child: NodeRef) {
-        child.borrow_mut().parent = Some(Rc::downgrade(self));
-        self.borrow_mut().children.push(child);
-    }
-
     fn get_parent(&self) -> Option<NodeRef> {
         self.borrow().parent.as_ref().and_then(Weak::upgrade)
     }
@@ -61,6 +56,11 @@ impl NodeRefExt for NodeRef {
             root = parent;
         }
         root
+    }
+
+    fn push_child(&self, child: NodeRef) {
+        child.borrow_mut().parent = Some(Rc::downgrade(self));
+        self.borrow_mut().children.push(child);
     }
 
     fn push_section_ref(&self, section: NodeRef) -> NodeRef {
