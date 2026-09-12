@@ -7,33 +7,38 @@ children:
       section_marker: "-"
     children:
       - class: Title
-        text: "All inline markups"
+        attributes:
+          text: "All inline markups"
       - class: Paragraph
         children:
           - class: InlineMarkup
-            text: em
             attributes:
+              text: em
               markup: emphasis
           - class: PlainText
-            text: " "
-          - class: InlineMarkup
-            text: strong
             attributes:
+              text: " "
+          - class: InlineMarkup
+            attributes:
+              text: strong
               markup: strong
           - class: PlainText
-            text: " "
-          - class: InlineMarkup
-            text: lit
             attributes:
+              text: " "
+          - class: InlineMarkup
+            attributes:
+              text: lit
               markup: inline_literal
           - class: PlainText
-            text: " "
-          - class: InlineMarkup
-            text: interp
             attributes:
+              text: " "
+          - class: InlineMarkup
+            attributes:
+              text: interp
               markup: interpreted_text
           - class: PlainText
-            text: "\n"
+            attributes:
+              text: "\n"
   - class: Section
     attributes:
       marker_len: 17
@@ -41,39 +46,45 @@ children:
       section_marker: "-"
     children:
       - class: Title
-        text: "Inline references"
+        attributes:
+          text: "Inline references"
       - class: Paragraph
         children:
           - class: Reference
-            text: simple_reference
             attributes:
+              text: simple_reference
               type: simple_ref
           - class: PlainText
-            text: " "
-          - class: Reference
-            text: anonymous_reference
             attributes:
+              text: " "
+          - class: Reference
+            attributes:
+              text: anonymous_reference
               type: simple_anonymous_ref
           - class: PlainText
-            text: " "
-          - class: InlineMarkup
-            text: link
             attributes:
+              text: " "
+          - class: InlineMarkup
+            attributes:
+              text: link
               markup: hyperlink_reference
           - class: PlainText
-            text: " "
-          - class: Reference
-            text: "1]_ [CIT"
             attributes:
+              text: " "
+          - class: Reference
+            attributes:
+              text: "1]_ [CIT"
               type: footnote
           - class: PlainText
-            text: " "
-          - class: Reference
-            text: "sub"
             attributes:
+              text: " "
+          - class: Reference
+            attributes:
+              text: "sub"
               type: sub
           - class: PlainText
-            text: "\n"
+            attributes:
+              text: "\n"
 
   - class: Section
     attributes:
@@ -82,12 +93,14 @@ children:
       section_marker: "-"
     children:
       - class: Title
-        text: "Inline internal targets"
+        attributes:
+          text: "Inline internal targets"
       - class: Paragraph
         children:
           - class: InlineMarkup
-            text: target
             attributes:
+              text: target
               markup: inline_internal_target
           - class: PlainText
-            text: "\n"
+            attributes:
+              text: "\n"

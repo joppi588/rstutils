@@ -3,7 +3,8 @@ children:
   - class: Paragraph
     children:
       - class: PlainText
-        text: "This is a field list:\n"
+        attributes:
+          text: "This is a field list:\n"
   - class: FieldList
     children:
       - class: FieldListItem
@@ -15,7 +16,8 @@ children:
             - class: Paragraph
               children:
                 - class: PlainText
-                  text: "Some Text\n"
+                  attributes:
+                    text: "Some Text\n"
       - class: FieldListItem
         attributes:
           fieldname: field_2
@@ -25,12 +27,14 @@ children:
               - class: Paragraph
                 children:
                   - class: PlainText
-                    text: "More Text\n"
+                    attributes:
+                      text: "More Text\n"
       - class: BlankLine
   - class: Paragraph
     children:
       - class: PlainText
-        text: "A field list with hanging indent:\n"
+        attributes:
+          text: "A field list with hanging indent:\n"
   - class: FieldList
     children:
       - class: FieldListItem
@@ -44,7 +48,8 @@ children:
               - class: Paragraph
                 children:
                   - class: PlainText
-                    text: "Text here\nreads better if\nwrapped around.\n"
+                    attributes:
+                      text: "Text here\nreads better if\nwrapped around.\n"
       - class: FieldListItem
         attributes:
           fieldname: field_2
@@ -54,12 +59,14 @@ children:
               - class: Paragraph
                 children:
                   - class: PlainText
-                    text: "more Text\n"
+                    attributes:
+                      text: "more Text\n"
       - class: BlankLine
   - class: Paragraph
     children:
       - class: PlainText
-        text: "In field lists\n"
+        attributes:
+          text: "In field lists\n"
   - class: FieldList
     children:
       - class: FieldListItem
@@ -71,7 +78,8 @@ children:
               - class: Paragraph
                 children:
                   - class: PlainText
-                    text: "Blank lines\n"
+                    attributes:
+                      text: "Blank lines\n"
       - class: BlankLine
       - class: FieldListItem
         attributes:
@@ -82,5 +90,6 @@ children:
               - class: Paragraph
                 children:
                   - class: PlainText
-                    text: "will not start a new list\n"
+                    attributes:
+                      text: "will not start a new list\n"
       - class: BlankLine

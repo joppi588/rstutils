@@ -4,4 +4,5 @@ children:
     children:
       - kind: Image
       - kind: Caption
-        text: Figure caption
+        attributes:
+          text: Figure caption

@@ -9,7 +9,8 @@ children:
           - class: Paragraph
             children:
               - class: PlainText
-                text: "field\n"
+                attributes:
+                  text: "field\n"
       - class: FieldListItem
         attributes:
           fieldname: field:name:with:embedded:colons
@@ -17,10 +18,12 @@ children:
           - class: Paragraph
             children:
               - class: PlainText
-                text: "unambiguous, no need for escapes\n"
+                attributes:
+                  text: "unambiguous, no need for escapes\n"
           - class: BlankLine
   - class: Comment
-    text: "\n"
+    attributes:
+      text: "\n"
   - class: FieldList
     children:
       - class: FieldListItem
@@ -30,7 +33,8 @@ children:
           - class: Paragraph
             children:
               - class: PlainText
-                text: "in first field name\n"
+                attributes:
+                  text: "in first field name\n"
       - class: FieldListItem
         attributes:
           fieldname: field:\`:name
@@ -38,7 +42,8 @@ children:
           - class: Paragraph
             children:
               - class: PlainText
-                text: "not interpreted text\n"
+                attributes:
+                  text: "not interpreted text\n"
       - class: FieldListItem
         attributes:
           fieldname: field:\`name
@@ -46,4 +51,5 @@ children:
           - class: Paragraph
             children:
               - class: PlainText
-                text: "not interpreted text\n"
+                attributes:
+                  text: "not interpreted text\n"

@@ -3,6 +3,8 @@ children:
   - kind: Section
     children:
       - kind: Title
-        text: Heading
+        attributes:
+          text: Heading
       - kind: Paragraph
-        text: Body text
+        attributes:
+          text: Body text
