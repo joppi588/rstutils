@@ -3,9 +3,10 @@ children:
 - class: Paragraph
   children:
   - class: PlainText
-    text: 'Nested field lists on one line:
+    attributes:
+      text: 'Nested field lists on one line:
 
-      '
+        '
 - class: FieldList
   children:
   - class: FieldListItem
@@ -15,9 +16,10 @@ children:
     - class: Paragraph
       children:
       - class: PlainText
-        text: ':field2: :field3: body
+        attributes:
+          text: ':field2: :field3: body
 
-          '
+            '
   - class: FieldListItem
     attributes:
       fieldname: field4
@@ -29,9 +31,10 @@ children:
       - class: Paragraph
         children:
         - class: PlainText
-          text: ':field5: :field6: body
+          attributes:
+            text: ':field5: :field6: body
 
-            '
+              '
       - class: FieldList
         children:
         - class: FieldListItem
@@ -41,9 +44,10 @@ children:
           - class: Paragraph
             children:
             - class: PlainText
-              text: 'body
+              attributes:
+                text: 'body
 
-                '
+                  '
       - class: FieldList
         children:
         - class: FieldListItem
@@ -53,9 +57,10 @@ children:
           - class: Paragraph
             children:
             - class: PlainText
-              text: 'body
+              attributes:
+                text: 'body
 
-                '
+                  '
         - class: FieldListItem
           attributes:
             fieldname: field9
@@ -63,4 +68,5 @@ children:
           - class: Paragraph
             children:
             - class: PlainText
-              text: "body line 1\n  body line 2\n"
+              attributes:
+                text: "body line 1\n  body line 2\n"

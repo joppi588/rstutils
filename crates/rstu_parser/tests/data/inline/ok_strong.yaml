@@ -7,38 +7,45 @@ children:
       section_marker: "-"
     children:
       - class: Title
-        text: "Short text with strong elements"
+        attributes:
+          text: "Short text with strong elements"
       - class: Paragraph
         children:
           - class: InlineMarkup
-            text: print this in bold text.
             attributes:
+              text: print this in bold text.
               markup: strong
           - class: PlainText
-            text: "\n"
+            attributes:
+              text: "\n"
       - class: Paragraph
         children:
           - class: PlainText
-            text: "print "
-          - class: InlineMarkup
-            text: this
             attributes:
+              text: "print "
+          - class: InlineMarkup
+            attributes:
+              text: this
               markup: strong
           - class: PlainText
-            text: " too.\n"
+            attributes:
+              text: " too.\n"
       - class: Paragraph
         children:
           - class: PlainText
-            text: "This "
-          - class: InlineMarkup
-            text: should
             attributes:
+              text: "This "
+          - class: InlineMarkup
+            attributes:
+              text: should
               markup: strong
           - class: PlainText
-            text: " "
-          - class: InlineMarkup
-            text: work as
             attributes:
+              text: " "
+          - class: InlineMarkup
+            attributes:
+              text: work as
               markup: strong
           - class: PlainText
-            text: " well.\n"
+            attributes:
+              text: " well.\n"

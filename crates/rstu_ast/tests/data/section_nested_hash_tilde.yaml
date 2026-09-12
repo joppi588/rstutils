@@ -9,4 +9,5 @@ children:
           section_marker: "~"
         children:
           - kind: Paragraph
-            text: Body text
+            attributes:
+              text: Body text

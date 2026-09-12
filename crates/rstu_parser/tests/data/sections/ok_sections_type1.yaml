@@ -7,11 +7,13 @@ children:
       marker_len_opening: 0
     children:
       - class: Title
-        text: "Heading I"
+        attributes:
+          text: "Heading I"
       - class: Paragraph
         children:
           - class: PlainText
-            text: "Some Text\n"
+            attributes:
+              text: "Some Text\n"
       - class: Section
         attributes:
           section_marker: "-"
@@ -19,11 +21,13 @@ children:
           marker_len_opening: 0
         children:
           - class: Title
-            text: "Heading II"
+            attributes:
+              text: "Heading II"
           - class: Paragraph
             children:
               - class: PlainText
-                text: "More Text\n"
+                attributes:
+                  text: "More Text\n"
   - class: Section
     attributes:
       section_marker: "="
@@ -31,8 +35,10 @@ children:
       marker_len_opening: 0
     children:
       - class: Title
-        text: "Heading III"
+        attributes:
+          text: "Heading III"
       - class: Paragraph
         children:
           - class: PlainText
-            text: "Same level as Heading 1.\n"
+            attributes:
+              text: "Same level as Heading 1.\n"

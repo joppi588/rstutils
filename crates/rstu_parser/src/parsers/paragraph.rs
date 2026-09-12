@@ -61,19 +61,19 @@ pub(crate) fn parse_inline_token(
     let lexeme = &tokens[at].lexeme;
     match kind {
         TK::FootnoteReference => {
-            node.with_text(&lexeme[1..lexeme.len() - 2])
+            node.with_attr("text", &lexeme[1..lexeme.len() - 2])
                 .with_attr("type", "footnote");
         }
         TK::SubstitutionReference => {
-            node.with_text(&lexeme[1..lexeme.len() - 1])
+            node.with_attr("text", &lexeme[1..lexeme.len() - 1])
                 .with_attr("type", "sub");
         }
         TK::SimpleHyperlinkReference => {
-            node.with_text(&lexeme[0..lexeme.len() - 1])
+            node.with_attr("text", &lexeme[0..lexeme.len() - 1])
                 .with_attr("type", "simple_ref");
         }
         TK::SimpleAnonymousHyperLinkReference => {
-            node.with_text(&lexeme[0..lexeme.len() - 2])
+            node.with_attr("text", &lexeme[0..lexeme.len() - 2])
                 .with_attr("type", "simple_anonymous_ref");
         }
 
@@ -128,7 +128,7 @@ pub(crate) fn parse_inline(
     let inline = AstNode::new_ref(NodeClass::InlineMarkup);
     inline
         .with_attr("markup", effective_markup)
-        .with_text(tokens_to_text(&tokens[start_at + 1..inline_final]));
+        .with_attr("text", tokens_to_text(&tokens[start_at + 1..inline_final]));
     Ok((inline, inline_final + 1))
 }
 
@@ -161,7 +161,7 @@ fn parse_plain(
     }
 
     let sentence = AstNode::new_ref(NodeClass::PlainText);
-    sentence.with_text(text);
+    sentence.with_attr("text", text);
     Ok((sentence, index))
 }
 
@@ -184,8 +184,11 @@ mod tests {
 
         assert_eq!(next_index, 3);
         assert_eq!(
-            paragraph.borrow().children[0].borrow().text,
-            Some("helloagain".into())
+            paragraph.borrow().children[0]
+                .borrow()
+                .attributes
+                .get("text"),
+            Some(&"helloagain".into())
         );
     }
 }

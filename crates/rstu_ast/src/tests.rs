@@ -64,7 +64,7 @@ fn to_json_serializes_node_tree_without_parent() {
         .with_attr("marker_len", 9usize);
 
     let title = AstNode::new_ref(NodeClass::Title);
-    title.with_text("Heading 1\n");
+    title.with_attr("text", "Heading 1\n");
     section.push_child(title);
     root.push_child(section);
 
@@ -87,7 +87,9 @@ fn to_json_serializes_node_tree_without_parent() {
                     "children": [
                         {
                             "class": "Title",
-                            "text": "Heading 1\n",
+                            "attributes": {
+                                "text": "Heading 1\n",
+                            },
                         }
                     ]
                 }
@@ -107,28 +109,29 @@ fn to_yaml_serializes_node_tree_without_parent() {
         .with_attr("marker_len", 9usize);
 
     let title = AstNode::new_ref(NodeClass::Title);
-    title.with_text("Heading 1\n");
+    title.with_attr("text", "Heading 1\n");
     section.push_child(title);
     root.push_child(section);
 
     let yaml_text = AstNode::to_yaml(&root).expect("failed to serialize yaml");
     let actual: serde_yaml::Value =
         serde_yaml::from_str(&yaml_text).expect("failed to parse generated yaml");
-    let expected: serde_yaml::Value = serde_yaml::from_str(
-        r#"class: Document
-attributes:
-  lang: rst
-children:
-  - class: Section
-    attributes:
-      section_marker: =========
-      marker_len: 9
-    children:
-      - class: Title
-        text: "Heading 1\n"
-"#,
-    )
-    .expect("failed to parse expected yaml");
+    let expected = serde_yaml::to_value(json!({
+        "class": "Document",
+        "attributes": { "lang": "rst" },
+        "children": [{
+            "class": "Section",
+            "attributes": {
+                "section_marker": "=========",
+                "marker_len": 9,
+            },
+            "children": [{
+                "class": "Title",
+                "attributes": { "text": "Heading 1\n" },
+            }],
+        }],
+    }))
+    .expect("failed to construct expected yaml");
 
     assert_eq!(actual, expected);
 }

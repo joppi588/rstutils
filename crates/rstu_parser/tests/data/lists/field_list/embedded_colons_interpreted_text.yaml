@@ -3,11 +3,13 @@ children:
   - class: Paragraph
     children:
       - class: PlainText
-        text: "Edge cases involving embedded colons and interpreted text.\n"
+        attributes:
+          text: "Edge cases involving embedded colons and interpreted text.\n"
   - class: Paragraph
     children:
       - class: PlainText
-        text: "Recognized as field list items:\n"
+        attributes:
+          text: "Recognized as field list items:\n"
   - class: FieldList
     children:
       - class: FieldListItem
@@ -21,9 +23,10 @@ children:
               - class: Paragraph
                 children:
                   - class: PlainText
-                    text:
-                      "interpreted text (standard role) requires\n                     \
-                      \           escaping a leading colon in a field name\n"
+                    attributes:
+                      text:
+                        "interpreted text (standard role) requires\n                     \
+                        \           escaping a leading colon in a field name\n"
           - class: BlankLine
       - class: FieldListItem
         attributes:
@@ -32,7 +35,8 @@ children:
           - class: Paragraph
             children:
               - class: PlainText
-                text: "unambiguous, no need for escapes\n"
+                attributes:
+                  text: "unambiguous, no need for escapes\n"
           - class: BlankLine
       - class: FieldListItem
         attributes:
@@ -41,7 +45,8 @@ children:
           - class: Paragraph
             children:
               - class: PlainText
-                text: "double colons are OK, too\n"
+                attributes:
+                  text: "double colons are OK, too\n"
           - class: BlankLine
       - class: FieldListItem
         attributes:
@@ -50,31 +55,38 @@ children:
           - class: Paragraph
             children:
               - class: PlainText
-                text: "not interpreted text\n"
+                attributes:
+                  text: "not interpreted text\n"
           - class: BlankLine
   - class: Paragraph
     children:
       - class: PlainText
-        text: "`field name`:code:: interpreted text with role in the field name\n"
+        attributes:
+          text: "`field name`:code:: interpreted text with role in the field name\n"
   - class: Paragraph
     children:
       - class: PlainText
-        text: "                     works only when the role follows the text\n"
+        attributes:
+          text: "                     works only when the role follows the text\n"
   - class: Paragraph
     children:
       - class: PlainText
-        text: ':a `complex`:code:\  field name: field body
+        attributes:
+          text: ':a `complex`:code:\  field name: field body
 
-          '
+            '
   - class: Paragraph
     children:
       - class: PlainText
-        text: "Not recognized as field list items:\n"
+        attributes:
+          text: "Not recognized as field list items:\n"
   - class: Paragraph
     children:
       - class: PlainText
-        text: "::code:`not a field name`: paragraph with interpreted text\n"
+        attributes:
+          text: "::code:`not a field name`: paragraph with interpreted text\n"
   - class: Paragraph
     children:
       - class: PlainText
-        text: ":code:`not a field name`: paragraph with interpreted text\n"
+        attributes:
+          text: ":code:`not a field name`: paragraph with interpreted text\n"

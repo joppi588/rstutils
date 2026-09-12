@@ -13,12 +13,14 @@ children:
               - class: Paragraph
                 children:
                   - class: PlainText
-                    text: "item 1, para 1.\n"
+                    attributes:
+                      text: "item 1, para 1.\n"
               - class: BlankLine
               - class: Paragraph
                 children:
                   - class: PlainText
-                    text: "item 1, para 2.\n"
+                    attributes:
+                      text: "item 1, para 2.\n"
               - class: BlankLine
       - class: BulletListItem
         attributes:
@@ -29,5 +31,6 @@ children:
             - class: Paragraph
               children:
                 - class: PlainText
-                  text: "item 2\n"
+                  attributes:
+                    text: "item 2\n"
       - class: BlankLine

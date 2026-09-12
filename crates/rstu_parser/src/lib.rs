@@ -136,7 +136,7 @@ pub fn match_section_header(
         .with_attr("marker_len_opening", opening_len);
 
     let title = AstNode::new_ref(NodeClass::Title);
-    title.with_text(tokens_to_text(&tokens[title_start..title_end]));
+    title.with_attr("text", tokens_to_text(&tokens[title_start..title_end]));
     section.push_child(title);
 
     Ok((section, closing_index + 2))

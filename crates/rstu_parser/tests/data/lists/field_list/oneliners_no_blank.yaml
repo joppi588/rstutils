@@ -3,7 +3,8 @@ children:
   - class: Paragraph
     children:
       - class: PlainText
-        text: "One-liners, no blank lines:\n"
+        attributes:
+          text: "One-liners, no blank lines:\n"
   - class: FieldList
     children:
       - class: FieldListItem
@@ -15,7 +16,8 @@ children:
             - class: Paragraph
               children:
                 - class: PlainText
-                  text: "Me\n"
+                  attributes:
+                    text: "Me\n"
       - class: FieldListItem
         attributes:
           fieldname: Version
@@ -25,7 +27,8 @@ children:
             - class: Paragraph
               children:
                 - class: PlainText
-                  text: "1\n"
+                  attributes:
+                    text: "1\n"
       - class: FieldListItem
         attributes:
           fieldname: Date
@@ -35,7 +38,8 @@ children:
             - class: Paragraph
               children:
                 - class: PlainText
-                  text: "2001-08-11\n"
+                  attributes:
+                    text: "2001-08-11\n"
       - class: FieldListItem
         attributes:
           fieldname: Parameter i
@@ -45,5 +49,6 @@ children:
               - class: Paragraph
                 children:
                   - class: PlainText
-                    text: "integer\n"
+                    attributes:
+                      text: "integer\n"
       - class: BlankLine

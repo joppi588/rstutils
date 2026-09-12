@@ -17,7 +17,8 @@ children:
                 - class: Paragraph
                   children:
                     - class: PlainText
-                      text: "20mm\n"
+                      attributes:
+                        text: "20mm\n"
           - class: FieldListItem
             attributes:
               fieldname: width
@@ -27,7 +28,8 @@ children:
                 - class: Paragraph
                   children:
                     - class: PlainText
-                      text: "300px\n"
+                      attributes:
+                        text: "300px\n"
           - class: FieldListItem
             attributes:
               fieldname: scale
@@ -37,5 +39,6 @@ children:
                   - class: Paragraph
                     children:
                       - class: PlainText
-                        text: "75\n"
+                        attributes:
+                          text: "75\n"
           - class: BlankLine

@@ -3,4 +3,5 @@ children:
   - kind: BulletList
     children:
       - kind: Paragraph
-        text: not a list item
+        attributes:
+          text: not a list item

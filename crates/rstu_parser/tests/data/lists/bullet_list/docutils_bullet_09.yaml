@@ -3,7 +3,8 @@ children:
   - class: Paragraph
     children:
       - class: PlainText
-        text: "Unicode bullets:\n"
+        attributes:
+          text: "Unicode bullets:\n"
   - class: BulletList
     children:
       - class: BulletListItem
@@ -15,7 +16,8 @@ children:
               - class: Paragraph
                 children:
                   - class: PlainText
-                    text: "BULLET\n"
+                    attributes:
+                      text: "BULLET\n"
               - class: BlankLine
       - class: BulletListItem
         attributes:
@@ -26,7 +28,8 @@ children:
               - class: Paragraph
                 children:
                   - class: PlainText
-                    text: "TRIANGULAR BULLET\n"
+                    attributes:
+                      text: "TRIANGULAR BULLET\n"
               - class: BlankLine
       - class: BulletListItem
         attributes:
@@ -37,5 +40,6 @@ children:
               - class: Paragraph
                 children:
                   - class: PlainText
-                    text: "HYPHEN BULLET\n"
+                    attributes:
+                      text: "HYPHEN BULLET\n"
               - class: BlankLine

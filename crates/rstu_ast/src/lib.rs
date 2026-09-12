@@ -20,12 +20,10 @@ pub struct AstNode {
     pub class: NodeClass,
     pub parent: Option<Weak<RefCell<AstNode>>>,
     pub attributes: BTreeMap<String, AttributeType>,
-    pub text: Option<String>,
     pub children: Vec<NodeRef>,
 }
 
 pub trait NodeRefExt {
-    fn with_text(&self, text: impl Into<String>) -> NodeRef;
     fn with_attr(&self, key: impl Into<String>, value: impl Into<AttributeType>) -> NodeRef;
     fn push_child(&self, child: NodeRef);
     fn get_parent(&self) -> Option<NodeRef>;
@@ -34,11 +32,6 @@ pub trait NodeRefExt {
 }
 
 impl NodeRefExt for NodeRef {
-    fn with_text(&self, text: impl Into<String>) -> NodeRef {
-        self.borrow_mut().text = Some(text.into());
-        self.clone()
-    }
-
     fn with_attr(&self, key: impl Into<String>, value: impl Into<AttributeType>) -> NodeRef {
         self.borrow_mut()
             .attributes
@@ -100,7 +93,6 @@ impl AstNode {
             class,
             parent: None,
             attributes: BTreeMap::new(),
-            text: None,
             children: Vec::new(),
         }))
     }
@@ -155,9 +147,6 @@ impl AstNode {
         );
         if attributes.len() > 0 {
             obj.insert("attributes".to_string(), Value::Object(attributes));
-        };
-        if let Some(v) = borrowed.text.clone().map(Value::String) {
-            obj.insert("text".to_string(), v);
         };
         if children.len() > 0 {
             obj.insert("children".to_string(), Value::Array(children));

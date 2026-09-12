@@ -11,5 +11,6 @@ children:
               - class: Paragraph
                 children:
                   - class: PlainText
-                    text: "multiple arguments\n"
+                    attributes:
+                      text: "multiple arguments\n"
       - class: BlankLine

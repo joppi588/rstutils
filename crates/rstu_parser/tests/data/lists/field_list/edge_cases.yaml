@@ -3,23 +3,28 @@ children:
   - class: Paragraph
     children:
       - class: PlainText
-        text: "Some edge cases:\n"
+        attributes:
+          text: "Some edge cases:\n"
   - class: Paragraph
     children:
       - class: PlainText
-        text: ": Field: marker must not begin with whitespace.\n"
+        attributes:
+          text: ": Field: marker must not begin with whitespace.\n"
   - class: Paragraph
     children:
       - class: PlainText
-        text: ":Field : marker must not end with whitespace.\n"
+        attributes:
+          text: ":Field : marker must not end with whitespace.\n"
   - class: Paragraph
     children:
       - class: PlainText
-        text: "Field: marker is missing its open-colon.\n"
+        attributes:
+          text: "Field: marker is missing its open-colon.\n"
   - class: Paragraph
     children:
       - class: PlainText
-        text: ":Field marker is missing its close-colon.\n"
+        attributes:
+          text: ":Field marker is missing its close-colon.\n"
   - class: FieldList
     children:
       - class: FieldListItem
@@ -29,7 +34,8 @@ children:
           - class: Paragraph
             children:
               - class: PlainText
-                text: "are possible.\n"
+                attributes:
+                  text: "are possible.\n"
       - class: FieldListItem
         attributes:
           fieldname: \\Field\  names with backslashes\\
@@ -37,7 +43,8 @@ children:
           - class: Paragraph
             children:
               - class: PlainText
-                text: "are possible, too.\n"
+                attributes:
+                  text: "are possible, too.\n"
       - class: FieldListItem
         attributes:
           fieldname: \\
@@ -45,31 +52,36 @@ children:
           - class: Paragraph
             children:
               - class: PlainText
-                text: "A backslash.\n"
+                attributes:
+                  text: "A backslash.\n"
   - class: Paragraph
     children:
       - class: PlainText
-        text: ':Not a\\\: field list.
+        attributes:
+          text: ':Not a\\\: field list.
 
-          '
+            '
   - class: Paragraph
     children:
       - class: PlainText
-        text: ':Not a \: field list either.
+        attributes:
+          text: ':Not a \: field list either.
 
-          '
+            '
   - class: Paragraph
     children:
       - class: PlainText
-        text: ':\: Not a field list either.
+        attributes:
+          text: ':\: Not a field list either.
 
-          '
+            '
   - class: Paragraph
     children:
       - class: PlainText
-        text: ':\:
+        attributes:
+          text: ':\:
 
-          '
+            '
   - class: Block
     attributes:
       indentation: "  "
@@ -77,4 +89,5 @@ children:
       - class: Paragraph
         children:
           - class: PlainText
-            text: "A definition list, not a field list.\n"
+            attributes:
+              text: "A definition list, not a field list.\n"

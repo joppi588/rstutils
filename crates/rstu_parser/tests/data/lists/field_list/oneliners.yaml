@@ -3,9 +3,10 @@ children:
 - class: Paragraph
   children:
   - class: PlainText
-    text: 'One-liners:
+    attributes:
+      text: 'One-liners:
 
-      '
+        '
 - class: FieldList
   children:
   - class: FieldListItem
@@ -15,9 +16,10 @@ children:
     - class: Paragraph
       children:
       - class: PlainText
-        text: 'Me
+        attributes:
+          text: 'Me
 
-          '
+            '
     - class: BlankLine
   - class: FieldListItem
     attributes:
@@ -26,9 +28,10 @@ children:
     - class: Paragraph
       children:
       - class: PlainText
-        text: '1
+        attributes:
+          text: '1
 
-          '
+            '
     - class: BlankLine
   - class: FieldListItem
     attributes:
@@ -37,13 +40,15 @@ children:
     - class: Paragraph
       children:
       - class: PlainText
-        text: '2001-08-11
+        attributes:
+          text: '2001-08-11
 
-          '
+            '
     - class: BlankLine
 - class: Paragraph
   children:
   - class: PlainText
-    text: ':Parameter i: integer
+    attributes:
+      text: ':Parameter i: integer
 
-      '
+        '

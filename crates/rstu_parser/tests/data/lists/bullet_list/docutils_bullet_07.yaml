@@ -11,9 +11,11 @@ children:
           - class: Paragraph
             children:
             - class: PlainText
-              text: "\n"
+              attributes:
+                text: "\n"
       - class: BlankLine
   - class: Paragraph
     children:
       - class: PlainText
-        text: "empty item above\n"
+        attributes:
+          text: "empty item above\n"
