@@ -29,6 +29,7 @@ pub trait NodeRefExt {
     fn with_attr(&self, key: impl Into<String>, value: impl Into<AttributeType>) -> NodeRef;
     fn push_child(&self, child: NodeRef);
     fn get_parent(&self) -> Option<NodeRef>;
+    fn get_root(&self) -> NodeRef;
     fn push_section_ref(&self, section: NodeRef) -> NodeRef;
 }
 
@@ -54,6 +55,14 @@ impl NodeRefExt for NodeRef {
         self.borrow().parent.as_ref().and_then(Weak::upgrade)
     }
 
+    fn get_root(&self) -> NodeRef {
+        let mut root = self.clone();
+        while let Some(parent) = root.get_parent() {
+            root = parent;
+        }
+        root
+    }
+
     fn push_section_ref(&self, section: NodeRef) -> NodeRef {
         assert_eq!(
             section.borrow().class,
@@ -76,15 +85,7 @@ impl NodeRefExt for NodeRef {
             } else if let Some(closest) = AstNode::closest_ancestor_section(self, None) {
                 closest
             } else {
-                let mut root = self.clone();
-                loop {
-                    let next = root.get_parent();
-                    match next {
-                        Some(parent) => root = parent,
-                        None => break,
-                    }
-                }
-                root
+                self.get_root()
             }
         };
 
