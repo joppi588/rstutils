@@ -56,22 +56,12 @@ impl NodeRefExt for NodeRef {
             "push_section_ref requires a section node"
         );
 
-        let section_marker = section
-            .borrow()
-            .attributes
-            .get("section_marker")
-            .and_then(AttributeType::as_str)
-            .map(str::to_owned);
+        let section_marker = section.borrow().get_string_attr("section_marker");
 
         let target_parent = if self.borrow().parent.is_none() {
             self.clone()
         } else {
-            let self_marker = self
-                .borrow()
-                .attributes
-                .get("section_marker")
-                .and_then(AttributeType::as_str)
-                .map(str::to_owned);
+            let self_marker = self.borrow().get_string_attr("section_marker");
             if self_marker == section_marker {
                 self.borrow()
                     .parent
@@ -121,6 +111,13 @@ impl AstNode {
         }))
     }
 
+    fn get_string_attr(&self, key: &str) -> Option<String> {
+        self.attributes
+            .get(key)
+            .and_then(AttributeType::as_str)
+            .map(str::to_owned)
+    }
+
     /// returns the current section the node is in
     /// - with the given marker
     /// - the lowest section if no marker given.
@@ -134,11 +131,7 @@ impl AstNode {
                 let borrowed = current_node.borrow();
                 borrowed.class == NodeClass::Section
                     && section_marker.is_none_or(|marker| {
-                        borrowed
-                            .attributes
-                            .get("section_marker")
-                            .and_then(AttributeType::as_str)
-                            == Some(marker)
+                        borrowed.get_string_attr("section_marker").as_deref() == Some(marker)
                     })
             };
             if matches {
