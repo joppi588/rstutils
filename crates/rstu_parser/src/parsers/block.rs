@@ -56,13 +56,53 @@ pub(crate) fn parse_block_hanging_indent(
         .expect("Token stream ends with a newline."); // TODO: Integrate this in token stream.
 
     // Parse the first paragraph
-
     match tokens[index_line_end + 1].kind {
         TK::BlankLine | TK::Field | TK::BulletListMarker => {
             let (paragraph, new_index) =
                 parse_paragraph(tokens, index, Some(index_line_end + 1), None)?;
             block.push_child(paragraph);
             index = new_index;
+
+            // Parse the rest
+            while index < tokens.len() - 2 {
+                let index_line_end =
+                    find_next_kind(&tokens, &[TK::NewLine, TK::BlankLine], index, None)
+                        .expect("Token stream ends with a newline.");
+                match (tokens[index].kind, tokens[index_line_end + 1].kind) {
+                    (TK::Indent, _) => {
+                        let (paragraph, new_index) =
+                            parse_paragraph(tokens, index + 1, None, None)?;
+                        block.push_child(paragraph);
+                        indent = Some(tokens[index].lexeme.len());
+                        index = new_index;
+                    }
+                    (TK::Word, _) => {
+                        let (paragraph, new_index) = parse_paragraph(tokens, index, None, None)?;
+                        block.push_child(paragraph);
+                        index = new_index;
+                    }
+                    (TK::BlankLine, TK::Indent | TK::Dedent) => {
+                        block.push_blank_lines(tokens[index].lexeme.len());
+                        index += 1;
+                    }
+                    (TK::BlankLine, TK::Word) if indent.is_some() => {
+                        block.push_blank_lines(tokens[index].lexeme.len());
+                        index += 1;
+                    }
+                    (TK::Dedent, _) => {
+                        // TODO: Do not dedent completely, modify token stream in place
+                        index += 1;
+                        break;
+                    }
+                    (_, _) => {
+                        break; // TODO: Should this be an error case?
+                    }
+                }
+            }
+
+            if let Some(indent) = indent {
+                block.with_attr("indent", indent);
+            }
         }
         TK::Indent => {
             let (paragraph, new_index) =
@@ -71,47 +111,49 @@ pub(crate) fn parse_block_hanging_indent(
             indent = Some(tokens[index_line_end + 1].lexeme.len());
 
             index = new_index;
+            // Parse the rest
+            while index < tokens.len() - 2 {
+                let index_line_end =
+                    find_next_kind(&tokens, &[TK::NewLine, TK::BlankLine], index, None)
+                        .expect("Token stream ends with a newline.");
+                match (tokens[index].kind, tokens[index_line_end + 1].kind) {
+                    (TK::Indent, _) => {
+                        let (paragraph, new_index) =
+                            parse_paragraph(tokens, index + 1, None, None)?;
+                        block.push_child(paragraph);
+                        indent = Some(tokens[index].lexeme.len());
+                        index = new_index;
+                    }
+                    (TK::Word, _) => {
+                        let (paragraph, new_index) = parse_paragraph(tokens, index, None, None)?;
+                        block.push_child(paragraph);
+                        index = new_index;
+                    }
+                    (TK::BlankLine, TK::Indent | TK::Dedent) => {
+                        block.push_blank_lines(tokens[index].lexeme.len());
+                        index += 1;
+                    }
+                    (TK::BlankLine, TK::Word) if indent.is_some() => {
+                        block.push_blank_lines(tokens[index].lexeme.len());
+                        index += 1;
+                    }
+                    (TK::Dedent, _) => {
+                        // TODO: Do not dedent completely, modify token stream in place
+                        index += 1;
+                        break;
+                    }
+                    (_, _) => {
+                        break; // TODO: Should this be an error case?
+                    }
+                }
+            }
+
+            if let Some(indent) = indent {
+                block.with_attr("indent", indent);
+            }
         }
         _ => return Err(ParserError::UnexpectedBlockEndError {}),
     }
 
-    // Parse the rest
-    while index < tokens.len() - 2 {
-        let index_line_end = find_next_kind(&tokens, &[TK::NewLine, TK::BlankLine], index, None)
-            .expect("Token stream ends with a newline.");
-        match (tokens[index].kind, tokens[index_line_end + 1].kind) {
-            (TK::Indent, _) => {
-                let (paragraph, new_index) = parse_paragraph(tokens, index + 1, None, None)?;
-                block.push_child(paragraph);
-                indent = Some(tokens[index].lexeme.len());
-                index = new_index;
-            }
-            (TK::Word, _) => {
-                let (paragraph, new_index) = parse_paragraph(tokens, index, None, None)?;
-                block.push_child(paragraph);
-                index = new_index;
-            }
-            (TK::BlankLine, TK::Indent | TK::Dedent) => {
-                block.push_blank_lines(tokens[index].lexeme.len());
-                index += 1;
-            }
-            (TK::BlankLine, TK::Word) if indent.is_some() => {
-                block.push_blank_lines(tokens[index].lexeme.len());
-                index += 1;
-            }
-            (TK::Dedent, _) => {
-                // TODO: Do not dedent completely, modify token stream in place
-                index += 1;
-                break;
-            }
-            (_, _) => {
-                break; // TODO: Should this be an error case?
-            }
-        }
-    }
-
-    if let Some(indent) = indent {
-        block.with_attr("indent", indent);
-    }
     Ok((block, index))
 }
