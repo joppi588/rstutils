@@ -69,7 +69,14 @@ pub(crate) fn parse_block_hanging_indent(
         .expect("Token stream ends with a newline."); // TODO: Integrate this in token stream.
 
     match tokens[index_line_end + 1].kind {
-        TK::BlankLine | TK::Field | TK::BulletListMarker => {
+        TK::Field | TK::BulletListMarker => {
+            // single line list case
+            let (paragraph, new_index) =
+                parse_paragraph(tokens, index, Some(index_line_end + 1), None)?;
+            block.push_child(paragraph);
+            index = new_index;
+        }
+        TK::BlankLine => {
             // first paragraph is a single line
             let (paragraph, new_index) =
                 parse_paragraph(tokens, index, Some(index_line_end + 1), None)?;
