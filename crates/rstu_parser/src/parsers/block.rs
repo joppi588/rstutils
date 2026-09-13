@@ -99,6 +99,10 @@ pub(crate) fn parse_block_hanging_indent(
                 block.push_blank_lines(tokens[index].lexeme.len());
                 index += 1;
             }
+            (TK::BlankLine, TK::Word) if indent.is_some() => {
+                block.push_child(AstNode::new_ref(NodeClass::BlankLine));
+                index += 1;
+            }
             (TK::Dedent, _) => {
                 // TODO: Do not dedent completely, modify token stream in place
                 index += 1;
