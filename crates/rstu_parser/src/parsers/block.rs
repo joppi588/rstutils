@@ -69,7 +69,9 @@ pub(crate) fn parse_block_hanging_indent(
                 index = new_index;
             }
             (TK::BlankLine, TK::BlankLine | TK::Indent | TK::Dedent) => {
-                block.push_child(AstNode::new_ref(NodeClass::BlankLine));
+                for _ in 0..tokens[index].lexeme.len() {
+                    block.push_child(AstNode::new_ref(NodeClass::BlankLine));
+                }
                 index += 1;
             }
             (TK::Dedent, _) => {
