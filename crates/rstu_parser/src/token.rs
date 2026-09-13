@@ -137,7 +137,7 @@ impl TokenKind {
         (Separator, format!(r"\n[{0}]{{4,}}\n", RECOMMENDED_SECTION_CHARS)),
 
         (Indent, r"\n[ \t]+[^ \t\n]"),
-        (BlankLine, r"\n[ \t]*\n(.|\n)"),
+        (BlankLine, r"\n[ \t]*\n+(.|\n)"),
         (NewLine, r"[^\n]\n(.|\n)"),
 
         // Directive-Like
