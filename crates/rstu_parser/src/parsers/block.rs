@@ -27,7 +27,7 @@ pub(crate) fn parse_block(
                 block.push_child(paragraph);
                 index = new_index;
             }
-            (TK::BlankLine, TK::Word) => {
+            (TK::BlankLine, TK::Indent | TK::Dedent | TK::Word) => {
                 block.push_blank_lines(tokens[index].lexeme.len());
                 index += 1;
             }
