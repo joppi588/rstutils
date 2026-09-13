@@ -51,8 +51,8 @@ pub(crate) fn parse_bullet_list(
                 }
             }
             TK::BlankLine => {
+                list.push_blank_lines(tokens[index].lexeme.len());
                 index += 1;
-                list.push_child(AstNode::new_ref(NodeClass::BlankLine))
             }
             _ => break,
         }
@@ -94,8 +94,8 @@ pub(crate) fn parse_field_list(
                 }
             }
             TK::BlankLine => {
+                list.push_blank_lines(tokens[index].lexeme.len());
                 index += 1;
-                list.push_child(AstNode::new_ref(NodeClass::BlankLine))
             }
             _ => break,
         }

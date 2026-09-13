@@ -26,6 +26,7 @@ pub struct AstNode {
 pub trait NodeRefExt {
     fn with_attr(&self, key: impl Into<String>, value: impl Into<AttributeType>) -> NodeRef;
     fn push_child(&self, child: NodeRef);
+    fn push_blank_lines(&self, count: usize);
     fn get_parent(&self) -> Option<NodeRef>;
     fn get_root(&self) -> NodeRef;
     fn push_section_ref(&self, section: NodeRef) -> NodeRef;
@@ -37,6 +38,12 @@ impl NodeRefExt for NodeRef {
             .attributes
             .insert(key.into(), value.into());
         self.clone()
+    }
+
+    fn push_blank_lines(&self, count: usize) {
+        for _ in 0..count {
+            self.push_child(AstNode::new_ref(NodeClass::BlankLine));
+        }
     }
 
     fn get_parent(&self) -> Option<NodeRef> {
