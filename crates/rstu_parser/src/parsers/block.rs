@@ -27,8 +27,8 @@ pub(crate) fn parse_block(
                 block.push_child(paragraph);
                 index = new_index;
             }
-            (TK::BlankLine, TK::BlankLine | TK::Indent | TK::Word) => {
-                block.push_child(AstNode::new_ref(NodeClass::BlankLine));
+            (TK::BlankLine, TK::Word) => {
+                block.push_blank_lines(tokens[index].lexeme.len());
                 index += 1;
             }
             (TK::Dedent, _) => {
@@ -75,11 +75,6 @@ pub(crate) fn parse_block_hanging_indent(
         _ => return Err(ParserError::UnexpectedBlockEndError {}),
     }
 
-    while index < tokens.len() - 1 && tokens[index + 1].kind == TK::BlankLine {
-        block.push_child(AstNode::new_ref(NodeClass::BlankLine));
-        index += 1;
-    }
-
     // Parse the rest
     while index < tokens.len() - 2 {
         let index_line_end = find_next_kind(&tokens, &[TK::NewLine, TK::BlankLine], index, None)
@@ -96,12 +91,12 @@ pub(crate) fn parse_block_hanging_indent(
                 block.push_child(paragraph);
                 index = new_index;
             }
-            (TK::BlankLine, TK::BlankLine | TK::Indent | TK::Dedent) => {
+            (TK::BlankLine, TK::Indent | TK::Dedent) => {
                 block.push_blank_lines(tokens[index].lexeme.len());
                 index += 1;
             }
             (TK::BlankLine, TK::Word) if indent.is_some() => {
-                block.push_child(AstNode::new_ref(NodeClass::BlankLine));
+                block.push_blank_lines(tokens[index].lexeme.len());
                 index += 1;
             }
             (TK::Dedent, _) => {
