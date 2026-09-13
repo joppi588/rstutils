@@ -52,10 +52,15 @@ pub(crate) fn parse_block_hanging_indent(
     let block = AstNode::new_ref(NodeClass::Block);
     let mut indent: Option<usize> = None;
     let mut index = start_at;
-    let index_line_end = find_next_kind(&tokens, &[TK::NewLine], index, None)
+    let mut index_line_end = find_next_kind(&tokens, &[TK::NewLine], index, None)
         .expect("Token stream ends with a newline."); // TODO: Integrate this in token stream.
 
     // Parse the first paragraph
+    while index_line_end < tokens.len() - 2 && tokens[index_line_end + 2].kind == TK::BlankLine {
+        block.push_child(AstNode::new_ref(NodeClass::BlankLine));
+        index_line_end += 1;
+    }
+
     match tokens[index_line_end + 1].kind {
         TK::BlankLine | TK::Field | TK::BulletListMarker => {
             let (paragraph, new_index) =

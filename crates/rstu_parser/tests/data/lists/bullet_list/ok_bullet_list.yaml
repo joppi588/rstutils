@@ -12,13 +12,27 @@ children:
           marker: "-"
         children:
           - class: Block
+            attributes:
+              indent: 2
             children:
               - class: Paragraph
                 children:
                   - class: PlainText
                     attributes:
                       text: "First item\n"
-      - class: BlankLine
+              - class: BlankLine
+              - class: Paragraph
+                children:
+                - class: PlainText
+                  attributes:
+                    text: "Indented paragraph 1.\n"
+              - class: BlankLine
+              - class: Paragraph
+                children:
+                - class: PlainText
+                  attributes:
+                    text: "Indented paragraph 2.\n"
+              - class: BlankLine
       - class: BulletListItem
         attributes:
           marker: "-"
