@@ -34,7 +34,7 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
         if tokens.is_stream_end(index) {
             break;
         }
-        let index_line_end = find_next_kind(&tokens, &[TK::NewLine], index, None)
+        let index_line_end = find_next_kind(&tokens, &[TK::NewLine], index)
             .expect("Token stream ends with a newline."); // TODO: Integrate this in token stream.
         match (tokens.kind_at(index), tokens.kind_at(index_line_end + 1)) {
             (token1, token2)
@@ -78,7 +78,7 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
                     || kind.is(TC::INLINE_TOKEN)
                     || kind.is(TC::PLAIN) =>
             {
-                let (paragraph, next_start) = parse_paragraph(&tokens, index, None, None)?;
+                let (paragraph, next_start) = parse_paragraph(&tokens, index, None)?;
                 current_parent.push_child(paragraph);
                 index = next_start;
             }
@@ -100,7 +100,7 @@ pub fn match_section_header(
     has_overline: bool,
 ) -> Result<(NodeRef, usize), ParserError> {
     let title_start = start_at + 2 * usize::from(has_overline);
-    let title_end = find_next_kind(tokens, &[TK::NewLine], title_start, None).map_err(|_| {
+    let title_end = find_next_kind(tokens, &[TK::NewLine], title_start).map_err(|_| {
         ParserError::SectionTitleMissingClosingAfterOpening {
             opening_index: start_at,
         }
@@ -159,7 +159,6 @@ fn parse_directive_like(
             TK::SubstitutionReference,
         ],
         start_at,
-        None,
     )
     .expect(EXPECT_NEWLINE);
     let (directive, new_index) = match &tokens[index].kind {

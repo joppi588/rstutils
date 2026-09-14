@@ -15,7 +15,7 @@ pub(crate) fn parse_directive(
     directive_colon_index: usize,
 ) -> Result<(NodeRef, usize), ParserError> {
     let first_line_end =
-        find_next_kind(tokens, &[TK::NewLine], directive_colon_index, None).expect(EXPECT_NEWLINE);
+        find_next_kind(tokens, &[TK::NewLine], directive_colon_index).expect(EXPECT_NEWLINE);
 
     let directive = AstNode::new_ref(NodeClass::Directive);
     let directive_type = tokens_to_text(&tokens[start_at + 1..directive_colon_index])

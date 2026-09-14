@@ -5,7 +5,7 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use super::paragraph::parse_paragraph;
+use super::paragraph::{parse_paragraph, parse_paragraph_with_hanging_indent};
 use crate::parser_errors::ParserError;
 use crate::token::{Token, TokenKind as TK};
 use crate::token_slice::{find_next_kind, TokenSliceExt};
@@ -18,11 +18,11 @@ fn parse_block_body(
 ) -> Result<usize, ParserError> {
     let mut index = start_at;
     while !tokens.is_stream_end(index) {
-        let index_line_end = find_next_kind(&tokens, &[TK::NewLine, TK::BlankLine], index, None)
+        let index_line_end = find_next_kind(&tokens, &[TK::NewLine, TK::BlankLine], index)
             .expect("Token stream ends with a newline.");
         match (tokens.kind_at(index), tokens.kind_at(index_line_end + 1)) {
             (TK::Word, _) => {
-                let (paragraph, new_index) = parse_paragraph(tokens, index, None, None)?;
+                let (paragraph, new_index) = parse_paragraph(tokens, index, None)?;
                 block.push_child(paragraph);
                 index = new_index;
             }
@@ -64,21 +64,19 @@ pub(crate) fn parse_block_hanging_indent(
 ) -> Result<(NodeRef, usize), ParserError> {
     let block = AstNode::new_ref(NodeClass::Block);
     let mut index = start_at;
-    let index_line_end = find_next_kind(&tokens, &[TK::NewLine], index, None)
-        .expect("Token stream ends with a newline."); // TODO: Integrate this in token stream.
+    let index_line_end =
+        find_next_kind(&tokens, &[TK::NewLine], index).expect("Token stream ends with a newline."); // TODO: Integrate this in token stream.
 
     match tokens.kind_at(index_line_end + 1) {
         TK::Field | TK::BulletListMarker => {
             // single line list case
-            let (paragraph, new_index) =
-                parse_paragraph(tokens, index, Some(index_line_end + 1), None)?;
+            let (paragraph, new_index) = parse_paragraph(tokens, index, Some(index_line_end + 1))?;
             block.push_child(paragraph);
             index = new_index;
         }
         TK::BlankLine => {
             // first paragraph is a single line
-            let (paragraph, new_index) =
-                parse_paragraph(tokens, index, Some(index_line_end + 1), None)?;
+            let (paragraph, new_index) = parse_paragraph(tokens, index, Some(index_line_end + 1))?;
             block.push_child(paragraph);
             index = new_index;
 
@@ -94,7 +92,7 @@ pub(crate) fn parse_block_hanging_indent(
             // first paragraph spans multiple lines
             block.with_attr("indent", tokens[index_line_end + 1].lexeme.len());
             let (paragraph, new_index) =
-                parse_paragraph(tokens, index, None, Some(index_line_end + 1))?;
+                parse_paragraph_with_hanging_indent(tokens, index, index_line_end + 1)?;
             block.push_child(paragraph);
             index = parse_block_body(&block, tokens, new_index)?;
         }

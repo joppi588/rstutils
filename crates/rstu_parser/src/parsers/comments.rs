@@ -16,7 +16,7 @@ pub(crate) fn parse_comment(
 ) -> Result<(NodeRef, usize), ParserError> {
     let mut index = first_line_end;
     if tokens.kind_at(index + 1) == TK::Indent {
-        index = find_next_kind(tokens, &[TK::Dedent], index + 1, None)
+        index = find_next_kind(tokens, &[TK::Dedent], index + 1)
             .expect("There is always a final dedent.");
     }
 
