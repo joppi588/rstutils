@@ -8,7 +8,7 @@ use std::rc::Rc;
 use super::paragraph::parse_paragraph;
 use crate::parser_errors::ParserError;
 use crate::token::{Token, TokenKind as TK};
-use crate::token_slice::find_next_kind;
+use crate::token_slice::{find_next_kind, TokenSliceExt};
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 fn parse_block_body(
@@ -17,10 +17,10 @@ fn parse_block_body(
     start_at: usize,
 ) -> Result<usize, ParserError> {
     let mut index = start_at;
-    while index < tokens.len() - 2 {
+    while !tokens.is_stream_end(index) {
         let index_line_end = find_next_kind(&tokens, &[TK::NewLine, TK::BlankLine], index, None)
             .expect("Token stream ends with a newline.");
-        match (tokens[index].kind, tokens[index_line_end + 1].kind) {
+        match (tokens.kind_at(index), tokens.kind_at(index_line_end + 1)) {
             (TK::Word, _) => {
                 let (paragraph, new_index) = parse_paragraph(tokens, index, None, None)?;
                 block.push_child(paragraph);
@@ -67,7 +67,7 @@ pub(crate) fn parse_block_hanging_indent(
     let index_line_end = find_next_kind(&tokens, &[TK::NewLine], index, None)
         .expect("Token stream ends with a newline."); // TODO: Integrate this in token stream.
 
-    match tokens[index_line_end + 1].kind {
+    match tokens.kind_at(index_line_end + 1) {
         TK::Field | TK::BulletListMarker => {
             // single line list case
             let (paragraph, new_index) =
@@ -82,7 +82,7 @@ pub(crate) fn parse_block_hanging_indent(
             block.push_child(paragraph);
             index = new_index;
 
-            if index + 1 < tokens.len() && tokens[index + 1].kind == TK::Indent {
+            if tokens.kind_at(index + 1) == TK::Indent {
                 block.push_blank_lines(tokens[index].lexeme.len());
                 block.with_attr("indent", tokens[index + 1].lexeme.len());
                 index = parse_block_body(&block, tokens, index + 2)?;

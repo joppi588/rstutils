@@ -18,7 +18,7 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 use crate::lexer::tokenize;
 use crate::token::{Token, TokenCategory as TC, TokenKind as TK};
 use parser_errors::{ParserError, EXPECT_NEWLINE};
-use token_slice::{find_next_kind, tokens_to_text};
+use token_slice::{find_next_kind, tokens_to_text, TokenSliceExt};
 
 // static DEDENT_GRACE: usize = 1;
 
@@ -30,11 +30,13 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
     let mut index: usize = 0;
     let mut current_parent = doc.clone();
 
-    while index < tokens.len() - 2 {
-        // final two tokens are always NewLine+Blankline
+    loop {
+        if tokens.is_stream_end(index) {
+            break;
+        }
         let index_line_end = find_next_kind(&tokens, &[TK::NewLine], index, None)
             .expect("Token stream ends with a newline."); // TODO: Integrate this in token stream.
-        match (tokens[index].kind, tokens[index_line_end + 1].kind) {
+        match (tokens.kind_at(index), tokens.kind_at(index_line_end + 1)) {
             (token1, token2)
                 if (token1, token2) == (TK::Separator, TK::Indent)
                     || (token1, token2) == (TK::Separator, TK::Word)
@@ -83,8 +85,8 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
 
             _ => panic!(
                 "Unexpected token combination ({:?},{:?})",
-                tokens[index].kind,
-                tokens[index_line_end + 1].kind
+                tokens.kind_at(index),
+                tokens.kind_at(index_line_end + 1)
             ),
         };
     }
@@ -105,12 +107,12 @@ pub fn match_section_header(
     })?;
 
     let closing_index = title_end + 1;
-    let closing_token = &tokens[closing_index];
-    if (closing_index >= tokens.len()) || (closing_token.kind != TK::Separator) {
+    if tokens.kind_at(closing_index) != TK::Separator {
         return Err(ParserError::SectionTitleMissingClosingAfterOpening {
             opening_index: start_at,
         });
     }
+    let closing_token = &tokens[closing_index];
     let closing_style: String = closing_token.lexeme[..1].to_string();
     let closing_len = closing_token.lexeme.len();
 

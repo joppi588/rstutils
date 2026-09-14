@@ -10,6 +10,29 @@ pub enum TokenSliceError {
     NoRemainingToken,
 }
 
+/// Panic-free lookahead over a token slice, treating out-of-bounds reads as `TokenKind::Eof`.
+pub trait TokenSliceExt {
+    fn kind_at(&self, index: usize) -> TokenKind;
+    fn token_at(&self, index: usize) -> Option<&Token>;
+    /// True once only the lexer's synthetic trailing NewLine+BlankLine padding remains,
+    /// i.e. there is no further real content for a dispatch loop to start processing at.
+    fn is_stream_end(&self, index: usize) -> bool;
+}
+
+impl TokenSliceExt for [Token] {
+    fn kind_at(&self, index: usize) -> TokenKind {
+        self.get(index).map_or(TokenKind::Eof, |token| token.kind)
+    }
+
+    fn token_at(&self, index: usize) -> Option<&Token> {
+        self.get(index)
+    }
+
+    fn is_stream_end(&self, index: usize) -> bool {
+        index >= self.len().saturating_sub(2)
+    }
+}
+
 pub fn tokens_to_text(tokens: &[Token]) -> String {
     let mut text = String::new();
     for token in tokens {
@@ -79,8 +102,24 @@ pub fn skip_kinds(tokens: &[Token], kinds: &[TokenKind], start_at: usize) -> usi
 
 #[cfg(test)]
 mod tests {
-    use super::{find_next_kind, skip_kinds, tokens_without_kinds};
+    use super::{find_next_kind, skip_kinds, tokens_without_kinds, TokenSliceExt};
     use crate::token::{Token, TokenKind};
+
+    #[test]
+    fn kind_at_returns_eof_past_the_end() {
+        let tokens = [Token::new(TokenKind::Word, "title")];
+
+        assert_eq!(tokens.kind_at(0), TokenKind::Word);
+        assert_eq!(tokens.kind_at(1), TokenKind::Eof);
+    }
+
+    #[test]
+    fn token_at_returns_none_past_the_end() {
+        let tokens = [Token::new(TokenKind::Word, "title")];
+
+        assert!(tokens.token_at(0).is_some());
+        assert!(tokens.token_at(1).is_none());
+    }
 
     #[test]
     fn find_next_kind_matches_any_requested_kind() {
