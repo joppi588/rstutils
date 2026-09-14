@@ -14,6 +14,7 @@ children:
               - class: PlainText
                 attributes:
                   text: "This is inside the note.\n"
+          - class: BlankLine
   - class: Paragraph
     children:
       - class: PlainText

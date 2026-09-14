@@ -12,6 +12,7 @@ mod test_parser;
 
 #[rstest]
 #[case("ok_note_simple")]
+#[case("ok_note_compound_block")]
 #[case("ok_note_then_paragraph")]
 #[case("ok_comment")]
 #[case("ok_image_numeric_options")]
