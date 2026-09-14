@@ -63,7 +63,6 @@ pub(crate) fn parse_block_hanging_indent(
     start_at: usize,
 ) -> Result<(NodeRef, usize), ParserError> {
     let block = AstNode::new_ref(NodeClass::Block);
-    let mut indent: Option<usize> = None;
     let mut index = start_at;
     let index_line_end = find_next_kind(&tokens, &[TK::NewLine], index, None)
         .expect("Token stream ends with a newline."); // TODO: Integrate this in token stream.
@@ -83,44 +82,12 @@ pub(crate) fn parse_block_hanging_indent(
             block.push_child(paragraph);
             index = new_index;
 
-            while index < tokens.len() - 2 {
-                let index_line_end =
-                    find_next_kind(&tokens, &[TK::NewLine, TK::BlankLine], index, None)
-                        .expect("Token stream ends with a newline.");
-                match (tokens[index].kind, tokens[index_line_end + 1].kind) {
-                    (TK::Indent, _) => {
-                        let (paragraph, new_index) =
-                            parse_paragraph(tokens, index + 1, None, None)?;
-                        block.push_child(paragraph);
-                        indent = Some(tokens[index].lexeme.len());
-                        index = new_index;
-                    }
-                    (TK::Word, _) => {
-                        let (paragraph, new_index) = parse_paragraph(tokens, index, None, None)?;
-                        block.push_child(paragraph);
-                        index = new_index;
-                    }
-                    (TK::BlankLine, TK::Indent | TK::Dedent) => {
-                        block.push_blank_lines(tokens[index].lexeme.len());
-                        index += 1;
-                    }
-                    (TK::BlankLine, TK::Word) if indent.is_some() => {
-                        block.push_blank_lines(tokens[index].lexeme.len());
-                        index += 1;
-                    }
-                    (TK::Dedent, _) => {
-                        // TODO: Do not dedent completely, modify token stream in place
-                        index += 1;
-                        break;
-                    }
-                    (_, _) => {
-                        break; // TODO: Should this be an error case?
-                    }
-                }
-            }
-
-            if let Some(indent) = indent {
-                block.with_attr("indent", indent);
+            if index + 1 < tokens.len() && tokens[index + 1].kind == TK::Indent {
+                block.push_blank_lines(tokens[index].lexeme.len());
+                block.with_attr("indent", tokens[index + 1].lexeme.len());
+                index = parse_block_body(&block, tokens, index + 2)?;
+            } else {
+                return Ok((block, index));
             }
         }
         TK::Indent => {
