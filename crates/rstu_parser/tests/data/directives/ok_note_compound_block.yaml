@@ -15,8 +15,8 @@ children:
                 attributes:
                   text: "This is inside the note.\n"
           - class: BlankLine
-  - class: Paragraph
-    children:
-      - class: PlainText
-        attributes:
-          text: "This paragraph follows the note.\n"
+          - class: Paragraph
+            children:
+              - class: PlainText
+                attributes:
+                  text: "This paragraph follows the note.\n"

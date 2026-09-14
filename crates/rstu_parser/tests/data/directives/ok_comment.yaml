@@ -21,3 +21,8 @@ children:
   - class: Comment
     attributes:
       text: "This comment\nspans\nmultiple lines\n\n"
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: "Normal text\n"
