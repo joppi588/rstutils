@@ -71,4 +71,3 @@ children:
                   - class: PlainText
                     attributes:
                       text: "integer\n"
-      - class: BlankLine

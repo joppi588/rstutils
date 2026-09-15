@@ -41,4 +41,3 @@ children:
                       - class: PlainText
                         attributes:
                           text: "75\n"
-          - class: BlankLine

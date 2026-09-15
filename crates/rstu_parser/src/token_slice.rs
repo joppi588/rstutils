@@ -14,9 +14,6 @@ pub enum TokenSliceError {
 pub trait TokenSliceExt {
     fn kind_at(&self, index: usize) -> TokenKind;
     fn token_at(&self, index: usize) -> Option<&Token>;
-    /// True once only the lexer's synthetic trailing NewLine+BlankLine padding remains,
-    /// i.e. there is no further real content for a dispatch loop to start processing at.
-    fn is_stream_end(&self, index: usize) -> bool;
 }
 
 impl TokenSliceExt for [Token] {
@@ -26,10 +23,6 @@ impl TokenSliceExt for [Token] {
 
     fn token_at(&self, index: usize) -> Option<&Token> {
         self.get(index)
-    }
-
-    fn is_stream_end(&self, index: usize) -> bool {
-        index >= self.len().saturating_sub(2)
     }
 }
 

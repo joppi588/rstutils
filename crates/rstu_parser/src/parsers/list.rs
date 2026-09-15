@@ -46,6 +46,7 @@ pub(crate) fn parse_bullet_list(
                 item.push_child(block);
                 list.push_child(item);
                 if tokens.kind_at(index) != TK::BlankLine
+                    && tokens.kind_at(index) != TK::Eof
                     && tokens.kind_at(index) != TK::BulletListMarker
                 {
                     return Err(ParserError::ListError {});
@@ -87,7 +88,11 @@ pub(crate) fn parse_field_list(
                 item.push_child(block);
                 index = new_index;
                 list.push_child(item);
-                if tokens.kind_at(index) != TK::BlankLine && tokens.kind_at(index) != TK::Field {
+                if tokens.kind_at(index) != TK::BlankLine
+                    && tokens.kind_at(index) != TK::Eof
+                    && tokens.kind_at(index) != TK::Field
+                    && tokens.kind_at(index) != TK::Dedent
+                {
                     return Err(ParserError::ListError {});
                 }
             }
