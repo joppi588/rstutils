@@ -18,7 +18,7 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 use crate::lexer::tokenize;
 use crate::token::{Token, TokenCategory as TC, TokenKind as TK};
 use parser_errors::{ParserError, EXPECT_NEWLINE};
-use token_slice::{find_next_kind, tokens_to_text};
+use token_slice::{find_next_kind, tokens_to_text, TokenSliceExt};
 
 // static DEDENT_GRACE: usize = 1;
 
@@ -30,11 +30,13 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
     let mut index: usize = 0;
     let mut current_parent = doc.clone();
 
-    while index < tokens.len() - 2 {
-        // final two tokens are always NewLine+Blankline
-        let index_line_end = find_next_kind(&tokens, &[TK::NewLine], index, None)
+    loop {
+        if tokens.is_stream_end(index) {
+            break;
+        }
+        let index_line_end = find_next_kind(&tokens, &[TK::NewLine], index)
             .expect("Token stream ends with a newline."); // TODO: Integrate this in token stream.
-        match (tokens[index].kind, tokens[index_line_end + 1].kind) {
+        match (tokens.kind_at(index), tokens.kind_at(index_line_end + 1)) {
             (token1, token2)
                 if (token1, token2) == (TK::Separator, TK::Indent)
                     || (token1, token2) == (TK::Separator, TK::Word)
@@ -76,15 +78,15 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
                     || kind.is(TC::INLINE_TOKEN)
                     || kind.is(TC::PLAIN) =>
             {
-                let (paragraph, next_start) = parse_paragraph(&tokens, index, None, None)?;
+                let (paragraph, next_start) = parse_paragraph(&tokens, index, None)?;
                 current_parent.push_child(paragraph);
                 index = next_start;
             }
 
             _ => panic!(
                 "Unexpected token combination ({:?},{:?})",
-                tokens[index].kind,
-                tokens[index_line_end + 1].kind
+                tokens.kind_at(index),
+                tokens.kind_at(index_line_end + 1)
             ),
         };
     }
@@ -98,19 +100,19 @@ pub fn match_section_header(
     has_overline: bool,
 ) -> Result<(NodeRef, usize), ParserError> {
     let title_start = start_at + 2 * usize::from(has_overline);
-    let title_end = find_next_kind(tokens, &[TK::NewLine], title_start, None).map_err(|_| {
+    let title_end = find_next_kind(tokens, &[TK::NewLine], title_start).map_err(|_| {
         ParserError::SectionTitleMissingClosingAfterOpening {
             opening_index: start_at,
         }
     })?;
 
     let closing_index = title_end + 1;
-    let closing_token = &tokens[closing_index];
-    if (closing_index >= tokens.len()) || (closing_token.kind != TK::Separator) {
+    if tokens.kind_at(closing_index) != TK::Separator {
         return Err(ParserError::SectionTitleMissingClosingAfterOpening {
             opening_index: start_at,
         });
     }
+    let closing_token = &tokens[closing_index];
     let closing_style: String = closing_token.lexeme[..1].to_string();
     let closing_len = closing_token.lexeme.len();
 
@@ -157,7 +159,6 @@ fn parse_directive_like(
             TK::SubstitutionReference,
         ],
         start_at,
-        None,
     )
     .expect(EXPECT_NEWLINE);
     let (directive, new_index) = match &tokens[index].kind {

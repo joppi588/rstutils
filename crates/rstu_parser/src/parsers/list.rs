@@ -5,7 +5,7 @@
 use super::block::parse_block_hanging_indent;
 use crate::parser_errors::ParserError;
 use crate::token::{Token, TokenKind as TK};
-use crate::token_slice::skip_kinds;
+use crate::token_slice::{skip_kinds, TokenSliceExt};
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 pub(crate) fn parse_bullet_list(
@@ -21,7 +21,7 @@ pub(crate) fn parse_bullet_list(
     // Test case for indented bullet list
     // List ends by blankline+dedent
     // Wrong indent causes error
-    while index < tokens.len() {
+    while tokens.kind_at(index) != TK::Eof {
         match tokens[index].kind {
             TK::BulletListMarker => {
                 let item = AstNode::new_ref(NodeClass::BulletListItem);
@@ -45,7 +45,8 @@ pub(crate) fn parse_bullet_list(
                 index = new_index;
                 item.push_child(block);
                 list.push_child(item);
-                if tokens[index].kind != TK::BlankLine && tokens[index].kind != TK::BulletListMarker
+                if tokens.kind_at(index) != TK::BlankLine
+                    && tokens.kind_at(index) != TK::BulletListMarker
                 {
                     return Err(ParserError::ListError {});
                 }
@@ -67,7 +68,7 @@ pub(crate) fn parse_field_list(
     let list = AstNode::new_ref(NodeClass::FieldList);
     let mut index = start_at;
 
-    while index < tokens.len() {
+    while tokens.kind_at(index) != TK::Eof {
         match tokens[index].kind {
             TK::Field => {
                 let item = AstNode::new_ref(NodeClass::FieldListItem);
@@ -86,10 +87,7 @@ pub(crate) fn parse_field_list(
                 item.push_child(block);
                 index = new_index;
                 list.push_child(item);
-                if index < tokens.len() // TODO: Can this be integrated in the loop, e.g by matching a token pair?
-                    && tokens[index].kind != TK::BlankLine
-                    && tokens[index].kind != TK::Field
-                {
+                if tokens.kind_at(index) != TK::BlankLine && tokens.kind_at(index) != TK::Field {
                     return Err(ParserError::ListError {});
                 }
             }

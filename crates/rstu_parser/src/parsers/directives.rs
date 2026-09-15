@@ -7,7 +7,7 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 use super::{block::parse_block, list::parse_field_list};
 use crate::parser_errors::{ParserError, EXPECT_NEWLINE};
 use crate::token::{Token, TokenKind as TK};
-use crate::token_slice::{find_next_kind, tokens_to_text};
+use crate::token_slice::{find_next_kind, tokens_to_text, TokenSliceExt};
 
 pub(crate) fn parse_directive(
     tokens: &[Token],
@@ -15,7 +15,7 @@ pub(crate) fn parse_directive(
     directive_colon_index: usize,
 ) -> Result<(NodeRef, usize), ParserError> {
     let first_line_end =
-        find_next_kind(tokens, &[TK::NewLine], directive_colon_index, None).expect(EXPECT_NEWLINE);
+        find_next_kind(tokens, &[TK::NewLine], directive_colon_index).expect(EXPECT_NEWLINE);
 
     let directive = AstNode::new_ref(NodeClass::Directive);
     let directive_type = tokens_to_text(&tokens[start_at + 1..directive_colon_index])
@@ -30,19 +30,19 @@ pub(crate) fn parse_directive(
     }
 
     let mut index = first_line_end + 1;
-    if index >= tokens.len() || tokens[index].kind != TK::Indent {
+    if tokens.kind_at(index) != TK::Indent {
         return Ok((directive, index));
     } else {
         directive.with_attr("indent", tokens[index].lexeme.len());
     }
 
-    if tokens[index + 1].kind == TK::Field {
+    if tokens.kind_at(index + 1) == TK::Field {
         let (options, new_index) = parse_field_list(tokens, index + 1)?;
         directive.push_child(options);
         index = new_index;
     }
 
-    if index < tokens.len() && tokens[index].kind != TK::Dedent {
+    if tokens.kind_at(index) != TK::Dedent && tokens.kind_at(index) != TK::Eof {
         let (content, new_index) = parse_block(tokens, index)?;
         directive.push_child(content);
         index = new_index;
