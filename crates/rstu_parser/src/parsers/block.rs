@@ -18,8 +18,8 @@ fn parse_block_body(
 ) -> Result<usize, ParserError> {
     let mut index = start_at;
     loop {
-        let index_line_end = find_next_kind(&tokens, &[TK::NewLine, TK::BlankLine, TK::Eof], index)
-            .expect("Token stream ends with Eof.");
+        let index_line_end = find_next_kind(&tokens, &[TK::NewLine, TK::BlankLine, TK::EoF], index)
+            .expect("Token stream ends with EoF.");
         match (tokens.kind_at(index), tokens.kind_at(index_line_end + 1)) {
             (TK::Word, _) => {
                 let (paragraph, new_index) = parse_paragraph(tokens, index, None)?;
@@ -35,7 +35,7 @@ fn parse_block_body(
                 index += 1;
                 break;
             }
-            (_, TK::Eof) => {
+            (_, TK::EoF) => {
                 break;
             }
             (_, _) => {
@@ -71,7 +71,7 @@ pub(crate) fn parse_block_hanging_indent(
         find_next_kind(&tokens, &[TK::NewLine], index).expect("Token stream ends with a newline."); // TODO: Integrate this in token stream.
 
     match tokens.kind_at(index_line_end + 1) {
-        TK::Field | TK::BulletListMarker | TK::Eof | TK::Dedent => {
+        TK::Field | TK::BulletListMarker | TK::EoF | TK::Dedent => {
             // single line list case
             let (paragraph, new_index) = parse_paragraph(tokens, index, Some(index_line_end + 1))?;
             block.push_child(paragraph);
