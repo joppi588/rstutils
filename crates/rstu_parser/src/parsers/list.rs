@@ -16,11 +16,6 @@ pub(crate) fn parse_bullet_list(
     let mut index = start_at;
     let mut marker: Option<String> = None;
 
-    // TODO
-    // list starts by blankline Bullet (in lib.rs)
-    // Test case for indented bullet list
-    // List ends by blankline+dedent
-    // Wrong indent causes error
     while tokens.kind_at(index) == TK::BulletListMarker {
         let item = AstNode::new_ref(NodeClass::BulletListItem);
         item.with_attr("marker", tokens[index].lexeme.clone());
