@@ -10,6 +10,29 @@ pub enum TokenSliceError {
     NoRemainingToken,
 }
 
+/// Panic-free lookahead over a token slice, treating out-of-bounds reads as `TokenKind::Eof`.
+pub trait TokenSliceExt {
+    fn kind_at(&self, index: usize) -> TokenKind;
+    fn token_at(&self, index: usize) -> Option<&Token>;
+    /// True once only the lexer's synthetic trailing NewLine+BlankLine padding remains,
+    /// i.e. there is no further real content for a dispatch loop to start processing at.
+    fn is_stream_end(&self, index: usize) -> bool;
+}
+
+impl TokenSliceExt for [Token] {
+    fn kind_at(&self, index: usize) -> TokenKind {
+        self.get(index).map_or(TokenKind::Eof, |token| token.kind)
+    }
+
+    fn token_at(&self, index: usize) -> Option<&Token> {
+        self.get(index)
+    }
+
+    fn is_stream_end(&self, index: usize) -> bool {
+        index >= self.len().saturating_sub(2)
+    }
+}
+
 pub fn tokens_to_text(tokens: &[Token]) -> String {
     let mut text = String::new();
     for token in tokens {
@@ -30,12 +53,9 @@ pub fn find_next_kind(
     tokens: &[Token],
     kinds: &[TokenKind],
     start_at: usize,
-    skip_index: Option<usize>,
 ) -> Result<usize, TokenSliceError> {
-    Ok(
-        find_next_kind_interrupt(tokens, kinds, &[], start_at, skip_index)?
-            .expect("interrupt_kinds is empty, so None is unreachable"),
-    )
+    Ok(find_next_kind_interrupt(tokens, kinds, &[], start_at)?
+        .expect("interrupt_kinds is empty, so None is unreachable"))
 }
 
 // TODO: remove if not used finally
@@ -45,16 +65,12 @@ pub fn find_next_kind_interrupt(
     kinds: &[TokenKind],
     interrupt_kinds: &[TokenKind],
     start_at: usize,
-    skip_index: Option<usize>,
 ) -> Result<Option<usize>, TokenSliceError> {
     tokens
         .iter()
         .enumerate()
         .skip(start_at)
         .find_map(|(index, token)| {
-            if skip_index == Some(index) {
-                return None;
-            }
             if (&token.kind).is(kinds) {
                 return Some(Some(index));
             }
@@ -79,8 +95,24 @@ pub fn skip_kinds(tokens: &[Token], kinds: &[TokenKind], start_at: usize) -> usi
 
 #[cfg(test)]
 mod tests {
-    use super::{find_next_kind, skip_kinds, tokens_without_kinds};
+    use super::{find_next_kind, skip_kinds, tokens_without_kinds, TokenSliceExt};
     use crate::token::{Token, TokenKind};
+
+    #[test]
+    fn kind_at_returns_eof_past_the_end() {
+        let tokens = [Token::new(TokenKind::Word, "title")];
+
+        assert_eq!(tokens.kind_at(0), TokenKind::Word);
+        assert_eq!(tokens.kind_at(1), TokenKind::Eof);
+    }
+
+    #[test]
+    fn token_at_returns_none_past_the_end() {
+        let tokens = [Token::new(TokenKind::Word, "title")];
+
+        assert!(tokens.token_at(0).is_some());
+        assert!(tokens.token_at(1).is_none());
+    }
 
     #[test]
     fn find_next_kind_matches_any_requested_kind() {
@@ -90,33 +122,9 @@ mod tests {
             Token::new(TokenKind::NewLine, "\n"),
         ];
 
-        let found = find_next_kind(
-            &tokens,
-            &[TokenKind::BlankLine, TokenKind::NewLine],
-            0,
-            None,
-        );
+        let found = find_next_kind(&tokens, &[TokenKind::BlankLine, TokenKind::NewLine], 0);
 
         assert_eq!(found, Ok(2));
-    }
-
-    #[test]
-    fn find_next_kind_skips_the_requested_index() {
-        let tokens = vec![
-            Token::new(TokenKind::Word, "one"),
-            Token::new(TokenKind::Spaces, " "),
-            Token::new(TokenKind::Word, "two"),
-            Token::new(TokenKind::BlankLine, "\n"),
-        ];
-
-        let found = find_next_kind(
-            &tokens,
-            &[TokenKind::BlankLine, TokenKind::Word],
-            1,
-            Some(2),
-        );
-
-        assert_eq!(found, Ok(3));
     }
 
     #[test]

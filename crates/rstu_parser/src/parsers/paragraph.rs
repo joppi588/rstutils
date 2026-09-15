@@ -12,31 +12,24 @@ pub(crate) fn parse_paragraph(
     tokens: &[Token],
     start_at: usize,
     stop_before: Option<usize>,
-    skip_index: Option<usize>,
 ) -> Result<(NodeRef, usize), ParserError> {
     let paragraph_end = stop_before.unwrap_or(
         find_next_kind(
             tokens,
             &[TK::BlankLine, TK::Indent, TK::Separator, TK::Dedent],
             start_at,
-            skip_index,
         )
         .expect("Paragraph must end somewhere."),
     );
     let paragraph = AstNode::new_ref(NodeClass::Paragraph);
     let mut index = start_at;
     while index < paragraph_end {
-        if skip_index == Some(index) {
-            index += 1;
-            continue;
-        }
-
         let (node, new_index) = match tokens[index].kind {
             kind if kind.is(TC::INLINE_MARKER) => parse_inline(&tokens, index)?,
             kind if kind.is(TC::INLINE_TOKEN) => parse_inline_token(&tokens, index)?,
             //TODO: Concatenate TC::PLAIN and tokens to a new list
             kind if kind.is(TC::PLAIN) || kind == TK::BulletListMarker || kind == TK::NewLine => {
-                parse_plain(&tokens, index, paragraph_end, skip_index)?
+                parse_plain(&tokens, index, paragraph_end)?
             }
             _ => {
                 return Err(ParserError::UnexpectedToken {
@@ -50,6 +43,20 @@ pub(crate) fn parse_paragraph(
         paragraph.push_child(node);
     }
     Ok((paragraph, index))
+}
+
+/// Parse a paragraph that continues after a hanging indent token: the indent is simply skipped.
+pub(crate) fn parse_paragraph_with_hanging_indent(
+    tokens: &[Token],
+    start_at: usize,
+    indent_at: usize,
+) -> Result<(NodeRef, usize), ParserError> {
+    let (paragraph, _) = parse_paragraph(tokens, start_at, Some(indent_at))?;
+    let (continuation, new_index) = parse_paragraph(tokens, indent_at + 1, None)?;
+    for child in std::mem::take(&mut continuation.borrow_mut().children) {
+        paragraph.push_child(child);
+    }
+    Ok((paragraph, new_index))
 }
 
 pub(crate) fn parse_inline_token(
@@ -111,13 +118,12 @@ pub(crate) fn parse_inline(
         }
     };
 
-    let inline_final =
-        find_next_kind(tokens, end_kind_candidates, start_at + 1, None).map_err(|_| {
-            ParserError::InlineMissingClosing {
-                markup: markup.to_owned(),
-                start_at,
-            }
-        })?;
+    let inline_final = find_next_kind(tokens, end_kind_candidates, start_at + 1).map_err(|_| {
+        ParserError::InlineMissingClosing {
+            markup: markup.to_owned(),
+            start_at,
+        }
+    })?;
 
     let effective_markup = match (kind, tokens[inline_final].kind) {
         (TK::BackquoteStart, TK::HyperlinkReferenceEnd) => "hyperlink_reference",
@@ -136,15 +142,10 @@ fn parse_plain(
     tokens: &[Token],
     start_at: usize,
     stop_before: usize,
-    skip_index: Option<usize>,
 ) -> Result<(NodeRef, usize), ParserError> {
     let mut index = start_at;
     let mut text = String::new();
     while index < stop_before {
-        if skip_index == Some(index) {
-            index += 1;
-            continue;
-        }
         // TODO: Use TC::PLAIN
         if !tokens[index].is(&[
             TK::Word,
@@ -167,28 +168,52 @@ fn parse_plain(
 
 #[cfg(test)]
 mod tests {
-    use super::parse_paragraph;
+    use super::{parse_paragraph, parse_paragraph_with_hanging_indent};
     use crate::token::{Token, TokenKind as TK};
 
     #[test]
-    fn parse_paragraph_skips_the_requested_index() {
+    fn parse_paragraph_stops_before_the_requested_index() {
         let tokens = vec![
             Token::new(TK::Word, "hello"),
             Token::new(TK::Word, "world"),
-            Token::new(TK::Word, "again"),
             Token::new(TK::BlankLine, "\n"),
         ];
 
         let (paragraph, next_index) =
-            parse_paragraph(&tokens, 0, None, Some(1)).expect("paragraph parsing should succeed");
+            parse_paragraph(&tokens, 0, Some(1)).expect("paragraph parsing should succeed");
 
-        assert_eq!(next_index, 3);
+        assert_eq!(next_index, 1);
         assert_eq!(
             paragraph.borrow().children[0]
                 .borrow()
                 .attributes
                 .get("text"),
-            Some(&"helloagain".into())
+            Some(&"hello".into())
+        );
+    }
+
+    #[test]
+    fn parse_paragraph_with_hanging_indent_skips_the_indent_token() {
+        let tokens = vec![
+            Token::new(TK::Word, "hello"),
+            Token::new(TK::Indent, "  "),
+            Token::new(TK::Word, "again"),
+            Token::new(TK::BlankLine, "\n"),
+        ];
+
+        let (paragraph, next_index) = parse_paragraph_with_hanging_indent(&tokens, 0, 1)
+            .expect("paragraph parsing should succeed");
+
+        assert_eq!(next_index, 3);
+        let children = &paragraph.borrow().children;
+        assert_eq!(children.len(), 2);
+        assert_eq!(
+            children[0].borrow().attributes.get("text"),
+            Some(&"hello".into())
+        );
+        assert_eq!(
+            children[1].borrow().attributes.get("text"),
+            Some(&"again".into())
         );
     }
 }
