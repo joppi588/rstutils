@@ -6,6 +6,9 @@ children:
         attributes:
           marker: "-"
         children:
+          - class: Spaces
+            attributes:
+              count: 1
           - class: Block
             attributes:
               indent: 2
@@ -26,6 +29,9 @@ children:
         attributes:
           marker: "-"
         children:
+          - class: Spaces
+            attributes:
+              count: 1
           - class: Block
             children:
             - class: Paragraph

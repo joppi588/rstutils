@@ -6,6 +6,9 @@ children:
         attributes:
           marker: "-"
         children:
+          - class: Spaces
+            attributes:
+              count: 1
           - class: Paragraph
             children:
               - class: PlainText
@@ -15,6 +18,9 @@ children:
         attributes:
           marker: "-"
         children:
+          - class: Spaces
+            attributes:
+              count: 1
           - class: Paragraph
             children:
               - class: PlainText

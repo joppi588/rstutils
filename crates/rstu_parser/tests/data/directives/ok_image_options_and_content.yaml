@@ -12,6 +12,9 @@ children:
             attributes:
               fieldname: height
             children:
+              - class: Spaces
+                attributes:
+                  count: 1
               - class: Block
                 children:
                   - class: Paragraph

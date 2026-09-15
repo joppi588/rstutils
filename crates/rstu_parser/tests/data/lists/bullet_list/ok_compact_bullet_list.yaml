@@ -11,6 +11,9 @@ children:
         attributes:
           marker: "-"
         children:
+          - class: Spaces
+            attributes:
+              count: 1
           - class: Block
             children:
               - class: Paragraph
@@ -22,6 +25,9 @@ children:
         attributes:
           marker: "-"
         children:
+          - class: Spaces
+            attributes:
+              count: 2
           - class: Block
             children:
               - class: Paragraph
