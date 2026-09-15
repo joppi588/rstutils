@@ -11,7 +11,7 @@ macro_rules! space {
 }
 
 pub fn tokenize(input: &str) -> Vec<Token> {
-    let input = format!("\n\n{input}\n\n"); // leading and trailing blank line
+    let input = format!("\n\n{input}\n"); // leading blank line
     let mut tokens: Vec<Token> = Vec::new();
     let mut last_token_kind = TK::BlankLine;
     let mut current_indent = 0;
@@ -61,6 +61,7 @@ pub fn tokenize(input: &str) -> Vec<Token> {
     if current_indent > 0 {
         tokens.push(Token::new(TK::Dedent, space!(current_indent)))
     };
+    tokens.push(Token::new(TK::Eof, ""));
     tokens
 }
 
@@ -78,7 +79,7 @@ mod tests {
             Token::new(TK::Spaces, " "),
             Token::new(TK::Word, "World"),
             Token::new(TK::NewLine, "\n"),
-            Token::new(TK::BlankLine, "\n"),
+            Token::new(TK::Eof, ""),
         ];
 
         assert_eq!(tokenize(input), expected);
@@ -93,7 +94,7 @@ mod tests {
             Token::new(TK::LiteralChar, "\x07"),
             Token::new(TK::Word, "def"),
             Token::new(TK::NewLine, "\n"),
-            Token::new(TK::BlankLine, "\n"),
+            Token::new(TK::Eof, ""),
         ];
 
         assert_eq!(tokenize(input), expected);
@@ -120,8 +121,8 @@ mod tests {
                 (TK::Dedent, "  "),
                 (TK::Word, "dedented"),
                 (TK::NewLine, "\n"),
-                (TK::BlankLine, "\n"),
-                (TK::Dedent, "  ")
+                (TK::Dedent, "  "),
+                (TK::Eof, ""),
             ]
         );
     }
@@ -147,7 +148,7 @@ mod tests {
                 (TK::Dedent, "    "),
                 (TK::Word, "plain"),
                 (TK::NewLine, "\n"),
-                (TK::BlankLine, "\n"),
+                (TK::Eof, ""),
             ]
         );
     }

@@ -16,7 +16,13 @@ pub(crate) fn parse_paragraph(
     let paragraph_end = stop_before.unwrap_or(
         find_next_kind(
             tokens,
-            &[TK::BlankLine, TK::Indent, TK::Separator, TK::Dedent],
+            &[
+                TK::BlankLine,
+                TK::Indent,
+                TK::Separator,
+                TK::Dedent,
+                TK::Eof,
+            ],
             start_at,
         )
         .expect("Paragraph must end somewhere."),

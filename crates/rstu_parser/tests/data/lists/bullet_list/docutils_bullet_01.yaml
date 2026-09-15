@@ -25,4 +25,3 @@ children:
                   - class: PlainText
                     attributes:
                       text: "item 2\n"
-      - class: BlankLine

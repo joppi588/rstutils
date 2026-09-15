@@ -31,11 +31,7 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
     let mut current_parent = doc.clone();
 
     loop {
-        if tokens.is_stream_end(index) {
-            break;
-        }
-        let index_line_end = find_next_kind(&tokens, &[TK::NewLine], index)
-            .expect("Token stream ends with a newline."); // TODO: Integrate this in token stream.
+        let index_line_end = find_next_kind(&tokens, &[TK::NewLine], index).unwrap_or(tokens.len()); // TODO: Integrate this in token stream.
         match (tokens.kind_at(index), tokens.kind_at(index_line_end + 1)) {
             (token1, token2)
                 if (token1, token2) == (TK::Separator, TK::Indent)
@@ -82,7 +78,9 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
                 current_parent.push_child(paragraph);
                 index = next_start;
             }
-
+            (TK::Eof, _) => {
+                break;
+            }
             _ => panic!(
                 "Unexpected token combination ({:?},{:?})",
                 tokens.kind_at(index),
