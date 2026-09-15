@@ -106,7 +106,7 @@ pub enum TokenKind {
     DoubleColon,
     DoubleDot,
     /// Sentinel for reads past the end of the token stream; the lexer never produces it.
-    Eof,
+    EoF,
     EmphasisEnd,
     EmphasisStart,
     Field,
@@ -183,7 +183,7 @@ impl TokenKind {
         (Punctuation, r"(.|\n)[[:punct:]](.|\n)"),
 
         (Dedent, r"\b\B"), // never matches, assigned by the lexer
-        (Eof, r"\b\B"), // never matches, only returned by TokenSliceExt::kind_at
+        (EoF, r"\b\B"), // never matches, only returned by TokenSliceExt::kind_at
         (LiteralChar, r"(.|\n).(.|\n)"),
     );
 

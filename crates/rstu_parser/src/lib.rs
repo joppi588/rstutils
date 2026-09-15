@@ -78,7 +78,7 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
                 current_parent.push_child(paragraph);
                 index = next_start;
             }
-            (TK::Eof, _) => {
+            (TK::EoF, _) => {
                 break;
             }
             _ => panic!(

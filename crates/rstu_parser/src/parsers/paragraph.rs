@@ -21,7 +21,7 @@ pub(crate) fn parse_paragraph(
                 TK::Indent,
                 TK::Separator,
                 TK::Dedent,
-                TK::Eof,
+                TK::EoF,
             ],
             start_at,
         )

@@ -87,7 +87,7 @@ fn tokenize_ok_mixed_lorem_ipsum_file() {
         (TK::Word, "file"),
         (TK::StrongEnd, "**"),
         (TK::NewLine, "\n"),
-        (TK::Eof, ""),
+        (TK::EoF, ""),
     ];
 
     assert_eq!(kinds, expected_kinds);
@@ -126,7 +126,7 @@ fn tokenize_ok_indentation() {
         (TK::Dedent, "  "),
         (TK::Word, "Dedented2"),
         (TK::NewLine, "\n"),
-        (TK::Eof, ""),
+        (TK::EoF, ""),
     ];
 
     assert_eq!(kinds, expected_kinds);
@@ -155,7 +155,7 @@ fn tokenize_ok_indentation_2blanklines() {
         (TK::Dedent, "  "),
         (TK::Word, "Dedented"),
         (TK::NewLine, "\n"),
-        (TK::Eof, ""),
+        (TK::EoF, ""),
     ];
 
     assert_eq!(kinds, expected_kinds);

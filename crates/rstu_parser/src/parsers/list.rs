@@ -21,7 +21,7 @@ pub(crate) fn parse_bullet_list(
     // Test case for indented bullet list
     // List ends by blankline+dedent
     // Wrong indent causes error
-    while tokens.kind_at(index) != TK::Eof {
+    while tokens.kind_at(index) != TK::EoF {
         match tokens[index].kind {
             TK::BulletListMarker => {
                 let item = AstNode::new_ref(NodeClass::BulletListItem);
@@ -46,7 +46,7 @@ pub(crate) fn parse_bullet_list(
                 item.push_child(block);
                 list.push_child(item);
                 if tokens.kind_at(index) != TK::BlankLine
-                    && tokens.kind_at(index) != TK::Eof
+                    && tokens.kind_at(index) != TK::EoF
                     && tokens.kind_at(index) != TK::BulletListMarker
                 {
                     return Err(ParserError::ListError {});
@@ -69,7 +69,7 @@ pub(crate) fn parse_field_list(
     let list = AstNode::new_ref(NodeClass::FieldList);
     let mut index = start_at;
 
-    while tokens.kind_at(index) != TK::Eof {
+    while tokens.kind_at(index) != TK::EoF {
         match tokens[index].kind {
             TK::Field => {
                 let item = AstNode::new_ref(NodeClass::FieldListItem);
@@ -89,7 +89,7 @@ pub(crate) fn parse_field_list(
                 index = new_index;
                 list.push_child(item);
                 if tokens.kind_at(index) != TK::BlankLine
-                    && tokens.kind_at(index) != TK::Eof
+                    && tokens.kind_at(index) != TK::EoF
                     && tokens.kind_at(index) != TK::Field
                     && tokens.kind_at(index) != TK::Dedent
                 {

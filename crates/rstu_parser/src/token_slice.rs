@@ -10,7 +10,7 @@ pub enum TokenSliceError {
     NoRemainingToken,
 }
 
-/// Panic-free lookahead over a token slice, treating out-of-bounds reads as `TokenKind::Eof`.
+/// Panic-free lookahead over a token slice, treating out-of-bounds reads as `TokenKind::EoF`.
 pub trait TokenSliceExt {
     fn kind_at(&self, index: usize) -> TokenKind;
     fn token_at(&self, index: usize) -> Option<&Token>;
@@ -18,7 +18,7 @@ pub trait TokenSliceExt {
 
 impl TokenSliceExt for [Token] {
     fn kind_at(&self, index: usize) -> TokenKind {
-        self.get(index).map_or(TokenKind::Eof, |token| token.kind)
+        self.get(index).map_or(TokenKind::EoF, |token| token.kind)
     }
 
     fn token_at(&self, index: usize) -> Option<&Token> {
@@ -96,7 +96,7 @@ mod tests {
         let tokens = [Token::new(TokenKind::Word, "title")];
 
         assert_eq!(tokens.kind_at(0), TokenKind::Word);
-        assert_eq!(tokens.kind_at(1), TokenKind::Eof);
+        assert_eq!(tokens.kind_at(1), TokenKind::EoF);
     }
 
     #[test]
