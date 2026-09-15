@@ -27,6 +27,7 @@ pub trait NodeRefExt {
     fn with_attr(&self, key: impl Into<String>, value: impl Into<AttributeType>) -> NodeRef;
     fn push_child(&self, child: NodeRef);
     fn push_blank_lines(&self, count: usize);
+    fn push_spaces(&self, count: usize);
     fn get_parent(&self) -> Option<NodeRef>;
     fn get_root(&self) -> NodeRef;
     fn push_section_ref(&self, section: NodeRef) -> NodeRef;
@@ -44,6 +45,12 @@ impl NodeRefExt for NodeRef {
         for _ in 0..count {
             self.push_child(AstNode::new_ref(NodeClass::BlankLine));
         }
+    }
+
+    fn push_spaces(&self, count: usize) {
+        let spaces = AstNode::new_ref(NodeClass::Spaces);
+        spaces.with_attr("count", count);
+        self.push_child(spaces);
     }
 
     fn get_parent(&self) -> Option<NodeRef> {

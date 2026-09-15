@@ -13,16 +13,11 @@ pub enum TokenSliceError {
 /// Panic-free lookahead over a token slice, treating out-of-bounds reads as `TokenKind::EoF`.
 pub trait TokenSliceExt {
     fn kind_at(&self, index: usize) -> TokenKind;
-    fn token_at(&self, index: usize) -> Option<&Token>;
 }
 
 impl TokenSliceExt for [Token] {
     fn kind_at(&self, index: usize) -> TokenKind {
         self.get(index).map_or(TokenKind::EoF, |token| token.kind)
-    }
-
-    fn token_at(&self, index: usize) -> Option<&Token> {
-        self.get(index)
     }
 }
 
@@ -77,18 +72,9 @@ pub fn find_next_kind_interrupt(
         })
 }
 
-pub fn skip_kinds(tokens: &[Token], kinds: &[TokenKind], start_at: usize) -> usize {
-    tokens
-        .iter()
-        .enumerate()
-        .skip(start_at)
-        .find_map(|(index, token)| (!kinds.contains(&token.kind)).then_some(index))
-        .unwrap_or(tokens.len())
-}
-
 #[cfg(test)]
 mod tests {
-    use super::{find_next_kind, skip_kinds, tokens_without_kinds, TokenSliceExt};
+    use super::{find_next_kind, tokens_without_kinds, TokenSliceExt};
     use crate::token::{Token, TokenKind};
 
     #[test]
@@ -97,14 +83,6 @@ mod tests {
 
         assert_eq!(tokens.kind_at(0), TokenKind::Word);
         assert_eq!(tokens.kind_at(1), TokenKind::EoF);
-    }
-
-    #[test]
-    fn token_at_returns_none_past_the_end() {
-        let tokens = [Token::new(TokenKind::Word, "title")];
-
-        assert!(tokens.token_at(0).is_some());
-        assert!(tokens.token_at(1).is_none());
     }
 
     #[test]
@@ -118,31 +96,6 @@ mod tests {
         let found = find_next_kind(&tokens, &[TokenKind::BlankLine, TokenKind::NewLine], 0);
 
         assert_eq!(found, Ok(2));
-    }
-
-    #[test]
-    fn skip_kinds_returns_first_non_matching_token_index() {
-        let tokens = vec![
-            Token::new(TokenKind::Spaces, " "),
-            Token::new(TokenKind::NewLine, "\n"),
-            Token::new(TokenKind::Word, "title"),
-        ];
-
-        let found = skip_kinds(&tokens, &[TokenKind::Spaces, TokenKind::NewLine], 0);
-
-        assert_eq!(found, 2);
-    }
-
-    #[test]
-    fn skip_kinds_fails_when_remaining_tokens_all_match() {
-        let tokens = vec![
-            Token::new(TokenKind::Spaces, " "),
-            Token::new(TokenKind::NewLine, "\n"),
-        ];
-
-        let next_index = skip_kinds(&tokens, &[TokenKind::Spaces, TokenKind::NewLine], 0);
-
-        assert_eq!(next_index, 2);
     }
 
     #[test]

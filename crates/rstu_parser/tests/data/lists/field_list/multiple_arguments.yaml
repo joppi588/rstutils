@@ -6,6 +6,9 @@ children:
         attributes:
           fieldname: Parameter i j k
         children:
+          - class: Spaces
+            attributes:
+              count: 1
           - class: Block
             children:
               - class: Paragraph

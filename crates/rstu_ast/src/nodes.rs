@@ -20,6 +20,7 @@ pub enum NodeClass {
     PlainText,
     Reference,
     Section,
+    Spaces,
     Strong,
     Title,
 }

@@ -11,6 +11,9 @@ children:
         attributes:
           fieldname: Authors
         children:
+          - class: Spaces
+            attributes:
+              count: 1
           - class: Block
             attributes:
               indent: 10
@@ -27,6 +30,9 @@ children:
         attributes:
           fieldname: Version
         children:
+          - class: Spaces
+            attributes:
+              count: 1
           - class: Block
             attributes:
               indent: 10
@@ -43,6 +49,9 @@ children:
         attributes:
           fieldname: Date
         children:
+          - class: Spaces
+            attributes:
+              count: 1
           - class: Block
             attributes:
               indent: 7
@@ -59,6 +68,9 @@ children:
         attributes:
           fieldname: "Parameter i"
         children:
+          - class: Spaces
+            attributes:
+              count: 1
           - class: Block
             attributes:
               indent: 14

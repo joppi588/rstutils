@@ -12,6 +12,9 @@ children:
             attributes:
               fieldname: height
             children:
+              - class: Spaces
+                attributes:
+                  count: 1
               - class: Block
                 children:
                 - class: Paragraph
@@ -23,17 +26,23 @@ children:
             attributes:
               fieldname: width
             children:
-            - class: Block
-              children:
-                - class: Paragraph
-                  children:
-                    - class: PlainText
-                      attributes:
-                        text: "300px\n"
+              - class: Spaces
+                attributes:
+                  count: 1
+              - class: Block
+                children:
+                  - class: Paragraph
+                    children:
+                      - class: PlainText
+                        attributes:
+                          text: "300px\n"
           - class: FieldListItem
             attributes:
               fieldname: scale
             children:
+              - class: Spaces
+                attributes:
+                  count: 1
               - class: Block
                 children:
                   - class: Paragraph
