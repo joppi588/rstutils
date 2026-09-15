@@ -42,7 +42,7 @@ pub(crate) fn parse_directive(
         index = new_index;
     }
 
-    if tokens.kind_at(index) != TK::Dedent && tokens.kind_at(index) != TK::Eof {
+    if tokens.kind_at(index) != TK::Dedent && tokens.kind_at(index) != TK::EoF {
         let (content, new_index) = parse_block(tokens, index)?;
         directive.push_child(content);
         index = new_index;
