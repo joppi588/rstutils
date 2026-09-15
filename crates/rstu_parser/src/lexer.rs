@@ -36,7 +36,7 @@ pub fn tokenize(input: &str) -> Vec<Token> {
                 }
                 current_indent = new_indent;
             }
-            (TK::NewLine | TK::BlankLine, TK::BlankLine) => tokens.push(new_token), // Blank line does not change indent
+            (TK::NewLine, TK::BlankLine) => tokens.push(new_token), // Blank line does not change indent
             (TK::NewLine | TK::BlankLine, _) => {
                 if current_indent > 0 {
                     let dedent_token = Token::new(TK::Dedent, space!(current_indent));
