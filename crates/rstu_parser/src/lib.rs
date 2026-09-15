@@ -63,7 +63,7 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
                 index = next_start;
             }
 
-            // TODO: Do not simply ignore these
+            // TODO: Do not simply ignore these, especially the blank lines
             (TK::NewLine, TK::BlankLine)
             | (TK::BlankLine, _)
             | (TK::Indent, _)
