@@ -48,18 +48,14 @@ pub(crate) fn parse_bullet_list(
                 index = new_index;
                 item.push_child(block);
                 list.push_child(item);
-                if tokens.kind_at(index) != TK::BlankLine
-                    && tokens.kind_at(index) != TK::EoF
-                    && tokens.kind_at(index) != TK::BulletListMarker
-                {
-                    return Err(ParserError::ListError {});
+                if tokens.kind_at(index) == TK::BlankLine {
+                    list.push_blank_lines(tokens[index].lexeme.len());
+                    index += 1;
                 }
             }
-            TK::BlankLine => {
-                list.push_blank_lines(tokens[index].lexeme.len());
-                index += 1;
+            _ => {
+                break;
             }
-            _ => break,
         }
     }
     Ok((list, index))
@@ -93,19 +89,14 @@ pub(crate) fn parse_field_list(
                 item.push_child(block);
                 index = new_index;
                 list.push_child(item);
-                if tokens.kind_at(index) != TK::BlankLine
-                    && tokens.kind_at(index) != TK::EoF
-                    && tokens.kind_at(index) != TK::Field
-                    && tokens.kind_at(index) != TK::Dedent
-                {
-                    return Err(ParserError::ListError {});
+                if tokens.kind_at(index) == TK::BlankLine {
+                    list.push_blank_lines(tokens[index].lexeme.len());
+                    index += 1;
                 }
             }
-            TK::BlankLine => {
-                list.push_blank_lines(tokens[index].lexeme.len());
-                index += 1;
+            _ => {
+                break;
             }
-            _ => break,
         }
     }
     Ok((list, index))
