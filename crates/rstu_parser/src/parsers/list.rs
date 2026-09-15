@@ -79,12 +79,14 @@ pub(crate) fn parse_field_list(
                     .trim_end_matches(':')
                     .to_string();
                 item.with_attr("fieldname", field_name);
+                index += 1;
 
-                let (block, new_index) = parse_block_hanging_indent(
-                    tokens,
-                    skip_kinds(tokens, &[TK::Spaces], index + 1),
-                )
-                .map_err(|_| ParserError::ListEndError {})?;
+                if tokens.kind_at(index) == TK::Spaces {
+                    item.push_spaces(tokens[index].lexeme.len());
+                    index += 1;
+                }
+                let (block, new_index) = parse_block_hanging_indent(tokens, index)
+                    .map_err(|_| ParserError::ListEndError {})?;
                 item.push_child(block);
                 index = new_index;
                 list.push_child(item);

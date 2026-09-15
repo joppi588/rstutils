@@ -11,8 +11,11 @@ children:
         attributes:
           fieldname: field_1
         children:
-          - class: Block
-            children:
+        - class: Spaces
+          attributes:
+            count: 1
+        - class: Block
+          children:
             - class: Paragraph
               children:
                 - class: PlainText
@@ -22,6 +25,9 @@ children:
         attributes:
           fieldname: field_2
         children:
+          - class: Spaces
+            attributes:
+              count: 1
           - class: Block
             children:
               - class: Paragraph
@@ -41,6 +47,9 @@ children:
         attributes:
           fieldname: long_field_name
         children:
+          - class: Spaces
+            attributes:
+              count: 1
           - class: Block
             attributes:
               indent: 4
@@ -57,6 +66,9 @@ children:
         attributes:
           fieldname: field_2
         children:
+          - class: Spaces
+            attributes:
+              count: 1
           - class: Block
             children:
               - class: Paragraph
@@ -76,6 +88,9 @@ children:
         attributes:
           fieldname: field_1
         children:
+          - class: Spaces
+            attributes:
+              count: 1
           - class: Block
             children:
               - class: Paragraph
@@ -88,6 +103,9 @@ children:
         attributes:
           fieldname: field_2
         children:
+          - class: Spaces
+            attributes:
+              count: 1
           - class: Block
             children:
               - class: Paragraph

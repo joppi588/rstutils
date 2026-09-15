@@ -11,6 +11,9 @@ children:
         attributes:
           fieldname: Author
         children:
+          - class: Spaces
+            attributes:
+              count: 1
           - class: Block
             children:
             - class: Paragraph
@@ -22,6 +25,9 @@ children:
         attributes:
           fieldname: Version
         children:
+          - class: Spaces
+            attributes:
+              count: 1
           - class: Block
             children:
             - class: Paragraph
@@ -33,6 +39,9 @@ children:
         attributes:
           fieldname: Date
         children:
+          - class: Spaces
+            attributes:
+              count: 1
           - class: Block
             children:
             - class: Paragraph
@@ -44,6 +53,9 @@ children:
         attributes:
           fieldname: Parameter i
         children:
+          - class: Spaces
+            attributes:
+              count: 1
           - class: Block
             children:
               - class: Paragraph
