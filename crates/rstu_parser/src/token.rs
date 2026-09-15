@@ -105,7 +105,6 @@ pub enum TokenKind {
     Dedent,
     DoubleColon,
     DoubleDot,
-    /// Sentinel for reads past the end of the token stream; the lexer never produces it.
     EoF,
     EmphasisEnd,
     EmphasisStart,
