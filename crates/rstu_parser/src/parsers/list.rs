@@ -5,7 +5,7 @@
 use super::block::parse_block_hanging_indent;
 use crate::parser_errors::ParserError;
 use crate::token::{Token, TokenKind as TK};
-use crate::token_slice::{skip_kinds, TokenSliceExt};
+use crate::token_slice::TokenSliceExt;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 pub(crate) fn parse_bullet_list(
@@ -37,11 +37,14 @@ pub(crate) fn parse_bullet_list(
                 } else {
                     marker = Some(current_marker.clone());
                 }
-                let (block, new_index) = parse_block_hanging_indent(
-                    tokens,
-                    skip_kinds(tokens, &[TK::Spaces], index + 1),
-                )
-                .map_err(|_| ParserError::ListEndError {})?;
+                index += 1;
+                if tokens.kind_at(index) == TK::Spaces {
+                    item.push_spaces(tokens[index].lexeme.len());
+                    index += 1;
+                }
+
+                let (block, new_index) = parse_block_hanging_indent(tokens, index)
+                    .map_err(|_| ParserError::ListEndError {})?;
                 index = new_index;
                 item.push_child(block);
                 list.push_child(item);
