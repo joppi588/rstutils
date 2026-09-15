@@ -27,7 +27,7 @@ children:
         children:
           - class: Spaces
             attributes:
-              count: 1
+              count: 2
           - class: Block
             children:
               - class: Paragraph
