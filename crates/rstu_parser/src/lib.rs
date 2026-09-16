@@ -67,7 +67,7 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
                 current_parent.push_blank_lines(tokens[index].lexeme.len());
                 index += 1;
             }
-            // TODO: Do not simply ignore these, especially the blank lines
+            // TODO: Do not simply ignore these
             (TK::Indent, _) | (TK::Dedent, _) => index += 1,
 
             (kind, _)
