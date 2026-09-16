@@ -76,15 +76,8 @@ impl NodeRefExt for NodeRef {
             "push_section_ref requires a section node"
         );
 
-        let section_marker = section.borrow().attributes["section_marker"]
-            .as_str()
-            .map(str::to_owned);
-        let self_marker = self
-            .borrow()
-            .attributes
-            .get("section_marker")
-            .and_then(AttributeType::as_str)
-            .map(str::to_owned);
+        let section_marker = section.borrow().attributes.get_str("section_marker");
+        let self_marker = self.borrow().attributes.get_str("section_marker");
 
         let target_parent = match self.get_parent() {
             None => self.clone(),
@@ -130,11 +123,7 @@ impl AstNode {
                 let borrowed = current_node.borrow();
                 borrowed.class == NodeClass::Section
                     && section_marker.is_none_or(|marker| {
-                        borrowed
-                            .attributes
-                            .get("section_marker")
-                            .and_then(AttributeType::as_str)
-                            == Some(marker)
+                        borrowed.attributes.get_str("section_marker").as_deref() == Some(marker)
                     })
             };
             if matches {

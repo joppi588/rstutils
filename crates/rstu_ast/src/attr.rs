@@ -15,10 +15,12 @@ pub enum AttributeType {
 }
 
 impl AttributeType {
-    pub(crate) fn as_str(&self) -> Option<&str> {
+    pub fn as_str(&self) -> Option<String> {
         match self {
-            AttributeType::String(value) => Some(value.as_str()),
-            _ => None,
+            AttributeType::Integer(value) => Some(value.to_string()),
+            AttributeType::Float(value) => Some(value.to_string()),
+            AttributeType::String(value) => Some(value.clone()),
+            AttributeType::Usize(value) => Some(value.to_string()),
         }
     }
 
@@ -46,6 +48,10 @@ impl Attributes {
 
     pub fn get(&self, key: &str) -> Option<&AttributeType> {
         self.0.get(key)
+    }
+
+    pub fn get_str(&self, key: &str) -> Option<String> {
+        self.get(key).and_then(AttributeType::as_str)
     }
 
     pub fn len(&self) -> usize {

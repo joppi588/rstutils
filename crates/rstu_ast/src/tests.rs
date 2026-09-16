@@ -21,8 +21,11 @@ fn attributes_index_by_name_and_convert_strings() {
     node.with_attr("name", "rst").with_attr("count", 1usize);
 
     let borrowed = node.borrow();
-    assert_eq!(borrowed.attributes["name"].as_str(), Some("rst"));
-    assert_eq!(borrowed.attributes["count"].as_str(), None);
+    assert_eq!(
+        borrowed.attributes["name"].as_str(),
+        Some("rst".to_string())
+    );
+    assert_eq!(borrowed.attributes["count"].as_str(), Some("1".to_string()));
 }
 
 #[test]
