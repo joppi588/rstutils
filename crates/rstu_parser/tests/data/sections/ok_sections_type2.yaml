@@ -1,42 +1,48 @@
 class: Document
 children:
+  - class: BlankLine
   - class: Section
     attributes:
-      section_marker:  "="
       marker_len: 9
       marker_len_opening: 1
+      section_marker: "="
     children:
       - class: Title
         attributes:
           text: "Heading 1"
+      - class: BlankLine
       - class: Paragraph
         children:
           - class: PlainText
             attributes:
               text: "Some Text\n"
+      - class: BlankLine
       - class: Section
         attributes:
-          section_marker: "-"
           marker_len: 9
           marker_len_opening: 1
+          section_marker: "-"
         children:
           - class: Title
             attributes:
               text: "Heading 2"
+          - class: BlankLine
           - class: Paragraph
             children:
               - class: PlainText
                 attributes:
                   text: "More Text\n"
+          - class: BlankLine
   - class: Section
     attributes:
-      section_marker:  "="
       marker_len: 9
       marker_len_opening: 1
+      section_marker: "="
     children:
       - class: Title
         attributes:
           text: "Heading 3"
+      - class: BlankLine
       - class: Paragraph
         children:
           - class: PlainText
