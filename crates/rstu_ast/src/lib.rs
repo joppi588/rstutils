@@ -6,11 +6,10 @@ mod attr;
 mod nodes;
 #[cfg(test)]
 mod tests;
-pub use attr::AttributeType;
+pub use attr::{AttributeType, Attributes};
 pub use nodes::NodeClass;
 use serde_json::{Map, Value};
 use std::cell::RefCell;
-use std::collections::BTreeMap;
 use std::rc::{Rc, Weak};
 
 pub type NodeRef = Rc<RefCell<AstNode>>;
@@ -19,7 +18,7 @@ pub type NodeRef = Rc<RefCell<AstNode>>;
 pub struct AstNode {
     pub class: NodeClass,
     pub parent: Option<Weak<RefCell<AstNode>>>,
-    pub attributes: BTreeMap<String, AttributeType>,
+    pub attributes: Attributes,
     pub children: Vec<NodeRef>,
 }
 
@@ -77,8 +76,15 @@ impl NodeRefExt for NodeRef {
             "push_section_ref requires a section node"
         );
 
-        let section_marker = section.borrow().get_string_attr("section_marker");
-        let self_marker = self.borrow().get_string_attr("section_marker");
+        let section_marker = section.borrow().attributes["section_marker"]
+            .as_str()
+            .map(str::to_owned);
+        let self_marker = self
+            .borrow()
+            .attributes
+            .get("section_marker")
+            .and_then(AttributeType::as_str)
+            .map(str::to_owned);
 
         let target_parent = match self.get_parent() {
             None => self.clone(),
@@ -106,16 +112,9 @@ impl AstNode {
         Rc::new(RefCell::new(Self {
             class,
             parent: None,
-            attributes: BTreeMap::new(),
+            attributes: Attributes::default(),
             children: Vec::new(),
         }))
-    }
-
-    fn get_string_attr(&self, key: &str) -> Option<String> {
-        self.attributes
-            .get(key)
-            .and_then(AttributeType::as_str)
-            .map(str::to_owned)
     }
 
     /// returns the current section the node is in
@@ -131,7 +130,11 @@ impl AstNode {
                 let borrowed = current_node.borrow();
                 borrowed.class == NodeClass::Section
                     && section_marker.is_none_or(|marker| {
-                        borrowed.get_string_attr("section_marker").as_deref() == Some(marker)
+                        borrowed
+                            .attributes
+                            .get("section_marker")
+                            .and_then(AttributeType::as_str)
+                            == Some(marker)
                     })
             };
             if matches {

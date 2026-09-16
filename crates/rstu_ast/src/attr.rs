@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: MIT
 
 use serde_json::Value;
+use std::collections::BTreeMap;
+use std::ops::Index;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum AttributeType {
@@ -27,6 +29,44 @@ impl AttributeType {
             AttributeType::String(value) => Value::String(value.clone()),
             AttributeType::Usize(value) => Value::from(*value as u64),
         }
+    }
+}
+
+#[derive(Debug, Clone, Default)]
+pub struct Attributes(BTreeMap<String, AttributeType>);
+
+impl Attributes {
+    pub fn insert(
+        &mut self,
+        key: impl Into<String>,
+        value: impl Into<AttributeType>,
+    ) -> Option<AttributeType> {
+        self.0.insert(key.into(), value.into())
+    }
+
+    pub fn get(&self, key: &str) -> Option<&AttributeType> {
+        self.0.get(key)
+    }
+
+    pub fn len(&self) -> usize {
+        self.0.len()
+    }
+}
+
+impl<'a> IntoIterator for &'a Attributes {
+    type Item = (&'a String, &'a AttributeType);
+    type IntoIter = std::collections::btree_map::Iter<'a, String, AttributeType>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.iter()
+    }
+}
+
+impl Index<&str> for Attributes {
+    type Output = AttributeType;
+
+    fn index(&self, key: &str) -> &Self::Output {
+        &self.0[key]
     }
 }
 

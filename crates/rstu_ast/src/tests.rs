@@ -13,6 +13,19 @@ fn section_with_marker(section_marker: &str) -> super::NodeRef {
 }
 
 #[test]
+/// GIVEN attributes containing string and integer values
+/// WHEN their values are accessed by name
+/// THEN as_str returns the string value only for the string attribute
+fn attributes_index_by_name_and_convert_strings() {
+    let node = AstNode::new_ref(NodeClass::Document);
+    node.with_attr("name", "rst").with_attr("count", 1usize);
+
+    let borrowed = node.borrow();
+    assert_eq!(borrowed.attributes["name"].as_str(), Some("rst"));
+    assert_eq!(borrowed.attributes["count"].as_str(), None);
+}
+
+#[test]
 fn push_child_sets_parent_and_appends_child() {
     let parent = AstNode::new_ref(NodeClass::Document);
     let child = AstNode::new_ref(NodeClass::Paragraph);
