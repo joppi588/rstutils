@@ -54,12 +54,9 @@ pub(crate) fn parse_block(stream: &mut TokenStream) -> Result<NodeRef, ParserErr
 
 pub(crate) fn parse_block_hanging_indent(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     let block = AstNode::new_ref(NodeClass::Block);
-    let index_line_end = stream
-        .find_next_kind(&[TK::NewLine])
-        .expect("Token stream ends with a newline.");
-
     match stream.kind_at_nextline() {
         TK::Field | TK::BulletListMarker | TK::EoF | TK::Dedent => {
+            // TODO: Can we check this already before the function call?
             // single line list case
             let paragraph = parse_paragraph(stream)?;
             block.push_child(paragraph);
@@ -81,8 +78,7 @@ pub(crate) fn parse_block_hanging_indent(stream: &mut TokenStream) -> Result<Nod
         }
         TK::Indent => {
             // first paragraph spans multiple lines
-            let indent_at = index_line_end + 1;
-            block.with_attr("indent", stream.tokens()[indent_at].lexeme.len());
+            block.with_attr("indent", stream.token_at_nextline().lexeme.len());
             let paragraph = parse_paragraph_with_hanging_indent(stream)?;
             block.push_child(paragraph);
             parse_block_body(&block, stream)?;
