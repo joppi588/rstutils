@@ -6,8 +6,8 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use crate::parser_errors::ParserError;
 use crate::token::{Token, TokenKind as TK};
-use crate::token_slice::find_next_kind;
-use crate::token_slice::{self, TokenSliceExt};
+use crate::token_stream::find_next_kind;
+use crate::token_stream::{self, TokenSliceExt};
 
 pub(crate) fn parse_comment(
     tokens: &[Token],
@@ -21,10 +21,10 @@ pub(crate) fn parse_comment(
     }
 
     let comment = AstNode::new_ref(NodeClass::Comment);
-    let comment_tokens = token_slice::tokens_without_kinds(
+    let comment_tokens = token_stream::tokens_without_kinds(
         &tokens[start_at + 2..index + 1],
         &[TK::Indent, TK::Dedent],
     );
-    comment.with_attr("text", token_slice::tokens_to_text(&comment_tokens));
+    comment.with_attr("text", token_stream::tokens_to_text(&comment_tokens));
     Ok((comment, index + 1))
 }

@@ -6,7 +6,7 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use crate::parser_errors::ParserError;
 use crate::token::{Token, TokenCategory as TC, TokenKind as TK};
-use crate::token_slice::{find_next_kind, tokens_to_text};
+use crate::token_stream::{find_next_kind, tokens_to_text};
 
 pub(crate) fn parse_paragraph(
     tokens: &[Token],

@@ -5,7 +5,7 @@
 use super::block::parse_block_hanging_indent;
 use crate::parser_errors::ParserError;
 use crate::token::{Token, TokenKind as TK};
-use crate::token_slice::TokenSliceExt;
+use crate::token_stream::TokenSliceExt;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 pub(crate) fn parse_bullet_list(

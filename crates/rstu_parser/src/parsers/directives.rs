@@ -7,7 +7,7 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 use super::{block::parse_block, list::parse_field_list};
 use crate::parser_errors::{ParserError, EXPECT_NEWLINE};
 use crate::token::{Token, TokenKind as TK};
-use crate::token_slice::{find_next_kind, tokens_to_text, TokenSliceExt};
+use crate::token_stream::{find_next_kind, tokens_to_text, TokenSliceExt};
 
 pub(crate) fn parse_directive(
     tokens: &[Token],

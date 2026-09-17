@@ -8,7 +8,7 @@ use std::rc::Rc;
 use super::paragraph::{parse_paragraph, parse_paragraph_with_hanging_indent};
 use crate::parser_errors::ParserError;
 use crate::token::{Token, TokenKind as TK};
-use crate::token_slice::{find_next_kind, TokenSliceExt};
+use crate::token_stream::{find_next_kind, TokenSliceExt};
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 fn parse_block_body(

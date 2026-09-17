@@ -11,14 +11,14 @@ use parsers::paragraph::parse_paragraph;
 
 pub mod parser_errors;
 pub mod token;
-pub mod token_slice;
+pub mod token_stream;
 
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use crate::lexer::tokenize;
 use crate::token::{Token, TokenCategory as TC, TokenKind as TK};
 use parser_errors::{ParserError, EXPECT_NEWLINE};
-use token_slice::{find_next_kind, tokens_to_text, TokenSliceExt};
+use token_stream::{find_next_kind, tokens_to_text, TokenSliceExt};
 
 // static DEDENT_GRACE: usize = 1;
 
