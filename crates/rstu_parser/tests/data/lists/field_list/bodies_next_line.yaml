@@ -5,6 +5,7 @@ children:
       - class: PlainText
         attributes:
           text: "Field bodies starting on the next line:\n"
+  - class: BlankLine
   - class: FieldList
     children:
       - class: FieldListItem

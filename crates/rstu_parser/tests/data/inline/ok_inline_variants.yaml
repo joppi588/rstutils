@@ -39,6 +39,7 @@ children:
           - class: PlainText
             attributes:
               text: "\n"
+      - class: BlankLine
   - class: Section
     attributes:
       marker_len: 17
@@ -85,7 +86,7 @@ children:
           - class: PlainText
             attributes:
               text: "\n"
-
+      - class: BlankLine
   - class: Section
     attributes:
       marker_len: 23
