@@ -5,73 +5,67 @@
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use crate::parser_errors::ParserError;
-use crate::token::{Token, TokenCategory as TC, TokenKind as TK};
-use crate::token_stream::{find_next_kind, tokens_to_text};
+use crate::token::{TokenCategory as TC, TokenKind as TK};
+use crate::token_stream::{find_next_kind, tokens_to_text, TokenStream};
 
 pub(crate) fn parse_paragraph(
-    tokens: &[Token],
-    start_at: usize,
+    stream: &mut TokenStream,
     stop_before: Option<usize>,
-) -> Result<(NodeRef, usize), ParserError> {
-    let paragraph_end = stop_before.unwrap_or(
-        find_next_kind(
-            tokens,
-            &[
+) -> Result<NodeRef, ParserError> {
+    let paragraph_end = stop_before.unwrap_or_else(|| {
+        stream
+            .find_next_kind(&[
                 TK::BlankLine,
                 TK::Indent,
                 TK::Separator,
                 TK::Dedent,
                 TK::EoF,
-            ],
-            start_at,
-        )
-        .expect("Paragraph must end somewhere."),
-    );
+            ])
+            .expect("Paragraph must end somewhere.")
+    });
     let paragraph = AstNode::new_ref(NodeClass::Paragraph);
-    let mut index = start_at;
-    while index < paragraph_end {
-        let (node, new_index) = match tokens[index].kind {
-            kind if kind.is(TC::INLINE_MARKER) => parse_inline(&tokens, index)?,
-            kind if kind.is(TC::INLINE_TOKEN) => parse_inline_token(&tokens, index)?,
+    while stream.cursor() < paragraph_end {
+        let kind = stream.kind_at_cursor();
+        let node = match kind {
+            kind if kind.is(TC::INLINE_MARKER) => parse_inline(stream)?,
+            kind if kind.is(TC::INLINE_TOKEN) => parse_inline_token(stream)?,
             //TODO: Concatenate TC::PLAIN and tokens to a new list
             kind if kind.is(TC::PLAIN) || kind == TK::BulletListMarker || kind == TK::NewLine => {
-                parse_plain(&tokens, index, paragraph_end)?
+                parse_plain(stream, paragraph_end)?
             }
             _ => {
                 return Err(ParserError::UnexpectedToken {
                     expected: "Inline/plain".to_owned(),
-                    found: format!("{:?}", tokens[index].kind),
-                    index: index,
+                    found: format!("{:?}", kind),
+                    index: stream.cursor(),
                 });
             }
         };
-        index = new_index;
         paragraph.push_child(node);
     }
-    Ok((paragraph, index))
+    Ok(paragraph)
 }
 
 /// Parse a paragraph that continues after a hanging indent token: the indent is simply skipped.
 pub(crate) fn parse_paragraph_with_hanging_indent(
-    tokens: &[Token],
-    start_at: usize,
+    stream: &mut TokenStream,
     indent_at: usize,
-) -> Result<(NodeRef, usize), ParserError> {
-    let (paragraph, _) = parse_paragraph(tokens, start_at, Some(indent_at))?;
-    let (continuation, new_index) = parse_paragraph(tokens, indent_at + 1, None)?;
+) -> Result<NodeRef, ParserError> {
+    let paragraph = parse_paragraph(stream, Some(indent_at))?;
+    stream.consume();
+    let continuation = parse_paragraph(stream, None)?;
     for child in std::mem::take(&mut continuation.borrow_mut().children) {
         paragraph.push_child(child);
     }
-    Ok((paragraph, new_index))
+    Ok(paragraph)
 }
 
-pub(crate) fn parse_inline_token(
-    tokens: &[Token],
-    at: usize,
-) -> Result<(NodeRef, usize), ParserError> {
+pub(crate) fn parse_inline_token(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    let at = stream.cursor();
     let node = AstNode::new_ref(NodeClass::Reference);
-    let kind = tokens[at].kind;
-    let lexeme = &tokens[at].lexeme;
+    let token = stream.consume();
+    let kind = token.kind;
+    let lexeme = &token.lexeme;
     match kind {
         TK::FootnoteReference => {
             node.with_attr("text", &lexeme[1..lexeme.len() - 2])
@@ -98,14 +92,12 @@ pub(crate) fn parse_inline_token(
             });
         }
     };
-    Ok((node, at + 1))
+    Ok(node)
 }
 
-pub(crate) fn parse_inline(
-    tokens: &[Token],
-    start_at: usize,
-) -> Result<(NodeRef, usize), ParserError> {
-    let kind = tokens[start_at].kind;
+pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    let start_at = stream.cursor();
+    let kind = stream.kind_at_cursor();
     let (markup, end_kind_candidates): (&str, &[TK]) = match kind {
         TK::StrongStart => ("strong", &[TK::StrongEnd]),
         TK::EmphasisStart => ("emphasis", &[TK::EmphasisEnd]),
@@ -124,58 +116,53 @@ pub(crate) fn parse_inline(
         }
     };
 
-    let inline_final = find_next_kind(tokens, end_kind_candidates, start_at + 1).map_err(|_| {
-        ParserError::InlineMissingClosing {
-            markup: markup.to_owned(),
-            start_at,
-        }
-    })?;
+    let inline_final =
+        find_next_kind(stream.tokens(), end_kind_candidates, start_at + 1).map_err(|_| {
+            ParserError::InlineMissingClosing {
+                markup: markup.to_owned(),
+                start_at,
+            }
+        })?;
 
-    let effective_markup = match (kind, tokens[inline_final].kind) {
+    let effective_markup = match (kind, stream.tokens()[inline_final].kind) {
         (TK::BackquoteStart, TK::HyperlinkReferenceEnd) => "hyperlink_reference",
         (TK::BackquoteStart, TK::BackquoteEnd) => "interpreted_text",
         _ => markup,
     };
 
     let inline = AstNode::new_ref(NodeClass::InlineMarkup);
-    inline
-        .with_attr("markup", effective_markup)
-        .with_attr("text", tokens_to_text(&tokens[start_at + 1..inline_final]));
-    Ok((inline, inline_final + 1))
+    inline.with_attr("markup", effective_markup).with_attr(
+        "text",
+        tokens_to_text(&stream.tokens()[start_at + 1..inline_final]),
+    );
+    stream.set_cursor(inline_final + 1);
+    Ok(inline)
 }
 
-fn parse_plain(
-    tokens: &[Token],
-    start_at: usize,
-    stop_before: usize,
-) -> Result<(NodeRef, usize), ParserError> {
-    let mut index = start_at;
+fn parse_plain(stream: &mut TokenStream, stop_before: usize) -> Result<NodeRef, ParserError> {
     let mut text = String::new();
-    while index < stop_before {
-        // TODO: Use TC::PLAIN
-        if !tokens[index].is(&[
+    while stream.cursor() < stop_before
+        && stream.kind_at_cursor().is(&[
             TK::Word,
             TK::Spaces,
             TK::Punctuation,
             TK::NewLine,
             TK::BulletListMarker,
-        ]) {
-            break;
-        }
-
-        text.push_str(&tokens[index].lexeme);
-        index += 1;
+        ])
+    {
+        text.push_str(&stream.consume().lexeme);
     }
 
     let sentence = AstNode::new_ref(NodeClass::PlainText);
     sentence.with_attr("text", text);
-    Ok((sentence, index))
+    Ok(sentence)
 }
 
 #[cfg(test)]
 mod tests {
     use super::{parse_paragraph, parse_paragraph_with_hanging_indent};
     use crate::token::{Token, TokenKind as TK};
+    use crate::token_stream::TokenStream;
 
     #[test]
     fn parse_paragraph_stops_before_the_requested_index() {
@@ -184,11 +171,12 @@ mod tests {
             Token::new(TK::Word, "world"),
             Token::new(TK::BlankLine, "\n"),
         ];
+        let mut stream = TokenStream::new(tokens);
 
-        let (paragraph, next_index) =
-            parse_paragraph(&tokens, 0, Some(1)).expect("paragraph parsing should succeed");
+        let paragraph =
+            parse_paragraph(&mut stream, Some(1)).expect("paragraph parsing should succeed");
 
-        assert_eq!(next_index, 1);
+        assert_eq!(stream.cursor(), 1);
         assert_eq!(
             paragraph.borrow().children[0]
                 .borrow()
@@ -206,11 +194,12 @@ mod tests {
             Token::new(TK::Word, "again"),
             Token::new(TK::BlankLine, "\n"),
         ];
+        let mut stream = TokenStream::new(tokens);
 
-        let (paragraph, next_index) = parse_paragraph_with_hanging_indent(&tokens, 0, 1)
+        let paragraph = parse_paragraph_with_hanging_indent(&mut stream, 1)
             .expect("paragraph parsing should succeed");
 
-        assert_eq!(next_index, 3);
+        assert_eq!(stream.cursor(), 3);
         let children = &paragraph.borrow().children;
         assert_eq!(children.len(), 2);
         assert_eq!(

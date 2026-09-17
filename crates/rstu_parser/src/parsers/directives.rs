@@ -6,47 +6,45 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use super::{block::parse_block, list::parse_field_list};
 use crate::parser_errors::{ParserError, EXPECT_NEWLINE};
-use crate::token::{Token, TokenKind as TK};
-use crate::token_stream::{find_next_kind, tokens_to_text, TokenSliceExt};
+use crate::token::TokenKind as TK;
+use crate::token_stream::{find_next_kind, tokens_to_text, TokenStream};
 
 pub(crate) fn parse_directive(
-    tokens: &[Token],
+    stream: &mut TokenStream,
     start_at: usize,
     directive_colon_index: usize,
-) -> Result<(NodeRef, usize), ParserError> {
-    let first_line_end =
-        find_next_kind(tokens, &[TK::NewLine], directive_colon_index).expect(EXPECT_NEWLINE);
+) -> Result<NodeRef, ParserError> {
+    let first_line_end = find_next_kind(stream.tokens(), &[TK::NewLine], directive_colon_index)
+        .expect(EXPECT_NEWLINE);
 
     let directive = AstNode::new_ref(NodeClass::Directive);
-    let directive_type = tokens_to_text(&tokens[start_at + 1..directive_colon_index])
+    let directive_type = tokens_to_text(&stream.tokens()[start_at + 1..directive_colon_index])
         .trim()
         .to_string();
     directive.with_attr("directive_type", directive_type);
 
     if first_line_end > directive_colon_index + 1 {
         let directive_arguments =
-            tokens_to_text(&tokens[directive_colon_index + 2..first_line_end]);
+            tokens_to_text(&stream.tokens()[directive_colon_index + 2..first_line_end]);
         directive.with_attr("directive_arguments", directive_arguments);
     }
 
-    let mut index = first_line_end + 1;
-    if tokens.kind_at(index) != TK::Indent {
-        return Ok((directive, index));
-    } else {
-        directive.with_attr("indent", tokens[index].lexeme.len());
+    stream.set_cursor(first_line_end + 1);
+    if stream.kind_at_cursor() != TK::Indent {
+        return Ok(directive);
     }
+    directive.with_attr("indent", stream.tokens()[stream.cursor()].lexeme.len());
 
-    if tokens.kind_at(index + 1) == TK::Field {
-        let (options, new_index) = parse_field_list(tokens, index + 1)?;
+    if stream.kind_peek_relative(1) == TK::Field {
+        stream.consume_n(1); // Skip the shared Indent token; parse_block consumes it otherwise.
+        let options = parse_field_list(stream)?;
         directive.push_child(options);
-        index = new_index;
     }
 
-    if tokens.kind_at(index) != TK::Dedent && tokens.kind_at(index) != TK::EoF {
-        let (content, new_index) = parse_block(tokens, index)?;
+    if stream.kind_at_cursor() != TK::Dedent && stream.kind_at_cursor() != TK::EoF {
+        let content = parse_block(stream)?;
         directive.push_child(content);
-        index = new_index;
     }
 
-    Ok((directive, index))
+    Ok(directive)
 }
