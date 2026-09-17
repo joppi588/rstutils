@@ -5,6 +5,7 @@ children:
       - class: PlainText
         attributes:
           text: "This is a bullet list:\n"
+  - class: BlankLine
   - class: BulletList
     children:
       - class: BulletListItem

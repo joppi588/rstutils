@@ -5,6 +5,7 @@ children:
       - class: PlainText
         attributes:
           text: "One-paragraph, multi-liners, not lined up:\n"
+  - class: BlankLine
   - class: FieldList
     children:
       - class: FieldListItem

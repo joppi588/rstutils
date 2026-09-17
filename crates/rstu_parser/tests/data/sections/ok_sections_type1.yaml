@@ -9,11 +9,13 @@ children:
       - class: Title
         attributes:
           text: "Heading I"
+      - class: BlankLine
       - class: Paragraph
         children:
           - class: PlainText
             attributes:
               text: "Some Text\n"
+      - class: BlankLine
       - class: Section
         attributes:
           section_marker: "-"
@@ -23,11 +25,13 @@ children:
           - class: Title
             attributes:
               text: "Heading II"
+          - class: BlankLine
           - class: Paragraph
             children:
               - class: PlainText
                 attributes:
                   text: "More Text\n"
+          - class: BlankLine
   - class: Section
     attributes:
       section_marker: "="
@@ -37,6 +41,7 @@ children:
       - class: Title
         attributes:
           text: "Heading III"
+      - class: BlankLine
       - class: Paragraph
         children:
           - class: PlainText
