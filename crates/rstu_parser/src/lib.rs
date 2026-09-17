@@ -63,12 +63,11 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
                 index = next_start;
             }
 
-            (TK::BlankLine, _) => {
-                current_parent.push_blank_lines(tokens[index].lexeme.len());
-                index += 1;
-            }
-            // TODO: Do not simply ignore these
-            (TK::Indent, _) | (TK::Dedent, _) => index += 1,
+            // TODO: Do not simply ignore these, especially the blank lines
+            (TK::NewLine, TK::BlankLine)
+            | (TK::BlankLine, _)
+            | (TK::Indent, _)
+            | (TK::Dedent, _) => index += 1,
 
             (kind, _)
                 if kind.is(TC::INLINE_MARKER)
