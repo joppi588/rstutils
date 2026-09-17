@@ -11,7 +11,7 @@ use crate::token_stream::{tokens_to_text, TokenStream};
 
 pub(crate) fn parse_directive(
     stream: &mut TokenStream,
-    directive_colon_index: usize,
+    directive_colon_index: usize, // TODO: It is ok to know this outside, but re-calculating inside (use a loop) would safe one parameter
 ) -> Result<NodeRef, ParserError> {
     let first_line_end = stream
         .find_next_kind_from(&[TK::NewLine], directive_colon_index)
