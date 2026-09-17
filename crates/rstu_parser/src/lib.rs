@@ -33,13 +33,14 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
     loop {
         let index_line_end = find_next_kind(&tokens, &[TK::NewLine], index).unwrap_or(tokens.len()); // TODO: Integrate this in token stream.
         match (tokens.kind_at(index), tokens.kind_at(index_line_end + 1)) {
-            (token1, token2)
-                if (token1, token2) == (TK::Separator, TK::Indent)
-                    || (token1, token2) == (TK::Separator, TK::Word)
-                    || (token1, token2) == (TK::Word, TK::Separator) =>
-            {
-                let (section, next_start) =
-                    match_section_header(&tokens, index, token1.is(&[TK::Separator]))?;
+            (TK::Separator, TK::Indent | TK::Word) => {
+                let (section, next_start) = match_section_header(&tokens, index, true)?;
+                current_parent.push_section_ref(section.clone());
+                current_parent = section;
+                index = next_start;
+            }
+            (TK::Word, TK::Separator) => {
+                let (section, next_start) = match_section_header(&tokens, index, false)?;
                 current_parent.push_section_ref(section.clone());
                 current_parent = section;
                 index = next_start;
