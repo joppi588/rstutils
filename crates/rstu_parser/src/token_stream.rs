@@ -10,17 +10,6 @@ pub enum TokenSliceError {
     NoRemainingToken,
 }
 
-/// Panic-free lookahead over a token slice, treating out-of-bounds reads as `TokenKind::EoF`.
-pub trait TokenSliceExt {
-    fn kind_at(&self, index: usize) -> TokenKind;
-}
-
-impl TokenSliceExt for [Token] {
-    fn kind_at(&self, index: usize) -> TokenKind {
-        self.get(index).map_or(TokenKind::EoF, |token| token.kind)
-    }
-}
-
 pub fn tokens_to_text(tokens: &[Token]) -> String {
     let mut text = String::new();
     for token in tokens {
@@ -100,19 +89,26 @@ impl TokenStream {
         self.cursor = pos;
     }
 
+    /// Panic-free lookahead by absolute index, treating out-of-bounds reads as `TokenKind::EoF`.
+    pub fn kind_at(&self, index: usize) -> TokenKind {
+        self.tokens
+            .get(index)
+            .map_or(TokenKind::EoF, |token| token.kind)
+    }
+
     pub fn kind_at_cursor(&self) -> TokenKind {
-        self.tokens.kind_at(self.cursor)
+        self.kind_at(self.cursor)
     }
 
     pub fn kind_peek_relative(&self, delta: usize) -> TokenKind {
-        self.tokens.kind_at(self.cursor.saturating_add(delta))
+        self.kind_at(self.cursor.saturating_add(delta))
     }
 
     /// Kind of the first token after the next `NewLine` found from the cursor.
     pub fn kind_at_nextline(&self) -> TokenKind {
         let line_end = find_next_kind(&self.tokens, &[TokenKind::NewLine], self.cursor)
             .unwrap_or(self.tokens.len());
-        self.tokens.kind_at(line_end + 1)
+        self.kind_at(line_end + 1)
     }
 
     pub fn find_next_kind(&self, kinds: &[TokenKind]) -> Result<usize, TokenSliceError> {
@@ -137,15 +133,15 @@ impl TokenStream {
 
 #[cfg(test)]
 mod tests {
-    use super::{find_next_kind, tokens_without_kinds, TokenSliceExt, TokenStream};
+    use super::{find_next_kind, tokens_without_kinds, TokenStream};
     use crate::token::{Token, TokenKind};
 
     #[test]
     fn kind_at_returns_eof_past_the_end() {
-        let tokens = [Token::new(TokenKind::Word, "title")];
+        let stream = TokenStream::new(vec![Token::new(TokenKind::Word, "title")]);
 
-        assert_eq!(tokens.kind_at(0), TokenKind::Word);
-        assert_eq!(tokens.kind_at(1), TokenKind::EoF);
+        assert_eq!(stream.kind_at(0), TokenKind::Word);
+        assert_eq!(stream.kind_at(1), TokenKind::EoF);
     }
 
     #[test]

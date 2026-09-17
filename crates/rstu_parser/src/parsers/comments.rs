@@ -7,7 +7,7 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 use crate::parser_errors::ParserError;
 use crate::token::TokenKind as TK;
 use crate::token_stream::find_next_kind;
-use crate::token_stream::{self, TokenSliceExt, TokenStream};
+use crate::token_stream::{self, TokenStream};
 
 pub(crate) fn parse_comment(
     stream: &mut TokenStream,
@@ -15,7 +15,7 @@ pub(crate) fn parse_comment(
     first_line_end: usize,
 ) -> Result<NodeRef, ParserError> {
     let mut index = first_line_end;
-    if stream.tokens().kind_at(index + 1) == TK::Indent {
+    if stream.kind_at(index + 1) == TK::Indent {
         index = find_next_kind(stream.tokens(), &[TK::Dedent], index + 1)
             .expect("There is always a final dedent.");
     }

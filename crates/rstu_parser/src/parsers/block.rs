@@ -8,7 +8,7 @@ use std::rc::Rc;
 use super::paragraph::{parse_paragraph, parse_paragraph_with_hanging_indent};
 use crate::parser_errors::ParserError;
 use crate::token::TokenKind as TK;
-use crate::token_stream::{TokenSliceExt, TokenStream};
+use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 fn parse_block_body(
@@ -19,10 +19,7 @@ fn parse_block_body(
         let index_line_end = stream
             .find_next_kind(&[TK::NewLine, TK::BlankLine, TK::EoF])
             .expect("Token stream ends with EoF.");
-        match (
-            stream.kind_at_cursor(),
-            stream.tokens().kind_at(index_line_end + 1),
-        ) {
+        match (stream.kind_at_cursor(), stream.kind_at(index_line_end + 1)) {
             (TK::Word, _) => {
                 let paragraph = parse_paragraph(stream, None)?;
                 block.push_child(paragraph);
@@ -64,7 +61,7 @@ pub(crate) fn parse_block_hanging_indent(stream: &mut TokenStream) -> Result<Nod
         .find_next_kind(&[TK::NewLine])
         .expect("Token stream ends with a newline.");
 
-    match stream.tokens().kind_at(index_line_end + 1) {
+    match stream.kind_at(index_line_end + 1) {
         TK::Field | TK::BulletListMarker | TK::EoF | TK::Dedent => {
             // single line list case
             let paragraph = parse_paragraph(stream, Some(index_line_end + 1))?;

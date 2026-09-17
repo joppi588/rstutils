@@ -18,7 +18,7 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 use crate::lexer::tokenize;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
 use parser_errors::{ParserError, EXPECT_NEWLINE};
-use token_stream::{find_next_kind, tokens_to_text, TokenSliceExt, TokenStream};
+use token_stream::{find_next_kind, tokens_to_text, TokenStream};
 
 // static DEDENT_GRACE: usize = 1;
 
@@ -95,7 +95,7 @@ pub fn match_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserE
     })?;
 
     let closing_index = title_end + 1;
-    if stream.tokens().kind_at(closing_index) != TK::Separator {
+    if stream.kind_at(closing_index) != TK::Separator {
         return Err(ParserError::SectionTitleMissingClosingAfterOpening {
             opening_index: start_at,
         });
