@@ -11,7 +11,7 @@ macro_rules! space {
 }
 
 pub fn tokenize(input: &str) -> Vec<Token> {
-    let input = format!("\n\n{input}\n"); // leading blank line
+    let input = format!("\n{input}\n"); // leading blank line
     let mut tokens: Vec<Token> = Vec::new();
     let mut last_token_kind = TK::BlankLine;
     let mut current_indent = 0;
@@ -74,7 +74,6 @@ mod tests {
     fn tokenize_spaces_words() {
         let input = "Hello World\n";
         let expected = vec![
-            Token::new(TK::BlankLine, "\n"),
             Token::new(TK::Word, "Hello"),
             Token::new(TK::Spaces, " "),
             Token::new(TK::Word, "World"),
@@ -89,7 +88,6 @@ mod tests {
     fn tokenize_treats_unmatched_input_as_literal_string() {
         let input = "abc\x07def\n";
         let expected = vec![
-            Token::new(TK::BlankLine, "\n"),
             Token::new(TK::Word, "abc"),
             Token::new(TK::LiteralChar, "\x07"),
             Token::new(TK::Word, "def"),
@@ -112,7 +110,6 @@ mod tests {
         assert_eq!(
             actual,
             vec![
-                (TK::BlankLine, "\n"),
                 (TK::Word, "line_1"),
                 (TK::NewLine, "\n"),
                 (TK::Indent, "    "),
@@ -139,7 +136,6 @@ mod tests {
         assert_eq!(
             actual,
             vec![
-                (TK::BlankLine, "\n"),
                 (TK::Word, "line_1"),
                 (TK::NewLine, "\n"),
                 (TK::Indent, "    "),
