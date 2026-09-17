@@ -33,14 +33,8 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
     loop {
         let index_line_end = find_next_kind(&tokens, &[TK::NewLine], index).unwrap_or(tokens.len()); // TODO: Integrate this in token stream.
         match (tokens.kind_at(index), tokens.kind_at(index_line_end + 1)) {
-            (TK::Separator, TK::Indent | TK::Word) => {
-                let (section, next_start) = match_section_header(&tokens, index, true)?;
-                current_parent.push_section_ref(section.clone());
-                current_parent = section;
-                index = next_start;
-            }
-            (TK::Word, TK::Separator) => {
-                let (section, next_start) = match_section_header(&tokens, index, false)?;
+            (TK::Separator, TK::Indent | TK::Word) | (TK::Word, TK::Separator) => {
+                let (section, next_start) = match_section_header(&tokens, index)?;
                 current_parent.push_section_ref(section.clone());
                 current_parent = section;
                 index = next_start;
@@ -97,8 +91,24 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
 pub fn match_section_header(
     tokens: &[Token],
     start_at: usize,
-    has_overline: bool,
 ) -> Result<(NodeRef, usize), ParserError> {
+    let has_overline = tokens.kind_at(start_at) == TK::Separator;
+
+    let opening_len = if has_overline {
+        let opening_token = &tokens[start_at];
+        let opening_style = opening_token.lexeme[..1].to_string();
+        if opening_style != closing_style {
+            return Err(ParserError::SectionTitleUnbalancedStyle {
+                opening_index: start_at,
+                opening_style,
+                closing_style,
+            });
+        }
+        opening_style.len()
+    } else {
+        0
+    };
+
     let title_start = start_at + 2 * usize::from(has_overline);
     let title_end = find_next_kind(tokens, &[TK::NewLine], title_start).map_err(|_| {
         ParserError::SectionTitleMissingClosingAfterOpening {
@@ -115,21 +125,6 @@ pub fn match_section_header(
     let closing_token = &tokens[closing_index];
     let closing_style: String = closing_token.lexeme[..1].to_string();
     let closing_len = closing_token.lexeme.len();
-
-    let opening_len = if has_overline {
-        let opening_token = &tokens[start_at];
-        let opening_style = opening_token.lexeme[..1].to_string();
-        if opening_style != closing_style {
-            return Err(ParserError::SectionTitleUnbalancedStyle {
-                opening_index: start_at,
-                opening_style,
-                closing_style,
-            });
-        }
-        opening_style.len()
-    } else {
-        0
-    };
 
     let section = AstNode::new_ref(NodeClass::Section);
     section
