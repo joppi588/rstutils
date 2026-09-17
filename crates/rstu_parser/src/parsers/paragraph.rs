@@ -19,6 +19,8 @@ pub(crate) fn parse_paragraph(
                 TK::Indent,
                 TK::Separator,
                 TK::Dedent,
+                TK::Field,
+                TK::BulletListMarker,
                 TK::EoF,
             ])
             .expect("Paragraph must end somewhere.")

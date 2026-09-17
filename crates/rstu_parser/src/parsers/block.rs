@@ -64,12 +64,12 @@ pub(crate) fn parse_block_hanging_indent(stream: &mut TokenStream) -> Result<Nod
     match stream.kind_at(index_line_end + 1) {
         TK::Field | TK::BulletListMarker | TK::EoF | TK::Dedent => {
             // single line list case
-            let paragraph = parse_paragraph(stream, Some(index_line_end + 1))?;
+            let paragraph = parse_paragraph(stream, None)?;
             block.push_child(paragraph);
         }
         TK::BlankLine => {
             // first paragraph is a single line
-            let paragraph = parse_paragraph(stream, Some(index_line_end + 1))?;
+            let paragraph = parse_paragraph(stream, None)?;
             block.push_child(paragraph);
 
             if stream.kind_peek_relative(1) == TK::Indent {

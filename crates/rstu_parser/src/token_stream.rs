@@ -104,7 +104,6 @@ impl TokenStream {
         self.kind_at(self.cursor.saturating_add(delta))
     }
 
-    /// Kind of the first token after the next `NewLine` found from the cursor.
     pub fn kind_at_nextline(&self) -> TokenKind {
         let line_end = find_next_kind(&self.tokens, &[TokenKind::NewLine], self.cursor)
             .unwrap_or(self.tokens.len());
@@ -113,6 +112,15 @@ impl TokenStream {
 
     pub fn find_next_kind(&self, kinds: &[TokenKind]) -> Result<usize, TokenSliceError> {
         find_next_kind(&self.tokens, kinds, self.cursor)
+    }
+
+    pub fn token_at_nextline(&self) -> Token {
+        let line_end = find_next_kind(&self.tokens, &[TokenKind::NewLine], self.cursor)
+            .unwrap_or(self.tokens.len());
+        self.tokens
+            .get(line_end + 1)
+            .cloned()
+            .unwrap_or_else(|| Token::new(TokenKind::EoF, ""))
     }
 
     /// Returns the token at the cursor (or a synthetic `EoF` token) and advances the cursor by one.
