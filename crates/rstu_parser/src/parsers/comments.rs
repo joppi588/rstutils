@@ -10,7 +10,6 @@ use crate::token_stream::{self, TokenStream};
 
 pub(crate) fn parse_comment(
     stream: &mut TokenStream,
-    start_at: usize,
     first_line_end: usize,
 ) -> Result<NodeRef, ParserError> {
     let mut index = first_line_end;
@@ -22,7 +21,7 @@ pub(crate) fn parse_comment(
 
     let comment = AstNode::new_ref(NodeClass::Comment);
     let comment_tokens = token_stream::tokens_without_kinds(
-        &stream.tokens()[start_at + 2..index + 1],
+        &stream.tokens()[stream.cursor() + 2..index + 1],
         &[TK::Indent, TK::Dedent],
     );
     comment.with_attr("text", token_stream::tokens_to_text(&comment_tokens));

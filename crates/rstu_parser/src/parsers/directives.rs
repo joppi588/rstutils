@@ -11,7 +11,6 @@ use crate::token_stream::{tokens_to_text, TokenStream};
 
 pub(crate) fn parse_directive(
     stream: &mut TokenStream,
-    start_at: usize,
     directive_colon_index: usize,
 ) -> Result<NodeRef, ParserError> {
     let first_line_end = stream
@@ -19,9 +18,10 @@ pub(crate) fn parse_directive(
         .expect(EXPECT_NEWLINE);
 
     let directive = AstNode::new_ref(NodeClass::Directive);
-    let directive_type = tokens_to_text(&stream.tokens()[start_at + 1..directive_colon_index])
-        .trim()
-        .to_string();
+    let directive_type =
+        tokens_to_text(&stream.tokens()[stream.cursor() + 1..directive_colon_index])
+            .trim()
+            .to_string();
     directive.with_attr("directive_type", directive_type);
 
     if first_line_end > directive_colon_index + 1 {

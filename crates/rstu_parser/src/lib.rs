@@ -137,22 +137,18 @@ pub fn match_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserE
 
 /// Parse directives, comments, citations, substitutions
 fn parse_directive_like(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
-    let start_at = stream.cursor();
     let index = stream
-        .find_next_kind_from(
-            &[
-                TK::NewLine,
-                TK::DoubleColon,
-                TK::FootnoteReference,
-                TK::HyperlinkReferenceEnd,
-                TK::SubstitutionReference,
-            ],
-            start_at,
-        )
+        .find_next_kind(&[
+            TK::NewLine,
+            TK::DoubleColon,
+            TK::FootnoteReference,
+            TK::HyperlinkReferenceEnd,
+            TK::SubstitutionReference,
+        ])
         .expect(EXPECT_NEWLINE);
     let directive = match stream.tokens()[index].kind {
-        TK::NewLine => parse_comment(stream, start_at, index)?,
-        TK::DoubleColon => parse_directive(stream, start_at, index)?,
+        TK::NewLine => parse_comment(stream, index)?,
+        TK::DoubleColon => parse_directive(stream, index)?,
         _ => panic!("Not implemented directive-like structure."),
     };
     Ok(directive)
