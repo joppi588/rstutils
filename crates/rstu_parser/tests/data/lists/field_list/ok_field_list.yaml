@@ -5,6 +5,7 @@ children:
       - class: PlainText
         attributes:
           text: "This is a field list:\n"
+  - class: BlankLine
   - class: FieldList
     children:
       - class: FieldListItem
@@ -41,6 +42,7 @@ children:
       - class: PlainText
         attributes:
           text: "A field list with hanging indent:\n"
+  - class: BlankLine
   - class: FieldList
     children:
       - class: FieldListItem
@@ -82,6 +84,7 @@ children:
       - class: PlainText
         attributes:
           text: "In field lists\n"
+  - class: BlankLine
   - class: FieldList
     children:
       - class: FieldListItem

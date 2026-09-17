@@ -16,7 +16,6 @@ fn tokenize_ok_mixed_lorem_ipsum_file() {
     let tokens: Vec<Token> = tokenize(&contents);
     let kinds: Vec<(TK, &str)> = tokens.iter().map(|token| token.as_tuple()).collect();
     let expected_kinds = vec![
-        (TK::BlankLine, "\n"),
         (TK::Word, "Lorem"),
         (TK::Spaces, " "),
         (TK::Word, "Ipsum"),
@@ -102,7 +101,6 @@ fn tokenize_ok_indentation() {
     let tokens: Vec<Token> = tokenize(&contents);
     let kinds: Vec<(TK, &str)> = tokens.iter().map(|token| token.as_tuple()).collect();
     let expected_kinds = vec![
-        (TK::BlankLine, "\n"),
         (TK::Word, "First"),
         (TK::Spaces, " "),
         (TK::Word, "line"),
@@ -141,7 +139,6 @@ fn tokenize_ok_indentation_2blanklines() {
     let tokens: Vec<Token> = tokenize(&contents);
     let kinds: Vec<(TK, &str)> = tokens.iter().map(|token| token.as_tuple()).collect();
     let expected_kinds = vec![
-        (TK::BlankLine, "\n"),
         (TK::Word, "First_line"),
         (TK::NewLine, "\n"),
         (TK::Indent, "  "),

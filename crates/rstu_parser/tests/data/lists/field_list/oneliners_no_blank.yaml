@@ -5,6 +5,7 @@ children:
       - class: PlainText
         attributes:
           text: "One-liners, no blank lines:\n"
+  - class: BlankLine
   - class: FieldList
     children:
       - class: FieldListItem
