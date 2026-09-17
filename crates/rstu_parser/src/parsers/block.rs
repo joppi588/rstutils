@@ -16,10 +16,7 @@ fn parse_block_body(
     stream: &mut TokenStream,
 ) -> Result<(), ParserError> {
     loop {
-        let index_line_end = stream
-            .find_next_kind(&[TK::NewLine, TK::BlankLine, TK::EoF])
-            .expect("Token stream ends with EoF.");
-        match (stream.kind_at_cursor(), stream.kind_at(index_line_end + 1)) {
+        match (stream.kind_at_cursor(), stream.kind_at_nextline()) {
             (TK::Word, _) => {
                 let paragraph = parse_paragraph(stream, None)?;
                 block.push_child(paragraph);

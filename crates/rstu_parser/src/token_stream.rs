@@ -105,8 +105,12 @@ impl TokenStream {
     }
 
     pub fn kind_at_nextline(&self) -> TokenKind {
-        let line_end = find_next_kind(&self.tokens, &[TokenKind::NewLine], self.cursor)
-            .unwrap_or(self.tokens.len());
+        let line_end = find_next_kind(
+            &self.tokens,
+            &[TokenKind::NewLine, TokenKind::BlankLine, TokenKind::EoF],
+            self.cursor,
+        )
+        .unwrap_or(self.tokens.len());
         self.kind_at(line_end + 1)
     }
 
@@ -115,8 +119,12 @@ impl TokenStream {
     }
 
     pub fn token_at_nextline(&self) -> Token {
-        let line_end = find_next_kind(&self.tokens, &[TokenKind::NewLine], self.cursor)
-            .unwrap_or(self.tokens.len());
+        let line_end = find_next_kind(
+            &self.tokens,
+            &[TokenKind::NewLine, TokenKind::BlankLine, TokenKind::EoF],
+            self.cursor,
+        )
+        .unwrap_or(self.tokens.len());
         self.tokens
             .get(line_end + 1)
             .cloned()
