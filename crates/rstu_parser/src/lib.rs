@@ -66,7 +66,7 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
                     || kind.is(TC::INLINE_TOKEN)
                     || kind.is(TC::PLAIN) =>
             {
-                let paragraph = parse_paragraph(&mut stream, None)?;
+                let paragraph = parse_paragraph(&mut stream)?;
                 current_parent.push_child(paragraph);
             }
             (TK::EoF, _) => {

@@ -18,7 +18,7 @@ fn parse_block_body(
     loop {
         match (stream.kind_at_cursor(), stream.kind_at_nextline()) {
             (TK::Word, _) => {
-                let paragraph = parse_paragraph(stream, None)?;
+                let paragraph = parse_paragraph(stream)?;
                 block.push_child(paragraph);
             }
             (TK::BlankLine, TK::Indent | TK::Dedent | TK::Word) => {
@@ -61,12 +61,12 @@ pub(crate) fn parse_block_hanging_indent(stream: &mut TokenStream) -> Result<Nod
     match stream.kind_at_nextline() {
         TK::Field | TK::BulletListMarker | TK::EoF | TK::Dedent => {
             // single line list case
-            let paragraph = parse_paragraph(stream, None)?;
+            let paragraph = parse_paragraph(stream)?;
             block.push_child(paragraph);
         }
         TK::BlankLine => {
             // first paragraph is a single line
-            let paragraph = parse_paragraph(stream, None)?;
+            let paragraph = parse_paragraph(stream)?;
             block.push_child(paragraph);
 
             if stream.kind_peek_relative(1) == TK::Indent {
@@ -83,7 +83,7 @@ pub(crate) fn parse_block_hanging_indent(stream: &mut TokenStream) -> Result<Nod
             // first paragraph spans multiple lines
             let indent_at = index_line_end + 1;
             block.with_attr("indent", stream.tokens()[indent_at].lexeme.len());
-            let paragraph = parse_paragraph_with_hanging_indent(stream, indent_at)?;
+            let paragraph = parse_paragraph_with_hanging_indent(stream)?;
             block.push_child(paragraph);
             parse_block_body(&block, stream)?;
         }

@@ -8,23 +8,18 @@ use crate::parser_errors::ParserError;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
 use crate::token_stream::{tokens_to_text, TokenStream};
 
-pub(crate) fn parse_paragraph(
-    stream: &mut TokenStream,
-    stop_before: Option<usize>,
-) -> Result<NodeRef, ParserError> {
-    let paragraph_end = stop_before.unwrap_or_else(|| {
-        stream
-            .find_next_kind(&[
-                TK::BlankLine,
-                TK::Indent,
-                TK::Separator,
-                TK::Dedent,
-                TK::Field,
-                TK::BulletListMarker,
-                TK::EoF,
-            ])
-            .expect("Paragraph must end somewhere.")
-    });
+pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    let paragraph_end = stream
+        .find_next_kind(&[
+            TK::BlankLine,
+            TK::Separator,
+            TK::Indent,
+            TK::Dedent,
+            TK::Field,
+            TK::BulletListMarker,
+            TK::EoF,
+        ])
+        .expect("Paragraph must end somewhere.");
     let paragraph = AstNode::new_ref(NodeClass::Paragraph);
     while stream.cursor() < paragraph_end {
         let kind = stream.kind_at_cursor();
@@ -51,11 +46,10 @@ pub(crate) fn parse_paragraph(
 /// Parse a paragraph that continues after a hanging indent token: the indent is simply skipped.
 pub(crate) fn parse_paragraph_with_hanging_indent(
     stream: &mut TokenStream,
-    indent_at: usize,
 ) -> Result<NodeRef, ParserError> {
-    let paragraph = parse_paragraph(stream, Some(indent_at))?;
-    stream.consume();
-    let continuation = parse_paragraph(stream, None)?;
+    let paragraph = parse_paragraph(stream)?;
+    stream.consume(); // we know that this is the indent
+    let continuation = parse_paragraph(stream)?;
     for child in std::mem::take(&mut continuation.borrow_mut().children) {
         paragraph.push_child(child);
     }
@@ -161,46 +155,25 @@ fn parse_plain(stream: &mut TokenStream, stop_before: usize) -> Result<NodeRef, 
 
 #[cfg(test)]
 mod tests {
-    use super::{parse_paragraph, parse_paragraph_with_hanging_indent};
+    use super::parse_paragraph_with_hanging_indent;
     use crate::token::{Token, TokenKind as TK};
     use crate::token_stream::TokenStream;
-
-    #[test]
-    fn parse_paragraph_stops_before_the_requested_index() {
-        let tokens = vec![
-            Token::new(TK::Word, "hello"),
-            Token::new(TK::Word, "world"),
-            Token::new(TK::BlankLine, "\n"),
-        ];
-        let mut stream = TokenStream::new(tokens);
-
-        let paragraph =
-            parse_paragraph(&mut stream, Some(1)).expect("paragraph parsing should succeed");
-
-        assert_eq!(stream.cursor(), 1);
-        assert_eq!(
-            paragraph.borrow().children[0]
-                .borrow()
-                .attributes
-                .get("text"),
-            Some(&"hello".into())
-        );
-    }
 
     #[test]
     fn parse_paragraph_with_hanging_indent_skips_the_indent_token() {
         let tokens = vec![
             Token::new(TK::Word, "hello"),
+            Token::new(TK::NewLine, ""),
             Token::new(TK::Indent, "  "),
             Token::new(TK::Word, "again"),
             Token::new(TK::BlankLine, "\n"),
         ];
         let mut stream = TokenStream::new(tokens);
 
-        let paragraph = parse_paragraph_with_hanging_indent(&mut stream, 1)
+        let paragraph = parse_paragraph_with_hanging_indent(&mut stream)
             .expect("paragraph parsing should succeed");
 
-        assert_eq!(stream.cursor(), 3);
+        assert_eq!(stream.cursor(), 4);
         let children = &paragraph.borrow().children;
         assert_eq!(children.len(), 2);
         assert_eq!(
