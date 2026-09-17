@@ -7,14 +7,15 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 use super::{block::parse_block, list::parse_field_list};
 use crate::parser_errors::{ParserError, EXPECT_NEWLINE};
 use crate::token::TokenKind as TK;
-use crate::token_stream::{find_next_kind, tokens_to_text, TokenStream};
+use crate::token_stream::{tokens_to_text, TokenStream};
 
 pub(crate) fn parse_directive(
     stream: &mut TokenStream,
     start_at: usize,
     directive_colon_index: usize,
 ) -> Result<NodeRef, ParserError> {
-    let first_line_end = find_next_kind(stream.tokens(), &[TK::NewLine], directive_colon_index)
+    let first_line_end = stream
+        .find_next_kind_from(&[TK::NewLine], directive_colon_index)
         .expect(EXPECT_NEWLINE);
 
     let directive = AstNode::new_ref(NodeClass::Directive);

@@ -6,7 +6,7 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use crate::parser_errors::ParserError;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
-use crate::token_stream::{find_next_kind, tokens_to_text, TokenStream};
+use crate::token_stream::{tokens_to_text, TokenStream};
 
 pub(crate) fn parse_paragraph(
     stream: &mut TokenStream,
@@ -118,12 +118,11 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
         }
     };
 
-    let inline_final =
-        find_next_kind(stream.tokens(), end_kind_candidates, start_at + 1).map_err(|_| {
-            ParserError::InlineMissingClosing {
-                markup: markup.to_owned(),
-                start_at,
-            }
+    let inline_final = stream
+        .find_next_kind_from(end_kind_candidates, start_at + 1)
+        .map_err(|_| ParserError::InlineMissingClosing {
+            markup: markup.to_owned(),
+            start_at,
         })?;
 
     let effective_markup = match (kind, stream.tokens()[inline_final].kind) {

@@ -26,41 +26,6 @@ pub fn tokens_without_kinds(tokens: &[Token], kinds: &[TokenKind]) -> Vec<Token>
         .collect()
 }
 
-pub fn find_next_kind(
-    tokens: &[Token],
-    kinds: &[TokenKind],
-    start_at: usize,
-) -> Result<usize, TokenSliceError> {
-    Ok(find_next_kind_interrupt(tokens, kinds, &[], start_at)?
-        .expect("interrupt_kinds is empty, so None is unreachable"))
-}
-
-// TODO: remove if not used finally
-
-pub fn find_next_kind_interrupt(
-    tokens: &[Token],
-    kinds: &[TokenKind],
-    interrupt_kinds: &[TokenKind],
-    start_at: usize,
-) -> Result<Option<usize>, TokenSliceError> {
-    tokens
-        .iter()
-        .enumerate()
-        .skip(start_at)
-        .find_map(|(index, token)| {
-            if (&token.kind).is(kinds) {
-                return Some(Some(index));
-            }
-            if (&token.kind).is(interrupt_kinds) {
-                return Some(None);
-            }
-            None
-        })
-        .ok_or(TokenSliceError::TokenNotFound {
-            kinds: kinds.to_vec(),
-        })
-}
-
 /// A token buffer paired with a cursor, so parsers no longer thread an index through return values.
 pub struct TokenStream {
     tokens: Vec<Token>,
@@ -105,26 +70,36 @@ impl TokenStream {
     }
 
     pub fn kind_at_nextline(&self) -> TokenKind {
-        let line_end = find_next_kind(
-            &self.tokens,
-            &[TokenKind::NewLine, TokenKind::BlankLine, TokenKind::EoF],
-            self.cursor,
-        )
-        .unwrap_or(self.tokens.len());
+        let line_end = self
+            .find_next_kind(&[TokenKind::NewLine, TokenKind::BlankLine, TokenKind::EoF])
+            .unwrap_or(self.tokens.len());
         self.kind_at(line_end + 1)
     }
 
     pub fn find_next_kind(&self, kinds: &[TokenKind]) -> Result<usize, TokenSliceError> {
-        find_next_kind(&self.tokens, kinds, self.cursor)
+        self.find_next_kind_from(kinds, self.cursor)
+    }
+
+    pub fn find_next_kind_from(
+        &self,
+        kinds: &[TokenKind],
+        start_at: usize,
+    ) -> Result<usize, TokenSliceError> {
+        self.tokens
+            .iter()
+            .enumerate()
+            .skip(start_at)
+            .find(|(_, token)| token.kind.is(kinds))
+            .map(|(index, _)| index)
+            .ok_or(TokenSliceError::TokenNotFound {
+                kinds: kinds.to_vec(),
+            })
     }
 
     pub fn token_at_nextline(&self) -> Token {
-        let line_end = find_next_kind(
-            &self.tokens,
-            &[TokenKind::NewLine, TokenKind::BlankLine, TokenKind::EoF],
-            self.cursor,
-        )
-        .unwrap_or(self.tokens.len());
+        let line_end = self
+            .find_next_kind(&[TokenKind::NewLine, TokenKind::BlankLine, TokenKind::EoF])
+            .unwrap_or(self.tokens.len());
         self.tokens
             .get(line_end + 1)
             .cloned()
@@ -149,7 +124,7 @@ impl TokenStream {
 
 #[cfg(test)]
 mod tests {
-    use super::{find_next_kind, tokens_without_kinds, TokenStream};
+    use super::{tokens_without_kinds, TokenStream};
     use crate::token::{Token, TokenKind};
 
     #[test]
@@ -162,13 +137,13 @@ mod tests {
 
     #[test]
     fn find_next_kind_matches_any_requested_kind() {
-        let tokens = vec![
+        let stream = TokenStream::new(vec![
             Token::new(TokenKind::Word, "title"),
             Token::new(TokenKind::Spaces, " "),
             Token::new(TokenKind::NewLine, "\n"),
-        ];
+        ]);
 
-        let found = find_next_kind(&tokens, &[TokenKind::BlankLine, TokenKind::NewLine], 0);
+        let found = stream.find_next_kind_from(&[TokenKind::BlankLine, TokenKind::NewLine], 0);
 
         assert_eq!(found, Ok(2));
     }

@@ -58,7 +58,7 @@ pub(crate) fn parse_block_hanging_indent(stream: &mut TokenStream) -> Result<Nod
         .find_next_kind(&[TK::NewLine])
         .expect("Token stream ends with a newline.");
 
-    match stream.kind_at(index_line_end + 1) {
+    match stream.kind_at_nextline() {
         TK::Field | TK::BulletListMarker | TK::EoF | TK::Dedent => {
             // single line list case
             let paragraph = parse_paragraph(stream, None)?;

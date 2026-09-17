@@ -18,7 +18,7 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 use crate::lexer::tokenize;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
 use parser_errors::{ParserError, EXPECT_NEWLINE};
-use token_stream::{find_next_kind, tokens_to_text, TokenStream};
+use token_stream::{tokens_to_text, TokenStream};
 
 // static DEDENT_GRACE: usize = 1;
 
@@ -88,11 +88,11 @@ pub fn match_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserE
     let has_overline = stream.kind_at_cursor() == TK::Separator;
 
     let title_start = start_at + 2 * usize::from(has_overline);
-    let title_end = find_next_kind(stream.tokens(), &[TK::NewLine], title_start).map_err(|_| {
-        ParserError::SectionTitleMissingClosingAfterOpening {
+    let title_end = stream
+        .find_next_kind_from(&[TK::NewLine], title_start)
+        .map_err(|_| ParserError::SectionTitleMissingClosingAfterOpening {
             opening_index: start_at,
-        }
-    })?;
+        })?;
 
     let closing_index = title_end + 1;
     if stream.kind_at(closing_index) != TK::Separator {
@@ -138,18 +138,18 @@ pub fn match_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserE
 /// Parse directives, comments, citations, substitutions
 fn parse_directive_like(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     let start_at = stream.cursor();
-    let index = find_next_kind(
-        stream.tokens(),
-        &[
-            TK::NewLine,
-            TK::DoubleColon,
-            TK::FootnoteReference,
-            TK::HyperlinkReferenceEnd,
-            TK::SubstitutionReference,
-        ],
-        start_at,
-    )
-    .expect(EXPECT_NEWLINE);
+    let index = stream
+        .find_next_kind_from(
+            &[
+                TK::NewLine,
+                TK::DoubleColon,
+                TK::FootnoteReference,
+                TK::HyperlinkReferenceEnd,
+                TK::SubstitutionReference,
+            ],
+            start_at,
+        )
+        .expect(EXPECT_NEWLINE);
     let directive = match stream.tokens()[index].kind {
         TK::NewLine => parse_comment(stream, start_at, index)?,
         TK::DoubleColon => parse_directive(stream, start_at, index)?,
