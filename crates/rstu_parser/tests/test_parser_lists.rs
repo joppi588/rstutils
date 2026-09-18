@@ -14,6 +14,7 @@ mod test_parser;
 #[rstest]
 #[case("ok_bullet_list")]
 #[case("ok_compact_bullet_list")]
+#[case("ok_nested_bullet_list")]
 #[case("docutils_bullet_00")]
 #[case("docutils_bullet_01")]
 #[case("docutils_bullet_02")]
