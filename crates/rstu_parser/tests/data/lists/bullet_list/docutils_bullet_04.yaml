@@ -17,10 +17,9 @@ children:
               children:
                 - class: PlainText
                   attributes:
-                    text: "item 1, line 1\n"
-                - class: PlainText
-                  attributes:
-                    text: "item 1, line 2\n"
+                    text: |
+                      item 1, line 1
+                      item 1, line 2
       - class: BulletListItem
         attributes:
           marker: "-"

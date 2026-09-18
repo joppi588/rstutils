@@ -60,10 +60,7 @@ children:
                 children:
                   - class: PlainText
                     attributes:
-                      text: "Text here\n"
-                  - class: PlainText
-                    attributes:
-                      text: "reads better if\nwrapped around.\n"
+                      text: "Text here\nreads better if\nwrapped around.\n"
       - class: FieldListItem
         attributes:
           fieldname: field_2
