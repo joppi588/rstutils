@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-use super::block::{parse_block, parse_block_hanging_indent};
+use super::block::parse_block;
 use crate::parser_errors::ParserError;
 use crate::token::{Token, TokenKind as TK};
 use crate::token_stream::TokenStream;
@@ -24,6 +24,29 @@ fn indent_ahead_index(stream: &TokenStream) -> Option<usize> {
         TK::BlankLine if stream.kind_at(next_line + 1) == TK::Indent => Some(next_line + 1),
         _ => None,
     }
+}
+
+/// Relocates a real indent right after the marker, or inserts a virtual dedent of
+/// `dedent_len` to bound a single-line item, so `parse_block` can handle both uniformly.
+fn prepare_item_block(stream: &mut TokenStream, dedent_len: usize) -> Result<(), ParserError> {
+    match indent_ahead_index(stream) {
+        Some(indent_index) => {
+            let indent_token = stream.take_at(indent_index);
+            let cursor = stream.cursor();
+            stream.insert_at(cursor, indent_token);
+            stream.set_cursor(cursor);
+        }
+        None => {
+            let next_line = next_line_start(stream);
+            match stream.kind_at(next_line) {
+                TK::Field | TK::BulletListMarker | TK::EoF | TK::Dedent | TK::BlankLine => {
+                    stream.insert_at(next_line, Token::new(TK::Dedent, " ".repeat(dedent_len)));
+                }
+                _ => return Err(ParserError::ListEndError {}),
+            }
+        }
+    }
+    Ok(())
 }
 
 pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
@@ -49,25 +72,7 @@ pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, Par
             item.push_spaces(spaces_token.lexeme.len());
         }
 
-        // Relocate a real indent right after the marker, or insert a virtual dedent
-        // to bound a single-line item, so `parse_block` can handle both uniformly.
-        match indent_ahead_index(stream) {
-            Some(indent_index) => {
-                let indent_token = stream.take_at(indent_index);
-                let cursor = stream.cursor();
-                stream.insert_at(cursor, indent_token);
-                stream.set_cursor(cursor);
-            }
-            None => {
-                let next_line = next_line_start(stream);
-                match stream.kind_at(next_line) {
-                    TK::Field | TK::BulletListMarker | TK::EoF | TK::Dedent | TK::BlankLine => {
-                        stream.insert_at(next_line, Token::new(TK::Dedent, ""));
-                    }
-                    _ => return Err(ParserError::ListEndError {}),
-                }
-            }
-        }
+        prepare_item_block(stream, 2)?;
         let block = parse_block(stream).map_err(|_| ParserError::ListEndError {})?;
         item.push_child(block);
         list.push_child(item);
@@ -97,7 +102,8 @@ pub(crate) fn parse_field_list(stream: &mut TokenStream) -> Result<NodeRef, Pars
             let spaces_token = stream.consume();
             item.push_spaces(spaces_token.lexeme.len());
         }
-        let block = parse_block_hanging_indent(stream).map_err(|_| ParserError::ListEndError {})?;
+        prepare_item_block(stream, field_token.lexeme.len())?;
+        let block = parse_block(stream).map_err(|_| ParserError::ListEndError {})?;
         item.push_child(block);
         list.push_child(item);
         if stream.kind_at_cursor() == TK::BlankLine {
