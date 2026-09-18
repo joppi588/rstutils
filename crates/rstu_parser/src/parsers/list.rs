@@ -3,16 +3,13 @@
 // SPDX-License-Identifier: MIT
 
 use super::block::parse_block;
-use crate::parser_errors::ParserError;
+use crate::parser_errors::{ParserError, EXPECT_NEWLINE};
 use crate::token::{Token, TokenKind as TK};
 use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 fn prepare_item_block(stream: &mut TokenStream, dedent_len: usize) -> Result<(), ParserError> {
-    let next_line = stream
-        .find_next_kind(&[TK::NewLine, TK::BlankLine, TK::EoF])
-        .expect("Token stream has a final newline.")
-        + 1;
+    let next_line = stream.find_next_kind(&[TK::NewLine]).expect(EXPECT_NEWLINE) + 1;
 
     let indent_ahead_index = match stream.kind_at(next_line) {
         TK::Indent => Some(next_line),
