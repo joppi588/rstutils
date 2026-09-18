@@ -50,8 +50,8 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
                 stream.consume();
             }
 
-            (kind, _) if kind.nested_is(TC::RECURSIVE) => {
-                parse_recursive_elements(&mut stream, &mut current_parent)?;
+            (kind, _) if kind.nested_is(TC::BODY_ELEMENTS) => {
+                parse_body_elements(&mut stream, &mut current_parent)?;
             }
             (TK::BlankLine, _) => {
                 let token = stream.consume();
@@ -143,7 +143,7 @@ fn parse_directive_like(stream: &mut TokenStream) -> Result<NodeRef, ParserError
     Ok(directive)
 }
 
-fn parse_recursive_elements(
+fn parse_body_elements(
     stream: &mut TokenStream,
     current_parent: &mut Rc<RefCell<AstNode>>,
 ) -> Result<(), ParserError> {
@@ -166,7 +166,7 @@ fn parse_recursive_elements(
             panic!(
                 "Token kind {:?} not in {:?}",
                 stream.kind_at_cursor(),
-                TC::RECURSIVE
+                TC::BODY_ELEMENTS
             );
         }
     }

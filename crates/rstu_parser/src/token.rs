@@ -112,9 +112,9 @@ impl TokenCategory {
         TokenCategory::PLAIN,
     ];
 
-    pub const RECURSIVE: &'static [&[TokenKind]] = &[
+    pub const BODY_ELEMENTS: &'static [&[TokenKind]] = &[
         TokenCategory::LIST_MARKER,
-        // PARAGRAPH (type checking does not allow nesting of a nested list)
+        // PARAGRAPH (type system does not allow nesting of a nested list)
         TokenCategory::INLINE_MARKER,
         TokenCategory::INLINE_TOKEN,
         TokenCategory::PLAIN,
