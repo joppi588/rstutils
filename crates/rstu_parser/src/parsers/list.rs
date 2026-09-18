@@ -38,6 +38,24 @@ fn prepare_item_block(stream: &mut TokenStream, dedent_len: usize) -> Result<(),
     Ok(())
 }
 
+/// Parses an item's block body and appends the item (and any trailing blank line) to `list`.
+fn finish_list_item(
+    stream: &mut TokenStream,
+    list: &NodeRef,
+    item: NodeRef,
+    dedent_len: usize,
+) -> Result<(), ParserError> {
+    prepare_item_block(stream, dedent_len)?;
+    let block = parse_block(stream).map_err(|_| ParserError::ListEndError {})?;
+    item.push_child(block);
+    list.push_child(item);
+    if stream.kind_at_cursor() == TK::BlankLine {
+        let blank_token = stream.consume();
+        list.push_blank_lines(blank_token.lexeme.len());
+    }
+    Ok(())
+}
+
 pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     let list = AstNode::new_ref(NodeClass::BulletList);
     let mut marker: Option<String> = None;
@@ -61,14 +79,7 @@ pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, Par
             item.push_spaces(spaces_token.lexeme.len());
         }
 
-        prepare_item_block(stream, 2)?;
-        let block = parse_block(stream).map_err(|_| ParserError::ListEndError {})?;
-        item.push_child(block);
-        list.push_child(item);
-        if stream.kind_at_cursor() == TK::BlankLine {
-            let blank_token = stream.consume();
-            list.push_blank_lines(blank_token.lexeme.len());
-        }
+        finish_list_item(stream, &list, item, 2)?;
     }
 
     Ok(list)
@@ -91,14 +102,8 @@ pub(crate) fn parse_field_list(stream: &mut TokenStream) -> Result<NodeRef, Pars
             let spaces_token = stream.consume();
             item.push_spaces(spaces_token.lexeme.len());
         }
-        prepare_item_block(stream, field_token.lexeme.len())?;
-        let block = parse_block(stream).map_err(|_| ParserError::ListEndError {})?;
-        item.push_child(block);
-        list.push_child(item);
-        if stream.kind_at_cursor() == TK::BlankLine {
-            let blank_token = stream.consume();
-            list.push_blank_lines(blank_token.lexeme.len());
-        }
+        let dedent_len = field_token.lexeme.len();
+        finish_list_item(stream, &list, item, dedent_len)?;
     }
 
     Ok(list)
