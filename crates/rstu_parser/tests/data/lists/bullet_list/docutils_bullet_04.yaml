@@ -9,11 +9,18 @@ children:
           - class: Spaces
             attributes:
               count: 1
-          - class: Paragraph
+          - class: Block
+            attributes:
+              indent: 2
             children:
-              - class: PlainText
-                attributes:
-                  text: "item 1, line 1\nitem 1, line 2\n"
+            - class: Paragraph
+              children:
+                - class: PlainText
+                  attributes:
+                    text: "item 1, line 1\n"
+                - class: PlainText
+                  attributes:
+                    text: "item 1, line 2\n"
       - class: BulletListItem
         attributes:
           marker: "-"
@@ -21,8 +28,10 @@ children:
           - class: Spaces
             attributes:
               count: 1
-          - class: Paragraph
+          - class: Block
             children:
-              - class: PlainText
-                attributes:
-                  text: "item 2\n"
+            - class: Paragraph
+              children:
+                - class: PlainText
+                  attributes:
+                    text: "item 2\n"

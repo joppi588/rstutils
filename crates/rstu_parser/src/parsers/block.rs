@@ -6,8 +6,9 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use super::paragraph::{parse_paragraph, parse_paragraph_with_hanging_indent};
+use crate::parse_body_elements;
 use crate::parser_errors::ParserError;
-use crate::token::TokenKind as TK;
+use crate::token::{TokenCategory as TC, TokenKind as TK};
 use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
@@ -27,8 +28,12 @@ fn parse_block_body(
             }
             (TK::Dedent, _) => {
                 // TODO: Do not dedent completely, modify token stream in place
+                // check indentation level.
                 stream.consume();
                 break;
+            }
+            (kind, _) if kind.nested_is(TC::BODY_ELEMENTS) => {
+                parse_body_elements(stream, &block)?;
             }
             (_, TK::EoF) => {
                 break;
