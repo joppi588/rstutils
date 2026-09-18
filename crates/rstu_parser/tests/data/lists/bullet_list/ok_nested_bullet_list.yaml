@@ -1,0 +1,69 @@
+class: Document
+children:
+  - class: Paragraph
+    children:
+      - class: PlainText
+        attributes:
+          text: "This is a bullet list:\n"
+  - class: BulletList
+    children:
+      - class: BulletListItem
+        attributes:
+          marker: "-"
+        children:
+          - class: Spaces
+            attributes:
+              count: 1
+          - class: Block
+            attributes:
+              indent: 2
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: "First item\n"
+              - class: BulletList
+                children:
+                  - class: BulletListItem
+                    attributes:
+                      marker: "*"
+                    children:
+                      - class: Spaces
+                        attributes:
+                          count: 1
+                      - class: Block
+                        children:
+                          - class: Paragraph
+                            children:
+                              - class: PlainText
+                                attributes:
+                                  text: "Sublist item 1\n"
+                  - class: BulletListItem
+                    attributes:
+                      marker: "*"
+                    children:
+                      - class: Spaces
+                        attributes:
+                          count: 1
+                      - class: Block
+                        children:
+                          - class: Paragraph
+                            children:
+                              - class: PlainText
+                                attributes:
+                                  text: "Sublist item 2\n"
+      - class: BulletListItem
+        attributes:
+          marker: "-"
+        children:
+          - class: Spaces
+            attributes:
+              count: 1
+          - class: Block
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: "Second item\n"
