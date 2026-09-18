@@ -182,7 +182,7 @@ impl TokenKind {
         (Punctuation, r"(.|\n)[[:punct:]](.|\n)"),
 
         (Dedent, r"\b\B"), // never matches, assigned by the lexer
-        (EoF, r"\b\B"), // never matches, only returned by TokenSliceExt::kind_at
+        (EoF, r"\b\B"), // never matches, only assigned by lexer / returned by TokenStream::kind_at
         (LiteralChar, r"(.|\n).(.|\n)"),
     );
 
