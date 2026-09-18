@@ -2,11 +2,29 @@
 //
 // SPDX-License-Identifier: MIT
 
-use super::block::parse_block_hanging_indent;
+use super::block::{parse_block, parse_block_hanging_indent};
 use crate::parser_errors::ParserError;
-use crate::token::TokenKind as TK;
+use crate::token::{Token, TokenKind as TK};
 use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
+
+/// Index of the token starting the line after the cursor's current line.
+fn next_line_start(stream: &TokenStream) -> usize {
+    stream
+        .find_next_kind(&[TK::NewLine, TK::BlankLine, TK::EoF])
+        .map(|index| index + 1)
+        .unwrap_or_else(|_| stream.tokens().len())
+}
+
+/// Index of an `Indent` token that starts the item's continuation, directly or after a blank line.
+fn indent_ahead_index(stream: &TokenStream) -> Option<usize> {
+    let next_line = next_line_start(stream);
+    match stream.kind_at(next_line) {
+        TK::Indent => Some(next_line),
+        TK::BlankLine if stream.kind_at(next_line + 1) == TK::Indent => Some(next_line + 1),
+        _ => None,
+    }
+}
 
 pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     let list = AstNode::new_ref(NodeClass::BulletList);
@@ -31,7 +49,26 @@ pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, Par
             item.push_spaces(spaces_token.lexeme.len());
         }
 
-        let block = parse_block_hanging_indent(stream).map_err(|_| ParserError::ListEndError {})?;
+        // Relocate a real indent right after the marker, or insert a virtual dedent
+        // to bound a single-line item, so `parse_block` can handle both uniformly.
+        match indent_ahead_index(stream) {
+            Some(indent_index) => {
+                let indent_token = stream.take_at(indent_index);
+                let cursor = stream.cursor();
+                stream.insert_at(cursor, indent_token);
+                stream.set_cursor(cursor);
+            }
+            None => {
+                let next_line = next_line_start(stream);
+                match stream.kind_at(next_line) {
+                    TK::Field | TK::BulletListMarker | TK::EoF | TK::Dedent | TK::BlankLine => {
+                        stream.insert_at(next_line, Token::new(TK::Dedent, ""));
+                    }
+                    _ => return Err(ParserError::ListEndError {}),
+                }
+            }
+        }
+        let block = parse_block(stream).map_err(|_| ParserError::ListEndError {})?;
         item.push_child(block);
         list.push_child(item);
         if stream.kind_at_cursor() == TK::BlankLine {

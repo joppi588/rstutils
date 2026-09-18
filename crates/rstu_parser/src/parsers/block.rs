@@ -18,7 +18,7 @@ fn parse_block_body(
 ) -> Result<(), ParserError> {
     loop {
         match (stream.kind_at_cursor(), stream.kind_at_nextline()) {
-            (TK::Word, _) => {
+            (TK::Word | TK::NewLine, _) => {
                 let paragraph = parse_paragraph(stream)?;
                 block.push_child(paragraph);
             }
