@@ -4,6 +4,9 @@
 
 pub mod lexer;
 mod parsers;
+use std::cell::RefCell;
+use std::rc::Rc;
+
 use parsers::comments::parse_comment;
 use parsers::directives::parse_directive;
 use parsers::list::{parse_bullet_list, parse_field_list};
@@ -42,33 +45,19 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
                 current_parent.push_child(directive);
             }
 
-            (TK::BulletListMarker, _) => {
-                let bullet_list = parse_bullet_list(&mut stream)?;
-                current_parent.push_child(bullet_list);
-            }
-
-            (TK::Field, _) => {
-                let field_list = parse_field_list(&mut stream)?;
-                current_parent.push_child(field_list);
-            }
-
-            (TK::BlankLine, _) => {
-                let token = stream.consume();
-                current_parent.push_blank_lines(token.lexeme.len());
-            }
             // TODO: Do not simply ignore these
             (TK::Indent, _) | (TK::Dedent, _) => {
                 stream.consume();
             }
 
-            (kind, _)
-                if kind.is(TC::INLINE_MARKER)
-                    || kind.is(TC::INLINE_TOKEN)
-                    || kind.is(TC::PLAIN) =>
-            {
-                let paragraph = parse_paragraph(&mut stream)?;
-                current_parent.push_child(paragraph);
+            (kind, _) if kind.nested_is(TC::RECURSIVE) => {
+                parse_recursive_elements(&mut stream, &mut current_parent)?;
             }
+            (TK::BlankLine, _) => {
+                let token = stream.consume();
+                current_parent.push_blank_lines(token.lexeme.len());
+            }
+
             (TK::EoF, _) => {
                 break;
             }
@@ -152,4 +141,35 @@ fn parse_directive_like(stream: &mut TokenStream) -> Result<NodeRef, ParserError
         _ => panic!("Not implemented directive-like structure."),
     };
     Ok(directive)
+}
+
+fn parse_recursive_elements(
+    stream: &mut TokenStream,
+    current_parent: &mut Rc<RefCell<AstNode>>,
+) -> Result<(), ParserError> {
+    match stream.kind_at_cursor() {
+        TK::BulletListMarker => {
+            let bullet_list = parse_bullet_list(stream)?;
+            current_parent.push_child(bullet_list);
+        }
+
+        TK::Field => {
+            let field_list = parse_field_list(stream)?;
+            current_parent.push_child(field_list);
+        }
+
+        kind if kind.nested_is(TC::PARAGRAPH) => {
+            let paragraph = parse_paragraph(stream)?;
+            current_parent.push_child(paragraph);
+        }
+        _ => {
+            panic!(
+                "Token kind {:?} not in {:?}",
+                stream.kind_at_cursor(),
+                TC::RECURSIVE
+            );
+        }
+    }
+
+    Ok(())
 }
