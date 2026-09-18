@@ -98,6 +98,7 @@ impl TokenCategory {
         TokenKind::Word,
         TokenKind::Punctuation,
         TokenKind::LiteralChar,
+        TokenKind::NewLine,
     ];
 
     pub const LIST_MARKER: &'static [TokenKind] = &[TokenKind::BulletListMarker, TokenKind::Field];

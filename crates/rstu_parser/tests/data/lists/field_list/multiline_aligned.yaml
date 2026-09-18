@@ -23,10 +23,7 @@ children:
                 children:
                   - class: PlainText
                     attributes:
-                      text: "Me,\n"
-                  - class: PlainText
-                    attributes:
-                      text: "Myself,\nand I\n"
+                      text: "Me,\nMyself,\nand I\n"
       - class: FieldListItem
         attributes:
           fieldname: Version
@@ -42,10 +39,7 @@ children:
                 children:
                   - class: PlainText
                     attributes:
-                      text: "1\n"
-                  - class: PlainText
-                    attributes:
-                      text: "or so\n"
+                      text: "1\nor so\n"
       - class: FieldListItem
         attributes:
           fieldname: Date
@@ -61,10 +55,7 @@ children:
                 children:
                   - class: PlainText
                     attributes:
-                      text: "2001-08-11\n"
-                  - class: PlainText
-                    attributes:
-                      text: "(Saturday)\n"
+                      text: "2001-08-11\n(Saturday)\n"
       - class: FieldListItem
         attributes:
           fieldname: "Parameter i"
@@ -80,7 +71,4 @@ children:
                 children:
                   - class: PlainText
                     attributes:
-                      text: "counter\n"
-                  - class: PlainText
-                    attributes:
-                      text: "(integer)\n"
+                      text: "counter\n(integer)\n"

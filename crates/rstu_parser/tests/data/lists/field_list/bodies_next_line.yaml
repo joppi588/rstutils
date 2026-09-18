@@ -20,10 +20,7 @@ children:
                 children:
                   - class: PlainText
                     attributes:
-                      text: "\n"
-                  - class: PlainText
-                    attributes:
-                      text: "Me\n"
+                      text: "\nMe\n"
       - class: FieldListItem
         attributes:
           fieldname: Version
@@ -36,10 +33,7 @@ children:
                 children:
                   - class: PlainText
                     attributes:
-                      text: "\n"
-                  - class: PlainText
-                    attributes:
-                      text: "1\n"
+                      text: "\n1\n"
       - class: FieldListItem
         attributes:
           fieldname: Date
@@ -52,10 +46,7 @@ children:
                 children:
                   - class: PlainText
                     attributes:
-                      text: "\n"
-                  - class: PlainText
-                    attributes:
-                      text: "2001-08-11\n"
+                      text: "\n2001-08-11\n"
       - class: FieldListItem
         attributes:
           fieldname: Parameter i
@@ -68,7 +59,4 @@ children:
                 children:
                   - class: PlainText
                     attributes:
-                      text: "\n"
-                  - class: PlainText
-                    attributes:
-                      text: "integer\n"
+                      text: "\ninteger\n"

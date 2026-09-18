@@ -2,11 +2,63 @@
 //
 // SPDX-License-Identifier: MIT
 
-use super::block::parse_block_hanging_indent;
-use crate::parser_errors::ParserError;
-use crate::token::TokenKind as TK;
+use super::block::parse_block;
+use crate::parser_errors::{ParserError, EXPECT_NEWLINE};
+use crate::token::{Token, TokenKind as TK};
 use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
+
+fn prepare_item_block(stream: &mut TokenStream, dedent_len: usize) -> Result<(), ParserError> {
+    // List item cases
+    // 1. [Optional Blankline],  Indent -> Hanging indent block
+    // 2. [Optional Blankline], list marker -> Single line item
+    // 3. Non-indented paragraph etc -> Error
+    let next_line = stream.find_next_kind(&[TK::NewLine]).expect(EXPECT_NEWLINE) + 1;
+
+    let indent_ahead_index = match stream.kind_at(next_line) {
+        TK::Indent => Some(next_line),
+        TK::BlankLine if stream.kind_at(next_line + 1) == TK::Indent => Some(next_line + 1),
+        _ => None,
+    };
+
+    match indent_ahead_index {
+        Some(indent_index) => {
+            let indent_token = stream.take_at(indent_index);
+            let cursor = stream.cursor();
+            stream.insert_at(cursor, indent_token);
+            stream.set_cursor(cursor);
+        }
+        None => match stream.kind_at(next_line) {
+            TK::Field | TK::BulletListMarker | TK::EoF | TK::Dedent | TK::BlankLine => {
+                stream.insert_at(next_line, Token::new(TK::Dedent, " ".repeat(dedent_len)));
+            }
+            _ => return Err(ParserError::ListEndError {}),
+        },
+    }
+    Ok(())
+}
+
+// TODO: Make this the main function and do the preparation depending on the list marker.
+fn finish_list_item(
+    stream: &mut TokenStream,
+    list: &NodeRef,
+    item: NodeRef,
+    dedent_len: usize,
+) -> Result<(), ParserError> {
+    if stream.kind_at_cursor() == TK::Spaces {
+        let spaces_token = stream.consume();
+        item.push_spaces(spaces_token.lexeme.len());
+    }
+    prepare_item_block(stream, dedent_len)?;
+    let block = parse_block(stream).map_err(|_| ParserError::ListEndError {})?;
+    item.push_child(block);
+    list.push_child(item);
+    if stream.kind_at_cursor() == TK::BlankLine {
+        let blank_token = stream.consume();
+        list.push_blank_lines(blank_token.lexeme.len());
+    }
+    Ok(())
+}
 
 pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     let list = AstNode::new_ref(NodeClass::BulletList);
@@ -26,18 +78,8 @@ pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, Par
         } else {
             marker = Some(marker_token.lexeme);
         }
-        if stream.kind_at_cursor() == TK::Spaces {
-            let spaces_token = stream.consume();
-            item.push_spaces(spaces_token.lexeme.len());
-        }
 
-        let block = parse_block_hanging_indent(stream).map_err(|_| ParserError::ListEndError {})?;
-        item.push_child(block);
-        list.push_child(item);
-        if stream.kind_at_cursor() == TK::BlankLine {
-            let blank_token = stream.consume();
-            list.push_blank_lines(blank_token.lexeme.len());
-        }
+        finish_list_item(stream, &list, item, 2)?;
     }
 
     Ok(list)
@@ -56,17 +98,8 @@ pub(crate) fn parse_field_list(stream: &mut TokenStream) -> Result<NodeRef, Pars
             .to_string();
         item.with_attr("fieldname", field_name);
 
-        if stream.kind_at_cursor() == TK::Spaces {
-            let spaces_token = stream.consume();
-            item.push_spaces(spaces_token.lexeme.len());
-        }
-        let block = parse_block_hanging_indent(stream).map_err(|_| ParserError::ListEndError {})?;
-        item.push_child(block);
-        list.push_child(item);
-        if stream.kind_at_cursor() == TK::BlankLine {
-            let blank_token = stream.consume();
-            list.push_blank_lines(blank_token.lexeme.len());
-        }
+        let dedent_len = field_token.lexeme.len();
+        finish_list_item(stream, &list, item, dedent_len)?;
     }
 
     Ok(list)

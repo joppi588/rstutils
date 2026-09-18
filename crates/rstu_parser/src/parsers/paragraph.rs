@@ -43,19 +43,6 @@ pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, Parse
     Ok(paragraph)
 }
 
-/// Parse a paragraph that continues after a hanging indent token: the indent is simply skipped.
-pub(crate) fn parse_paragraph_with_hanging_indent(
-    stream: &mut TokenStream,
-) -> Result<NodeRef, ParserError> {
-    let paragraph = parse_paragraph(stream)?;
-    stream.consume(); // we know that this is the indent
-    let continuation = parse_paragraph(stream)?;
-    for child in std::mem::take(&mut continuation.borrow_mut().children) {
-        paragraph.push_child(child);
-    }
-    Ok(paragraph)
-}
-
 pub(crate) fn parse_inline_token(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     let at = stream.cursor();
     let node = AstNode::new_ref(NodeClass::Reference);
@@ -151,38 +138,4 @@ fn parse_plain(stream: &mut TokenStream, stop_before: usize) -> Result<NodeRef, 
     let sentence = AstNode::new_ref(NodeClass::PlainText);
     sentence.with_attr("text", text);
     Ok(sentence)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::parse_paragraph_with_hanging_indent;
-    use crate::token::{Token, TokenKind as TK};
-    use crate::token_stream::TokenStream;
-
-    #[test]
-    fn parse_paragraph_with_hanging_indent_skips_the_indent_token() {
-        let tokens = vec![
-            Token::new(TK::Word, "hello"),
-            Token::new(TK::NewLine, ""),
-            Token::new(TK::Indent, "  "),
-            Token::new(TK::Word, "again"),
-            Token::new(TK::BlankLine, "\n"),
-        ];
-        let mut stream = TokenStream::new(tokens);
-
-        let paragraph = parse_paragraph_with_hanging_indent(&mut stream)
-            .expect("paragraph parsing should succeed");
-
-        assert_eq!(stream.cursor(), 4);
-        let children = &paragraph.borrow().children;
-        assert_eq!(children.len(), 2);
-        assert_eq!(
-            children[0].borrow().attributes.get("text"),
-            Some(&"hello".into())
-        );
-        assert_eq!(
-            children[1].borrow().attributes.get("text"),
-            Some(&"again".into())
-        );
-    }
 }

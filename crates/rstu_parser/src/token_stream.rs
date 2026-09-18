@@ -120,6 +120,23 @@ impl TokenStream {
     pub fn consume_n(&mut self, n: usize) {
         self.cursor = self.cursor.saturating_add(n).min(self.tokens.len());
     }
+
+    /// Inserts a token at an absolute index, shifting the cursor if it lies at or after the insertion point.
+    pub fn insert_at(&mut self, index: usize, token: Token) {
+        self.tokens.insert(index, token);
+        if index <= self.cursor {
+            self.cursor += 1;
+        }
+    }
+
+    /// Removes and returns the token at an absolute index, shifting the cursor if it precedes it.
+    pub fn take_at(&mut self, index: usize) -> Token {
+        let token = self.tokens.remove(index);
+        if index < self.cursor {
+            self.cursor -= 1;
+        }
+        token
+    }
 }
 
 #[cfg(test)]
