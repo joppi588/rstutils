@@ -18,7 +18,7 @@ mod test_parser;
 #[case("docutils_bullet_01")]
 #[case("docutils_bullet_02")]
 #[case("docutils_bullet_03")]
-// #[case("docutils_bullet_04")]
+#[case("docutils_bullet_04")]
 #[case("docutils_bullet_07")]
 // #[case("docutils_bullet_09")]
 fn parse_bullet_list(#[case] test_case: &str) {
