@@ -39,6 +39,12 @@ macro_rules! token_kinds {
     };
 }
 
+macro_rules! is_token_category {
+    ($cat:expr) => {
+        |kind: &TokenKind| -> bool { $cat.iter().any(|inner_cat| inner_cat.contains(kind)) }
+    };
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Token {
     pub kind: TokenKind,
@@ -93,7 +99,26 @@ impl TokenCategory {
         TokenKind::Punctuation,
         TokenKind::LiteralChar,
     ];
+
+    pub const LIST_MARKER: &'static [TokenKind] = &[TokenKind::BulletListMarker, TokenKind::Field];
+
     pub const TABLE: &'static [TokenKind] = &[TokenKind::TableHorizontal];
+
+    // nested categories
+
+    pub const PARAGRAPH: &'static [&[TokenKind]] = &[
+        TokenCategory::INLINE_MARKER,
+        TokenCategory::INLINE_TOKEN,
+        TokenCategory::PLAIN,
+    ];
+
+    pub const BODY_ELEMENTS: &'static [&[TokenKind]] = &[
+        TokenCategory::LIST_MARKER,
+        // PARAGRAPH (type system does not allow nesting of a nested list)
+        TokenCategory::INLINE_MARKER,
+        TokenCategory::INLINE_TOKEN,
+        TokenCategory::PLAIN,
+    ];
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -188,6 +213,10 @@ impl TokenKind {
 
     pub fn is(self, kinds: &[TokenKind]) -> bool {
         kinds.contains(&self)
+    }
+
+    pub fn nested_is(self, categories: &[&'static [TokenKind]]) -> bool {
+        is_token_category!(categories)(&self)
     }
 
     pub fn match_token(input: &str) -> Option<(Self, &str)> {
