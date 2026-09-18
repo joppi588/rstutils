@@ -8,43 +8,31 @@ use crate::token::{Token, TokenKind as TK};
 use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
-/// Index of the token starting the line after the cursor's current line.
-fn next_line_start(stream: &TokenStream) -> usize {
-    stream
+fn prepare_item_block(stream: &mut TokenStream, dedent_len: usize) -> Result<(), ParserError> {
+    let next_line = stream
         .find_next_kind(&[TK::NewLine, TK::BlankLine, TK::EoF])
-        .map(|index| index + 1)
-        .unwrap_or_else(|_| stream.tokens().len())
-}
+        .expect("Token stream has a final newline.")
+        + 1;
 
-/// Index of an `Indent` token that starts the item's continuation, directly or after a blank line.
-fn indent_ahead_index(stream: &TokenStream) -> Option<usize> {
-    let next_line = next_line_start(stream);
-    match stream.kind_at(next_line) {
+    let indent_ahead_index = match stream.kind_at(next_line) {
         TK::Indent => Some(next_line),
         TK::BlankLine if stream.kind_at(next_line + 1) == TK::Indent => Some(next_line + 1),
         _ => None,
-    }
-}
+    };
 
-/// Relocates a real indent right after the marker, or inserts a virtual dedent of
-/// `dedent_len` to bound a single-line item, so `parse_block` can handle both uniformly.
-fn prepare_item_block(stream: &mut TokenStream, dedent_len: usize) -> Result<(), ParserError> {
-    match indent_ahead_index(stream) {
+    match indent_ahead_index {
         Some(indent_index) => {
             let indent_token = stream.take_at(indent_index);
             let cursor = stream.cursor();
             stream.insert_at(cursor, indent_token);
             stream.set_cursor(cursor);
         }
-        None => {
-            let next_line = next_line_start(stream);
-            match stream.kind_at(next_line) {
-                TK::Field | TK::BulletListMarker | TK::EoF | TK::Dedent | TK::BlankLine => {
-                    stream.insert_at(next_line, Token::new(TK::Dedent, " ".repeat(dedent_len)));
-                }
-                _ => return Err(ParserError::ListEndError {}),
+        None => match stream.kind_at(next_line) {
+            TK::Field | TK::BulletListMarker | TK::EoF | TK::Dedent | TK::BlankLine => {
+                stream.insert_at(next_line, Token::new(TK::Dedent, " ".repeat(dedent_len)));
             }
-        }
+            _ => return Err(ParserError::ListEndError {}),
+        },
     }
     Ok(())
 }
