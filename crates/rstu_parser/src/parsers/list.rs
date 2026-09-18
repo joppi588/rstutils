@@ -4,83 +4,70 @@
 
 use super::block::parse_block_hanging_indent;
 use crate::parser_errors::ParserError;
-use crate::token::{Token, TokenKind as TK};
-use crate::token_slice::TokenSliceExt;
+use crate::token::TokenKind as TK;
+use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
-pub(crate) fn parse_bullet_list(
-    tokens: &[Token],
-    start_at: usize,
-) -> Result<(NodeRef, usize), ParserError> {
+pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     let list = AstNode::new_ref(NodeClass::BulletList);
-    let mut index = start_at;
     let mut marker: Option<String> = None;
 
-    while tokens.kind_at(index) == TK::BulletListMarker {
+    while stream.kind_at_cursor() == TK::BulletListMarker {
         let item = AstNode::new_ref(NodeClass::BulletListItem);
-        item.with_attr("marker", tokens[index].lexeme.clone());
-        let current_marker = tokens[index].lexeme.clone();
+        let marker_token = stream.consume();
+        item.with_attr("marker", marker_token.lexeme.clone());
         if let Some(existing_marker) = &marker {
-            if existing_marker != &current_marker {
+            if existing_marker != &marker_token.lexeme {
                 return Err(ParserError::ListStyleError {
                     marker: existing_marker.clone(),
-                    conflicting_marker: current_marker,
+                    conflicting_marker: marker_token.lexeme,
                 });
             }
         } else {
-            marker = Some(current_marker.clone());
+            marker = Some(marker_token.lexeme);
         }
-        index += 1;
-        if tokens.kind_at(index) == TK::Spaces {
-            item.push_spaces(tokens[index].lexeme.len());
-            index += 1;
+        if stream.kind_at_cursor() == TK::Spaces {
+            let spaces_token = stream.consume();
+            item.push_spaces(spaces_token.lexeme.len());
         }
 
-        let (block, new_index) =
-            parse_block_hanging_indent(tokens, index).map_err(|_| ParserError::ListEndError {})?;
-        index = new_index;
+        let block = parse_block_hanging_indent(stream).map_err(|_| ParserError::ListEndError {})?;
         item.push_child(block);
         list.push_child(item);
-        if tokens.kind_at(index) == TK::BlankLine {
-            list.push_blank_lines(tokens[index].lexeme.len());
-            index += 1;
+        if stream.kind_at_cursor() == TK::BlankLine {
+            let blank_token = stream.consume();
+            list.push_blank_lines(blank_token.lexeme.len());
         }
     }
 
-    Ok((list, index))
+    Ok(list)
 }
 
-pub(crate) fn parse_field_list(
-    tokens: &[Token],
-    start_at: usize,
-) -> Result<(NodeRef, usize), ParserError> {
+pub(crate) fn parse_field_list(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     let list = AstNode::new_ref(NodeClass::FieldList);
-    let mut index = start_at;
 
-    while tokens.kind_at(index) == TK::Field {
+    while stream.kind_at_cursor() == TK::Field {
         let item = AstNode::new_ref(NodeClass::FieldListItem);
-        let field_name = tokens[index]
+        let field_token = stream.consume();
+        let field_name = field_token
             .lexeme
             .trim_start_matches(':')
             .trim_end_matches(':')
             .to_string();
         item.with_attr("fieldname", field_name);
-        index += 1;
 
-        if tokens.kind_at(index) == TK::Spaces {
-            item.push_spaces(tokens[index].lexeme.len());
-            index += 1;
+        if stream.kind_at_cursor() == TK::Spaces {
+            let spaces_token = stream.consume();
+            item.push_spaces(spaces_token.lexeme.len());
         }
-        let (block, new_index) =
-            parse_block_hanging_indent(tokens, index).map_err(|_| ParserError::ListEndError {})?;
+        let block = parse_block_hanging_indent(stream).map_err(|_| ParserError::ListEndError {})?;
         item.push_child(block);
-        index = new_index;
         list.push_child(item);
-        if tokens.kind_at(index) == TK::BlankLine {
-            list.push_blank_lines(tokens[index].lexeme.len());
-            index += 1;
+        if stream.kind_at_cursor() == TK::BlankLine {
+            let blank_token = stream.consume();
+            list.push_blank_lines(blank_token.lexeme.len());
         }
     }
 
-    Ok((list, index))
+    Ok(list)
 }
