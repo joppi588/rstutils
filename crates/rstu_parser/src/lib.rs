@@ -51,7 +51,7 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
             }
 
             (kind, _) if kind.nested_is(TC::BODY_ELEMENTS) => {
-                parse_body_elements(&mut stream, &mut current_parent)?;
+                parse_body_elements(&mut stream, &current_parent)?;
             }
             (TK::BlankLine, _) => {
                 let token = stream.consume();
@@ -145,7 +145,7 @@ fn parse_directive_like(stream: &mut TokenStream) -> Result<NodeRef, ParserError
 
 fn parse_body_elements(
     stream: &mut TokenStream,
-    current_parent: &mut Rc<RefCell<AstNode>>,
+    current_parent: &Rc<RefCell<AstNode>>,
 ) -> Result<(), ParserError> {
     match stream.kind_at_cursor() {
         TK::BulletListMarker => {

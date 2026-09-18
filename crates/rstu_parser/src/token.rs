@@ -170,8 +170,6 @@ impl TokenKind {
         (DoubleDot, r"[\n\s]\.\.[\n\s]"),
         (DoubleColon, r"(.|\n)::(.|\n)"),
 
-
-
         (TableHorizontal, r"\n=+(?:\s+=+)+\s*\n"),
 
         // Inline
@@ -199,7 +197,6 @@ impl TokenKind {
         // Lists
         (Field,r"[\n\s]:[\w\s]+:[\n\s]"),
         (BulletListMarker, r"(\s|\n)[\-\+\*•‣⁃](\s|\n)"),
-
 
         // Plain text
         (Spaces, r"[^ \t\n][ \t]+[^ \t]"),

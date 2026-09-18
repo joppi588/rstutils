@@ -14,11 +14,12 @@ mod test_parser;
 #[rstest]
 #[case("ok_bullet_list")]
 #[case("ok_compact_bullet_list")]
+#[case("ok_nested_bullet_list")]
 #[case("docutils_bullet_00")]
 #[case("docutils_bullet_01")]
 #[case("docutils_bullet_02")]
 #[case("docutils_bullet_03")]
-// #[case("docutils_bullet_04")]
+#[case("docutils_bullet_04")]
 #[case("docutils_bullet_07")]
 // #[case("docutils_bullet_09")]
 fn parse_bullet_list(#[case] test_case: &str) {
