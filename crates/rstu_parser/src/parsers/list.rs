@@ -38,13 +38,17 @@ fn prepare_item_block(stream: &mut TokenStream, dedent_len: usize) -> Result<(),
     Ok(())
 }
 
-/// Parses an item's block body and appends the item (and any trailing blank line) to `list`.
+// TODO: Make this the main function and do the preparation depending on the list marker.
 fn finish_list_item(
     stream: &mut TokenStream,
     list: &NodeRef,
     item: NodeRef,
     dedent_len: usize,
 ) -> Result<(), ParserError> {
+    if stream.kind_at_cursor() == TK::Spaces {
+        let spaces_token = stream.consume();
+        item.push_spaces(spaces_token.lexeme.len());
+    }
     prepare_item_block(stream, dedent_len)?;
     let block = parse_block(stream).map_err(|_| ParserError::ListEndError {})?;
     item.push_child(block);
@@ -74,10 +78,6 @@ pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, Par
         } else {
             marker = Some(marker_token.lexeme);
         }
-        if stream.kind_at_cursor() == TK::Spaces {
-            let spaces_token = stream.consume();
-            item.push_spaces(spaces_token.lexeme.len());
-        }
 
         finish_list_item(stream, &list, item, 2)?;
     }
@@ -98,10 +98,6 @@ pub(crate) fn parse_field_list(stream: &mut TokenStream) -> Result<NodeRef, Pars
             .to_string();
         item.with_attr("fieldname", field_name);
 
-        if stream.kind_at_cursor() == TK::Spaces {
-            let spaces_token = stream.consume();
-            item.push_spaces(spaces_token.lexeme.len());
-        }
         let dedent_len = field_token.lexeme.len();
         finish_list_item(stream, &list, item, dedent_len)?;
     }
