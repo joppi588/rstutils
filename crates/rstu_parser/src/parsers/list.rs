@@ -9,6 +9,10 @@ use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 fn prepare_item_block(stream: &mut TokenStream, dedent_len: usize) -> Result<(), ParserError> {
+    // List item cases
+    // 1. [Optional Blankline],  Indent -> Hanging indent block
+    // 2. [Optional Blankline], list marker -> Single line item
+    // 3. Non-indented paragraph etc -> Error
     let next_line = stream.find_next_kind(&[TK::NewLine]).expect(EXPECT_NEWLINE) + 1;
 
     let indent_ahead_index = match stream.kind_at(next_line) {
