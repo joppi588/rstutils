@@ -2,9 +2,6 @@
 //
 // SPDX-License-Identifier: MIT
 
-use std::cell::RefCell;
-use std::rc::Rc;
-
 use super::paragraph::parse_paragraph;
 use crate::parse_body_elements;
 use crate::parser_errors::ParserError;
@@ -12,10 +9,12 @@ use crate::token::{TokenCategory as TC, TokenKind as TK};
 use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
-fn parse_block_body(
-    block: &Rc<RefCell<AstNode>>,
-    stream: &mut TokenStream,
-) -> Result<(), ParserError> {
+pub(crate) fn parse_block(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    let block = AstNode::new_ref(NodeClass::Block);
+    if stream.kind_at_cursor() == TK::Indent {
+        let token = stream.consume();
+        block.with_attr("indent", token.lexeme.len());
+    }
     loop {
         match (stream.kind_at_cursor(), stream.kind_at_nextline()) {
             (TK::Word | TK::NewLine, _) => {
@@ -43,16 +42,6 @@ fn parse_block_body(
             }
         }
     }
-    Ok(())
-}
-
-pub(crate) fn parse_block(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
-    let block = AstNode::new_ref(NodeClass::Block);
-    if stream.kind_at_cursor() == TK::Indent {
-        let token = stream.consume();
-        block.with_attr("indent", token.lexeme.len());
-    }
-    parse_block_body(&block, stream)?;
 
     Ok(block)
 }
