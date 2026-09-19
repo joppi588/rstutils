@@ -30,7 +30,15 @@ fn prepare_item_block(stream: &mut TokenStream, dedent_len: usize) -> Result<(),
         }
         None => match stream.kind_at(next_line) {
             TK::Field | TK::BulletListMarker | TK::EoF | TK::Dedent | TK::BlankLine => {
-                stream.insert_at(next_line, Token::new(TK::Dedent, " ".repeat(dedent_len)));
+                stream.insert_at(
+                    stream.cursor(),
+                    Token::new(TK::Indent, " ".repeat(dedent_len)),
+                );
+                stream.set_cursor(stream.cursor() - 1);
+                stream.insert_at(
+                    next_line + 1,
+                    Token::new(TK::Dedent, " ".repeat(dedent_len)),
+                );
             }
             _ => return Err(ParserError::ListEndError {}),
         },
