@@ -12,12 +12,9 @@ children:
             attributes:
               fieldname: height
             children:
-              - class: Spaces
-                attributes:
-                  count: 1
               - class: Block
                 attributes:
-                  indent: 8
+                  indent: 9
                 children:
                 - class: Paragraph
                   children:
@@ -28,12 +25,9 @@ children:
             attributes:
               fieldname: width
             children:
-              - class: Spaces
-                attributes:
-                  count: 1
               - class: Block
                 attributes:
-                  indent: 7
+                  indent: 8
                 children:
                   - class: Paragraph
                     children:
@@ -44,12 +38,9 @@ children:
             attributes:
               fieldname: scale
             children:
-              - class: Spaces
-                attributes:
-                  count: 1
               - class: Block
                 attributes:
-                  indent: 7
+                  indent: 8
                 children:
                   - class: Paragraph
                     children:

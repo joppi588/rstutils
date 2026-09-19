@@ -6,12 +6,9 @@ children:
         attributes:
           fieldname: Parameter i j k
         children:
-          - class: Spaces
-            attributes:
-              count: 1
           - class: Block
             attributes:
-              indent: 17
+              indent: 18
             children:
               - class: Paragraph
                 children:
