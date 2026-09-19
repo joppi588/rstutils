@@ -108,10 +108,6 @@ impl TokenStream {
         token
     }
 
-    pub fn consume_n(&mut self, n: usize) {
-        self.cursor = self.cursor.saturating_add(n).min(self.tokens.len());
-    }
-
     /// Inserts a token at an absolute index, shifting the cursor if it lies at or after the insertion point.
     pub fn insert_at(&mut self, index: usize, token: Token) {
         self.tokens.insert(index, token);
@@ -162,16 +158,6 @@ mod tests {
     }
 
     #[test]
-    fn kind_at_cursor_returns_eof_past_the_end() {
-        let mut stream = TokenStream::new(vec![Token::new(TokenKind::Word, "title")]);
-
-        assert_eq!(stream.kind_at_cursor(), TokenKind::Word);
-
-        stream.consume_n(1);
-        assert_eq!(stream.kind_at_cursor(), TokenKind::EoF);
-    }
-
-    #[test]
     fn kind_peek_relative_looks_ahead_of_the_cursor() {
         let stream = TokenStream::new(vec![
             Token::new(TokenKind::Word, "title"),
@@ -215,20 +201,6 @@ mod tests {
 
         // Consuming past the end stays at the boundary and yields a synthetic EoF token.
         assert_eq!(stream.consume(), Token::new(TokenKind::EoF, ""));
-        assert_eq!(stream.cursor(), 2);
-    }
-
-    #[test]
-    fn consume_n_advances_the_cursor_by_n_and_saturates() {
-        let mut stream = TokenStream::new(vec![
-            Token::new(TokenKind::Word, "title"),
-            Token::new(TokenKind::NewLine, "\n"),
-        ]);
-
-        stream.consume_n(1);
-        assert_eq!(stream.cursor(), 1);
-
-        stream.consume_n(10);
         assert_eq!(stream.cursor(), 2);
     }
 }
