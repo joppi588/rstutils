@@ -30,12 +30,7 @@ pub(crate) fn parse_block(stream: &mut TokenStream) -> Result<NodeRef, ParserErr
             (TK::Dedent, _) => {
                 let dedent_token = stream.consume();
                 let dedent = dedent_token.lexeme.len();
-                if dedent < indent {
-                    return Err(ParserError::InvalidDedent {
-                        expected: indent,
-                        is: dedent,
-                    });
-                } else if dedent > indent {
+                if dedent > indent {
                     let cursor = stream.cursor();
                     let rel_dedent = Token::new(TK::Dedent, " ".repeat(dedent - indent));
                     stream.insert_at(cursor, rel_dedent);
