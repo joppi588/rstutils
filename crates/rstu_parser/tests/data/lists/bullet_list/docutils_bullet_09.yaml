@@ -13,7 +13,7 @@ children:
         children:
           - class: Block
             attributes:
-              indent: 3
+              indent: 2
             children:
               - class: Paragraph
                 children:
@@ -27,7 +27,7 @@ children:
         children:
           - class: Block
             attributes:
-              indent: 3
+              indent: 2
             children:
               - class: Paragraph
                 children:
@@ -41,7 +41,7 @@ children:
         children:
           - class: Block
             attributes:
-              indent: 3
+              indent: 2
             children:
               - class: Paragraph
                 children:

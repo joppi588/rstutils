@@ -101,7 +101,7 @@ pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, Par
             marker = Some(marker_token.lexeme);
         }
 
-        finish_list_item(stream, &list, item, 2)?;
+        finish_list_item(stream, &list, item, 1)?;
     }
 
     Ok(list)
