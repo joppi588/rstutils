@@ -95,9 +95,26 @@ children:
                       attributes:
                         text: |
                           body
+              - class: FieldListItem
+                attributes:
+                  fieldname: field7
+                children:
+                - class: Spaces
+                  attributes:
+                    count: 1
+                - class: Block
+                  attributes:
+                    indent: 8
+                  children:
+                  - class: Paragraph
+                    children:
+                    - class: PlainText
+                      attributes:
+                        text: |
+                          body
         - class: FieldListItem
           attributes:
-            fieldname: field7
+            fieldname: field8
           children:
           - class: Spaces
             attributes:
@@ -112,38 +129,21 @@ children:
                 attributes:
                   text: |
                     body
-  - class: FieldListItem
-    attributes:
-      fieldname: field8
-    children:
-    - class: Spaces
-      attributes:
-        count: 1
-    - class: Block
-      attributes:
-        indent: 8
-      children:
-      - class: Paragraph
-        children:
-        - class: PlainText
+        - class: FieldListItem
           attributes:
-            text: |
-              body
-  - class: FieldListItem
-    attributes:
-      fieldname: field9
-    children:
-    - class: Spaces
-      attributes:
-        count: 1
-    - class: Block
-      attributes:
-        indent: 2
-      children:
-      - class: Paragraph
-        children:
-        - class: PlainText
-          attributes:
-            text: |
-              body line 1
-              body line 2
+            fieldname: field9
+          children:
+          - class: Spaces
+            attributes:
+              count: 1
+          - class: Block
+            attributes:
+              indent: 2
+            children:
+            - class: Paragraph
+              children:
+              - class: PlainText
+                attributes:
+                  text: |
+                    body line 1
+                    body line 2
