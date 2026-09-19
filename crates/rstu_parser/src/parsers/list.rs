@@ -93,9 +93,10 @@ pub(crate) fn parse_field_list(stream: &mut TokenStream) -> Result<NodeRef, Pars
         let field_token = stream.consume();
         let field_name = field_token
             .lexeme
-            .trim_start_matches(':')
-            .trim_end_matches(':')
-            .to_string();
+            .strip_prefix(':')
+            .and_then(|name| name.strip_suffix(':'))
+            .unwrap()
+            .to_owned();
         item.with_attr("fieldname", field_name);
 
         let dedent_len = field_token.lexeme.len();
