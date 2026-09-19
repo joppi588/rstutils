@@ -66,11 +66,12 @@ fn finish_list_item(
     item: NodeRef,
     dedent_len: usize,
 ) -> Result<(), ParserError> {
-    let dedent_len = if stream.kind_at_cursor() == TK::Spaces {
-        dedent_len + stream.consume().lexeme.len()
-    } else {
-        dedent_len
-    };
+    let mut dedent_len = dedent_len;
+
+    if stream.kind_at_cursor() == TK::Spaces {
+        dedent_len += stream.consume().lexeme.len();
+    }
+
     prepare_item_block(stream, dedent_len)?;
     let block = parse_block(stream).map_err(|_| ParserError::ListEndError {})?;
     item.push_child(block);
