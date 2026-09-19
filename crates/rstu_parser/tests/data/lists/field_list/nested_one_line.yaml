@@ -4,69 +4,132 @@ children:
   children:
   - class: PlainText
     attributes:
-      text: 'Nested field lists on one line:
-
-        '
+      text: |
+        Nested field lists on one line:
+- class: BlankLine
 - class: FieldList
   children:
   - class: FieldListItem
     attributes:
       fieldname: field1
     children:
-    - class: Paragraph
+    - class: Spaces
+      attributes:
+        count: 1
+    - class: Block
       children:
-      - class: PlainText
-        attributes:
-          text: ':field2: :field3: body
-
-            '
+      - class: FieldList
+        children:
+        - class: FieldListItem
+          attributes:
+            fieldname: field2
+          children:
+          - class: Spaces
+            attributes:
+              count: 1
+          - class: Block
+            children:
+            - class: FieldList
+              children:
+              - class: FieldListItem
+                attributes:
+                  fieldname: field3
+                children:
+                - class: Spaces
+                  attributes:
+                    count: 1
+                - class: Block
+                  children:
+                  - class: Paragraph
+                    children:
+                    - class: PlainText
+                      attributes:
+                        text: |
+                          body
   - class: FieldListItem
     attributes:
       fieldname: field4
     children:
+    - class: Spaces
+      attributes:
+        count: 1
     - class: Block
       attributes:
-        indent: 9
+        indent: 18
+      children:
+      - class: FieldList
+        children:
+        - class: FieldListItem
+          attributes:
+            fieldname: field5
+          children:
+          - class: Spaces
+            attributes:
+              count: 1
+          - class: Block
+            children:
+            - class: FieldList
+              children:
+              - class: FieldListItem
+                attributes:
+                  fieldname: field6
+                children:
+                - class: Spaces
+                  attributes:
+                    count: 1
+                - class: Block
+                  children:
+                  - class: Paragraph
+                    children:
+                    - class: PlainText
+                      attributes:
+                        text: |
+                          body
+        - class: FieldListItem
+          attributes:
+            fieldname: field7
+          children:
+          - class: Spaces
+            attributes:
+              count: 1
+          - class: Block
+            children:
+            - class: Paragraph
+              children:
+              - class: PlainText
+                attributes:
+                  text: |
+                    body
+  - class: FieldListItem
+    attributes:
+      fieldname: field8
+    children:
+    - class: Spaces
+      attributes:
+        count: 1
+    - class: Block
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: ':field5: :field6: body
-
-              '
-      - class: FieldList
+            text: |
+              body
+  - class: FieldListItem
+    attributes:
+      fieldname: field9
+    children:
+    - class: Spaces
+      attributes:
+        count: 1
+    - class: Block
+      attributes:
+        indent: 2
+      children:
+      - class: Paragraph
         children:
-        - class: FieldListItem
+        - class: PlainText
           attributes:
-            fieldname: field7
-          children:
-          - class: Paragraph
-            children:
-            - class: PlainText
-              attributes:
-                text: 'body
-
-                  '
-      - class: FieldList
-        children:
-        - class: FieldListItem
-          attributes:
-            fieldname: field8
-          children:
-          - class: Paragraph
-            children:
-            - class: PlainText
-              attributes:
-                text: 'body
-
-                  '
-        - class: FieldListItem
-          attributes:
-            fieldname: field9
-          children:
-          - class: Paragraph
-            children:
-            - class: PlainText
-              attributes:
-                text: "body line 1\n  body line 2\n"
+            text: |
+              body line 1
+              body line 2
