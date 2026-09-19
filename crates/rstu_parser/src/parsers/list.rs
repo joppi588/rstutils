@@ -91,11 +91,7 @@ pub(crate) fn parse_field_list(stream: &mut TokenStream) -> Result<NodeRef, Pars
     while stream.kind_at_cursor() == TK::Field {
         let item = AstNode::new_ref(NodeClass::FieldListItem);
         let field_token = stream.consume();
-        let field_name = field_token
-            .lexeme
-            .trim_start_matches(':')
-            .trim_end_matches(':')
-            .to_string();
+        let field_name = field_token.lexeme[1..field_token.lexeme.len() - 1].to_string();
         item.with_attr("fieldname", field_name);
 
         let dedent_len = field_token.lexeme.len();
