@@ -12,10 +12,9 @@ children:
         attributes:
           marker: "+"
         children:
-          - class: Spaces
-            attributes:
-              count: 1
           - class: Block
+            attributes:
+              indent: 3
             children:
             - class: Paragraph
               children:
@@ -26,10 +25,9 @@ children:
         attributes:
           marker: "+"
         children:
-          - class: Spaces
-            attributes:
-              count: 1
           - class: Block
+            attributes:
+              indent: 3
             children:
             - class: Paragraph
               children:

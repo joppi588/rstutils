@@ -5,15 +5,17 @@
 use super::paragraph::parse_paragraph;
 use crate::parse_body_elements;
 use crate::parser_errors::ParserError;
-use crate::token::{TokenCategory as TC, TokenKind as TK};
+use crate::token::{Token, TokenCategory as TC, TokenKind as TK};
 use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 pub(crate) fn parse_block(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     let block = AstNode::new_ref(NodeClass::Block);
+    let mut indent: usize = 0;
     if stream.kind_at_cursor() == TK::Indent {
         let token = stream.consume();
-        block.with_attr("indent", token.lexeme.len());
+        indent = token.lexeme.len();
+        block.with_attr("indent", indent);
     }
     loop {
         match (stream.kind_at_cursor(), stream.kind_at_nextline()) {
@@ -26,9 +28,19 @@ pub(crate) fn parse_block(stream: &mut TokenStream) -> Result<NodeRef, ParserErr
                 block.push_blank_lines(token.lexeme.len());
             }
             (TK::Dedent, _) => {
-                // TODO: Do not dedent completely, modify token stream in place
-                // check indentation level.
-                stream.consume();
+                let dedent_token = stream.consume();
+                let dedent = dedent_token.lexeme.len();
+                if dedent < indent {
+                    let cursor = stream.cursor();
+                    let rel_dedent = Token::new(TK::Indent, " ".repeat(indent - dedent));
+                    stream.insert_at(cursor, rel_dedent);
+                    stream.set_cursor(cursor);
+                } else if dedent > indent {
+                    let cursor = stream.cursor();
+                    let rel_dedent = Token::new(TK::Dedent, " ".repeat(dedent - indent));
+                    stream.insert_at(cursor, rel_dedent);
+                    stream.set_cursor(cursor);
+                }
                 break;
             }
             (kind, _) if kind.nested_is(TC::BODY_ELEMENTS) => {

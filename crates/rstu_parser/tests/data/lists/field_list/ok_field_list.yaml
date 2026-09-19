@@ -12,10 +12,9 @@ children:
         attributes:
           fieldname: field_1
         children:
-        - class: Spaces
-          attributes:
-            count: 1
         - class: Block
+          attributes:
+            indent: 10
           children:
             - class: Paragraph
               children:
@@ -26,10 +25,9 @@ children:
         attributes:
           fieldname: field_2
         children:
-          - class: Spaces
-            attributes:
-              count: 2
           - class: Block
+            attributes:
+              indent: 11
             children:
               - class: Paragraph
                 children:
@@ -49,9 +47,6 @@ children:
         attributes:
           fieldname: long_field_name
         children:
-          - class: Spaces
-            attributes:
-              count: 1
           - class: Block
             attributes:
               indent: 4
@@ -65,10 +60,9 @@ children:
         attributes:
           fieldname: field_2
         children:
-          - class: Spaces
-            attributes:
-              count: 1
           - class: Block
+            attributes:
+              indent: 10
             children:
               - class: Paragraph
                 children:
@@ -88,10 +82,9 @@ children:
         attributes:
           fieldname: field_1
         children:
-          - class: Spaces
-            attributes:
-              count: 1
           - class: Block
+            attributes:
+              indent: 10
             children:
               - class: Paragraph
                 children:
@@ -103,10 +96,9 @@ children:
         attributes:
           fieldname: field_2
         children:
-          - class: Spaces
-            attributes:
-              count: 1
           - class: Block
+            attributes:
+              indent: 10
             children:
               - class: Paragraph
                 children:
