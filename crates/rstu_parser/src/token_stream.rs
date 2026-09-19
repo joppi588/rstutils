@@ -97,6 +97,13 @@ impl TokenStream {
             .unwrap_or_else(|| Token::new(TokenKind::EoF, ""))
     }
 
+    pub fn token_at(&self, index: usize) -> Token {
+        self.tokens
+            .get(index)
+            .cloned()
+            .unwrap_or_else(|| Token::new(TokenKind::EoF, ""))
+    }
+
     /// Returns the token at the cursor (or a synthetic `EoF` token) and advances the cursor by one.
     pub fn consume(&mut self) -> Token {
         let token = self

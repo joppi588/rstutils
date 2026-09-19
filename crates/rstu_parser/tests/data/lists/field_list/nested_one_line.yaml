@@ -13,12 +13,9 @@ children:
     attributes:
       fieldname: field1
     children:
-    - class: Spaces
-      attributes:
-        count: 1
     - class: Block
       attributes:
-        indent: 8
+        indent: 9
       children:
       - class: FieldList
         children:
@@ -26,12 +23,9 @@ children:
           attributes:
             fieldname: field2
           children:
-          - class: Spaces
-            attributes:
-              count: 1
           - class: Block
             attributes:
-              indent: 8
+              indent: 9
             children:
             - class: FieldList
               children:
@@ -39,29 +33,22 @@ children:
                 attributes:
                   fieldname: field3
                 children:
-                - class: Spaces
-                  attributes:
-                    count: 1
                 - class: Block
                   attributes:
-                    indent: 8
+                    indent: 9
                   children:
                   - class: Paragraph
                     children:
                     - class: PlainText
                       attributes:
-                        text: |
-                          body
+                        text: "body\n"
   - class: FieldListItem
     attributes:
       fieldname: field4
     children:
-    - class: Spaces
-      attributes:
-        count: 1
     - class: Block
       attributes:
-        indent: 18
+        indent: 9
       children:
       - class: FieldList
         children:
@@ -69,12 +56,9 @@ children:
           attributes:
             fieldname: field5
           children:
-          - class: Spaces
-            attributes:
-              count: 1
           - class: Block
             attributes:
-              indent: 8
+              indent: 9
             children:
             - class: FieldList
               children:
@@ -82,12 +66,9 @@ children:
                 attributes:
                   fieldname: field6
                 children:
-                - class: Spaces
-                  attributes:
-                    count: 1
                 - class: Block
                   attributes:
-                    indent: 8
+                    indent: 9
                   children:
                   - class: Paragraph
                     children:
@@ -99,9 +80,6 @@ children:
                 attributes:
                   fieldname: field7
                 children:
-                - class: Spaces
-                  attributes:
-                    count: 1
                 - class: Block
                   attributes:
                     indent: 8
@@ -116,9 +94,6 @@ children:
           attributes:
             fieldname: field8
           children:
-          - class: Spaces
-            attributes:
-              count: 1
           - class: Block
             attributes:
               indent: 8
@@ -133,9 +108,6 @@ children:
           attributes:
             fieldname: field9
           children:
-          - class: Spaces
-            attributes:
-              count: 1
           - class: Block
             attributes:
               indent: 2
