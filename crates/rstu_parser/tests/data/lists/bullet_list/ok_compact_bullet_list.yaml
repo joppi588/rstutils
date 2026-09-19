@@ -26,6 +26,17 @@ children:
         attributes:
           marker: "-"
         children:
+          - class: Block
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: "\n"
+      - class: BulletListItem
+        attributes:
+          marker: "-"
+        children:
           - class: Spaces
             attributes:
               count: 2
