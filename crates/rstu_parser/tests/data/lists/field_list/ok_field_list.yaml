@@ -16,6 +16,8 @@ children:
           attributes:
             count: 1
         - class: Block
+          attributes:
+            indent: 9
           children:
             - class: Paragraph
               children:
@@ -30,6 +32,8 @@ children:
             attributes:
               count: 2
           - class: Block
+            attributes:
+              indent: 9
             children:
               - class: Paragraph
                 children:
@@ -69,6 +73,8 @@ children:
             attributes:
               count: 1
           - class: Block
+            attributes:
+              indent: 9
             children:
               - class: Paragraph
                 children:
@@ -92,6 +98,8 @@ children:
             attributes:
               count: 1
           - class: Block
+            attributes:
+              indent: 9
             children:
               - class: Paragraph
                 children:
@@ -107,6 +115,8 @@ children:
             attributes:
               count: 1
           - class: Block
+            attributes:
+              indent: 9
             children:
               - class: Paragraph
                 children:
