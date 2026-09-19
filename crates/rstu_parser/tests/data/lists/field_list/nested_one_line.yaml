@@ -82,7 +82,7 @@ children:
                 children:
                 - class: Block
                   attributes:
-                    indent: 8
+                    indent: 9
                   children:
                   - class: Paragraph
                     children:
@@ -96,7 +96,7 @@ children:
           children:
           - class: Block
             attributes:
-              indent: 8
+              indent: 9
             children:
             - class: Paragraph
               children:

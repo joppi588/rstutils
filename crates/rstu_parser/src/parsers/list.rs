@@ -32,7 +32,7 @@ fn prepare_item_block(stream: &mut TokenStream, dedent_len: usize) -> Result<(),
                 // we assume that it represents two subsequent indents.
                 stream.insert_at(cursor, Token::new(TK::Indent, " ".repeat(dedent_len)));
                 stream.insert_at(
-                    indent_index,
+                    indent_index + 1,
                     Token::new(
                         TK::Indent,
                         " ".repeat(indent_token.lexeme.len() - dedent_len),
