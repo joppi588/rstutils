@@ -25,12 +25,33 @@ fn prepare_item_block(stream: &mut TokenStream, dedent_len: usize) -> Result<(),
         Some(indent_index) => {
             let indent_token = stream.take_at(indent_index);
             let cursor = stream.cursor();
-            stream.insert_at(cursor, indent_token);
+            if indent_token.lexeme.len() <= dedent_len {
+                stream.insert_at(cursor, indent_token);
+            } else {
+                // If the next line is indented beyond the marker/field/...,
+                // we assume that it represents two subsequent indents.
+                stream.insert_at(cursor, Token::new(TK::Indent, " ".repeat(dedent_len)));
+                stream.insert_at(
+                    indent_index + 1,
+                    Token::new(
+                        TK::Indent,
+                        " ".repeat(indent_token.lexeme.len() - dedent_len),
+                    ),
+                );
+            }
             stream.set_cursor(cursor);
         }
         None => match stream.kind_at(next_line) {
             TK::Field | TK::BulletListMarker | TK::EoF | TK::Dedent | TK::BlankLine => {
-                stream.insert_at(next_line, Token::new(TK::Dedent, " ".repeat(dedent_len)));
+                stream.insert_at(
+                    stream.cursor(),
+                    Token::new(TK::Indent, " ".repeat(dedent_len)),
+                );
+                stream.set_cursor(stream.cursor() - 1);
+                stream.insert_at(
+                    next_line + 1,
+                    Token::new(TK::Dedent, " ".repeat(dedent_len)),
+                );
             }
             _ => return Err(ParserError::ListEndError {}),
         },
@@ -45,10 +66,12 @@ fn finish_list_item(
     item: NodeRef,
     dedent_len: usize,
 ) -> Result<(), ParserError> {
+    let mut dedent_len = dedent_len;
+
     if stream.kind_at_cursor() == TK::Spaces {
-        let spaces_token = stream.consume();
-        item.push_spaces(spaces_token.lexeme.len());
+        dedent_len += stream.consume().lexeme.len();
     }
+
     prepare_item_block(stream, dedent_len)?;
     let block = parse_block(stream).map_err(|_| ParserError::ListEndError {})?;
     item.push_child(block);
@@ -79,7 +102,7 @@ pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, Par
             marker = Some(marker_token.lexeme);
         }
 
-        finish_list_item(stream, &list, item, 2)?;
+        finish_list_item(stream, &list, item, 1)?;
     }
 
     Ok(list)

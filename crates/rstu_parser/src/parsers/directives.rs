@@ -37,7 +37,7 @@ pub(crate) fn parse_directive(
     directive.with_attr("indent", stream.tokens()[stream.cursor()].lexeme.len());
 
     if stream.kind_peek_relative(1) == TK::Field {
-        stream.consume_n(1); // Skip the shared Indent token; parse_block consumes it otherwise.
+        stream.consume(); // Skip the shared Indent token; parse_block consumes it otherwise.
         let options = parse_field_list(stream)?;
         directive.push_child(options);
     }

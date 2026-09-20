@@ -34,6 +34,10 @@ pub enum ParserError {
     },
     ListEndError {},
     UnexpectedBlockEndError {},
+    InvalidDedent {
+        expected: usize,
+        is: usize,
+    },
 }
 
 pub(crate) static EXPECT_NEWLINE: &str = "There is at least one newline at the end of tokens.";
