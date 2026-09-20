@@ -9,18 +9,23 @@ children:
       text: "This is a comment\n"
   - class: Comment
     attributes:
+      indent: 3
       text: "_so: is this!\n"
   - class: Comment
     attributes:
+      indent: 3
       text: "[and] this!\n"
   - class: Comment
     attributes:
+      indent: 3
       text: "this:: too!\n"
   - class: Comment
     attributes:
+      indent: 3
       text: "|even| this:: !\n\n\n"
   - class: Comment
     attributes:
+      indent: 3
       text: "This comment\nspans\nmultiple lines\n\n"
   - class: Paragraph
     children:
