@@ -4,27 +4,39 @@
 
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
-use crate::parser_errors::ParserError;
+use crate::parser_errors::{ParserError, EXPECT_NEWLINE};
 use crate::token::TokenKind as TK;
 use crate::token_stream::{self, TokenStream};
 
-pub(crate) fn parse_comment(
-    stream: &mut TokenStream,
-    first_line_end: usize,
-) -> Result<NodeRef, ParserError> {
-    let mut index = first_line_end;
-    if stream.kind_at(index + 1) == TK::Indent {
-        index = stream
-            .find_next_kind_from(&[TK::Dedent], index + 1)
-            .expect("There is always a final dedent.");
+pub(crate) fn parse_comment(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    let comment = AstNode::new_ref(NodeClass::Comment);
+    let index = stream.find_next_kind(&[TK::NewLine]).expect(EXPECT_NEWLINE);
+    let mut text = token_stream::tokens_to_text(&stream.tokens()[stream.cursor() + 2..index + 1]);
+
+    stream.set_cursor(index + 1);
+    if stream.kind_at_cursor() == TK::Indent {
+        let base_indent = stream.take_at_cursor().lexeme.len();
+        comment.with_attr("indent", base_indent);
+
+        let mut absolute_indent = base_indent;
+        loop {
+            match stream.kind_at_cursor() {
+                TK::Indent => {
+                    absolute_indent += stream.take_at_cursor().lexeme.len();
+                    text.push_str(&" ".repeat(absolute_indent - base_indent));
+                }
+                TK::Dedent => {
+                    absolute_indent -= stream.take_at_cursor().lexeme.len();
+                    if absolute_indent == 0 {
+                        break;
+                    }
+                    text.push_str(&" ".repeat(absolute_indent - base_indent));
+                }
+                _ => text.push_str(&stream.take_at_cursor().lexeme),
+            }
+        }
     }
 
-    let comment = AstNode::new_ref(NodeClass::Comment);
-    let comment_tokens = token_stream::tokens_without_kinds(
-        &stream.tokens()[stream.cursor() + 2..index + 1],
-        &[TK::Indent, TK::Dedent],
-    );
-    comment.with_attr("text", token_stream::tokens_to_text(&comment_tokens));
-    stream.set_cursor(index + 1);
+    comment.with_attr("text", text);
     Ok(comment)
 }
