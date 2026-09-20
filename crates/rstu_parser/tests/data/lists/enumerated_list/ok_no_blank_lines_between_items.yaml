@@ -14,7 +14,7 @@ children:
     children:
       - class: EnumeratedListItem
         attributes:
-          marker: "1."
+          number: 1
         children:
           - class: Block
             attributes:
@@ -27,7 +27,7 @@ children:
                       text: "Item one.\n"
       - class: EnumeratedListItem
         attributes:
-          marker: "2."
+          number: 2
         children:
           - class: Block
             attributes:
@@ -40,7 +40,7 @@ children:
                       text: "Item two.\n"
       - class: EnumeratedListItem
         attributes:
-          marker: "3."
+          number: 3
         children:
           - class: Block
             attributes:

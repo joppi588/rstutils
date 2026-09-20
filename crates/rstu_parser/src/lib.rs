@@ -9,7 +9,7 @@ use std::rc::Rc;
 
 use parsers::comments::parse_comment;
 use parsers::directives::parse_directive;
-use parsers::list::{parse_bullet_list, parse_field_list};
+use parsers::list::{parse_bullet_list, parse_enumerated_list, parse_field_list};
 use parsers::paragraph::parse_paragraph;
 
 pub mod parser_errors;
@@ -159,12 +159,8 @@ fn parse_body_elements(
         }
 
         TK::EnumeratedListMarker => {
-            // TODO: implement real enumerated-list parsing.
-            let _marker = stream.consume();
-            if stream.kind_at_cursor() != TK::EoF {
-                let paragraph = parse_paragraph(stream)?;
-                current_parent.push_child(paragraph);
-            }
+            let enumerated_list = parse_enumerated_list(stream)?;
+            current_parent.push_child(enumerated_list);
         }
 
         kind if kind.nested_is(TC::PARAGRAPH) => {

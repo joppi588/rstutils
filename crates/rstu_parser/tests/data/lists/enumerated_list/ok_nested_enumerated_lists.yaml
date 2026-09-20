@@ -14,7 +14,7 @@ children:
     children:
       - class: EnumeratedListItem
         attributes:
-          marker: "1."
+          number: 1
         children:
           - class: Block
             attributes:
@@ -34,7 +34,7 @@ children:
                 children:
                   - class: EnumeratedListItem
                     attributes:
-                      marker: "A)"
+                      number: 1
                     children:
                       - class: Block
                         attributes:
@@ -47,7 +47,7 @@ children:
                                   text: "Item A).\n"
                   - class: EnumeratedListItem
                     attributes:
-                      marker: "B)"
+                      number: 2
                     children:
                       - class: Block
                         attributes:
@@ -60,7 +60,7 @@ children:
                                   text: "Item B).\n"
                   - class: EnumeratedListItem
                     attributes:
-                      marker: "C)"
+                      number: 3
                     children:
                       - class: Block
                         attributes:
@@ -73,7 +73,7 @@ children:
                                   text: "Item C).\n"
       - class: EnumeratedListItem
         attributes:
-          marker: "2."
+          number: 2
         children:
           - class: Block
             attributes:
@@ -93,7 +93,7 @@ children:
                 children:
                   - class: EnumeratedListItem
                     attributes:
-                      marker: "(a)"
+                      number: 1
                     children:
                       - class: Block
                         attributes:
@@ -113,7 +113,7 @@ children:
                             children:
                               - class: EnumeratedListItem
                                 attributes:
-                                  marker: "I)"
+                                  number: 1
                                 children:
                                   - class: Block
                                     attributes:
@@ -126,7 +126,7 @@ children:
                                               text: "Item I).\n"
                               - class: EnumeratedListItem
                                 attributes:
-                                  marker: "II)"
+                                  number: 2
                                 children:
                                   - class: Block
                                     attributes:
@@ -139,7 +139,7 @@ children:
                                               text: "Item II).\n"
                               - class: EnumeratedListItem
                                 attributes:
-                                  marker: "III)"
+                                  number: 3
                                 children:
                                   - class: Block
                                     attributes:
@@ -152,7 +152,7 @@ children:
                                               text: "Item III).\n"
                   - class: EnumeratedListItem
                     attributes:
-                      marker: "(b)"
+                      number: 2
                     children:
                       - class: Block
                         attributes:
@@ -165,7 +165,7 @@ children:
                                   text: "Item (b).\n"
                   - class: EnumeratedListItem
                     attributes:
-                      marker: "(c)"
+                      number: 3
                     children:
                       - class: Block
                         attributes:
@@ -185,7 +185,7 @@ children:
                             children:
                               - class: EnumeratedListItem
                                 attributes:
-                                  marker: "(i)"
+                                  number: 1
                                 children:
                                   - class: Block
                                     attributes:
@@ -198,7 +198,7 @@ children:
                                               text: "Item (i).\n"
                               - class: EnumeratedListItem
                                 attributes:
-                                  marker: "(ii)"
+                                  number: 2
                                 children:
                                   - class: Block
                                     attributes:
@@ -211,7 +211,7 @@ children:
                                               text: "Item (ii).\n"
                               - class: EnumeratedListItem
                                 attributes:
-                                  marker: "(iii)"
+                                  number: 3
                                 children:
                                   - class: Block
                                     attributes:
@@ -224,7 +224,7 @@ children:
                                               text: "Item (iii).\n"
       - class: EnumeratedListItem
         attributes:
-          marker: "3."
+          number: 3
         children:
           - class: Block
             attributes:
