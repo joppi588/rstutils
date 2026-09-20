@@ -10,11 +10,11 @@ children:
     children:
       - class: FieldListItem
         attributes:
-          fieldname: field_1
+          fieldname: field_9
         children:
         - class: Block
           attributes:
-            indent: 10
+            indent: 11
           children:
             - class: Paragraph
               children:
@@ -23,7 +23,7 @@ children:
                     text: "Some Text\n"
       - class: FieldListItem
         attributes:
-          fieldname: field_2
+          fieldname: field_10
         children:
           - class: Block
             attributes:
