@@ -120,6 +120,11 @@ impl TokenStream {
         }
     }
 
+    /// Removes and returns the token at the cursor, leaving the cursor pointing at the next token.
+    pub fn take_at_cursor(&mut self) -> Token {
+        self.take_at(self.cursor)
+    }
+
     /// Removes and returns the token at an absolute index, shifting the cursor if it precedes it.
     pub fn take_at(&mut self, index: usize) -> Token {
         let token = self.tokens.remove(index);
