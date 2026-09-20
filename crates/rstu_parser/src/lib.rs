@@ -158,6 +158,15 @@ fn parse_body_elements(
             current_parent.push_child(field_list);
         }
 
+        TK::EnumeratedListMarker => {
+            // TODO: implement real enumerated-list parsing.
+            let _marker = stream.consume();
+            if stream.kind_at_cursor() != TK::EoF {
+                let paragraph = parse_paragraph(stream)?;
+                current_parent.push_child(paragraph);
+            }
+        }
+
         kind if kind.nested_is(TC::PARAGRAPH) => {
             let paragraph = parse_paragraph(stream)?;
             current_parent.push_child(paragraph);
