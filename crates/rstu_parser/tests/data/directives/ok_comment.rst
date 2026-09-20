@@ -14,6 +14,8 @@
 
 .. This comment
    spans
-   multiple lines
+
+     multiple
+   lines
 
 Normal text
