@@ -26,7 +26,7 @@ children:
   - class: Comment
     attributes:
       indent: 3
-      text: "This comment\nspans\nmultiple lines\n\n"
+      text: "This comment\nspans\n\n  multiple\nlines\n\n"
   - class: Paragraph
     children:
     - class: PlainText
