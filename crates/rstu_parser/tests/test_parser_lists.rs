@@ -58,6 +58,16 @@ fn rejects_docutils_bullet_list_end(#[case] rst_filename: &str) {
 }
 
 #[rstest]
+#[case("ok_enumerated_list")]
+#[case("ok_no_blank_lines_between_items")]
+#[case("ok_different_enumeration_sequences")]
+#[case("ok_nested_enumerated_lists")]
+#[case("ok_auto_enumerator")]
+fn parse_enumerated_list(#[case] test_case: &str) {
+    rst_vs_yaml!("lists/enumerated_list", test_case)
+}
+
+#[rstest]
 #[case("bodies_next_line")]
 #[case("multiline_aligned")]
 #[case("multiline_not_lined_up")]

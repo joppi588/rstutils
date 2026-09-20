@@ -1,0 +1,53 @@
+class: Document
+children:
+  - class: Paragraph
+    children:
+      - class: PlainText
+        attributes:
+          text: "No blank lines between items:\n"
+  - class: BlankLine
+  - class: EnumeratedList
+    attributes:
+      enumtype: arabic
+      prefix: ""
+      suffix: "."
+    children:
+      - class: EnumeratedListItem
+        attributes:
+          marker: "1."
+        children:
+          - class: Block
+            attributes:
+              indent: 2
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: "Item one.\n"
+      - class: EnumeratedListItem
+        attributes:
+          marker: "2."
+        children:
+          - class: Block
+            attributes:
+              indent: 2
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: "Item two.\n"
+      - class: EnumeratedListItem
+        attributes:
+          marker: "3."
+        children:
+          - class: Block
+            attributes:
+              indent: 2
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: "Item three.\n"
