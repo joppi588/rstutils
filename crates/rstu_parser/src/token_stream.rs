@@ -17,15 +17,6 @@ pub fn tokens_to_text(tokens: &[Token]) -> String {
     }
     text
 }
-
-pub fn tokens_without_kinds(tokens: &[Token], kinds: &[TokenKind]) -> Vec<Token> {
-    tokens
-        .iter()
-        .filter(|token| !kinds.contains(&token.kind))
-        .cloned()
-        .collect()
-}
-
 /// A token buffer paired with a cursor, so parsers no longer thread an index through return values.
 pub struct TokenStream {
     tokens: Vec<Token>,
@@ -141,7 +132,7 @@ impl TokenStream {
 
 #[cfg(test)]
 mod tests {
-    use super::{tokens_without_kinds, TokenStream};
+    use super::TokenStream;
     use crate::token::{Token, TokenKind};
 
     #[test]
@@ -163,26 +154,6 @@ mod tests {
         let found = stream.find_next_kind_from(&[TokenKind::BlankLine, TokenKind::NewLine], 0);
 
         assert_eq!(found, Ok(2));
-    }
-
-    #[test]
-    fn tokens_without_kinds_removes_requested_token_kinds() {
-        let tokens = vec![
-            Token::new(TokenKind::Indent, "   "),
-            Token::new(TokenKind::Word, "hello"),
-            Token::new(TokenKind::Indent, "   "),
-            Token::new(TokenKind::Punctuation, "."),
-        ];
-
-        let filtered = tokens_without_kinds(&tokens, &[TokenKind::Indent]);
-
-        assert_eq!(
-            filtered,
-            vec![
-                Token::new(TokenKind::Word, "hello"),
-                Token::new(TokenKind::Punctuation, "."),
-            ]
-        );
     }
 
     #[test]

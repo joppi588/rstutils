@@ -2,6 +2,7 @@ class: Document
 children:
   - class: Comment
     attributes:
+      indent: 3
       text: "This is a simple comment.\nIt should be ignored by the parser as visible content.\n\n"
   - class: Comment
     attributes:

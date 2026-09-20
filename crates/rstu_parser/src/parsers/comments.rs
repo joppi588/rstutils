@@ -4,26 +4,22 @@
 
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
-use crate::parser_errors::ParserError;
+use crate::parser_errors::{ParserError, EXPECT_NEWLINE};
 use crate::token::TokenKind as TK;
 use crate::token_stream::{self, TokenStream};
 
-pub(crate) fn parse_comment(
-    stream: &mut TokenStream,
-    first_line_end: usize,
-) -> Result<NodeRef, ParserError> {
-    let mut index = first_line_end;
+pub(crate) fn parse_comment(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    let comment = AstNode::new_ref(NodeClass::Comment);
+    let mut index = stream.find_next_kind(&[TK::NewLine]).expect(EXPECT_NEWLINE);
     if stream.kind_at(index + 1) == TK::Indent {
+        let indent_token = stream.take_at(index + 1);
+        comment.with_attr("indent", indent_token.lexeme.len());
         index = stream
-            .find_next_kind_from(&[TK::Dedent], index + 1)
+            .find_next_kind(&[TK::Dedent])
             .expect("There is always a final dedent.");
     }
 
-    let comment = AstNode::new_ref(NodeClass::Comment);
-    let comment_tokens = token_stream::tokens_without_kinds(
-        &stream.tokens()[stream.cursor() + 2..index + 1],
-        &[TK::Indent, TK::Dedent],
-    );
+    let comment_tokens = &stream.tokens()[stream.cursor() + 2..index + 1];
     comment.with_attr("text", token_stream::tokens_to_text(&comment_tokens));
     stream.set_cursor(index + 1);
     Ok(comment)
