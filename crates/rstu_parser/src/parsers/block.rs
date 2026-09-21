@@ -23,7 +23,7 @@ pub(crate) fn parse_block(stream: &mut TokenStream) -> Result<NodeRef, ParserErr
                 let paragraph = parse_paragraph(stream)?;
                 block.push_child(paragraph);
             }
-            (TK::BlankLine, TK::Indent | TK::Dedent | TK::Word) => {
+            (TK::BlankLine, TK::Indent | TK::Dedent | TK::Word | TK::EnumeratedListMarker) => {
                 let token = stream.consume();
                 block.push_blank_lines(token.lexeme.len());
             }

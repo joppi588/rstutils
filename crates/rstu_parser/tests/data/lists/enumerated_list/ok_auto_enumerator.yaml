@@ -9,36 +9,42 @@ children:
       - class: EnumeratedListItem
         attributes:
           number: 1
+          raw_value: "1"
         children:
           - class: Block
             attributes:
-              indent: 2
+              indent: 3
             children:
               - class: Paragraph
                 children:
                   - class: PlainText
                     attributes:
                       text: "Item one.\n"
+
+      - class: BlankLine
       - class: EnumeratedListItem
         attributes:
           number: 2
+          raw_value: "#"
         children:
           - class: Block
             attributes:
-              indent: 2
+              indent: 3
             children:
               - class: Paragraph
                 children:
                   - class: PlainText
                     attributes:
                       text: "Item two.\n"
+      - class: BlankLine
       - class: EnumeratedListItem
         attributes:
           number: 3
+          raw_value: "#"
         children:
           - class: Block
             attributes:
-              indent: 2
+              indent: 3
             children:
               - class: Paragraph
                 children:

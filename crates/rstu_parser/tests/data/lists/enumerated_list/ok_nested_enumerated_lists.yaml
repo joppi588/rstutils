@@ -15,10 +15,11 @@ children:
       - class: EnumeratedListItem
         attributes:
           number: 1
+          raw_value: "1"
         children:
           - class: Block
             attributes:
-              indent: 2
+              indent: 3
             children:
               - class: Paragraph
                 children:
@@ -35,10 +36,11 @@ children:
                   - class: EnumeratedListItem
                     attributes:
                       number: 1
+                      raw_value: A
                     children:
                       - class: Block
                         attributes:
-                          indent: 2
+                          indent: 3
                         children:
                           - class: Paragraph
                             children:
@@ -48,10 +50,11 @@ children:
                   - class: EnumeratedListItem
                     attributes:
                       number: 2
+                      raw_value: B
                     children:
                       - class: Block
                         attributes:
-                          indent: 2
+                          indent: 3
                         children:
                           - class: Paragraph
                             children:
@@ -61,23 +64,26 @@ children:
                   - class: EnumeratedListItem
                     attributes:
                       number: 3
+                      raw_value: C
                     children:
                       - class: Block
                         attributes:
-                          indent: 2
+                          indent: 3
                         children:
                           - class: Paragraph
                             children:
                               - class: PlainText
                                 attributes:
                                   text: "Item C).\n"
+                  - class: BlankLine
       - class: EnumeratedListItem
         attributes:
           number: 2
+          raw_value: "2"
         children:
           - class: Block
             attributes:
-              indent: 2
+              indent: 3
             children:
               - class: Paragraph
                 children:
@@ -94,10 +100,11 @@ children:
                   - class: EnumeratedListItem
                     attributes:
                       number: 1
+                      raw_value: a
                     children:
                       - class: Block
                         attributes:
-                          indent: 2
+                          indent: 4
                         children:
                           - class: Paragraph
                             children:
@@ -114,10 +121,11 @@ children:
                               - class: EnumeratedListItem
                                 attributes:
                                   number: 1
+                                  raw_value: I
                                 children:
                                   - class: Block
                                     attributes:
-                                      indent: 2
+                                      indent: 3
                                     children:
                                       - class: Paragraph
                                         children:
@@ -127,10 +135,11 @@ children:
                               - class: EnumeratedListItem
                                 attributes:
                                   number: 2
+                                  raw_value: II
                                 children:
                                   - class: Block
                                     attributes:
-                                      indent: 2
+                                      indent: 4
                                     children:
                                       - class: Paragraph
                                         children:
@@ -140,36 +149,41 @@ children:
                               - class: EnumeratedListItem
                                 attributes:
                                   number: 3
+                                  raw_value: III
                                 children:
                                   - class: Block
                                     attributes:
-                                      indent: 2
+                                      indent: 5
                                     children:
                                       - class: Paragraph
                                         children:
                                           - class: PlainText
                                             attributes:
                                               text: "Item III).\n"
+                              - class: BlankLine
                   - class: EnumeratedListItem
                     attributes:
                       number: 2
+                      raw_value: b
                     children:
                       - class: Block
                         attributes:
-                          indent: 2
+                          indent: 4
                         children:
                           - class: Paragraph
                             children:
                               - class: PlainText
                                 attributes:
                                   text: "Item (b).\n"
+                  - class: BlankLine
                   - class: EnumeratedListItem
                     attributes:
                       number: 3
+                      raw_value: c
                     children:
                       - class: Block
                         attributes:
-                          indent: 2
+                          indent: 4
                         children:
                           - class: Paragraph
                             children:
@@ -186,10 +200,11 @@ children:
                               - class: EnumeratedListItem
                                 attributes:
                                   number: 1
+                                  raw_value: i
                                 children:
                                   - class: Block
                                     attributes:
-                                      indent: 2
+                                      indent: 4
                                     children:
                                       - class: Paragraph
                                         children:
@@ -199,10 +214,11 @@ children:
                               - class: EnumeratedListItem
                                 attributes:
                                   number: 2
+                                  raw_value: ii
                                 children:
                                   - class: Block
                                     attributes:
-                                      indent: 2
+                                      indent: 5
                                     children:
                                       - class: Paragraph
                                         children:
@@ -212,23 +228,26 @@ children:
                               - class: EnumeratedListItem
                                 attributes:
                                   number: 3
+                                  raw_value: iii
                                 children:
                                   - class: Block
                                     attributes:
-                                      indent: 2
+                                      indent: 6
                                     children:
                                       - class: Paragraph
                                         children:
                                           - class: PlainText
                                             attributes:
                                               text: "Item (iii).\n"
+                              - class: BlankLine
       - class: EnumeratedListItem
         attributes:
           number: 3
+          raw_value: "3"
         children:
           - class: Block
             attributes:
-              indent: 2
+              indent: 3
             children:
               - class: Paragraph
                 children:

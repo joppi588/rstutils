@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 use super::block::parse_block;
+use super::list_enum_helpers::{enumerator_parts, enumerator_type, enumerator_value};
 use crate::parser_errors::{ParserError, EXPECT_NEWLINE};
 use crate::token::{Token, TokenKind as TK};
 use crate::token_stream::TokenStream;
@@ -113,103 +114,8 @@ pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, Par
     Ok(list)
 }
 
-fn alphabetic_value(value: &str) -> Option<usize> {
-    if value.is_empty()
-        || !value
-            .chars()
-            .all(|character| character.is_ascii_alphabetic())
-    {
-        return None;
-    }
-
-    Some(value.chars().fold(0, |total, character| {
-        total * 26 + (character.to_ascii_uppercase() as usize - 'A' as usize + 1)
-    }))
-}
-
-fn roman_value(value: &str) -> Option<usize> {
-    if value.is_empty() {
-        return None;
-    }
-
-    let mut total = 0;
-    let mut previous = 0;
-    for character in value.chars().rev() {
-        let current = match character.to_ascii_uppercase() {
-            'I' => 1,
-            'V' => 5,
-            'X' => 10,
-            'L' => 50,
-            'C' => 100,
-            'D' => 500,
-            'M' => 1000,
-            _ => return None,
-        };
-        if current < previous {
-            total -= current;
-        } else {
-            total += current;
-            previous = current;
-        }
-    }
-    Some(total)
-}
-
-fn enumerator_parts(marker: &str) -> (&str, &str, &str) {
-    let (prefix, value, suffix) = if marker.starts_with('(') && marker.ends_with(')') {
-        ("(", &marker[1..marker.len() - 1], ")")
-    } else {
-        let split_at = marker.len().saturating_sub(1);
-        ("", &marker[..split_at], &marker[split_at..])
-    };
-    (prefix, value, suffix)
-}
-
-fn enumerator_value(value: &str, enumtype: &str) -> Option<usize> {
-    match enumtype {
-        "arabic" => value.parse().ok(),
-        "upperalpha" | "loweralpha" => alphabetic_value(value),
-        "upperroman" | "lowerroman" => roman_value(value),
-        _ => None,
-    }
-}
-
-fn enumerator_type(value: &str) -> Option<&'static str> {
-    if value.chars().all(|character| character.is_ascii_digit()) {
-        Some("arabic")
-    } else if roman_value(value).is_some()
-        && value.chars().all(|character| {
-            matches!(
-                character.to_ascii_uppercase(),
-                'I' | 'V' | 'X' | 'L' | 'C' | 'D' | 'M'
-            )
-        })
-    {
-        if value
-            .chars()
-            .all(|character| character.is_ascii_uppercase())
-        {
-            Some("upperroman")
-        } else {
-            Some("lowerroman")
-        }
-    } else if value
-        .chars()
-        .all(|character| character.is_ascii_uppercase())
-    {
-        Some("upperalpha")
-    } else if value
-        .chars()
-        .all(|character| character.is_ascii_lowercase())
-    {
-        Some("loweralpha")
-    } else {
-        None
-    }
-}
-
 pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
-    let first_marker = stream.token_at(stream.cursor()).lexeme.trim().to_owned();
+    let first_marker = stream.token_at(stream.cursor()).lexeme.to_owned();
     let (prefix, first_value, suffix) = enumerator_parts(&first_marker);
     let enumtype = enumerator_type(first_value).ok_or(ParserError::ListEndError {})?;
     let list = AstNode::new_ref(NodeClass::EnumeratedList);
@@ -219,24 +125,28 @@ pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef,
 
     let mut next_number = 1;
     while stream.kind_at_cursor() == TK::EnumeratedListMarker {
-        let marker = stream.consume().lexeme.trim().to_owned();
+        let marker = stream.consume().lexeme.to_owned();
         let (item_prefix, value, item_suffix) = enumerator_parts(&marker);
         if item_prefix != prefix
             || item_suffix != suffix
             || (value != "#" && enumerator_type(value) != Some(enumtype))
         {
+            stream.set_cursor(stream.cursor() - 1);
             break;
         }
+        let item = AstNode::new_ref(NodeClass::EnumeratedListItem);
+        item.with_attr("raw_value", value);
         let number = if value == "#" {
             next_number
         } else {
-            enumerator_value(value, enumtype).ok_or(ParserError::ListEndError {})?
+            enumerator_value(value, enumtype).ok_or(ParserError::ListStyleError {
+                marker: first_marker.clone(),
+                conflicting_marker: marker.clone(),
+            })?
         };
-        next_number = number + 1;
-
-        let item = AstNode::new_ref(NodeClass::EnumeratedListItem);
         item.with_attr("number", number);
-        finish_list_item(stream, &list, item, 1)?;
+        next_number = number + 1;
+        finish_list_item(stream, &list, item, marker.len())?;
     }
 
     Ok(list)
