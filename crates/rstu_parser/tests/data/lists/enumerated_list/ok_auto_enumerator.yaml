@@ -20,7 +20,6 @@ children:
                   - class: PlainText
                     attributes:
                       text: "Item one.\n"
-
       - class: BlankLine
       - class: EnumeratedListItem
         attributes:

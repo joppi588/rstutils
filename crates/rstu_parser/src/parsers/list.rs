@@ -43,6 +43,7 @@ fn prepare_item_block(stream: &mut TokenStream, dedent_len: usize) -> Result<(),
             stream.set_cursor(cursor);
         }
         None => match stream.kind_at(next_line) {
+            // list end
             TK::Field
             | TK::BulletListMarker
             | TK::EnumeratedListMarker
