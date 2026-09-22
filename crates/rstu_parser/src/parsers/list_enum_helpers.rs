@@ -11,6 +11,8 @@ pub(super) enum EnumMarkerType {
     Loweralpha,
     Upperroman,
     Lowerroman,
+    AmbiguousI,
+    AmbiguousC,
 }
 
 pub(super) fn alphabetic_value(value: &str) -> Option<usize> {
@@ -73,6 +75,7 @@ pub(super) fn enumerator_value(
         EnumMarkerType::Arabic => value.parse().ok(),
         EnumMarkerType::Upperalpha | EnumMarkerType::Loweralpha => alphabetic_value(value),
         EnumMarkerType::Upperroman | EnumMarkerType::Lowerroman => roman_value(value),
+        EnumMarkerType::AmbiguousI | EnumMarkerType::AmbiguousC => None,
     };
     return converted_value.ok_or_else(|| ParserError::ListMarkerError {
         marker: (value.to_string()),
@@ -82,12 +85,16 @@ pub(super) fn enumerator_value(
 pub(super) fn enumerator_type(value: &str) -> Result<EnumMarkerType, ParserError> {
     if value.chars().all(|character| character.is_ascii_digit()) {
         Ok(EnumMarkerType::Arabic)
-    } else if roman_value(value).is_some()
+    } else if value == "I" || value == "i" {
+        Ok(EnumMarkerType::AmbiguousI)
+    } else if value == "C" || value == "c" {
+        Ok(EnumMarkerType::AmbiguousC)
+    } else if value.chars().count() > 1
+        && roman_value(value).is_some()
         && value.chars().all(|character| {
             matches!(
                 character.to_ascii_uppercase(),
-                //                'I' | 'V' | 'X' | 'L' | 'C' | 'D' | 'M'
-                'I' | 'V' | 'X' | 'L' // TODO: Allow Values > 100 (C)
+                'I' | 'V' | 'X' | 'L' | 'C' | 'D' | 'M'
             )
         })
     {
@@ -116,9 +123,36 @@ pub(super) fn enumerator_type(value: &str) -> Result<EnumMarkerType, ParserError
     }
 }
 
+pub(super) fn resolve_enumerator_type(
+    value: &str,
+    marker_type: EnumMarkerType,
+    list_type: Option<EnumMarkerType>,
+) -> EnumMarkerType {
+    let ambiguous_type = match marker_type {
+        EnumMarkerType::AmbiguousI | EnumMarkerType::AmbiguousC => marker_type,
+        _ => return marker_type,
+    };
+    let use_roman = match (list_type, ambiguous_type) {
+        (Some(EnumMarkerType::Upperroman | EnumMarkerType::Lowerroman), _) => true,
+        (Some(EnumMarkerType::Upperalpha | EnumMarkerType::Loweralpha), _) => false,
+        (_, EnumMarkerType::AmbiguousI) => true,
+        (_, EnumMarkerType::AmbiguousC) => false,
+        _ => unreachable!(),
+    };
+    let is_uppercase = value
+        .chars()
+        .all(|character| character.is_ascii_uppercase());
+    match (use_roman, is_uppercase) {
+        (true, true) => EnumMarkerType::Upperroman,
+        (true, false) => EnumMarkerType::Lowerroman,
+        (false, true) => EnumMarkerType::Upperalpha,
+        (false, false) => EnumMarkerType::Loweralpha,
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{enumerator_type, enumerator_value, EnumMarkerType};
+    use super::{enumerator_type, enumerator_value, resolve_enumerator_type, EnumMarkerType};
     use crate::parser_errors::ParserError;
 
     #[test]
@@ -131,6 +165,8 @@ mod tests {
         assert_eq!(enumerator_type("abc"), Ok(EnumMarkerType::Loweralpha));
         assert_eq!(enumerator_type("XL"), Ok(EnumMarkerType::Upperroman));
         assert_eq!(enumerator_type("xl"), Ok(EnumMarkerType::Lowerroman));
+        assert_eq!(enumerator_type("I"), Ok(EnumMarkerType::AmbiguousI));
+        assert_eq!(enumerator_type("C"), Ok(EnumMarkerType::AmbiguousC));
     }
 
     #[test]
@@ -158,6 +194,44 @@ mod tests {
         assert_eq!(enumerator_value("z", EnumMarkerType::Loweralpha), Ok(26));
         assert_eq!(enumerator_value("XL", EnumMarkerType::Upperroman), Ok(40));
         assert_eq!(enumerator_value("xl", EnumMarkerType::Lowerroman), Ok(40));
+    }
+
+    #[test]
+    fn resolve_enumerator_type_uses_initial_marker_rules() {
+        // GIVEN ambiguous markers starting a list
+        // WHEN their types are resolved without an existing list type
+        // THEN I is Roman and C is alphabetic
+        assert_eq!(
+            resolve_enumerator_type("I", EnumMarkerType::AmbiguousI, None,),
+            EnumMarkerType::Upperroman
+        );
+        assert_eq!(
+            resolve_enumerator_type("c", EnumMarkerType::AmbiguousC, None,),
+            EnumMarkerType::Loweralpha
+        );
+    }
+
+    #[test]
+    fn resolve_enumerator_type_uses_existing_list_type() {
+        // GIVEN ambiguous markers inside established lists
+        // WHEN their types are resolved against the list type
+        // THEN they use the existing list family and marker case
+        assert_eq!(
+            resolve_enumerator_type(
+                "I",
+                EnumMarkerType::AmbiguousI,
+                Some(EnumMarkerType::Upperalpha),
+            ),
+            EnumMarkerType::Upperalpha
+        );
+        assert_eq!(
+            resolve_enumerator_type(
+                "C",
+                EnumMarkerType::AmbiguousC,
+                Some(EnumMarkerType::Lowerroman),
+            ),
+            EnumMarkerType::Upperroman
+        );
     }
 
     #[test]

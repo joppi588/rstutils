@@ -3,7 +3,9 @@
 // SPDX-License-Identifier: MIT
 
 use super::block::parse_block;
-use super::list_enum_helpers::{enumerator_parts, enumerator_type, enumerator_value};
+use super::list_enum_helpers::{
+    enumerator_parts, enumerator_type, enumerator_value, resolve_enumerator_type,
+};
 use crate::parser_errors::{ParserError, EXPECT_NEWLINE};
 use crate::token::{Token, TokenKind as TK};
 use crate::token_stream::TokenStream;
@@ -118,7 +120,7 @@ pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, Par
 pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     let first_marker = stream.token_at(stream.cursor()).lexeme.to_owned();
     let (prefix, first_value, suffix) = enumerator_parts(&first_marker);
-    let enumtype = enumerator_type(first_value)?;
+    let enumtype = resolve_enumerator_type(first_value, enumerator_type(first_value)?, None);
     let list = AstNode::new_ref(NodeClass::EnumeratedList);
     list.with_attr("enumtype", format!("{enumtype:?}").to_lowercase())
         .with_attr("prefix", prefix)
@@ -128,10 +130,12 @@ pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef,
     while stream.kind_at_cursor() == TK::EnumeratedListMarker {
         let marker = stream.consume().lexeme.to_owned();
         let (item_prefix, value, item_suffix) = enumerator_parts(&marker);
-        if item_prefix != prefix
-            || item_suffix != suffix
-            || (value != "#" && enumerator_type(value)? != enumtype)
-        {
+        let item_type = if value == "#" {
+            enumtype
+        } else {
+            resolve_enumerator_type(value, enumerator_type(value)?, Some(enumtype))
+        };
+        if item_prefix != prefix || item_suffix != suffix || item_type != enumtype {
             stream.set_cursor(stream.cursor() - 1);
             break;
         }
@@ -169,4 +173,46 @@ pub(crate) fn parse_field_list(stream: &mut TokenStream) -> Result<NodeRef, Pars
     }
 
     Ok(list)
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::parse;
+    use rstu_ast::NodeClass;
+
+    fn list_types(input: &str) -> Vec<String> {
+        parse(input)
+            .unwrap()
+            .borrow()
+            .children
+            .iter()
+            .filter(|child| child.borrow().class == NodeClass::EnumeratedList)
+            .map(|child| child.borrow().attributes.get_str("enumtype").unwrap())
+            .collect()
+    }
+
+    #[test]
+    fn ambiguous_i_starts_a_roman_list() {
+        // GIVEN a list whose first marker is the ambiguous I
+        // WHEN the list is parsed
+        // THEN the list style is upper Roman
+        assert_eq!(list_types("I. first\nII. second\n"), ["upperroman"]);
+    }
+
+    #[test]
+    fn ambiguous_c_starts_an_alpha_list() {
+        // GIVEN a list whose first marker is the ambiguous C
+        // WHEN the list is parsed
+        // THEN the list style is upper alpha
+        assert_eq!(list_types("C. first\nD. second\n"), ["upperalpha"]);
+    }
+
+    #[test]
+    fn ambiguous_markers_use_the_existing_list_style() {
+        // GIVEN alpha and Roman lists containing ambiguous markers
+        // WHEN the lists are parsed
+        // THEN I follows alpha and C follows Roman
+        assert_eq!(list_types("H. first\nI. second\n"), ["upperalpha"]);
+        assert_eq!(list_types("I. first\nC. second\n"), ["upperroman"]);
+    }
 }
