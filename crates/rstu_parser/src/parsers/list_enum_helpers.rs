@@ -115,3 +115,67 @@ pub(super) fn enumerator_type(value: &str) -> Result<EnumMarkerType, ParserError
         })
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{enumerator_type, enumerator_value, EnumMarkerType};
+    use crate::parser_errors::ParserError;
+
+    #[test]
+    fn enumerator_type_identifies_supported_marker_types() {
+        // GIVEN markers using each supported enumeration style
+        // WHEN their enumeration types are detected
+        // THEN each marker is assigned its matching type
+        assert_eq!(enumerator_type("12"), Ok(EnumMarkerType::Arabic));
+        assert_eq!(enumerator_type("ABC"), Ok(EnumMarkerType::Upperalpha));
+        assert_eq!(enumerator_type("abc"), Ok(EnumMarkerType::Loweralpha));
+        assert_eq!(enumerator_type("XL"), Ok(EnumMarkerType::Upperroman));
+        assert_eq!(enumerator_type("xl"), Ok(EnumMarkerType::Lowerroman));
+    }
+
+    #[test]
+    fn enumerator_type_rejects_invalid_markers() {
+        // GIVEN markers that contain invalid or mixed characters
+        // WHEN their enumeration types are detected
+        // THEN a list marker error containing the original marker is returned
+        for marker in ["a1", "A!", "aB"] {
+            assert_eq!(
+                enumerator_type(marker),
+                Err(ParserError::ListMarkerError {
+                    marker: marker.to_string(),
+                })
+            );
+        }
+    }
+
+    #[test]
+    fn enumerator_value_converts_supported_marker_values() {
+        // GIVEN valid values for each supported enumeration type
+        // WHEN their numeric values are converted
+        // THEN the corresponding ordinal value is returned
+        assert_eq!(enumerator_value("12", EnumMarkerType::Arabic), Ok(12));
+        assert_eq!(enumerator_value("C", EnumMarkerType::Upperalpha), Ok(3));
+        assert_eq!(enumerator_value("z", EnumMarkerType::Loweralpha), Ok(26));
+        assert_eq!(enumerator_value("XL", EnumMarkerType::Upperroman), Ok(40));
+        assert_eq!(enumerator_value("xl", EnumMarkerType::Lowerroman), Ok(40));
+    }
+
+    #[test]
+    fn enumerator_value_rejects_invalid_values() {
+        // GIVEN values that cannot be converted for their requested type
+        // WHEN their numeric values are converted
+        // THEN a list marker error containing the original value is returned
+        for (value, enumtype) in [
+            ("not-a-number", EnumMarkerType::Arabic),
+            ("A1", EnumMarkerType::Upperalpha),
+            ("invalid", EnumMarkerType::Lowerroman),
+        ] {
+            assert_eq!(
+                enumerator_value(value, enumtype),
+                Err(ParserError::ListMarkerError {
+                    marker: value.to_string(),
+                })
+            );
+        }
+    }
+}
