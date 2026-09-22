@@ -118,9 +118,9 @@ pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, Par
 pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     let first_marker = stream.token_at(stream.cursor()).lexeme.to_owned();
     let (prefix, first_value, suffix) = enumerator_parts(&first_marker);
-    let enumtype = enumerator_type(first_value).ok_or(ParserError::ListEndError {})?;
+    let enumtype = enumerator_type(first_value)?;
     let list = AstNode::new_ref(NodeClass::EnumeratedList);
-    list.with_attr("enumtype", enumtype)
+    list.with_attr("enumtype", format!("{enumtype:?}").to_lowercase())
         .with_attr("prefix", prefix)
         .with_attr("suffix", suffix);
 
@@ -130,7 +130,7 @@ pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef,
         let (item_prefix, value, item_suffix) = enumerator_parts(&marker);
         if item_prefix != prefix
             || item_suffix != suffix
-            || (value != "#" && enumerator_type(value) != Some(enumtype))
+            || (value != "#" && enumerator_type(value)? != enumtype)
         {
             stream.set_cursor(stream.cursor() - 1);
             break;
@@ -140,10 +140,7 @@ pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef,
         let number = if value == "#" {
             next_number
         } else {
-            enumerator_value(value, enumtype).ok_or(ParserError::ListStyleError {
-                marker: first_marker.clone(),
-                conflicting_marker: marker.clone(),
-            })?
+            enumerator_value(value, enumtype)?
         };
         item.with_attr("number", number);
         next_number = number + 1;

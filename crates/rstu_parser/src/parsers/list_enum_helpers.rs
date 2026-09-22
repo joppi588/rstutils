@@ -1,6 +1,18 @@
 // SPDX-FileCopyrightText: 2026 Jochen Schmaehling <tostmann1@web.de>
 //
 // SPDX-License-Identifier: MIT
+
+use crate::parser_errors::ParserError;
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub(super) enum EnumMarkerType {
+    Arabic,
+    Upperalpha,
+    Loweralpha,
+    Upperroman,
+    Lowerroman,
+}
+
 pub(super) fn alphabetic_value(value: &str) -> Option<usize> {
     if value.is_empty()
         || !value
@@ -53,18 +65,23 @@ pub(super) fn enumerator_parts(marker: &str) -> (&str, &str, &str) {
     (prefix, value, suffix)
 }
 
-pub(super) fn enumerator_value(value: &str, enumtype: &str) -> Option<usize> {
-    match enumtype {
-        "arabic" => value.parse().ok(),
-        "upperalpha" | "loweralpha" => alphabetic_value(value),
-        "upperroman" | "lowerroman" => roman_value(value),
-        _ => None,
-    }
+pub(super) fn enumerator_value(
+    value: &str,
+    enumtype: EnumMarkerType,
+) -> Result<usize, ParserError> {
+    let converted_value = match enumtype {
+        EnumMarkerType::Arabic => value.parse().ok(),
+        EnumMarkerType::Upperalpha | EnumMarkerType::Loweralpha => alphabetic_value(value),
+        EnumMarkerType::Upperroman | EnumMarkerType::Lowerroman => roman_value(value),
+    };
+    return converted_value.ok_or_else(|| ParserError::ListMarkerError {
+        marker: (value.to_string()),
+    });
 }
 
-pub(super) fn enumerator_type(value: &str) -> Option<&'static str> {
+pub(super) fn enumerator_type(value: &str) -> Result<EnumMarkerType, ParserError> {
     if value.chars().all(|character| character.is_ascii_digit()) {
-        Some("arabic")
+        Ok(EnumMarkerType::Arabic)
     } else if roman_value(value).is_some()
         && value.chars().all(|character| {
             matches!(
@@ -78,21 +95,23 @@ pub(super) fn enumerator_type(value: &str) -> Option<&'static str> {
             .chars()
             .all(|character| character.is_ascii_uppercase())
         {
-            Some("upperroman")
+            Ok(EnumMarkerType::Upperroman)
         } else {
-            Some("lowerroman")
+            Ok(EnumMarkerType::Lowerroman)
         }
     } else if value
         .chars()
         .all(|character| character.is_ascii_uppercase())
     {
-        Some("upperalpha")
+        Ok(EnumMarkerType::Upperalpha)
     } else if value
         .chars()
         .all(|character| character.is_ascii_lowercase())
     {
-        Some("loweralpha")
+        Ok(EnumMarkerType::Loweralpha)
     } else {
-        None
+        Err(ParserError::ListMarkerError {
+            marker: (value.to_string()),
+        })
     }
 }
