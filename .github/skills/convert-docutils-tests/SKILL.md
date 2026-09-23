@@ -15,6 +15,8 @@ For each test file, create two new rust test function types:
 For each test case in the test file, create rst and yaml fixtures, and a test case for rstest.
 Delete test functions without associated test cases.
 
+In the yaml fixtures, sort the subelements in the order class - attributes - children
+
 Comment out test cases that use features not implemented so far.
 
 Run the tests, but allow the test cases to fail.
