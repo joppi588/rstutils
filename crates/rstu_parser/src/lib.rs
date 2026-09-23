@@ -10,6 +10,7 @@ use std::rc::Rc;
 use parsers::comments::parse_comment;
 use parsers::directives::parse_directive;
 use parsers::list::{parse_bullet_list, parse_enumerated_list, parse_field_list};
+use parsers::literal_block::parse_literal_block;
 use parsers::paragraph::parse_paragraph;
 
 pub mod parser_errors;
@@ -21,7 +22,7 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 use crate::lexer::tokenize;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
 use parser_errors::ParserError;
-use token_stream::{tokens_to_text, TokenStream};
+use token_stream::{TokenStream, tokens_to_text};
 
 // static DEDENT_GRACE: usize = 1;
 
@@ -152,6 +153,11 @@ fn parse_body_elements(
             let paragraph = parse_paragraph(stream)?;
             current_parent.push_child(paragraph);
         }
+        TK::DoubleColon => {
+            let literal_block = parse_literal_block(stream)?;
+            current_parent.push_child(literal_block);
+        }
+
         _ => {
             panic!(
                 "Token kind {:?} not in {:?}",

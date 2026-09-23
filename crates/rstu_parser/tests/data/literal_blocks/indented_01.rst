@@ -1,0 +1,3 @@
+A paragraph with a space after the colons::
+
+    A literal block.

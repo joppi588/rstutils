@@ -1,0 +1,15 @@
+class: Document
+children:
+  - class: Paragraph
+    children:
+      - class: PlainText
+        attributes:
+          text: "A paragraph\non more than\none line:\n"
+  - class: LiteralBlock
+    attributes:
+      indent: 4
+      xml:space: preserve
+    children:
+      - class: PlainText
+        attributes:
+          text: "A literal block.\n"

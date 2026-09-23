@@ -1,0 +1,8 @@
+
+A paragraph\\::
+
+    A literal block.
+
+A paragraph\::
+
+    Not a literal block.
