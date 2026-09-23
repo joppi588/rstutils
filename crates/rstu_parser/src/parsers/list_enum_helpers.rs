@@ -11,8 +11,10 @@ pub(super) enum EnumMarkerType {
     Loweralpha,
     Upperroman,
     Lowerroman,
-    AmbiguousI,
-    AmbiguousC,
+    UpperAmbiguousI,
+    LowerAmbiguousI,
+    UpperAmbiguousC,
+    LowerAmbiguousC,
 }
 
 pub(super) fn alphabetic_value(value: &str) -> Option<usize> {
@@ -75,7 +77,10 @@ pub(super) fn enumerator_value(
         EnumMarkerType::Arabic => value.parse().ok(),
         EnumMarkerType::Upperalpha | EnumMarkerType::Loweralpha => alphabetic_value(value),
         EnumMarkerType::Upperroman | EnumMarkerType::Lowerroman => roman_value(value),
-        EnumMarkerType::AmbiguousI | EnumMarkerType::AmbiguousC => None,
+        EnumMarkerType::UpperAmbiguousI
+        | EnumMarkerType::LowerAmbiguousI
+        | EnumMarkerType::UpperAmbiguousC
+        | EnumMarkerType::LowerAmbiguousC => None,
     };
     return converted_value.ok_or_else(|| ParserError::ListMarkerError {
         marker: (value.to_string()),
@@ -85,10 +90,14 @@ pub(super) fn enumerator_value(
 pub(super) fn enumerator_type(value: &str) -> Result<EnumMarkerType, ParserError> {
     if value.chars().all(|character| character.is_ascii_digit()) {
         Ok(EnumMarkerType::Arabic)
-    } else if value == "I" || value == "i" {
-        Ok(EnumMarkerType::AmbiguousI)
-    } else if value == "C" || value == "c" {
-        Ok(EnumMarkerType::AmbiguousC)
+    } else if value == "I" {
+        Ok(EnumMarkerType::UpperAmbiguousI)
+    } else if value == "i" {
+        Ok(EnumMarkerType::LowerAmbiguousI)
+    } else if value == "C" {
+        Ok(EnumMarkerType::UpperAmbiguousC)
+    } else if value == "c" {
+        Ok(EnumMarkerType::LowerAmbiguousC)
     } else if value.chars().count() > 1
         && roman_value(value).is_some()
         && value.chars().all(|character| {
@@ -124,29 +133,31 @@ pub(super) fn enumerator_type(value: &str) -> Result<EnumMarkerType, ParserError
 }
 
 pub(super) fn resolve_enumerator_type(
-    value: &str,
     marker_type: EnumMarkerType,
     list_type: Option<EnumMarkerType>,
 ) -> EnumMarkerType {
-    let ambiguous_type = match marker_type {
-        EnumMarkerType::AmbiguousI | EnumMarkerType::AmbiguousC => marker_type,
-        _ => return marker_type,
-    };
-    let use_roman = match (list_type, ambiguous_type) {
-        (Some(EnumMarkerType::Upperroman | EnumMarkerType::Lowerroman), _) => true,
-        (Some(EnumMarkerType::Upperalpha | EnumMarkerType::Loweralpha), _) => false,
-        (_, EnumMarkerType::AmbiguousI) => true,
-        (_, EnumMarkerType::AmbiguousC) => false,
-        _ => unreachable!(),
-    };
-    let is_uppercase = value
-        .chars()
-        .all(|character| character.is_ascii_uppercase());
-    match (use_roman, is_uppercase) {
-        (true, true) => EnumMarkerType::Upperroman,
-        (true, false) => EnumMarkerType::Lowerroman,
-        (false, true) => EnumMarkerType::Upperalpha,
-        (false, false) => EnumMarkerType::Loweralpha,
+    match (marker_type, list_type) {
+        (
+            EnumMarkerType::UpperAmbiguousI | EnumMarkerType::UpperAmbiguousC,
+            Some(EnumMarkerType::Upperroman | EnumMarkerType::Lowerroman),
+        ) => EnumMarkerType::Upperroman,
+        (
+            EnumMarkerType::LowerAmbiguousI | EnumMarkerType::LowerAmbiguousC,
+            Some(EnumMarkerType::Upperroman | EnumMarkerType::Lowerroman),
+        ) => EnumMarkerType::Lowerroman,
+        (
+            EnumMarkerType::UpperAmbiguousI | EnumMarkerType::UpperAmbiguousC,
+            Some(EnumMarkerType::Upperalpha | EnumMarkerType::Loweralpha),
+        ) => EnumMarkerType::Upperalpha,
+        (
+            EnumMarkerType::LowerAmbiguousI | EnumMarkerType::LowerAmbiguousC,
+            Some(EnumMarkerType::Upperalpha | EnumMarkerType::Loweralpha),
+        ) => EnumMarkerType::Loweralpha,
+        (EnumMarkerType::UpperAmbiguousI, None) => EnumMarkerType::Upperroman,
+        (EnumMarkerType::LowerAmbiguousI, None) => EnumMarkerType::Lowerroman,
+        (EnumMarkerType::UpperAmbiguousC, None) => EnumMarkerType::Upperalpha,
+        (EnumMarkerType::LowerAmbiguousC, None) => EnumMarkerType::Loweralpha,
+        (marker_type, _) => marker_type,
     }
 }
 
@@ -165,8 +176,10 @@ mod tests {
         assert_eq!(enumerator_type("abc"), Ok(EnumMarkerType::Loweralpha));
         assert_eq!(enumerator_type("XL"), Ok(EnumMarkerType::Upperroman));
         assert_eq!(enumerator_type("xl"), Ok(EnumMarkerType::Lowerroman));
-        assert_eq!(enumerator_type("I"), Ok(EnumMarkerType::AmbiguousI));
-        assert_eq!(enumerator_type("C"), Ok(EnumMarkerType::AmbiguousC));
+        assert_eq!(enumerator_type("I"), Ok(EnumMarkerType::UpperAmbiguousI));
+        assert_eq!(enumerator_type("i"), Ok(EnumMarkerType::LowerAmbiguousI));
+        assert_eq!(enumerator_type("C"), Ok(EnumMarkerType::UpperAmbiguousC));
+        assert_eq!(enumerator_type("c"), Ok(EnumMarkerType::LowerAmbiguousC));
     }
 
     #[test]
@@ -202,11 +215,11 @@ mod tests {
         // WHEN their types are resolved without an existing list type
         // THEN I is Roman and C is alphabetic
         assert_eq!(
-            resolve_enumerator_type("I", EnumMarkerType::AmbiguousI, None,),
+            resolve_enumerator_type(EnumMarkerType::UpperAmbiguousI, None,),
             EnumMarkerType::Upperroman
         );
         assert_eq!(
-            resolve_enumerator_type("c", EnumMarkerType::AmbiguousC, None,),
+            resolve_enumerator_type(EnumMarkerType::LowerAmbiguousC, None,),
             EnumMarkerType::Loweralpha
         );
     }
@@ -218,16 +231,14 @@ mod tests {
         // THEN they use the existing list family and marker case
         assert_eq!(
             resolve_enumerator_type(
-                "I",
-                EnumMarkerType::AmbiguousI,
+                EnumMarkerType::UpperAmbiguousI,
                 Some(EnumMarkerType::Upperalpha),
             ),
             EnumMarkerType::Upperalpha
         );
         assert_eq!(
             resolve_enumerator_type(
-                "C",
-                EnumMarkerType::AmbiguousC,
+                EnumMarkerType::UpperAmbiguousC,
                 Some(EnumMarkerType::Lowerroman),
             ),
             EnumMarkerType::Upperroman

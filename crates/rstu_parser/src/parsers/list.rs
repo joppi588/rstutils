@@ -120,7 +120,7 @@ pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, Par
 pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     let first_marker = stream.token_at(stream.cursor()).lexeme.to_owned();
     let (prefix, first_value, suffix) = enumerator_parts(&first_marker);
-    let enumtype = resolve_enumerator_type(first_value, enumerator_type(first_value)?, None);
+    let enumtype = resolve_enumerator_type(enumerator_type(first_value)?, None);
     let list = AstNode::new_ref(NodeClass::EnumeratedList);
     list.with_attr("enumtype", format!("{enumtype:?}").to_lowercase())
         .with_attr("prefix", prefix)
@@ -133,7 +133,7 @@ pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef,
         let item_type = if value == "#" {
             enumtype
         } else {
-            resolve_enumerator_type(value, enumerator_type(value)?, Some(enumtype))
+            resolve_enumerator_type(enumerator_type(value)?, Some(enumtype))
         };
         if item_prefix != prefix || item_suffix != suffix || item_type != enumtype {
             stream.set_cursor(stream.cursor() - 1);
