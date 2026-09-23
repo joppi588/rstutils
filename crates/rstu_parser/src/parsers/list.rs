@@ -141,10 +141,9 @@ pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef,
         }
         let item = AstNode::new_ref(NodeClass::EnumeratedListItem);
         item.with_attr("raw_value", value);
-        let number = if value == "#" {
-            next_number
-        } else {
-            enumerator_value(value, enumtype)?
+        let number = match value {
+            "#" => next_number,
+            _ => enumerator_value(value, enumtype)?,
         };
         item.with_attr("number", number);
         next_number = number + 1;
