@@ -1,0 +1,53 @@
+children:
+- attributes:
+    enumtype: lowerroman
+    prefix: ''
+    suffix: .
+  children:
+  - attributes:
+      number: 1
+      raw_value: i
+    children:
+    - attributes:
+        indent: 3
+      children:
+      - children:
+        - attributes:
+            text: |
+              Item one.
+          class: PlainText
+        class: Paragraph
+      class: Block
+    class: EnumeratedListItem
+  - attributes:
+      number: 2
+      raw_value: ii
+    children:
+    - attributes:
+        indent: 4
+      children:
+      - children:
+        - attributes:
+            text: |
+              Item two.
+          class: PlainText
+        class: Paragraph
+      class: Block
+    class: EnumeratedListItem
+  - attributes:
+      number: 3
+      raw_value: '#'
+    children:
+    - attributes:
+        indent: 3
+      children:
+      - children:
+        - attributes:
+            text: |
+              Item three.
+          class: PlainText
+        class: Paragraph
+      class: Block
+    class: EnumeratedListItem
+  class: EnumeratedList
+class: Document

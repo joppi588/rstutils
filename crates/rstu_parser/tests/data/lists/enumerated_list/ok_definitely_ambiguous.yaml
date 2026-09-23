@@ -1,0 +1,364 @@
+children:
+- children:
+  - attributes:
+      text: |
+        Definitely ambiguous:
+    class: PlainText
+  class: Paragraph
+- class: BlankLine
+- attributes:
+    enumtype: upperalpha
+    prefix: ''
+    suffix: .
+  children:
+  - attributes:
+      number: 1
+      raw_value: A
+    children:
+    - attributes:
+        indent: 3
+      children:
+      - children:
+        - attributes:
+            text: |
+              Item A.
+          class: PlainText
+        class: Paragraph
+      class: Block
+    class: EnumeratedListItem
+  - attributes:
+      number: 2
+      raw_value: B
+    children:
+    - attributes:
+        indent: 3
+      children:
+      - children:
+        - attributes:
+            text: |
+              Item B.
+          class: PlainText
+        class: Paragraph
+      class: Block
+    class: EnumeratedListItem
+  - attributes:
+      number: 3
+      raw_value: C
+    children:
+    - attributes:
+        indent: 3
+      children:
+      - children:
+        - attributes:
+            text: |
+              Item C.
+          class: PlainText
+        class: Paragraph
+      class: Block
+    class: EnumeratedListItem
+  - attributes:
+      number: 4
+      raw_value: D
+    children:
+    - attributes:
+        indent: 3
+      children:
+      - children:
+        - attributes:
+            text: |
+              Item D.
+          class: PlainText
+        class: Paragraph
+      class: Block
+    class: EnumeratedListItem
+  - attributes:
+      number: 5
+      raw_value: E
+    children:
+    - attributes:
+        indent: 3
+      children:
+      - children:
+        - attributes:
+            text: |
+              Item E.
+          class: PlainText
+        class: Paragraph
+      class: Block
+    class: EnumeratedListItem
+  - attributes:
+      number: 6
+      raw_value: F
+    children:
+    - attributes:
+        indent: 3
+      children:
+      - children:
+        - attributes:
+            text: |
+              Item F.
+          class: PlainText
+        class: Paragraph
+      class: Block
+    class: EnumeratedListItem
+  - attributes:
+      number: 7
+      raw_value: G
+    children:
+    - attributes:
+        indent: 3
+      children:
+      - children:
+        - attributes:
+            text: |
+              Item G.
+          class: PlainText
+        class: Paragraph
+      class: Block
+    class: EnumeratedListItem
+  - attributes:
+      number: 8
+      raw_value: H
+    children:
+    - attributes:
+        indent: 3
+      children:
+      - children:
+        - attributes:
+            text: |
+              Item H.
+          class: PlainText
+        class: Paragraph
+      class: Block
+    class: EnumeratedListItem
+  - attributes:
+      number: 9
+      raw_value: I
+    children:
+    - attributes:
+        indent: 3
+      children:
+      - children:
+        - attributes:
+            text: |
+              Item I.
+          class: PlainText
+        class: Paragraph
+      class: Block
+    class: EnumeratedListItem
+  class: EnumeratedList
+- attributes:
+    enumtype: upperroman
+    prefix: ''
+    suffix: .
+  children:
+  - attributes:
+      number: 2
+      raw_value: II
+    children:
+    - attributes:
+        indent: 4
+      children:
+      - children:
+        - attributes:
+            text: |
+              Item II.
+          class: PlainText
+        class: Paragraph
+      class: Block
+    class: EnumeratedListItem
+  - attributes:
+      number: 3
+      raw_value: III
+    children:
+    - attributes:
+        indent: 5
+      children:
+      - children:
+        - attributes:
+            text: |
+              Item III.
+          class: PlainText
+        class: Paragraph
+      class: Block
+    class: EnumeratedListItem
+  - class: BlankLine
+  class: EnumeratedList
+- attributes:
+    enumtype: loweralpha
+    prefix: ''
+    suffix: .
+  children:
+  - attributes:
+      number: 1
+      raw_value: a
+    children:
+    - attributes:
+        indent: 3
+      children:
+      - children:
+        - attributes:
+            text: |
+              Item a.
+          class: PlainText
+        class: Paragraph
+      class: Block
+    class: EnumeratedListItem
+  - attributes:
+      number: 2
+      raw_value: b
+    children:
+    - attributes:
+        indent: 3
+      children:
+      - children:
+        - attributes:
+            text: |
+              Item b.
+          class: PlainText
+        class: Paragraph
+      class: Block
+    class: EnumeratedListItem
+  - attributes:
+      number: 3
+      raw_value: c
+    children:
+    - attributes:
+        indent: 3
+      children:
+      - children:
+        - attributes:
+            text: |
+              Item c.
+          class: PlainText
+        class: Paragraph
+      class: Block
+    class: EnumeratedListItem
+  - attributes:
+      number: 4
+      raw_value: d
+    children:
+    - attributes:
+        indent: 3
+      children:
+      - children:
+        - attributes:
+            text: |
+              Item d.
+          class: PlainText
+        class: Paragraph
+      class: Block
+    class: EnumeratedListItem
+  - attributes:
+      number: 5
+      raw_value: e
+    children:
+    - attributes:
+        indent: 3
+      children:
+      - children:
+        - attributes:
+            text: |
+              Item e.
+          class: PlainText
+        class: Paragraph
+      class: Block
+    class: EnumeratedListItem
+  - attributes:
+      number: 6
+      raw_value: f
+    children:
+    - attributes:
+        indent: 3
+      children:
+      - children:
+        - attributes:
+            text: |
+              Item f.
+          class: PlainText
+        class: Paragraph
+      class: Block
+    class: EnumeratedListItem
+  - attributes:
+      number: 7
+      raw_value: g
+    children:
+    - attributes:
+        indent: 3
+      children:
+      - children:
+        - attributes:
+            text: |
+              Item g.
+          class: PlainText
+        class: Paragraph
+      class: Block
+    class: EnumeratedListItem
+  - attributes:
+      number: 8
+      raw_value: h
+    children:
+    - attributes:
+        indent: 3
+      children:
+      - children:
+        - attributes:
+            text: |
+              Item h.
+          class: PlainText
+        class: Paragraph
+      class: Block
+    class: EnumeratedListItem
+  - attributes:
+      number: 9
+      raw_value: i
+    children:
+    - attributes:
+        indent: 3
+      children:
+      - children:
+        - attributes:
+            text: |
+              Item i.
+          class: PlainText
+        class: Paragraph
+      class: Block
+    class: EnumeratedListItem
+  class: EnumeratedList
+- attributes:
+    enumtype: lowerroman
+    prefix: ''
+    suffix: .
+  children:
+  - attributes:
+      number: 2
+      raw_value: ii
+    children:
+    - attributes:
+        indent: 4
+      children:
+      - children:
+        - attributes:
+            text: |
+              Item ii.
+          class: PlainText
+        class: Paragraph
+      class: Block
+    class: EnumeratedListItem
+  - attributes:
+      number: 3
+      raw_value: iii
+    children:
+    - attributes:
+        indent: 5
+      children:
+      - children:
+        - attributes:
+            text: |
+              Item iii.
+          class: PlainText
+        class: Paragraph
+      class: Block
+    class: EnumeratedListItem
+  class: EnumeratedList
+class: Document
