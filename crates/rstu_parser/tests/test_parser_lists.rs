@@ -12,15 +12,15 @@ mod test_parser;
 #[rstest]
 // TODO: Activate tests
 #[rstest]
-#[case("ok_bullet_list")]
-#[case("ok_compact_bullet_list")]
-#[case("ok_nested_bullet_list")]
 #[case("docutils_bullet_00")]
 #[case("docutils_bullet_01")]
 #[case("docutils_bullet_02")]
 #[case("docutils_bullet_03")]
 #[case("docutils_bullet_04")]
 #[case("docutils_bullet_07")]
+#[case("ok_bullet_list")]
+#[case("ok_compact_bullet_list")]
+#[case("ok_nested_bullet_list")]
 // #[case("docutils_bullet_09")]
 fn parse_bullet_list(#[case] test_case: &str) {
     rst_vs_yaml!("lists/bullet_list", test_case)
@@ -55,6 +55,16 @@ fn rejects_docutils_bullet_list_end(#[case] rst_filename: &str) {
     let err = parse(&rst_contents).unwrap_err();
 
     assert!(matches!(err, ParserError::ListEndError { .. }));
+}
+
+#[rstest]
+#[case("ok_enumerated_list")]
+#[case("ok_no_blank_lines_between_items")]
+#[case("ok_different_enumeration_sequences")]
+#[case("ok_nested_enumerated_lists")]
+#[case("ok_auto_enumerator")]
+fn parse_enumerated_list(#[case] test_case: &str) {
+    rst_vs_yaml!("lists/enumerated_list", test_case)
 }
 
 #[rstest]

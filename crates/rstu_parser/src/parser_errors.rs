@@ -28,6 +28,9 @@ pub enum ParserError {
         markup: String,
         start_at: usize,
     },
+    ListMarkerError {
+        marker: String,
+    },
     ListStyleError {
         marker: String,
         conflicting_marker: String,

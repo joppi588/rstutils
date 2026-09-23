@@ -1,0 +1,52 @@
+class: Document
+children:
+  - class: EnumeratedList
+    attributes:
+      enumtype: arabic
+      prefix: ""
+      suffix: "."
+    children:
+      - class: EnumeratedListItem
+        attributes:
+          number: 1
+          raw_value: "1"
+        children:
+          - class: Block
+            attributes:
+              indent: 3
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: "Item one.\n"
+      - class: BlankLine
+      - class: EnumeratedListItem
+        attributes:
+          number: 2
+          raw_value: "2"
+        children:
+          - class: Block
+            attributes:
+              indent: 3
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: "Item two.\n"
+      - class: BlankLine
+      - class: EnumeratedListItem
+        attributes:
+          number: 3
+          raw_value: "3"
+        children:
+          - class: Block
+            attributes:
+              indent: 3
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: "Item three.\n"
