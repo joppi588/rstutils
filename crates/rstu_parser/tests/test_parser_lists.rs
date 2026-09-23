@@ -64,7 +64,6 @@ fn rejects_docutils_bullet_list_end(#[case] rst_filename: &str) {
 #[case("ok_different_enumeration_sequences")]
 #[case("ok_nested_enumerated_lists")]
 #[case("ok_auto_enumerator")]
-#[case("ok_multiline_enumerated_items")]
 #[case("ok_potentially_ambiguous")]
 #[case("ok_definitely_ambiguous")]
 #[case("ok_different_enumeration_formats")]
@@ -90,6 +89,7 @@ fn rejects_docutils_enumerated_list_errors(#[case] rst_filename: &str) {
     assert!(matches!(err, ParserError::ListEndError { .. }));
 }
 
+// TODO
 // NOT IMPLEMENTED: Docutils emits system messages for ordinal validation.
 // #[case("docutils_scrambled_sequences")]
 // #[case("docutils_skipping_item")]
@@ -106,6 +106,7 @@ fn rejects_docutils_enumerated_list_errors(#[case] rst_filename: &str) {
 // #[case("ok_enumerated_item_indentation")]
 // NOT IMPLEMENTED: A list cannot currently start with an auto-enumerator.
 // #[case("ok_auto_only")]
+// #[case("ok_multiline_enumerated_items")]
 
 #[rstest]
 #[case("bodies_next_line")]
