@@ -18,16 +18,16 @@ pub(crate) fn parse_block(stream: &mut TokenStream) -> Result<NodeRef, ParserErr
         block.with_attr("indent", indent);
     }
     loop {
-        match (stream.kind_at_cursor(), stream.kind_at_nextline()) {
-            (TK::Word | TK::NewLine, _) => {
+        match stream.kind_at_cursor() {
+            TK::Word | TK::NewLine => {
                 let paragraph = parse_paragraph(stream)?;
                 block.push_child(paragraph);
             }
-            (TK::BlankLine, TK::Indent | TK::Dedent | TK::Word) => {
+            TK::BlankLine => {
                 let token = stream.consume();
                 block.push_blank_lines(token.lexeme.len());
             }
-            (TK::Dedent, _) => {
+            TK::Dedent => {
                 let dedent_token = stream.consume();
                 let dedent = dedent_token.lexeme.len();
                 if dedent != indent {
@@ -43,13 +43,10 @@ pub(crate) fn parse_block(stream: &mut TokenStream) -> Result<NodeRef, ParserErr
                 }
                 break;
             }
-            (kind, _) if kind.nested_is(TC::BODY_ELEMENTS) => {
+            kind if kind.nested_is(TC::BODY_ELEMENTS) => {
                 parse_body_elements(stream, &block)?;
             }
-            (_, TK::EoF) => {
-                break;
-            }
-            (_, _) => {
+            _ => {
                 break; // TODO: Should this be an error case?
             }
         }

@@ -17,6 +17,7 @@ pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, Parse
             TK::Dedent,
             TK::Field,
             TK::BulletListMarker,
+            TK::EnumeratedListMarker,
             TK::EoF,
         ])
         .expect("Paragraph must end somewhere.");

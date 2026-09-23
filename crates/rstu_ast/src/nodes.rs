@@ -12,6 +12,8 @@ pub enum NodeClass {
     Document,
     BulletListItem,
     BulletList,
+    EnumeratedListItem,
+    EnumeratedList,
     FieldListItem,
     FieldList,
     Block,

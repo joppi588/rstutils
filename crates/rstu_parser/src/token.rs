@@ -101,7 +101,11 @@ impl TokenCategory {
         TokenKind::NewLine,
     ];
 
-    pub const LIST_MARKER: &'static [TokenKind] = &[TokenKind::BulletListMarker, TokenKind::Field];
+    pub const LIST_MARKER: &'static [TokenKind] = &[
+        TokenKind::BulletListMarker,
+        TokenKind::EnumeratedListMarker,
+        TokenKind::Field,
+    ];
 
     pub const TABLE: &'static [TokenKind] = &[TokenKind::TableHorizontal];
 
@@ -134,6 +138,7 @@ pub enum TokenKind {
     EoF,
     EmphasisEnd,
     EmphasisStart,
+    EnumeratedListMarker,
     Field,
     FootnoteReference,
     HyperlinkReferenceEnd,
@@ -197,6 +202,7 @@ impl TokenKind {
 
         // Lists
         (Field,r"[\n\s]:[\w\s]+:[\n\s]"),
+        (EnumeratedListMarker, r"[\n\s](?:(?:#|[0-9]+|[A-Za-z]+|[IVXLCDMivxlcdm]+)(?:\.|\))[ \t]|\([A-Za-z0-9]+\)[ \t])"),
         (BulletListMarker, r"(\s|\n)[\-\+\*•‣⁃](\s|\n)"),
 
         // Plain text
@@ -345,6 +351,20 @@ mod tests {
     #[test]
     fn bullet_list_marker_non_matching() {
         assert!(!TK::BulletListMarker.is_match("x-y"));
+    }
+
+    #[test]
+    fn enumerated_list_marker_matches() {
+        assert!(TK::EnumeratedListMarker.is_match("\n1. item\n"));
+        assert!(TK::EnumeratedListMarker.is_match("\n(A) item\n"));
+        assert!(TK::EnumeratedListMarker.is_match("\niv) item\n"));
+        assert!(TK::EnumeratedListMarker.is_match("\n#. item\n"));
+    }
+
+    #[test]
+    fn enumerated_list_marker_non_matching() {
+        assert!(!TK::EnumeratedListMarker.is_match("x1. item"));
+        assert!(!TK::EnumeratedListMarker.is_match("\n1 item\n"));
     }
 
     #[test]

@@ -1,0 +1,256 @@
+class: Document
+children:
+  - class: Paragraph
+    children:
+      - class: PlainText
+        attributes:
+          text: "Nested enumerated lists:\n"
+  - class: BlankLine
+  - class: EnumeratedList
+    attributes:
+      enumtype: arabic
+      prefix: ""
+      suffix: "."
+    children:
+      - class: EnumeratedListItem
+        attributes:
+          number: 1
+          raw_value: "1"
+        children:
+          - class: Block
+            attributes:
+              indent: 3
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: "Item 1.\n"
+              - class: BlankLine
+              - class: EnumeratedList
+                attributes:
+                  enumtype: upperalpha
+                  prefix: ""
+                  suffix: ")"
+                children:
+                  - class: EnumeratedListItem
+                    attributes:
+                      number: 1
+                      raw_value: A
+                    children:
+                      - class: Block
+                        attributes:
+                          indent: 3
+                        children:
+                          - class: Paragraph
+                            children:
+                              - class: PlainText
+                                attributes:
+                                  text: "Item A).\n"
+                  - class: EnumeratedListItem
+                    attributes:
+                      number: 2
+                      raw_value: B
+                    children:
+                      - class: Block
+                        attributes:
+                          indent: 3
+                        children:
+                          - class: Paragraph
+                            children:
+                              - class: PlainText
+                                attributes:
+                                  text: "Item B).\n"
+                  - class: EnumeratedListItem
+                    attributes:
+                      number: 3
+                      raw_value: C
+                    children:
+                      - class: Block
+                        attributes:
+                          indent: 3
+                        children:
+                          - class: Paragraph
+                            children:
+                              - class: PlainText
+                                attributes:
+                                  text: "Item C).\n"
+                  - class: BlankLine
+      - class: EnumeratedListItem
+        attributes:
+          number: 2
+          raw_value: "2"
+        children:
+          - class: Block
+            attributes:
+              indent: 3
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: "Item 2.\n"
+              - class: BlankLine
+              - class: EnumeratedList
+                attributes:
+                  enumtype: loweralpha
+                  prefix: "("
+                  suffix: ")"
+                children:
+                  - class: EnumeratedListItem
+                    attributes:
+                      number: 1
+                      raw_value: a
+                    children:
+                      - class: Block
+                        attributes:
+                          indent: 4
+                        children:
+                          - class: Paragraph
+                            children:
+                              - class: PlainText
+                                attributes:
+                                  text: "Item (a).\n"
+                          - class: BlankLine
+                          - class: EnumeratedList
+                            attributes:
+                              enumtype: upperroman
+                              prefix: ""
+                              suffix: ")"
+                            children:
+                              - class: EnumeratedListItem
+                                attributes:
+                                  number: 1
+                                  raw_value: I
+                                children:
+                                  - class: Block
+                                    attributes:
+                                      indent: 3
+                                    children:
+                                      - class: Paragraph
+                                        children:
+                                          - class: PlainText
+                                            attributes:
+                                              text: "Item I).\n"
+                              - class: EnumeratedListItem
+                                attributes:
+                                  number: 2
+                                  raw_value: II
+                                children:
+                                  - class: Block
+                                    attributes:
+                                      indent: 4
+                                    children:
+                                      - class: Paragraph
+                                        children:
+                                          - class: PlainText
+                                            attributes:
+                                              text: "Item II).\n"
+                              - class: EnumeratedListItem
+                                attributes:
+                                  number: 3
+                                  raw_value: III
+                                children:
+                                  - class: Block
+                                    attributes:
+                                      indent: 5
+                                    children:
+                                      - class: Paragraph
+                                        children:
+                                          - class: PlainText
+                                            attributes:
+                                              text: "Item III).\n"
+                              - class: BlankLine
+                  - class: EnumeratedListItem
+                    attributes:
+                      number: 2
+                      raw_value: b
+                    children:
+                      - class: Block
+                        attributes:
+                          indent: 4
+                        children:
+                          - class: Paragraph
+                            children:
+                              - class: PlainText
+                                attributes:
+                                  text: "Item (b).\n"
+                  - class: BlankLine
+                  - class: EnumeratedListItem
+                    attributes:
+                      number: 3
+                      raw_value: c
+                    children:
+                      - class: Block
+                        attributes:
+                          indent: 4
+                        children:
+                          - class: Paragraph
+                            children:
+                              - class: PlainText
+                                attributes:
+                                  text: "Item (c).\n"
+                          - class: BlankLine
+                          - class: EnumeratedList
+                            attributes:
+                              enumtype: lowerroman
+                              prefix: "("
+                              suffix: ")"
+                            children:
+                              - class: EnumeratedListItem
+                                attributes:
+                                  number: 1
+                                  raw_value: i
+                                children:
+                                  - class: Block
+                                    attributes:
+                                      indent: 4
+                                    children:
+                                      - class: Paragraph
+                                        children:
+                                          - class: PlainText
+                                            attributes:
+                                              text: "Item (i).\n"
+                              - class: EnumeratedListItem
+                                attributes:
+                                  number: 2
+                                  raw_value: ii
+                                children:
+                                  - class: Block
+                                    attributes:
+                                      indent: 5
+                                    children:
+                                      - class: Paragraph
+                                        children:
+                                          - class: PlainText
+                                            attributes:
+                                              text: "Item (ii).\n"
+                              - class: EnumeratedListItem
+                                attributes:
+                                  number: 3
+                                  raw_value: iii
+                                children:
+                                  - class: Block
+                                    attributes:
+                                      indent: 6
+                                    children:
+                                      - class: Paragraph
+                                        children:
+                                          - class: PlainText
+                                            attributes:
+                                              text: "Item (iii).\n"
+                              - class: BlankLine
+      - class: EnumeratedListItem
+        attributes:
+          number: 3
+          raw_value: "3"
+        children:
+          - class: Block
+            attributes:
+              indent: 3
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: "Item 3.\n"
