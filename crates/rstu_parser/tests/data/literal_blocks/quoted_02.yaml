@@ -1,0 +1,14 @@
+class: Document
+children:
+  - class: Paragraph
+    children:
+      - class: PlainText
+        attributes:
+          text: "A paragraph:\n"
+  - class: LiteralBlock
+    attributes:
+      xml:space: preserve
+    children:
+      - class: PlainText
+        attributes:
+          text: "> A literal block.\n> Line 2.\n"

@@ -10,6 +10,7 @@ use std::rc::Rc;
 use parsers::comments::parse_comment;
 use parsers::directives::parse_directive;
 use parsers::list::{parse_bullet_list, parse_enumerated_list, parse_field_list};
+use parsers::literal_block::parse_literal_block;
 use parsers::paragraph::parse_paragraph;
 
 pub mod parser_errors;
@@ -43,6 +44,11 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
             (TK::DoubleDot, _) => {
                 let directive = parse_directive_like(&mut stream)?;
                 current_parent.push_child(directive);
+            }
+
+            (TK::DoubleColon, _) => {
+                let literal_block = parse_directive_like(&mut stream)?;
+                current_parent.push_child(literal_block);
             }
 
             // TODO: Do not simply ignore these
@@ -135,9 +141,10 @@ fn parse_directive_like(stream: &mut TokenStream) -> Result<NodeRef, ParserError
             TK::SubstitutionReference,
         ])
         .expect(EXPECT_NEWLINE);
-    let directive = match stream.tokens()[index].kind {
-        TK::NewLine => parse_comment(stream)?,
-        TK::DoubleColon => parse_directive(stream, index)?,
+    let directive = match (stream.kind_at_cursor(), stream.tokens()[index].kind) {
+        (TK::DoubleDot, TK::NewLine) => parse_comment(stream)?,
+        (TK::DoubleDot, TK::DoubleColon) => parse_directive(stream, index)?,
+        (TK::DoubleColon, TK::DoubleColon) => parse_literal_block(stream)?,
         _ => panic!("Not implemented directive-like structure."),
     };
     Ok(directive)

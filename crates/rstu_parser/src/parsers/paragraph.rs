@@ -31,7 +31,20 @@ pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, Parse
         };
         paragraph.push_child(node);
     }
-
+    if stream.kind_at_cursor() == TK::DoubleColon {
+        if let Some(last_child) = paragraph.borrow().children.last().cloned() {
+            if last_child.borrow().class == NodeClass::PlainText {
+                let text = last_child
+                    .borrow()
+                    .attributes
+                    .get_str("text")
+                    .unwrap_or_default();
+                let text = text.trim_end();
+                let suffix = if text.ends_with(':') { "\n" } else { ":\n" };
+                last_child.with_attr("text", format!("{}{}", text, suffix));
+            }
+        }
+    }
     Ok(paragraph)
 }
 
