@@ -5,7 +5,7 @@
 use crate::parser_errors::ParserError;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub(super) enum EnumMarkerType {
+pub(super) enum EnumType {
     Arabic,
     Upperalpha,
     Loweralpha,
@@ -69,101 +69,98 @@ pub(super) fn enumerator_parts(marker: &str) -> (&str, &str, &str) {
     (prefix, value, suffix)
 }
 
-pub(super) fn enumerator_value(
-    value: &str,
-    enumtype: EnumMarkerType,
-) -> Result<usize, ParserError> {
+pub(super) fn enumerator_value(value: &str, enumtype: EnumType) -> Result<usize, ParserError> {
     let converted_value = match enumtype {
-        EnumMarkerType::Arabic => value.parse().ok(),
-        EnumMarkerType::Upperalpha | EnumMarkerType::Loweralpha => alphabetic_value(value),
-        EnumMarkerType::Upperroman | EnumMarkerType::Lowerroman => roman_value(value),
-        EnumMarkerType::UpperAmbiguousI
-        | EnumMarkerType::LowerAmbiguousI
-        | EnumMarkerType::UpperAmbiguousC
-        | EnumMarkerType::LowerAmbiguousC => None,
+        EnumType::Arabic => value.parse().ok(),
+        EnumType::Upperalpha | EnumType::Loweralpha => alphabetic_value(value),
+        EnumType::Upperroman | EnumType::Lowerroman => roman_value(value),
+        EnumType::UpperAmbiguousI
+        | EnumType::LowerAmbiguousI
+        | EnumType::UpperAmbiguousC
+        | EnumType::LowerAmbiguousC => None,
     };
     return converted_value.ok_or_else(|| ParserError::ListMarkerError {
         marker: (value.to_string()),
     });
 }
 
-pub(super) fn enumerator_type(value: &str) -> Result<EnumMarkerType, ParserError> {
-    if value.chars().all(|character| character.is_ascii_digit()) {
-        Ok(EnumMarkerType::Arabic)
-    } else if value == "I" {
-        Ok(EnumMarkerType::UpperAmbiguousI)
-    } else if value == "i" {
-        Ok(EnumMarkerType::LowerAmbiguousI)
-    } else if value == "C" {
-        Ok(EnumMarkerType::UpperAmbiguousC)
-    } else if value == "c" {
-        Ok(EnumMarkerType::LowerAmbiguousC)
-    } else if value.chars().count() > 1
-        && roman_value(value).is_some()
-        && value.chars().all(|character| {
-            matches!(
-                character.to_ascii_uppercase(),
-                'I' | 'V' | 'X' | 'L' | 'C' | 'D' | 'M'
-            )
-        })
-    {
-        if value
-            .chars()
-            .all(|character| character.is_ascii_uppercase())
+pub(super) fn enumerator_type(value: &str) -> Result<EnumType, ParserError> {
+    match value {
+        value if value.chars().all(|character| character.is_ascii_digit()) => Ok(EnumType::Arabic),
+        "I" => Ok(EnumType::UpperAmbiguousI),
+        "i" => Ok(EnumType::LowerAmbiguousI),
+        "C" => Ok(EnumType::UpperAmbiguousC),
+        "c" => Ok(EnumType::LowerAmbiguousC),
+        value
+            if value.chars().count() > 1
+                && roman_value(value).is_some()
+                && value
+                    .chars()
+                    .all(|character| character.is_ascii_uppercase()) =>
         {
-            Ok(EnumMarkerType::Upperroman)
-        } else {
-            Ok(EnumMarkerType::Lowerroman)
+            Ok(EnumType::Upperroman)
         }
-    } else if value
-        .chars()
-        .all(|character| character.is_ascii_uppercase())
-    {
-        Ok(EnumMarkerType::Upperalpha)
-    } else if value
-        .chars()
-        .all(|character| character.is_ascii_lowercase())
-    {
-        Ok(EnumMarkerType::Loweralpha)
-    } else {
-        Err(ParserError::ListMarkerError {
-            marker: (value.to_string()),
-        })
+        value
+            if value.chars().count() > 1
+                && roman_value(value).is_some()
+                && value
+                    .chars()
+                    .all(|character| character.is_ascii_lowercase()) =>
+        {
+            Ok(EnumType::Lowerroman)
+        }
+        value
+            if value
+                .chars()
+                .all(|character| character.is_ascii_uppercase()) =>
+        {
+            Ok(EnumType::Upperalpha)
+        }
+        value
+            if value
+                .chars()
+                .all(|character| character.is_ascii_lowercase()) =>
+        {
+            Ok(EnumType::Loweralpha)
+        }
+        value => Err(ParserError::ListMarkerError {
+            marker: value.to_string(),
+        }),
     }
 }
 
 pub(super) fn resolve_enumerator_type(
-    marker_type: EnumMarkerType,
-    list_type: Option<EnumMarkerType>,
-) -> EnumMarkerType {
+    marker_type: EnumType,
+    list_type: Option<EnumType>,
+) -> EnumType {
     match (marker_type, list_type) {
         (
-            EnumMarkerType::UpperAmbiguousI | EnumMarkerType::UpperAmbiguousC,
-            Some(EnumMarkerType::Upperroman | EnumMarkerType::Lowerroman),
-        ) => EnumMarkerType::Upperroman,
+            EnumType::UpperAmbiguousI | EnumType::UpperAmbiguousC,
+            Some(EnumType::Upperroman | EnumType::Lowerroman),
+        ) => EnumType::Upperroman,
         (
-            EnumMarkerType::LowerAmbiguousI | EnumMarkerType::LowerAmbiguousC,
-            Some(EnumMarkerType::Upperroman | EnumMarkerType::Lowerroman),
-        ) => EnumMarkerType::Lowerroman,
+            EnumType::LowerAmbiguousI | EnumType::LowerAmbiguousC,
+            Some(EnumType::Upperroman | EnumType::Lowerroman),
+        ) => EnumType::Lowerroman,
         (
-            EnumMarkerType::UpperAmbiguousI | EnumMarkerType::UpperAmbiguousC,
-            Some(EnumMarkerType::Upperalpha | EnumMarkerType::Loweralpha),
-        ) => EnumMarkerType::Upperalpha,
+            EnumType::UpperAmbiguousI | EnumType::UpperAmbiguousC,
+            Some(EnumType::Upperalpha | EnumType::Loweralpha),
+        ) => EnumType::Upperalpha,
         (
-            EnumMarkerType::LowerAmbiguousI | EnumMarkerType::LowerAmbiguousC,
-            Some(EnumMarkerType::Upperalpha | EnumMarkerType::Loweralpha),
-        ) => EnumMarkerType::Loweralpha,
-        (EnumMarkerType::UpperAmbiguousI, None) => EnumMarkerType::Upperroman,
-        (EnumMarkerType::LowerAmbiguousI, None) => EnumMarkerType::Lowerroman,
-        (EnumMarkerType::UpperAmbiguousC, None) => EnumMarkerType::Upperalpha,
-        (EnumMarkerType::LowerAmbiguousC, None) => EnumMarkerType::Loweralpha,
+            EnumType::LowerAmbiguousI | EnumType::LowerAmbiguousC,
+            Some(EnumType::Upperalpha | EnumType::Loweralpha),
+        ) => EnumType::Loweralpha,
+        (EnumType::UpperAmbiguousI, None) => EnumType::Upperroman,
+        (EnumType::LowerAmbiguousI, None) => EnumType::Lowerroman,
+        (EnumType::UpperAmbiguousC, None) => EnumType::Upperalpha,
+        (EnumType::LowerAmbiguousC, None) => EnumType::Loweralpha,
         (marker_type, _) => marker_type,
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{enumerator_type, enumerator_value, resolve_enumerator_type, EnumMarkerType};
+    use super::{enumerator_type, enumerator_value, resolve_enumerator_type, EnumType};
     use crate::parser_errors::ParserError;
 
     #[test]
@@ -171,15 +168,15 @@ mod tests {
         // GIVEN markers using each supported enumeration style
         // WHEN their enumeration types are detected
         // THEN each marker is assigned its matching type
-        assert_eq!(enumerator_type("12"), Ok(EnumMarkerType::Arabic));
-        assert_eq!(enumerator_type("ABC"), Ok(EnumMarkerType::Upperalpha));
-        assert_eq!(enumerator_type("abc"), Ok(EnumMarkerType::Loweralpha));
-        assert_eq!(enumerator_type("XL"), Ok(EnumMarkerType::Upperroman));
-        assert_eq!(enumerator_type("xl"), Ok(EnumMarkerType::Lowerroman));
-        assert_eq!(enumerator_type("I"), Ok(EnumMarkerType::UpperAmbiguousI));
-        assert_eq!(enumerator_type("i"), Ok(EnumMarkerType::LowerAmbiguousI));
-        assert_eq!(enumerator_type("C"), Ok(EnumMarkerType::UpperAmbiguousC));
-        assert_eq!(enumerator_type("c"), Ok(EnumMarkerType::LowerAmbiguousC));
+        assert_eq!(enumerator_type("12"), Ok(EnumType::Arabic));
+        assert_eq!(enumerator_type("ABC"), Ok(EnumType::Upperalpha));
+        assert_eq!(enumerator_type("abc"), Ok(EnumType::Loweralpha));
+        assert_eq!(enumerator_type("XL"), Ok(EnumType::Upperroman));
+        assert_eq!(enumerator_type("xl"), Ok(EnumType::Lowerroman));
+        assert_eq!(enumerator_type("I"), Ok(EnumType::UpperAmbiguousI));
+        assert_eq!(enumerator_type("i"), Ok(EnumType::LowerAmbiguousI));
+        assert_eq!(enumerator_type("C"), Ok(EnumType::UpperAmbiguousC));
+        assert_eq!(enumerator_type("c"), Ok(EnumType::LowerAmbiguousC));
     }
 
     #[test]
@@ -187,7 +184,7 @@ mod tests {
         // GIVEN markers that contain invalid or mixed characters
         // WHEN their enumeration types are detected
         // THEN a list marker error containing the original marker is returned
-        for marker in ["a1", "A!", "aB"] {
+        for marker in ["a1", "A!", "aB", "Xl"] {
             assert_eq!(
                 enumerator_type(marker),
                 Err(ParserError::ListMarkerError {
@@ -202,11 +199,11 @@ mod tests {
         // GIVEN valid values for each supported enumeration type
         // WHEN their numeric values are converted
         // THEN the corresponding ordinal value is returned
-        assert_eq!(enumerator_value("12", EnumMarkerType::Arabic), Ok(12));
-        assert_eq!(enumerator_value("C", EnumMarkerType::Upperalpha), Ok(3));
-        assert_eq!(enumerator_value("z", EnumMarkerType::Loweralpha), Ok(26));
-        assert_eq!(enumerator_value("XL", EnumMarkerType::Upperroman), Ok(40));
-        assert_eq!(enumerator_value("xl", EnumMarkerType::Lowerroman), Ok(40));
+        assert_eq!(enumerator_value("12", EnumType::Arabic), Ok(12));
+        assert_eq!(enumerator_value("C", EnumType::Upperalpha), Ok(3));
+        assert_eq!(enumerator_value("z", EnumType::Loweralpha), Ok(26));
+        assert_eq!(enumerator_value("XL", EnumType::Upperroman), Ok(40));
+        assert_eq!(enumerator_value("xl", EnumType::Lowerroman), Ok(40));
     }
 
     #[test]
@@ -215,12 +212,12 @@ mod tests {
         // WHEN their types are resolved without an existing list type
         // THEN I is Roman and C is alphabetic
         assert_eq!(
-            resolve_enumerator_type(EnumMarkerType::UpperAmbiguousI, None,),
-            EnumMarkerType::Upperroman
+            resolve_enumerator_type(EnumType::UpperAmbiguousI, None,),
+            EnumType::Upperroman
         );
         assert_eq!(
-            resolve_enumerator_type(EnumMarkerType::LowerAmbiguousC, None,),
-            EnumMarkerType::Loweralpha
+            resolve_enumerator_type(EnumType::LowerAmbiguousC, None,),
+            EnumType::Loweralpha
         );
     }
 
@@ -230,18 +227,12 @@ mod tests {
         // WHEN their types are resolved against the list type
         // THEN they use the existing list family and marker case
         assert_eq!(
-            resolve_enumerator_type(
-                EnumMarkerType::UpperAmbiguousI,
-                Some(EnumMarkerType::Upperalpha),
-            ),
-            EnumMarkerType::Upperalpha
+            resolve_enumerator_type(EnumType::UpperAmbiguousI, Some(EnumType::Upperalpha),),
+            EnumType::Upperalpha
         );
         assert_eq!(
-            resolve_enumerator_type(
-                EnumMarkerType::UpperAmbiguousC,
-                Some(EnumMarkerType::Lowerroman),
-            ),
-            EnumMarkerType::Upperroman
+            resolve_enumerator_type(EnumType::UpperAmbiguousC, Some(EnumType::Lowerroman),),
+            EnumType::Upperroman
         );
     }
 
@@ -251,9 +242,9 @@ mod tests {
         // WHEN their numeric values are converted
         // THEN a list marker error containing the original value is returned
         for (value, enumtype) in [
-            ("not-a-number", EnumMarkerType::Arabic),
-            ("A1", EnumMarkerType::Upperalpha),
-            ("invalid", EnumMarkerType::Lowerroman),
+            ("not-a-number", EnumType::Arabic),
+            ("A1", EnumType::Upperalpha),
+            ("invalid", EnumType::Lowerroman),
         ] {
             assert_eq!(
                 enumerator_value(value, enumtype),
