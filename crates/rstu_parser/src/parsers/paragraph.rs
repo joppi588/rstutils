@@ -15,9 +15,6 @@ pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, Parse
             TK::Separator,
             TK::Indent,
             TK::Dedent,
-            TK::Field,
-            TK::BulletListMarker,
-            TK::EnumeratedListMarker,
             TK::EoF,
         ])
         .expect("Paragraph must end somewhere.");
@@ -125,13 +122,9 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
 fn parse_plain(stream: &mut TokenStream, stop_before: usize) -> Result<NodeRef, ParserError> {
     let mut text = String::new();
     while stream.cursor() < stop_before
-        && stream.kind_at_cursor().is(&[
-            TK::Word,
-            TK::Spaces,
-            TK::Punctuation,
-            TK::NewLine,
-            TK::BulletListMarker,
-        ])
+        && stream
+            .kind_at_cursor()
+            .is(&[TK::Word, TK::Spaces, TK::Punctuation, TK::NewLine])
     {
         text.push_str(&stream.consume().lexeme);
     }

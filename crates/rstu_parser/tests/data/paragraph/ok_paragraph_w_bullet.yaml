@@ -1,0 +1,7 @@
+class: Document
+children:
+  - class: Paragraph
+    children:
+      - class: PlainText
+        attributes:
+          text: "This is a paragraph - even if it contains a bullet."

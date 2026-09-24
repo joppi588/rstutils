@@ -87,12 +87,6 @@ impl TokenCategory {
         TokenKind::SimpleAnonymousHyperLinkReference,
     ];
     pub const STRUCTURAL: &'static [TokenKind] = &[TokenKind::Separator];
-    pub const CONTROL: &'static [TokenKind] = &[
-        TokenKind::Indent,
-        TokenKind::Dedent,
-        TokenKind::BlankLine,
-        TokenKind::NewLine,
-    ];
     pub const PLAIN: &'static [TokenKind] = &[
         TokenKind::Spaces,
         TokenKind::Word,

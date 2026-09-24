@@ -5,98 +5,56 @@ children:
       - class: PlainText
         attributes:
           text: "Multiple body elements:\n"
+  - class: BlankLine
   - class: FieldList
     children:
       - class: FieldListItem
         attributes:
           fieldname: Authors
         children:
-          - class: BulletList
-            children:
-              - class: BulletListItem
-                attributes:
-                  marker: "-"
-                children:
-                  - class: Paragraph
-                    children:
-                      - class: PlainText
-                        attributes:
-                          text: "Me\n"
-              - class: BulletListItem
-                attributes:
-                  marker: "-"
-                children:
-                  - class: Paragraph
-                    children:
-                      - class: PlainText
-                        attributes:
-                          text: "Myself\n"
-              - class: BulletListItem
-                attributes:
-                  marker: "-"
-                children:
-                  - class: Paragraph
-                    children:
-                      - class: PlainText
-                        attributes:
-                          text: "I\n"
-          - class: BlankLine
-      - class: FieldListItem
-        attributes:
-          fieldname: Abstract
-        children:
           - class: Block
             attributes:
-              indent: 4
+              indent: 10
             children:
-              - class: Paragraph
+              - class: BulletList
                 children:
-                  - class: PlainText
+                  - class: BulletListItem
                     attributes:
-                      text: "This is a field list item's body,
-
-                        containing multiple elements.\n"
-              - class: Paragraph
-                children:
-                  - class: PlainText
-                    attributes:
-                      text: "Here's a literal block::\n"
-              - class: Paragraph
-                children:
-                  - class: PlainText
-                    attributes:
-                      text: "def f(x):\n    return x**2 + x\n"
-              - class: Paragraph
-                children:
-                  - class: PlainText
-                    attributes:
-                      text: "Even nested field lists are possible:\n"
-              - class: FieldList
-                children:
-                  - class: FieldListItem
-                    attributes:
-                      fieldname: Date
+                      marker: "-"
                     children:
-                      - class: Paragraph
+                      - class: Block
+                        attributes:
+                          indent: 2
                         children:
-                          - class: PlainText
-                            attributes:
-                              text: "2001-08-11\n"
-                  - class: FieldListItem
+                          - class: Paragraph
+                            children:
+                              - class: PlainText
+                                attributes:
+                                  text: "Me\n"
+                  - class: BulletListItem
                     attributes:
-                      fieldname: Day
+                      marker: "-"
                     children:
-                      - class: Paragraph
+                      - class: Block
+                        attributes:
+                          indent: 2
                         children:
-                          - class: PlainText
-                            attributes:
-                              text: "Saturday\n"
-                  - class: FieldListItem
+                          - class: Paragraph
+                            children:
+                              - class: PlainText
+                                attributes:
+                                  text: "Myself\n"
+                  - class: BulletListItem
                     attributes:
-                      fieldname: Time
+                      marker: "-"
                     children:
-                      - class: Paragraph
+                      - class: Block
+                        attributes:
+                          indent: 2
                         children:
-                          - class: PlainText
-                            attributes:
-                              text: "15:07\n"
+                          - class: Paragraph
+                            children:
+                              - class: PlainText
+                                attributes:
+                                  text: "I\n"
+                  - class: BlankLine
