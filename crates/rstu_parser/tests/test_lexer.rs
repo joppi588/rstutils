@@ -157,3 +157,23 @@ fn tokenize_ok_indentation_2blanklines() {
 
     assert_eq!(kinds, expected_kinds);
 }
+
+#[test]
+fn tokenize_punctuation_bullet_list() {
+    let contents = "\n:Authors: - Me\n";
+
+    let tokens: Vec<Token> = tokenize(&contents);
+    let kinds: Vec<(TK, &str)> = tokens.iter().map(|token| token.as_tuple()).collect();
+    let expected_kinds = vec![
+        (TK::BlankLine, "\n"),
+        (TK::Field, ":Authors:"),
+        (TK::Spaces, " "),
+        (TK::BulletListMarker, "-"),
+        (TK::Spaces, " "),
+        (TK::Word, "Me"),
+        (TK::NewLine, "\n"),
+        (TK::EoF, ""),
+    ];
+
+    assert_eq!(kinds, expected_kinds);
+}
