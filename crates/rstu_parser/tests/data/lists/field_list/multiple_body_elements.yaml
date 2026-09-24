@@ -62,15 +62,15 @@ children:
         attributes:
           fieldname: Abstract
         children:
-        - class: Block
-          attributes:
-            indent: 4
-          children:
-          - class: Paragraph
+          - class: Block
+            attributes:
+              indent: 4
             children:
-            - class: PlainText
-              attributes:
-                text: |
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: |
 
-                  This is a field list item's body,
-                  containing multiple elements.
+                        This is a field list item's body,
+                        containing multiple elements.
