@@ -58,3 +58,19 @@ children:
                                 attributes:
                                   text: "I\n"
                   - class: BlankLine
+      - class: FieldListItem
+        attributes:
+          fieldname: Abstract
+        children:
+        - class: Block
+          attributes:
+            indent: 4
+          children:
+          - class: Paragraph
+            children:
+            - class: PlainText
+              attributes:
+                text: |
+
+                  This is a field list item's body,
+                  containing multiple elements.
