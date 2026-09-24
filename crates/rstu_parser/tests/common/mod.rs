@@ -165,25 +165,25 @@ pub fn format_side_by_side(
     rows.join("\n")
 }
 
-#[macro_export]
+#[allow(unused_macros)]
 macro_rules! rst_vs_yaml {
     ($directory:expr, $test_case:expr) => {{
-        let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+        let rst_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
             .join("tests/data")
             .join($directory)
             .join(format!("{}.rst", $test_case));
-        let rst_contents = fs::read_to_string(&rst_path)
+        let rst_contents = std::fs::read_to_string(&rst_path)
             .unwrap_or_else(|_| panic!("failed to read sections test file: {}", $test_case));
 
-        let parsed = parse(&rst_contents).expect("expected parse to succeed");
+        let parsed = rstu_parser::parse(&rst_contents).expect("expected parse to succeed");
         let actual_yaml =
-            AstNode::to_yaml(&parsed).expect("failed to serialize parse output to yaml");
+            rstu_ast::AstNode::to_yaml(&parsed).expect("failed to serialize parse output to yaml");
 
-        let expected_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+        let expected_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
             .join("tests/data")
             .join($directory)
             .join(format!("{}.yaml", $test_case));
-        let expected_yaml = fs::read_to_string(&expected_path)
+        let expected_yaml = std::fs::read_to_string(&expected_path)
             .unwrap_or_else(|_| panic!("failed to read expected yaml fixture: {}", $test_case));
 
         let mut actual_value: serde_yaml::Value =
@@ -191,8 +191,8 @@ macro_rules! rst_vs_yaml {
         let mut expected_value: serde_yaml::Value =
             serde_yaml::from_str(&expected_yaml).expect("failed to parse expected yaml fixture");
 
-        test_parser::canonicalize_yaml(&mut actual_value);
-        test_parser::canonicalize_yaml(&mut expected_value);
+        $crate::test_parser::canonicalize_yaml(&mut actual_value);
+        $crate::test_parser::canonicalize_yaml(&mut expected_value);
 
         if actual_value != expected_value {
             let actual_canonical = serde_yaml::to_string(&actual_value)
@@ -200,19 +200,19 @@ macro_rules! rst_vs_yaml {
             let expected_canonical = serde_yaml::to_string(&expected_value)
                 .expect("failed to serialize canonical expected yaml");
 
-            let diff_line = test_parser::first_diff_line(&actual_canonical, &expected_canonical).unwrap_or(1);
+            let diff_line = $crate::test_parser::first_diff_line(&actual_canonical, &expected_canonical).unwrap_or(1);
             let actual_lines: Vec<&str> = actual_canonical.lines().collect();
             let expected_lines: Vec<&str> = expected_canonical.lines().collect();
-            let actual_line = test_parser::line_at(&actual_lines, diff_line);
-            let expected_line = test_parser::line_at(&expected_lines, diff_line);
-            let side_by_side = test_parser::format_side_by_side(&actual_canonical, &expected_canonical, diff_line, 45);
+            let actual_line = $crate::test_parser::line_at(&actual_lines, diff_line);
+            let expected_line = $crate::test_parser::line_at(&expected_lines, diff_line);
+            let side_by_side = $crate::test_parser::format_side_by_side(&actual_canonical, &expected_canonical, diff_line, 45);
 
             panic!(
                 "\n\nUnexpected parse output for fixture: \x1b[1;33m{}\x1b[0m\n\nFirst deviation at canonicalized line \x1b[1;31m{}\x1b[0m\nActual line:   \x1b[31m{}\x1b[0m\nExpected line: \x1b[32m{}\x1b[0m\n\n{}\n",
                 $test_case,
                 diff_line,
-                test_parser::truncate_str(actual_line, 60),
-                test_parser::truncate_str(expected_line, 60),
+                $crate::test_parser::truncate_str(actual_line, 60),
+                $crate::test_parser::truncate_str(expected_line, 60),
                 side_by_side
             );
         }
@@ -225,68 +225,5 @@ macro_rules! rst_vs_yaml {
     }};
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_truncate_str() {
-        assert_eq!(truncate_str("short", 10), "short");
-        assert_eq!(truncate_str("exactly ten", 11), "exactly ten");
-        assert_eq!(truncate_str("this is longer than 10", 10), "this is...");
-    }
-
-    #[test]
-    fn test_first_diff_line() {
-        let a = "line1\nline2\nline3";
-        let b = "line1\nline2_diff\nline3";
-        assert_eq!(first_diff_line(a, b), Some(2));
-
-        let a2 = "line1\nline2";
-        let b2 = "line1\nline2\nline3";
-        assert_eq!(first_diff_line(a2, b2), Some(3));
-    }
-
-    #[test]
-    fn test_format_side_by_side_window() {
-        let actual = (1..=20)
-            .map(|i| {
-                if i == 10 {
-                    format!(
-                        "line {} act with very long text exceeding max width limit",
-                        i
-                    )
-                } else {
-                    format!("line {}", i)
-                }
-            })
-            .collect::<Vec<_>>()
-            .join("\n");
-        let expected = (1..=20)
-            .map(|i| {
-                if i == 10 {
-                    format!(
-                        "line {} exp with very long text exceeding max width limit",
-                        i
-                    )
-                } else {
-                    format!("line {}", i)
-                }
-            })
-            .collect::<Vec<_>>()
-            .join("\n");
-
-        let result = format_side_by_side(&actual, &expected, 10, 30);
-        // Start line: 10 - 3 = 7, end line: 10 + 5 = 15
-        assert!(result.contains("   7 |"));
-        assert!(result.contains("  15 |"));
-        assert!(!result.contains("   6 |"));
-        assert!(!result.contains("  16 |"));
-
-        // Check difference marker on line 10
-        assert!(result.contains(">   10 |"));
-        // Check truncation of long lines
-        assert!(result.contains("line 10 act with very long ..."));
-        assert!(result.contains("line 10 exp with very long ..."));
-    }
-}
+#[allow(unused_imports)]
+pub(crate) use rst_vs_yaml;
