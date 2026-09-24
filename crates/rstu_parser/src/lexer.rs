@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-use crate::token::{Token, TokenCategory as TC, TokenKind as TK};
+use crate::token::{Token, TokenKind as TK};
 
 macro_rules! space {
     ($n:expr) => {
@@ -45,13 +45,7 @@ pub fn tokenize(input: &str) -> Vec<Token> {
                 current_indent = 0;
                 tokens.push(new_token);
             }
-            (_, TK::BulletListMarker) => {
-                tokens.push(if last_token_kind.is(TC::CONTROL) {
-                    new_token
-                } else {
-                    Token::new(TK::Punctuation, lexeme)
-                });
-            }
+
             _ => tokens.push(new_token),
         }
 

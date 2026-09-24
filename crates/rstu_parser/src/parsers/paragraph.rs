@@ -15,9 +15,6 @@ pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, Parse
             TK::Separator,
             TK::Indent,
             TK::Dedent,
-            TK::Field,
-            TK::BulletListMarker,
-            TK::EnumeratedListMarker,
             TK::EoF,
         ])
         .expect("Paragraph must end somewhere.");
@@ -129,10 +126,11 @@ fn parse_plain(stream: &mut TokenStream, stop_before: usize) -> Result<NodeRef, 
             TK::Word,
             TK::Spaces,
             TK::Punctuation,
-            TK::NewLine,
             TK::BulletListMarker,
+            TK::NewLine,
         ])
     {
+        // TODO: We had this in the paragraph parser already, DRY (PLAIN || Bulletlistmarker)
         text.push_str(&stream.consume().lexeme);
     }
 
