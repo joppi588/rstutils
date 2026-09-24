@@ -3,11 +3,9 @@
 // SPDX-License-Identifier: MIT
 
 use rstest::rstest;
-use rstu_ast::AstNode;
-use rstu_parser::parse;
+#[path = "common/mod.rs"]
 mod test_parser;
-use std::fs;
-use std::path::Path;
+use test_parser::rst_vs_yaml;
 
 #[rstest]
 #[case("ok_strong")]

@@ -3,15 +3,15 @@
 // SPDX-License-Identifier: MIT
 
 use rstest::rstest;
-use rstu_ast::AstNode;
 use rstu_parser::{parse, parser_errors::ParserError};
 use std::fs;
 use std::path::Path;
 
+#[path = "common/mod.rs"]
 mod test_parser;
+use test_parser::rst_vs_yaml;
 #[rstest]
 // TODO: Activate tests
-#[rstest]
 #[case("docutils_bullet_00")]
 #[case("docutils_bullet_01")]
 #[case("docutils_bullet_02")]
