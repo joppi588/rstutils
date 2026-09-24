@@ -122,10 +122,15 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
 fn parse_plain(stream: &mut TokenStream, stop_before: usize) -> Result<NodeRef, ParserError> {
     let mut text = String::new();
     while stream.cursor() < stop_before
-        && stream
-            .kind_at_cursor()
-            .is(&[TK::Word, TK::Spaces, TK::Punctuation, TK::NewLine])
+        && stream.kind_at_cursor().is(&[
+            TK::Word,
+            TK::Spaces,
+            TK::Punctuation,
+            TK::BulletListMarker,
+            TK::NewLine,
+        ])
     {
+        // TODO: We had this in the paragraph parser already, DRY (PLAIN || Bulletlistmarker)
         text.push_str(&stream.consume().lexeme);
     }
 
