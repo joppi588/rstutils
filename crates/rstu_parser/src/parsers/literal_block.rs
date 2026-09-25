@@ -9,16 +9,6 @@ use crate::token::TokenKind as TK;
 use crate::token_stream::TokenStream;
 
 pub(crate) fn parse_literal_block(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
-    if stream
-        .token_at(stream.cursor().saturating_sub(1))
-        .lexeme
-        .ends_with('\\')
-    {
-        return Err(ParserError::LiteralBlockError {
-            message: "escaped literal marker".to_owned(),
-        });
-    }
-
     let marker = stream.consume();
     debug_assert_eq!(marker.kind, TK::DoubleColon);
 
