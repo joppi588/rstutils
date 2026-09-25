@@ -13,7 +13,6 @@ use test_parser::rst_vs_yaml;
 
 #[rstest]
 #[case("indented_00")]
-#[case("indented_01")]
 #[case("indented_02")]
 #[case("indented_03")]
 #[case("indented_08")]
@@ -23,8 +22,8 @@ use test_parser::rst_vs_yaml;
 #[case("quoted_01")]
 #[case("quoted_02")]
 // TODO: Activate after escaping is implemented
-// #[case("indented_06")]
-// #[case("indented_07")]
+//#[case("indented_06")]
+//#[case("indented_07")]
 
 fn parse_literal_block(#[case] test_case: &str) {
     rst_vs_yaml!("literal_blocks", test_case)

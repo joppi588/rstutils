@@ -9,19 +9,12 @@ use crate::token::TokenKind as TK;
 use crate::token_stream::TokenStream;
 
 pub(crate) fn parse_literal_block(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
-    let marker = stream.consume();
-    debug_assert_eq!(marker.kind, TK::DoubleColon);
+    stream.consume();
 
     let block = AstNode::new_ref(NodeClass::LiteralBlock);
-
-    if stream.kind_at_cursor() == TK::Spaces {
-        stream.consume();
-    }
-
     if stream.kind_at_cursor() == TK::NewLine {
         stream.consume();
     }
-
     if stream.kind_at_cursor() == TK::BlankLine {
         stream.consume();
     } else if stream.kind_at_cursor() == TK::Indent {
@@ -29,7 +22,6 @@ pub(crate) fn parse_literal_block(stream: &mut TokenStream) -> Result<NodeRef, P
             message: "literal block requires a blank line".to_owned(),
         });
     }
-
     if stream.kind_at_cursor() == TK::Indent {
         append_indented_content(stream, &block)?;
     } else if stream.kind_at_cursor() != TK::EoF {
