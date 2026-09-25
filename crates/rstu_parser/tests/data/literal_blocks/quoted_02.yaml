@@ -6,8 +6,6 @@ children:
         attributes:
           text: "A paragraph:\n"
   - class: LiteralBlock
-    attributes:
-      xml:space: preserve
     children:
       - class: PlainText
         attributes:

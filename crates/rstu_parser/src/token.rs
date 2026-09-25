@@ -126,6 +126,8 @@ impl TokenCategory {
         TokenCategory::INLINE_MARKER,
         TokenCategory::INLINE_TOKEN,
         TokenCategory::PLAIN,
+        // LITERAL_BLOCK
+        &[TokenKind::DoubleColon],
     ];
 }
 

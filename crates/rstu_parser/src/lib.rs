@@ -41,14 +41,10 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
                 current_parent = section;
             }
 
+            // TODO: Are nested directives allowed?
             (TK::DoubleDot, _) => {
                 let directive = parse_directive_like(&mut stream)?;
                 current_parent.push_child(directive);
-            }
-
-            (TK::DoubleColon, _) => {
-                let literal_block = parse_directive_like(&mut stream)?;
-                current_parent.push_child(literal_block);
             }
 
             // TODO: Do not simply ignore these
@@ -144,7 +140,6 @@ fn parse_directive_like(stream: &mut TokenStream) -> Result<NodeRef, ParserError
     let directive = match (stream.kind_at_cursor(), stream.tokens()[index].kind) {
         (TK::DoubleDot, TK::NewLine) => parse_comment(stream)?,
         (TK::DoubleDot, TK::DoubleColon) => parse_directive(stream, index)?,
-        (TK::DoubleColon, TK::DoubleColon) => parse_literal_block(stream)?,
         _ => panic!("Not implemented directive-like structure."),
     };
     Ok(directive)
@@ -174,6 +169,11 @@ fn parse_body_elements(
             let paragraph = parse_paragraph(stream)?;
             current_parent.push_child(paragraph);
         }
+        TK::DoubleColon => {
+            let literal_block = parse_literal_block(stream)?;
+            current_parent.push_child(literal_block);
+        }
+
         _ => {
             panic!(
                 "Token kind {:?} not in {:?}",

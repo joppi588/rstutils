@@ -17,7 +17,6 @@ pub fn tokens_to_text(tokens: &[Token]) -> String {
     }
     text
 }
-/// A token buffer paired with a cursor, so parsers no longer thread an index through return values.
 pub struct TokenStream {
     tokens: Vec<Token>,
     cursor: usize,
@@ -126,6 +125,10 @@ impl TokenStream {
     /// Removes and returns the token at the cursor, leaving the cursor pointing at the next token.
     pub fn take_at_cursor(&mut self) -> Token {
         self.take_at(self.cursor)
+    }
+
+    pub fn update_at_cursor(&mut self, new_lexeme: String) {
+        self.tokens[self.cursor].lexeme = new_lexeme;
     }
 
     /// Removes and returns the token at an absolute index, shifting the cursor if it precedes it.
