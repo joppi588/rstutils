@@ -137,9 +137,9 @@ fn parse_directive_like(stream: &mut TokenStream) -> Result<NodeRef, ParserError
             TK::SubstitutionReference,
         ])
         .expect(EXPECT_NEWLINE);
-    let directive = match (stream.kind_at_cursor(), stream.tokens()[index].kind) {
-        (TK::DoubleDot, TK::NewLine) => parse_comment(stream)?,
-        (TK::DoubleDot, TK::DoubleColon) => parse_directive(stream, index)?,
+    let directive = match stream.tokens()[index].kind {
+        TK::NewLine => parse_comment(stream)?,
+        TK::DoubleColon => parse_directive(stream, index)?,
         _ => panic!("Not implemented directive-like structure."),
     };
     Ok(directive)
