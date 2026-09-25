@@ -9,7 +9,6 @@ children:
   - class: LiteralBlock
     attributes:
       indent: 4
-      xml:space: preserve
     children:
       - class: PlainText
         attributes:

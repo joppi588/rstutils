@@ -23,7 +23,6 @@ pub(crate) fn parse_literal_block(stream: &mut TokenStream) -> Result<NodeRef, P
     debug_assert_eq!(marker.kind, TK::DoubleColon);
 
     let block = AstNode::new_ref(NodeClass::LiteralBlock);
-    block.with_attr("xml:space", "preserve");
 
     if stream.kind_at_cursor() == TK::Spaces {
         stream.consume();
@@ -42,8 +41,6 @@ pub(crate) fn parse_literal_block(stream: &mut TokenStream) -> Result<NodeRef, P
     }
 
     if stream.kind_at_cursor() == TK::Indent {
-        let indent = stream.consume().lexeme.len();
-        block.with_attr("indent", indent);
         append_indented_content(stream, &block)?;
     } else if stream.kind_at_cursor() != TK::EoF {
         append_quoted_content(stream, &block)?;
@@ -57,11 +54,32 @@ pub(crate) fn parse_literal_block(stream: &mut TokenStream) -> Result<NodeRef, P
 }
 
 fn append_indented_content(stream: &mut TokenStream, block: &NodeRef) -> Result<(), ParserError> {
+    let mut rel_indent = stream.consume().lexeme.len();
+    block.with_attr("indent", rel_indent);
+
     let mut text = String::new();
-    while stream.kind_at_cursor() != TK::EoF {
+    loop {
         match stream.kind_at_cursor() {
-            TK::BlankLine | TK::Dedent => {
+            TK::EoF => {
                 break;
+            }
+            TK::Indent => {
+                let indent = stream.consume();
+                rel_indent += indent.lexeme.len();
+                text.push_str(&indent.lexeme.to_string());
+            }
+            TK::Dedent => {
+                let dedent_token = stream.token_at(stream.cursor());
+                let dedent = dedent_token.lexeme.len();
+                if dedent > rel_indent {
+                    stream.update_at_cursor(" ".repeat(dedent - rel_indent));
+                    break;
+                } else if dedent == rel_indent {
+                    stream.set_cursor(stream.cursor() + 1);
+                    break;
+                } else {
+                    rel_indent -= dedent;
+                }
             }
             _ => text.push_str(&stream.consume().lexeme),
         }
@@ -71,9 +89,6 @@ fn append_indented_content(stream: &mut TokenStream, block: &NodeRef) -> Result<
         return Err(ParserError::LiteralBlockError {
             message: "literal block expected after literal marker".to_owned(),
         });
-    }
-    if !text.ends_with('\n') {
-        text.push('\n');
     }
 
     let content = AstNode::new_ref(NodeClass::PlainText);
