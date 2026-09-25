@@ -31,6 +31,9 @@ pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, Parse
         };
         paragraph.push_child(node);
     }
+
+    // TODO: Move to Literal block parser
+    // Distinguish by last token (space, indent, plain)
     if stream.kind_at_cursor() == TK::DoubleColon {
         if let Some(last_child) = paragraph.borrow().children.last().cloned() {
             if last_child.borrow().class == NodeClass::PlainText {
