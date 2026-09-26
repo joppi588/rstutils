@@ -95,6 +95,15 @@ impl TokenCategory {
         TokenKind::NewLine,
     ];
 
+    pub const PARAGRAPH_END: &'static [TokenKind] = &[
+        TokenKind::BlankLine,
+        TokenKind::Separator,
+        TokenKind::Indent,
+        TokenKind::Dedent,
+        TokenKind::DoubleColon,
+        TokenKind::EoF,
+    ];
+
     pub const LIST_MARKER: &'static [TokenKind] = &[
         TokenKind::BulletListMarker,
         TokenKind::EnumeratedListMarker,
