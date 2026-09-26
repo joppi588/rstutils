@@ -21,7 +21,7 @@ pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, Parse
             }
             kind if kind.is(TC::PARAGRAPH_END) => break,
             _ => {
-                // TODO: Unreachable?
+                // TODO: Unreachable? Or unexpected_token! macro
                 return Err(ParserError::UnexpectedToken {
                     expected: "Inline/plain".to_owned(),
                     found: format!("{:?}", kind),
@@ -117,12 +117,10 @@ fn parse_plain(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     let mut text = String::new();
 
     loop {
-        let kind = stream.kind_at_cursor();
-        match kind {
+        match stream.kind_at_cursor() {
             kind if kind.is(&TC::PLAIN) || kind == TK::BulletListMarker => {
                 text.push_str(&stream.consume().lexeme);
             }
-
             _ => break,
         }
     }
