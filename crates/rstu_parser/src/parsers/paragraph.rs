@@ -17,7 +17,7 @@ pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, Parse
             kind if kind.is(TC::INLINE_TOKEN) => parse_inline_token(stream)?,
             //TODO: Concatenate TC::PLAIN and tokens to a new list
             kind if kind.is(TC::PLAIN) || kind == TK::BulletListMarker || kind == TK::NewLine => {
-                parse_plain(stream)?
+                parse_plain(stream)
             }
             kind if kind.is(TC::PARAGRAPH_END) => break,
             _ => {
@@ -113,7 +113,7 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
     Ok(inline)
 }
 
-fn parse_plain(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+fn parse_plain(stream: &mut TokenStream) -> NodeRef {
     let mut text = String::new();
 
     loop {
@@ -126,5 +126,5 @@ fn parse_plain(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     }
     let sentence = AstNode::new_ref(NodeClass::PlainText);
     sentence.with_attr("text", text);
-    Ok(sentence)
+    sentence
 }
