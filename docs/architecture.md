@@ -52,3 +52,8 @@ This represents the language structure.
 Development speed, especially bug fixes -> Maintainability is key
 Execution speed
 Easy installation -> low entry hurdle
+
+# Assumptions
+Preprocessing of text files / enforcement:
+- All files have a trailing newline
+- No trailing spaces at the end of the line

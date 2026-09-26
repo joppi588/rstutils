@@ -10,6 +10,7 @@ use std::rc::Rc;
 use parsers::comments::parse_comment;
 use parsers::directives::parse_directive;
 use parsers::list::{parse_bullet_list, parse_enumerated_list, parse_field_list};
+use parsers::literal_block::parse_literal_block;
 use parsers::paragraph::parse_paragraph;
 
 pub mod parser_errors;
@@ -40,6 +41,7 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
                 current_parent = section;
             }
 
+            // TODO: Are nested directives allowed?
             (TK::DoubleDot, _) => {
                 let directive = parse_directive_like(&mut stream)?;
                 current_parent.push_child(directive);
@@ -167,6 +169,11 @@ fn parse_body_elements(
             let paragraph = parse_paragraph(stream)?;
             current_parent.push_child(paragraph);
         }
+        TK::DoubleColon => {
+            let literal_block = parse_literal_block(stream)?;
+            current_parent.push_child(literal_block);
+        }
+
         _ => {
             panic!(
                 "Token kind {:?} not in {:?}",

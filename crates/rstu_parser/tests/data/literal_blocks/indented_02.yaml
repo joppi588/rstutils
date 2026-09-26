@@ -1,0 +1,31 @@
+class: Document
+children:
+  - class: Paragraph
+    children:
+      - class: PlainText
+        attributes:
+          text: "A paragraph:\n"
+  - class: LiteralBlock
+    attributes:
+      indent: 4
+    children:
+      - class: PlainText
+        attributes:
+          text: "A literal block.\n\n"
+  - class: Paragraph
+    children:
+      - class: PlainText
+        attributes:
+          text: "Another paragraph:\n"
+  - class: LiteralBlock
+    attributes:
+      indent: 4
+    children:
+      - class: PlainText
+        attributes:
+          text: "Another literal block.\nWith two blank lines following.\n\n\n"
+  - class: Paragraph
+    children:
+      - class: PlainText
+        attributes:
+          text: "A final paragraph.\n"

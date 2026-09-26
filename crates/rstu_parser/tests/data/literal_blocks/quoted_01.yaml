@@ -1,0 +1,12 @@
+class: Document
+children:
+  - class: Paragraph
+    children:
+      - class: PlainText
+        attributes:
+          text: "A paragraph:\n"
+  - class: LiteralBlock
+    children:
+      - class: PlainText
+        attributes:
+          text: "> A literal block.\n"

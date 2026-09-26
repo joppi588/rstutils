@@ -16,7 +16,7 @@ pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, Parse
             kind if kind.is(TC::INLINE_MARKER) => parse_inline(stream)?,
             kind if kind.is(TC::INLINE_TOKEN) => parse_inline_token(stream)?,
             //TODO: Concatenate TC::PLAIN and tokens to a new list
-            kind if kind.is(TC::PLAIN) || kind == TK::BulletListMarker || kind == TK::NewLine => {
+            kind if kind.is(TC::PLAIN) || kind == TK::BulletListMarker => {
                 parse_plain(stream)
             }
             kind if kind.is(TC::PARAGRAPH_END) => break,
@@ -32,6 +32,22 @@ pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, Parse
         paragraph.push_child(node);
     }
 
+    // TODO: Move to Literal block parser
+    // Distinguish by last token (space, indent, plain)
+    if stream.kind_at_cursor() == TK::DoubleColon {
+        if let Some(last_child) = paragraph.borrow().children.last().cloned() {
+            if last_child.borrow().class == NodeClass::PlainText {
+                let text = last_child
+                    .borrow()
+                    .attributes
+                    .get_str("text")
+                    .unwrap_or_default();
+                let text = text.trim_end();
+                let suffix = if text.ends_with(':') { "\n" } else { ":\n" };
+                last_child.with_attr("text", format!("{}{}", text, suffix));
+            }
+        }
+    }
     Ok(paragraph)
 }
 

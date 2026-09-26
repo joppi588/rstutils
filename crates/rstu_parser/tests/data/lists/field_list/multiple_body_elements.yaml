@@ -74,3 +74,67 @@ children:
 
                         This is a field list item's body,
                         containing multiple elements.
+              - class: BlankLine
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: "Here's a literal block:\n"
+              - class: LiteralBlock
+                attributes:
+                  indent: 4
+
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: |+
+                        def f(x):
+                            return x**2 + x
+
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: "Even nested field lists are possible:\n"
+              - class: BlankLine
+              - class: FieldList
+                children:
+                  - class: FieldListItem
+                    attributes:
+                      fieldname: Date
+                    children:
+                      - class: Block
+                        attributes:
+                          indent: 7
+                        children:
+                          - class: Paragraph
+                            children:
+                              - class: PlainText
+                                attributes:
+                                  text: "2001-08-11\n"
+                  - class: FieldListItem
+                    attributes:
+                      fieldname: Day
+                    children:
+                      - class: Block
+                        attributes:
+                          indent: 6
+                        children:
+                          - class: Paragraph
+                            children:
+                              - class: PlainText
+                                attributes:
+                                  text: "Saturday\n"
+                  - class: FieldListItem
+                    attributes:
+                      fieldname: Time
+                    children:
+                      - class: Block
+                        attributes:
+                          indent: 7
+                        children:
+                          - class: Paragraph
+                            children:
+                              - class: PlainText
+                                attributes:
+                                  text: "15:07\n"
