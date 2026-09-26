@@ -9,26 +9,19 @@ use crate::token::{TokenCategory as TC, TokenKind as TK};
 use crate::token_stream::{tokens_to_text, TokenStream};
 
 pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
-    let paragraph_end = stream
-        .find_next_kind(&[
-            TK::BlankLine,
-            TK::Separator,
-            TK::Indent,
-            TK::Dedent,
-            TK::EoF,
-        ])
-        .expect("Paragraph must end somewhere.");
     let paragraph = AstNode::new_ref(NodeClass::Paragraph);
-    while stream.cursor() < paragraph_end {
+    loop {
         let kind = stream.kind_at_cursor();
         let node = match kind {
             kind if kind.is(TC::INLINE_MARKER) => parse_inline(stream)?,
             kind if kind.is(TC::INLINE_TOKEN) => parse_inline_token(stream)?,
             //TODO: Concatenate TC::PLAIN and tokens to a new list
             kind if kind.is(TC::PLAIN) || kind == TK::BulletListMarker || kind == TK::NewLine => {
-                parse_plain(stream, paragraph_end)?
+                parse_plain(stream)?
             }
+            kind if kind.is(TC::PARAGRAPH_END) => break,
             _ => {
+                // TODO: Unreachable?
                 return Err(ParserError::UnexpectedToken {
                     expected: "Inline/plain".to_owned(),
                     found: format!("{:?}", kind),
@@ -38,6 +31,7 @@ pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, Parse
         };
         paragraph.push_child(node);
     }
+
     Ok(paragraph)
 }
 
@@ -119,21 +113,19 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
     Ok(inline)
 }
 
-fn parse_plain(stream: &mut TokenStream, stop_before: usize) -> Result<NodeRef, ParserError> {
+fn parse_plain(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     let mut text = String::new();
-    while stream.cursor() < stop_before
-        && stream.kind_at_cursor().is(&[
-            TK::Word,
-            TK::Spaces,
-            TK::Punctuation,
-            TK::BulletListMarker,
-            TK::NewLine,
-        ])
-    {
-        // TODO: We had this in the paragraph parser already, DRY (PLAIN || Bulletlistmarker)
-        text.push_str(&stream.consume().lexeme);
-    }
 
+    loop {
+        let kind = stream.kind_at_cursor();
+        match kind {
+            kind if kind.is(&TC::PLAIN) || kind == TK::BulletListMarker => {
+                text.push_str(&stream.consume().lexeme);
+            }
+
+            _ => break,
+        }
+    }
     let sentence = AstNode::new_ref(NodeClass::PlainText);
     sentence.with_attr("text", text);
     Ok(sentence)
