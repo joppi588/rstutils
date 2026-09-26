@@ -9,3 +9,10 @@ This document lists deviations from the rst specification.
 
 
 # Interpretations
+
+# Proposals
+1. Remove "Fully minimized form" for Literal blocks.
+   Rationale:
+   - Hard to read
+   - no large benefit over partially minimized form
+   - special case, extra parsing effort
