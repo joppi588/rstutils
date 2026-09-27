@@ -71,8 +71,6 @@ impl Token {
 pub struct TokenCategory;
 
 impl TokenCategory {
-    pub const DIRECTIVE_LIKE: &'static [TokenKind] =
-        &[TokenKind::DoubleDot, TokenKind::DoubleColon];
     pub const INLINE_MARKER: &'static [TokenKind] = &[
         TokenKind::StrongStart,
         TokenKind::EmphasisStart,
@@ -136,6 +134,7 @@ pub enum TokenKind {
     BlankLine,
     BulletListMarker,
     Dedent,
+    Directive,
     DoubleColon,
     DoubleDot,
     EoF,
@@ -176,6 +175,7 @@ impl TokenKind {
         (NewLine, r"[^\n]\n(.|\n)"),
 
         // Directive-Like
+        (Directive, r"[\n\s]\.\. (?:(?:\|[\w ]+\|) )?[\w]+(?::[\w]+)*::[\n\s]"),
         (DoubleDot, r"[\n\s]\.\.[\n\s]"),
         (DoubleColon, r"(.|\n)::(.|\n)"),
 
@@ -343,6 +343,18 @@ mod tests {
     #[test]
     fn doubledot_non_matching() {
         assert!(!TK::DoubleDot.is_match("\nwarning...\n"));
+    }
+
+    #[test]
+    fn directive_matches() {
+        assert!(TK::Directive.is_match("\n.. image::\n"));
+        assert!(TK::Directive.is_match("\n.. |name| replace:: text\n"));
+    }
+
+    #[test]
+    fn directive_non_matching() {
+        assert!(!TK::Directive.is_match("\n.. image:\n"));
+        assert!(!TK::Directive.is_match("\n.. |name replace:: text\n"));
     }
 
     #[test]

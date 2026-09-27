@@ -9,24 +9,39 @@ use crate::parser_errors::{ParserError, EXPECT_NEWLINE};
 use crate::token::TokenKind as TK;
 use crate::token_stream::{tokens_to_text, TokenStream};
 
-pub(crate) fn parse_directive(
-    stream: &mut TokenStream,
-    directive_colon_index: usize, // TODO: It is ok to know this outside, but re-calculating inside (use a loop) would safe one parameter
-) -> Result<NodeRef, ParserError> {
-    let first_line_end = stream
-        .find_next_kind_from(&[TK::NewLine], directive_colon_index)
-        .expect(EXPECT_NEWLINE);
+pub(crate) fn parse_directive(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    let marker_index = stream.cursor();
+    let directive_colon_index = if stream.kind_at_cursor() == TK::Directive {
+        None
+    } else {
+        Some(
+            stream
+                .find_next_kind_from(&[TK::DoubleColon], marker_index)
+                .expect(EXPECT_NEWLINE),
+        )
+    };
+    let first_line_end = stream.find_next_kind(&[TK::NewLine]).expect(EXPECT_NEWLINE);
 
     let directive = AstNode::new_ref(NodeClass::Directive);
-    let directive_type =
-        tokens_to_text(&stream.tokens()[stream.cursor() + 1..directive_colon_index])
+    let directive_type = match directive_colon_index {
+        None => stream.tokens()[marker_index]
+            .lexeme
+            .strip_prefix(".. ")
+            .and_then(|marker| marker.strip_suffix("::"))
+            .unwrap_or_default()
             .trim()
-            .to_string();
+            .to_string(),
+        Some(colon_index) => tokens_to_text(&stream.tokens()[marker_index + 1..colon_index])
+            .trim()
+            .to_string(),
+    };
     directive.with_attr("directive_type", directive_type);
 
-    if first_line_end > directive_colon_index + 1 {
-        let directive_arguments =
-            tokens_to_text(&stream.tokens()[directive_colon_index + 2..first_line_end]);
+    let arguments_start = directive_colon_index.map_or(marker_index + 1, |index| index + 2);
+    if first_line_end > arguments_start {
+        let directive_arguments = tokens_to_text(&stream.tokens()[arguments_start..first_line_end])
+            .trim()
+            .to_string();
         directive.with_attr("directive_arguments", directive_arguments);
     }
 

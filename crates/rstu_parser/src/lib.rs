@@ -40,7 +40,7 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
                 current_parent = section;
             }
 
-            (TK::DoubleDot, _) => {
+            (TK::Directive | TK::DoubleDot, _) => {
                 let directive = parse_directive_like(&mut stream)?;
                 current_parent.push_child(directive);
             }
@@ -129,6 +129,7 @@ fn parse_directive_like(stream: &mut TokenStream) -> Result<NodeRef, ParserError
     let index = stream
         .find_next_kind(&[
             TK::NewLine,
+            TK::Directive,
             TK::DoubleColon,
             TK::FootnoteReference,
             TK::HyperlinkReferenceEnd,
@@ -137,7 +138,11 @@ fn parse_directive_like(stream: &mut TokenStream) -> Result<NodeRef, ParserError
         .expect(EXPECT_NEWLINE);
     let directive = match stream.tokens()[index].kind {
         TK::NewLine => parse_comment(stream)?,
-        TK::DoubleColon => parse_directive(stream, index)?,
+        TK::Directive => {
+            stream.set_cursor(index);
+            parse_directive(stream)?
+        }
+        TK::DoubleColon => parse_directive(stream)?,
         _ => panic!("Not implemented directive-like structure."),
     };
     Ok(directive)
