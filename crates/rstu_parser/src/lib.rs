@@ -20,7 +20,7 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use crate::lexer::tokenize;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
-use parser_errors::{ParserError, EXPECT_NEWLINE};
+use parser_errors::ParserError;
 use token_stream::{tokens_to_text, TokenStream};
 
 // static DEDENT_GRACE: usize = 1;
@@ -39,10 +39,14 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
                 current_parent.push_section_ref(section.clone());
                 current_parent = section;
             }
+            (TK::Directive, _) => {
+                let directive = parse_directive(&mut stream)?;
+                current_parent.push_child(directive);
+            }
 
             (TK::DoubleDot, _) => {
-                let directive = parse_directive_like(&mut stream)?;
-                current_parent.push_child(directive);
+                let comment = parse_comment(&mut stream)?;
+                current_parent.push_child(comment);
             }
 
             // TODO: Do not simply ignore these
@@ -122,25 +126,6 @@ pub fn match_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserE
 
     stream.set_cursor(closing_index + 2);
     Ok(section)
-}
-
-/// Parse directives, comments, citations, substitutions
-fn parse_directive_like(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
-    let index = stream
-        .find_next_kind(&[
-            TK::NewLine,
-            TK::DoubleColon,
-            TK::FootnoteReference,
-            TK::HyperlinkReferenceEnd,
-            TK::SubstitutionReference,
-        ])
-        .expect(EXPECT_NEWLINE);
-    let directive = match stream.tokens()[index].kind {
-        TK::NewLine => parse_comment(stream)?,
-        TK::DoubleColon => parse_directive(stream, index)?,
-        _ => panic!("Not implemented directive-like structure."),
-    };
-    Ok(directive)
 }
 
 fn parse_body_elements(
