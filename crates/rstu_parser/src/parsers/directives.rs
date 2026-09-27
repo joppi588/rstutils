@@ -5,47 +5,41 @@
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use super::{block::parse_block, list::parse_field_list};
-use crate::parser_errors::{ParserError, EXPECT_NEWLINE};
+use crate::parser_errors::ParserError;
 use crate::token::TokenKind as TK;
-use crate::token_stream::{tokens_to_text, TokenStream};
+use crate::token_stream::TokenStream;
 
 pub(crate) fn parse_directive(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
-    let marker_index = stream.cursor();
-    let directive_colon_index = if stream.kind_at_cursor() == TK::Directive {
-        None
-    } else {
-        Some(
-            stream
-                .find_next_kind_from(&[TK::DoubleColon], marker_index)
-                .expect(EXPECT_NEWLINE),
-        )
-    };
-    let first_line_end = stream.find_next_kind(&[TK::NewLine]).expect(EXPECT_NEWLINE);
+    let directive_marker = stream.consume().lexeme;
+    let marker_content = directive_marker
+        .strip_prefix("..")
+        .and_then(|marker| marker.strip_suffix("::"))
+        .unwrap_or_default();
+    let marker_parts: Vec<_> = marker_content
+        .split('|')
+        .map(str::trim)
+        .filter(|part| !part.is_empty())
+        .collect();
 
     let directive = AstNode::new_ref(NodeClass::Directive);
-    let directive_type = match directive_colon_index {
-        None => stream.tokens()[marker_index]
-            .lexeme
-            .strip_prefix(".. ")
-            .and_then(|marker| marker.strip_suffix("::"))
-            .unwrap_or_default()
-            .trim()
-            .to_string(),
-        Some(colon_index) => tokens_to_text(&stream.tokens()[marker_index + 1..colon_index])
-            .trim()
-            .to_string(),
-    };
-    directive.with_attr("directive_type", directive_type);
+    if marker_parts.len() >= 2 {
+        directive.with_attr("substitution", marker_parts[0]);
+    }
+    directive.with_attr(
+        "directive_type",
+        marker_parts.last().copied().unwrap_or_default(),
+    );
 
-    let arguments_start = directive_colon_index.map_or(marker_index + 1, |index| index + 2);
-    if first_line_end > arguments_start {
-        let directive_arguments = tokens_to_text(&stream.tokens()[arguments_start..first_line_end])
-            .trim()
-            .to_string();
+    let mut directive_arguments = String::new();
+    while !matches!(stream.kind_at_cursor(), TK::NewLine | TK::EoF) {
+        directive_arguments.push_str(&stream.consume().lexeme);
+    }
+    let directive_arguments = directive_arguments.trim();
+    if !directive_arguments.is_empty() {
         directive.with_attr("directive_arguments", directive_arguments);
     }
+    stream.consume(); // consume Newline
 
-    stream.set_cursor(first_line_end + 1);
     if stream.kind_at_cursor() != TK::Indent {
         return Ok(directive);
     }
@@ -63,4 +57,35 @@ pub(crate) fn parse_directive(stream: &mut TokenStream) -> Result<NodeRef, Parse
     }
 
     Ok(directive)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::parse_directive;
+    use crate::lexer::tokenize;
+    use crate::token_stream::TokenStream;
+
+    #[test]
+    fn parse_substitution_directive_marker() {
+        let mut stream = TokenStream::new(tokenize(".. | name | replace:: target\n"));
+
+        let directive = parse_directive(&mut stream).unwrap();
+        let directive = directive.borrow();
+
+        assert_eq!(
+            directive.attributes.get_str("substitution").as_deref(),
+            Some("name")
+        );
+        assert_eq!(
+            directive.attributes.get_str("directive_type").as_deref(),
+            Some("replace")
+        );
+        assert_eq!(
+            directive
+                .attributes
+                .get_str("directive_arguments")
+                .as_deref(),
+            Some("target")
+        );
+    }
 }

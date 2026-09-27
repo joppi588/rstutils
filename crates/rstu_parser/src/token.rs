@@ -174,9 +174,12 @@ impl TokenKind {
         (BlankLine, r"\n[ \t]*\n+(.|\n)"),
         (NewLine, r"[^\n]\n(.|\n)"),
 
-        // Directive-Like
         (Directive, r"[\n\s]\.\.\s(?:\|[^|\n]+\|\s)?[\p{L}\p{N}]+(?:[-_+:.][\p{L}\p{N}]+)*::\s"),
+
+        // Comments
         (DoubleDot, r"[\n\s]\.\.[\n\s]"),
+
+        // Literal block
         (DoubleColon, r"(.|\n)::(.|\n)"),
 
         (TableHorizontal, r"\n=+(?:\s+=+)+\s*\n"),
