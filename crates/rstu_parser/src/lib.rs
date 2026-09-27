@@ -22,7 +22,7 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 use crate::lexer::tokenize;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
 use parser_errors::ParserError;
-use token_stream::{TokenStream, tokens_to_text};
+use token_stream::{tokens_to_text, TokenStream};
 
 // static DEDENT_GRACE: usize = 1;
 
@@ -153,7 +153,7 @@ fn parse_body_elements(
             let paragraph = parse_paragraph(stream)?;
             current_parent.push_child(paragraph);
         }
-        TK::DoubleColon => {
+        TK::LiteralBlock | TK::LiteralBlockMinimized | TK::LiteralBlockPartiallyMinimized => {
             let literal_block = parse_literal_block(stream)?;
             current_parent.push_child(literal_block);
         }

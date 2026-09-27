@@ -8,16 +8,32 @@ use crate::parser_errors::ParserError;
 use crate::token::TokenKind as TK;
 use crate::token_stream::TokenStream;
 
+#[derive(Debug)]
+pub enum LiteralBlockType {
+    Expanded,
+    PartiallyMinimized,
+    FullyMinimized,
+}
+
 pub(crate) fn parse_literal_block(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
-    stream.consume();
+    debug_assert!(stream.kind_at_cursor().is(&[
+        TK::LiteralBlock,
+        TK::LiteralBlockMinimized,
+        TK::LiteralBlockPartiallyMinimized
+    ]));
 
     let block = AstNode::new_ref(NodeClass::LiteralBlock);
-    if stream.kind_at_cursor() == TK::NewLine {
-        stream.consume();
-    }
-    if stream.kind_at_cursor() == TK::BlankLine {
-        stream.consume();
-    } else if stream.kind_at_cursor() == TK::Indent {
+
+    let literal_block_token = stream.consume();
+    let literal_block_type = match literal_block_token.kind {
+        TK::LiteralBlockMinimized => LiteralBlockType::FullyMinimized,
+        TK::LiteralBlock => LiteralBlockType::Expanded,
+        TK::LiteralBlockPartiallyMinimized => LiteralBlockType::PartiallyMinimized,
+        _ => unreachable!(),
+    };
+    block.with_attr("type", format!("{literal_block_type:?}"));
+
+    if stream.consume().kind != TK::BlankLine {
         return Err(ParserError::LiteralBlockError {
             message: "literal block requires a blank line".to_owned(),
         });

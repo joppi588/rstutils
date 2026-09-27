@@ -83,14 +83,13 @@ children:
               - class: LiteralBlock
                 attributes:
                   indent: 4
-
+                  type: FullyMinimized
                 children:
                   - class: PlainText
                     attributes:
-                      text: |+
+                      text: |
                         def f(x):
                             return x**2 + x
-
               - class: Paragraph
                 children:
                   - class: PlainText

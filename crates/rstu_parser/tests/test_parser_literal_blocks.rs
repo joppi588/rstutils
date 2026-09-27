@@ -26,7 +26,7 @@ use test_parser::rst_vs_yaml;
 //#[case("indented_07")]
 
 fn parse_literal_block(#[case] test_case: &str) {
-    rst_vs_yaml!("literal_blocks", test_case)
+    rst_vs_yaml!("literal_blocks", test_case);
 }
 
 #[rstest]

@@ -9,6 +9,7 @@ children:
   - class: LiteralBlock
     attributes:
       indent: 4
+      type: Expanded
     children:
       - class: PlainText
         attributes:

@@ -6,6 +6,8 @@ children:
         attributes:
           text: "A paragraph:\n"
   - class: LiteralBlock
+    attributes:
+      type: FullyMinimized
     children:
       - class: PlainText
         attributes:

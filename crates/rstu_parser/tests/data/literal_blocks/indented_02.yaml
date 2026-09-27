@@ -8,6 +8,7 @@ children:
   - class: LiteralBlock
     attributes:
       indent: 4
+      type: FullyMinimized
     children:
       - class: PlainText
         attributes:
@@ -20,6 +21,7 @@ children:
   - class: LiteralBlock
     attributes:
       indent: 4
+      type: FullyMinimized
     children:
       - class: PlainText
         attributes:
