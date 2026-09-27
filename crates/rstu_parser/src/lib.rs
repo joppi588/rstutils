@@ -45,8 +45,8 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
             }
 
             (TK::DoubleDot, _) => {
-                let directive = parse_comment(&mut stream)?;
-                current_parent.push_child(directive);
+                let comment = parse_comment(&mut stream)?;
+                current_parent.push_child(comment);
             }
 
             // TODO: Do not simply ignore these
