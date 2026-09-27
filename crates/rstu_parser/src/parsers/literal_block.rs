@@ -39,7 +39,7 @@ pub(crate) fn parse_literal_block(stream: &mut TokenStream) -> Result<NodeRef, P
         });
     }
     if stream.kind_at_cursor() == TK::Indent {
-        append_indented_content(stream, &block)?;
+        set_indented_content(stream, &block)?;
     } else if stream.kind_at_cursor() != TK::EoF {
         append_quoted_content(stream, &block)?;
     } else {
@@ -51,7 +51,7 @@ pub(crate) fn parse_literal_block(stream: &mut TokenStream) -> Result<NodeRef, P
     Ok(block)
 }
 
-fn append_indented_content(stream: &mut TokenStream, block: &NodeRef) -> Result<(), ParserError> {
+fn set_indented_content(stream: &mut TokenStream, block: &NodeRef) -> Result<(), ParserError> {
     let mut rel_indent = stream.consume().lexeme.len();
     block.with_attr("indent", rel_indent);
 
@@ -88,10 +88,10 @@ fn append_indented_content(stream: &mut TokenStream, block: &NodeRef) -> Result<
             message: "literal block expected after literal marker".to_owned(),
         });
     }
-
-    let content = AstNode::new_ref(NodeClass::PlainText);
-    content.with_attr("text", text);
-    block.push_child(content);
+    if text.ends_with("\n\n") {
+        text.pop();
+    }
+    block.with_attr("text", text);
     Ok(())
 }
 

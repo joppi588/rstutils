@@ -9,8 +9,5 @@ children:
   - class: LiteralBlock
     attributes:
       indent: 4
+      text: "A literal block.\n"
       type: Expanded
-    children:
-      - class: PlainText
-        attributes:
-          text: "A literal block.\n"

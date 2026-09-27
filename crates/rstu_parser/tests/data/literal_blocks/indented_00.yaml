@@ -8,8 +8,5 @@ children:
   - class: LiteralBlock
     attributes:
       indent: 4
+      text: "A literal block.\n"
       type: FullyMinimized
-    children:
-      - class: PlainText
-        attributes:
-          text: "A literal block.\n"

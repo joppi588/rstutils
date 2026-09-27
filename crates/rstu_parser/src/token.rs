@@ -341,12 +341,12 @@ mod tests {
     }
 
     #[test]
-    fn LiteralBlock_matches() {
-        assert!(TK::LiteralBlock.is_match("e::\n"));
+    fn literal_block_matches() {
+        assert!(TK::LiteralBlock.is_match("e::\nt"));
     }
 
     #[test]
-    fn LiteralBlock_non_matching() {
+    fn literal_block_non_matching() {
         assert!(!TK::LiteralBlock.is_match("e:\n"));
     }
 
