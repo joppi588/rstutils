@@ -71,8 +71,6 @@ impl Token {
 pub struct TokenCategory;
 
 impl TokenCategory {
-    pub const DIRECTIVE_LIKE: &'static [TokenKind] =
-        &[TokenKind::DoubleDot, TokenKind::DoubleColon];
     pub const INLINE_MARKER: &'static [TokenKind] = &[
         TokenKind::StrongStart,
         TokenKind::EmphasisStart,
@@ -136,6 +134,7 @@ pub enum TokenKind {
     BlankLine,
     BulletListMarker,
     Dedent,
+    Directive,
     DoubleColon,
     DoubleDot,
     EoF,
@@ -175,8 +174,12 @@ impl TokenKind {
         (BlankLine, r"\n[ \t]*\n+(.|\n)"),
         (NewLine, r"[^\n]\n(.|\n)"),
 
-        // Directive-Like
+        (Directive, r"[\n\s]\.\.\s(?:\|[^|\n]+\|\s)?[\p{L}\p{N}]+(?:[-_+:.][\p{L}\p{N}]+)*::\s"),
+
+        // Comments
         (DoubleDot, r"[\n\s]\.\.[\n\s]"),
+
+        // Literal block
         (DoubleColon, r"(.|\n)::(.|\n)"),
 
         (TableHorizontal, r"\n=+(?:\s+=+)+\s*\n"),
@@ -343,6 +346,28 @@ mod tests {
     #[test]
     fn doubledot_non_matching() {
         assert!(!TK::DoubleDot.is_match("\nwarning...\n"));
+    }
+
+    #[test]
+    fn directive_matches() {
+        assert!(TK::Directive.is_match("\n.. image::\n"));
+        assert!(TK::Directive.is_match("\n.. |name| replace:: text\n"));
+        assert!(TK::Directive.is_match("\n.. |name surname| replace-text:: text\n"));
+        assert!(TK::Directive.is_match("\n.. custom_name+type.v2:: text\n"));
+        assert!(TK::Directive.is_match("\n.. domain:directive:: text\n"));
+        assert!(TK::Directive.is_match("\n.. ImAgE:: text\n"));
+        assert!(TK::Directive.is_match("\n.. | name| replace:: text\n"));
+        assert!(TK::Directive.is_match("\n.. |name | replace:: text\n"));
+        assert!(TK::Directive.is_match("\n.. | name | replace:: text\n"));
+    }
+
+    #[test]
+    fn directive_non_matching() {
+        assert!(!TK::Directive.is_match("\n.. image:\n"));
+        assert!(!TK::Directive.is_match("\n.. |name replace:: text\n"));
+        assert!(!TK::Directive.is_match("\n.. custom--type:: text\n"));
+        assert!(!TK::Directive.is_match("\n.. -custom:: text\n"));
+        assert!(!TK::Directive.is_match("\n.. custom_:: text\n"));
     }
 
     #[test]
