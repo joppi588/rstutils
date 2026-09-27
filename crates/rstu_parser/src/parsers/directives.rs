@@ -14,12 +14,11 @@ pub(crate) fn parse_directive(stream: &mut TokenStream) -> Result<NodeRef, Parse
 
     let directive_marker = stream.consume().lexeme;
     let marker_content = directive_marker
-        .strip_prefix("..")
+        .strip_prefix(".. ")
         .and_then(|marker| marker.strip_suffix("::"))
         .unwrap_or_default();
     let marker_parts: Vec<_> = marker_content
         .split('|')
-        .map(str::trim)
         .filter(|part| !part.is_empty())
         .collect();
 
