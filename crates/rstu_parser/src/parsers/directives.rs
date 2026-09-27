@@ -28,7 +28,7 @@ pub(crate) fn parse_directive(stream: &mut TokenStream) -> Result<NodeRef, Parse
     }
     directive.with_attr(
         "directive_type",
-        marker_parts.last().copied().unwrap_or_default(),
+        marker_parts.last().copied().unwrap_or_default().trim(),
     );
 
     let mut directive_arguments = String::new();
@@ -75,7 +75,7 @@ mod tests {
 
         assert_eq!(
             directive.attributes.get_str("substitution").as_deref(),
-            Some("name")
+            Some(" name ")
         );
         assert_eq!(
             directive.attributes.get_str("directive_type").as_deref(),
