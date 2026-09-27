@@ -98,17 +98,42 @@ fn set_indented_content(stream: &mut TokenStream, block: &NodeRef) -> Result<(),
 fn append_quoted_content(stream: &mut TokenStream, block: &NodeRef) -> Result<(), ParserError> {
     let mut text = String::new();
     let mut at_line_start = true;
+    let mut marker = None;
+    let mut line_indent = 0;
     while !matches!(stream.kind_at_cursor(), TK::BlankLine | TK::EoF) {
         if at_line_start {
-            if stream.kind_at_cursor() == TK::Indent {
-                return Err(ParserError::LiteralBlockError {
-                    message: "unexpected indentation in quoted literal block".to_owned(),
-                });
-            }
-            if stream.token_at(stream.cursor()).lexeme != ">" {
-                return Err(ParserError::LiteralBlockError {
-                    message: "inconsistent quoted literal block".to_owned(),
-                });
+            match stream.kind_at_cursor() {
+                TK::Indent => {
+                    line_indent += stream.consume().lexeme.len();
+                    check_quoted_marker(&mut marker, ' ')?;
+                    text.push_str(&" ".repeat(line_indent));
+                    at_line_start = false;
+                    continue;
+                }
+                TK::Dedent => {
+                    line_indent = line_indent.saturating_sub(stream.consume().lexeme.len());
+                    if line_indent > 0 {
+                        check_quoted_marker(&mut marker, ' ')?;
+                        text.push_str(&" ".repeat(line_indent));
+                        at_line_start = false;
+                    }
+                    continue;
+                }
+                _ if line_indent > 0 => {
+                    check_quoted_marker(&mut marker, ' ')?;
+                    text.push_str(&" ".repeat(line_indent));
+                }
+                _ => {
+                    let first_char = stream
+                        .token_at(stream.cursor())
+                        .lexeme
+                        .chars()
+                        .next()
+                        .ok_or_else(|| ParserError::LiteralBlockError {
+                            message: "inconsistent quoted literal block".to_owned(),
+                        })?;
+                    check_quoted_marker(&mut marker, first_char)?;
+                }
             }
         }
         let token = stream.consume();
@@ -126,4 +151,38 @@ fn append_quoted_content(stream: &mut TokenStream, block: &NodeRef) -> Result<()
     content.with_attr("text", text);
     block.push_child(content);
     Ok(())
+}
+
+fn check_quoted_marker(marker: &mut Option<char>, candidate: char) -> Result<(), ParserError> {
+    const ALLOWED_MARKERS: &str = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+
+    if !ALLOWED_MARKERS.contains(candidate) || marker.is_some_and(|marker| marker != candidate) {
+        return Err(ParserError::LiteralBlockError {
+            message: "inconsistent quoted literal block".to_owned(),
+        });
+    }
+    *marker = Some(candidate);
+    Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{append_quoted_content, AstNode, NodeClass, TokenStream, TK};
+    use crate::token::Token;
+
+    #[test]
+    fn accepts_a_consistent_space_quoted_marker() {
+        let mut stream = TokenStream::new(vec![
+            Token::new(TK::Indent, " "),
+            Token::new(TK::Word, "first"),
+            Token::new(TK::NewLine, "\n"),
+            Token::new(TK::Word, "second"),
+            Token::new(TK::NewLine, "\n"),
+            Token::new(TK::BlankLine, "\n"),
+            Token::new(TK::EoF, ""),
+        ]);
+        let block = AstNode::new_ref(NodeClass::LiteralBlock);
+
+        assert!(append_quoted_content(&mut stream, &block).is_ok());
+    }
 }

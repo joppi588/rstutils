@@ -46,6 +46,27 @@ fn rejects_literal_block_errors(#[case] test_case: &str) {
     );
 }
 
+#[test]
+fn accepts_consistent_quoted_literal_markers() {
+    for marker in "!#$%&'()*+,-./:;<=>?@[\\]^_`{|}~".chars() {
+        let source = format!("A paragraph::\n\n{marker}first\n{marker}second\n\n");
+        assert!(
+            parse(&source).is_ok(),
+            "marker {marker:?} should be accepted"
+        );
+    }
+}
+
+#[test]
+fn rejects_invalid_or_inconsistent_quoted_literal_markers() {
+    for source in [
+        "A paragraph::\n\nx first\nx second\n\n",
+        "A paragraph::\n\n# first\n> second\n\n",
+    ] {
+        assert!(parse(source).is_err(), "expected quoted marker rejection");
+    }
+}
+
 // #[case("indented_05")] // Emits a warning for an unindented continuation.
 // #[case("indented_10")] // Emits an informational possible-title warning.
 // #[case("indented_12")] // Emits a warning when no literal block follows.
