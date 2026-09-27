@@ -175,7 +175,7 @@ impl TokenKind {
         (NewLine, r"[^\n]\n(.|\n)"),
 
         // Directive-Like
-        (Directive, r"[\n\s]\.\. (?:(?:\|[\w ]+\|) )?[\w]+(?::[\w]+)*::[\n\s]"),
+        (Directive, r"[\n\s]\.\.\s(?:\|[^\s|](?:[^|\n]*[^\s|])?\|\s)?[\p{L}\p{N}]+(?:[-_+:.][\p{L}\p{N}]+)*::\s"),
         (DoubleDot, r"[\n\s]\.\.[\n\s]"),
         (DoubleColon, r"(.|\n)::(.|\n)"),
 
@@ -349,12 +349,22 @@ mod tests {
     fn directive_matches() {
         assert!(TK::Directive.is_match("\n.. image::\n"));
         assert!(TK::Directive.is_match("\n.. |name| replace:: text\n"));
+        assert!(TK::Directive.is_match("\n.. |name surname| replace-text:: text\n"));
+        assert!(TK::Directive.is_match("\n.. custom_name+type.v2:: text\n"));
+        assert!(TK::Directive.is_match("\n.. domain:directive:: text\n"));
+        assert!(TK::Directive.is_match("\n.. ImAgE:: text\n"));
+        assert!(!TK::Directive.is_match("\n.. | name| replace:: text\n"));
+        assert!(!TK::Directive.is_match("\n.. |name | replace:: text\n"));
     }
 
     #[test]
     fn directive_non_matching() {
         assert!(!TK::Directive.is_match("\n.. image:\n"));
         assert!(!TK::Directive.is_match("\n.. |name replace:: text\n"));
+        assert!(!TK::Directive.is_match("\n.. | name | replace:: text\n"));
+        assert!(!TK::Directive.is_match("\n.. custom--type:: text\n"));
+        assert!(!TK::Directive.is_match("\n.. -custom:: text\n"));
+        assert!(!TK::Directive.is_match("\n.. custom_:: text\n"));
     }
 
     #[test]
