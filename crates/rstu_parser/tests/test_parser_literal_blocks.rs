@@ -31,9 +31,12 @@ fn parse_literal_block(#[case] test_case: &str) {
 
 #[rstest]
 #[case("indented_04")]
+#[case("indented_05")]
 #[case("quoted_03")]
 #[case("quoted_04")]
 #[case("quoted_05")]
+#[case("nok_quoted_block_01")]
+#[case("nok_quoted_block_02")]
 fn rejects_literal_block_errors(#[case] test_case: &str) {
     let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tests/data/literal_blocks")
@@ -57,17 +60,6 @@ fn accepts_consistent_quoted_literal_markers() {
     }
 }
 
-#[test]
-fn rejects_invalid_or_inconsistent_quoted_literal_markers() {
-    for source in [
-        "A paragraph::\n\nx first\nx second\n\n",
-        "A paragraph::\n\n# first\n> second\n\n",
-    ] {
-        assert!(parse(source).is_err(), "expected quoted marker rejection");
-    }
-}
-
-// #[case("indented_05")] // Emits a warning for an unindented continuation.
 // #[case("indented_10")] // Emits an informational possible-title warning.
 // #[case("indented_12")] // Emits a warning when no literal block follows.
 // #[case("indented_14")] // Emits a warning when the marker reaches EOF.

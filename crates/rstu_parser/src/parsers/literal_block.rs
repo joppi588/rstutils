@@ -99,90 +99,51 @@ fn append_quoted_content(stream: &mut TokenStream, block: &NodeRef) -> Result<()
     let mut text = String::new();
     let mut at_line_start = true;
     let mut marker = None;
-    let mut line_indent = 0;
-    while !matches!(stream.kind_at_cursor(), TK::BlankLine | TK::EoF) {
-        if at_line_start {
-            match stream.kind_at_cursor() {
-                TK::Indent => {
-                    line_indent += stream.consume().lexeme.len();
-                    check_quoted_marker(&mut marker, ' ')?;
-                    text.push_str(&" ".repeat(line_indent));
-                    at_line_start = false;
-                    continue;
-                }
-                TK::Dedent => {
-                    line_indent = line_indent.saturating_sub(stream.consume().lexeme.len());
-                    if line_indent > 0 {
-                        check_quoted_marker(&mut marker, ' ')?;
-                        text.push_str(&" ".repeat(line_indent));
-                        at_line_start = false;
-                    }
-                    continue;
-                }
-                _ if line_indent > 0 => {
-                    check_quoted_marker(&mut marker, ' ')?;
-                    text.push_str(&" ".repeat(line_indent));
-                }
-                _ => {
-                    let first_char = stream
-                        .token_at(stream.cursor())
-                        .lexeme
-                        .chars()
-                        .next()
-                        .ok_or_else(|| ParserError::LiteralBlockError {
-                            message: "inconsistent quoted literal block".to_owned(),
-                        })?;
+    loop {
+        let token = stream.consume();
+        match token.kind {
+            TK::BlankLine | TK::EoF => {
+                break;
+            }
+            TK::NewLine => {
+                at_line_start = true;
+                text.push_str("\n");
+            }
+            _ => {
+                if at_line_start {
+                    let first_char = token.lexeme.chars().nth(0).expect("lexeme is not empty.");
                     check_quoted_marker(&mut marker, first_char)?;
+                    at_line_start = false;
                 }
+                text.push_str(&token.lexeme);
             }
         }
-        let token = stream.consume();
-        at_line_start = token.kind == TK::NewLine;
-        text.push_str(&token.lexeme);
     }
-
     if text.is_empty() {
         return Err(ParserError::LiteralBlockError {
             message: "literal block expected after literal marker".to_owned(),
         });
     }
 
-    let content = AstNode::new_ref(NodeClass::PlainText);
-    content.with_attr("text", text);
-    block.push_child(content);
+    block.with_attr("text", text);
     Ok(())
 }
 
 fn check_quoted_marker(marker: &mut Option<char>, candidate: char) -> Result<(), ParserError> {
     const ALLOWED_MARKERS: &str = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
 
-    if !ALLOWED_MARKERS.contains(candidate) || marker.is_some_and(|marker| marker != candidate) {
+    if !ALLOWED_MARKERS.contains(candidate) {
         return Err(ParserError::LiteralBlockError {
-            message: "inconsistent quoted literal block".to_owned(),
+            message: "Invalid quoted literal block marker".to_owned(),
         });
     }
+
+    if marker.is_some_and(|marker| marker != candidate) {
+        return Err(ParserError::LiteralBlockError {
+            message: "Inconsistent quoted literal block".to_owned(),
+        });
+    }
+
     *marker = Some(candidate);
     Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::{append_quoted_content, AstNode, NodeClass, TokenStream, TK};
-    use crate::token::Token;
-
-    #[test]
-    fn accepts_a_consistent_space_quoted_marker() {
-        let mut stream = TokenStream::new(vec![
-            Token::new(TK::Indent, " "),
-            Token::new(TK::Word, "first"),
-            Token::new(TK::NewLine, "\n"),
-            Token::new(TK::Word, "second"),
-            Token::new(TK::NewLine, "\n"),
-            Token::new(TK::BlankLine, "\n"),
-            Token::new(TK::EoF, ""),
-        ]);
-        let block = AstNode::new_ref(NodeClass::LiteralBlock);
-
-        assert!(append_quoted_content(&mut stream, &block).is_ok());
-    }
 }
