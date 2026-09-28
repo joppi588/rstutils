@@ -1,5 +1,6 @@
-A paragraph:
+A paragraph::
 
-::
+    A wonky literal block.
+  Literal line 2.
 
-    A literal block.
+    Literal line 3.

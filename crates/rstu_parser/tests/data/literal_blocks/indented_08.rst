@@ -1,3 +1,5 @@
-A paragraph: ::
+A paragraph:
+
+::
 
     A literal block.

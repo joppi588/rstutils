@@ -4,9 +4,10 @@ children:
     children:
       - class: PlainText
         attributes:
-          text: "A paragraph:"
+          text: "A paragraph:\n"
+  - class: BlankLine
   - class: LiteralBlock
     attributes:
       indent: 4
       text: "A literal block.\n"
-      type: PartiallyMinimized
+      type: Expanded

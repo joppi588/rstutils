@@ -1,4 +1,8 @@
-A paragraph::
+
+A paragraph\\::
 
     A literal block.
-no blank line
+
+A paragraph\::
+
+    Not a literal block.

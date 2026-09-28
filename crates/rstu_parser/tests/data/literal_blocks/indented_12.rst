@@ -1,3 +1,1 @@
-A paragraph::
-
-Not a literal block.
+EOF, even though a literal block is indicated::
