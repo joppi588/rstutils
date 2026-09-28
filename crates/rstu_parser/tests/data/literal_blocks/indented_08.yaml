@@ -1,0 +1,13 @@
+class: Document
+children:
+  - class: Paragraph
+    children:
+      - class: PlainText
+        attributes:
+          text: "A paragraph:\n"
+  - class: BlankLine
+  - class: LiteralBlock
+    attributes:
+      indent: 4
+      text: "A literal block.\n"
+      type: Expanded

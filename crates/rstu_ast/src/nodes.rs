@@ -18,6 +18,7 @@ pub enum NodeClass {
     FieldList,
     Block,
     InlineMarkup,
+    LiteralBlock,
     Paragraph,
     PlainText,
     Reference,

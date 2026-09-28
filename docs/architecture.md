@@ -39,16 +39,30 @@ Rationale: more simple AST definition
 Use a 1 character context before and after the token.
 
 Drawback Information leakage:
-The tokenizer and parser share information, e.g. the knowledge that a bullet list marker will be followed by a newline or space. This creates a dependency between the modules, if the lexer is updated the parser needs to be checked as well. This dependency can sometimes be made explicit by parsing adjacent token pairs rather than single tokens.
+The tokenizer and parser share information, e.g. the knowledge that a bullet list marker will be followed by a newline or space. This creates a dependency between the modules, if the lexer is updated, the parser needs to be checked as well. This dependency can sometimes be made explicit by parsing adjacent token pairs rather than single tokens.
 
 5. Parser approach
-Top-down. Lookahead one line.
-- Level 1: Document structure (sections)
+Top-down.
+- Level 1: Document structure (sections), lookahead one line.
 - Level 2: Main blocks (directives, comments)
 - Level 3: (recursive): Body elements
 This represents the language structure.
+
+6. Error handling while parsing
+Error messages shall contain line and column number.
+Option 1:
+- One error type per Err statement
+Option 2:
+- One error type per parsing subfunction
+- Further specialization via error messages
+Decision: TODO (depends on error handling)
 
 # Architectural drivers
 Development speed, especially bug fixes -> Maintainability is key
 Execution speed
 Easy installation -> low entry hurdle
+
+# Assumptions
+Preprocessing of text files / enforcement:
+- All files have a trailing newline
+- No trailing spaces at the end of the line
