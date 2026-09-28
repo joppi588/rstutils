@@ -70,6 +70,7 @@ fn rejects_docutils_bullet_list_end(#[case] rst_filename: &str) {
 #[case("ok_loweralpha_auto")]
 #[case("ok_lowerroman_auto")]
 #[case("ok_non_marker_period")]
+#[case("docutils_mixed_auto_and_explicit")]
 fn parse_enumerated_list(#[case] test_case: &str) {
     rst_vs_yaml!("lists/enumerated_list", test_case)
 }
@@ -98,11 +99,8 @@ fn rejects_docutils_enumerated_list_errors(#[case] rst_filename: &str) {
 // #[case("docutils_bad_roman_numerals")]
 // NOT IMPLEMENTED: Docutils recovers misaligned continuation lines as warnings/block quotes.
 // #[case("docutils_misaligned_multiline_items")]
-// NOT IMPLEMENTED: Docutils leaves the later markers as paragraph text after a warning.
-// #[case("docutils_mixed_auto_and_explicit")]
 // NOT IMPLEMENTED: Non-breaking-space handling is not supported by the current lexer.
 // #[case("docutils_nonbreaking_space_workaround")]
-// NOT IMPLEMENTED: The remaining indentation matrix includes unsupported recovery cases.
 // #[case("ok_enumerated_item_indentation")]
 // NOT IMPLEMENTED: A list cannot currently start with an auto-enumerator.
 // #[case("ok_auto_only")]
