@@ -59,6 +59,10 @@ impl Token {
         }
     }
 
+    pub fn len(&self) -> usize {
+        self.lexeme.len()
+    }
+
     pub fn as_tuple(&self) -> (TokenKind, &str) {
         (self.kind, &self.lexeme)
     }
@@ -261,7 +265,17 @@ impl TokenKind {
 
 #[cfg(test)]
 mod tests {
-    use super::{TokenCategory, TokenKind as TK};
+    use super::{Token, TokenCategory, TokenKind as TK};
+
+    /// GIVEN a token with a multibyte lexeme
+    /// WHEN its length is queried
+    /// THEN the byte length is returned
+    #[test]
+    fn token_len_returns_lexeme_byte_length() {
+        let token = Token::new(TK::Word, "é");
+
+        assert_eq!(token.len(), 2);
+    }
 
     #[test]
     fn match_token_uses_centralized_token_list() {

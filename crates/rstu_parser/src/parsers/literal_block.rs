@@ -52,7 +52,7 @@ pub(crate) fn parse_literal_block(stream: &mut TokenStream) -> Result<NodeRef, P
 }
 
 fn set_text_indented_content(stream: &mut TokenStream, block: &NodeRef) -> Result<(), ParserError> {
-    let mut rel_indent = stream.consume().lexeme.len();
+    let mut rel_indent = stream.consume().len();
     block.with_attr("indent", rel_indent);
 
     let mut text = String::new();
@@ -63,12 +63,12 @@ fn set_text_indented_content(stream: &mut TokenStream, block: &NodeRef) -> Resul
             }
             TK::Indent => {
                 let indent = stream.consume();
-                rel_indent += indent.lexeme.len();
+                rel_indent += indent.len();
                 text.push_str(&indent.lexeme.to_string());
             }
             TK::Dedent => {
                 let dedent_token = stream.token_at(stream.cursor());
-                let dedent = dedent_token.lexeme.len();
+                let dedent = dedent_token.len();
                 if dedent > rel_indent {
                     stream.update_at_cursor(" ".repeat(dedent - rel_indent));
                     break;

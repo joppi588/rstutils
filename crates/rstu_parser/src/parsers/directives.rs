@@ -45,7 +45,7 @@ pub(crate) fn parse_directive(stream: &mut TokenStream) -> Result<NodeRef, Parse
     if stream.kind_at_cursor() != TK::Indent {
         return Ok(directive);
     }
-    directive.with_attr("indent", stream.tokens()[stream.cursor()].lexeme.len());
+    directive.with_attr("indent", stream.tokens()[stream.cursor()].len());
 
     if stream.kind_peek_relative(1) == TK::Field {
         stream.consume(); // Skip the shared Indent token; parse_block consumes it otherwise.
