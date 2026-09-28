@@ -33,10 +33,10 @@ fn prepare_item_block(stream: &mut TokenStream, dedent_len: usize) -> Result<(),
             } else {
                 // If the next line is indented beyond the marker/field/...,
                 // we assume that it represents two subsequent indents.
-                stream.insert_at(cursor, Token::new(TK::Indent, " ".repeat(dedent_len)));
+                stream.insert_at(cursor, Token::indent(dedent_len));
                 stream.insert_at(
                     indent_index + 1,
-                    Token::new(TK::Indent, " ".repeat(indent_token.len() - dedent_len)),
+                    Token::indent(indent_token.len() - dedent_len),
                 );
             }
             stream.set_cursor(cursor);
@@ -49,15 +49,9 @@ fn prepare_item_block(stream: &mut TokenStream, dedent_len: usize) -> Result<(),
             | TK::EoF
             | TK::Dedent
             | TK::BlankLine => {
-                stream.insert_at(
-                    stream.cursor(),
-                    Token::new(TK::Indent, " ".repeat(dedent_len)),
-                );
+                stream.insert_at(stream.cursor(), Token::indent(dedent_len));
                 stream.set_cursor(stream.cursor() - 1);
-                stream.insert_at(
-                    next_line + 1,
-                    Token::new(TK::Dedent, " ".repeat(dedent_len)),
-                );
+                stream.insert_at(next_line + 1, Token::dedent(dedent_len));
             }
             _ => return Err(ParserError::ListEndError {}),
         },

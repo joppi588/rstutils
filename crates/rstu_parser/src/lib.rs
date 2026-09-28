@@ -2,6 +2,12 @@
 //
 // SPDX-License-Identifier: MIT
 
+macro_rules! space {
+    ($width:expr) => {
+        " ".repeat($width)
+    };
+}
+
 pub mod lexer;
 mod parsers;
 use std::cell::RefCell;

@@ -59,6 +59,14 @@ impl Token {
         }
     }
 
+    pub fn indent(width: usize) -> Self {
+        Self::new(TokenKind::Indent, space!(width))
+    }
+
+    pub fn dedent(width: usize) -> Self {
+        Self::new(TokenKind::Dedent, space!(width))
+    }
+
     pub fn len(&self) -> usize {
         self.lexeme.len()
     }
@@ -275,6 +283,12 @@ mod tests {
         let token = Token::new(TK::Word, "é");
 
         assert_eq!(token.len(), 2);
+    }
+
+    #[test]
+    fn indent_and_dedent_constructors_create_space_tokens() {
+        assert_eq!(Token::indent(3), Token::new(TK::Indent, "   "));
+        assert_eq!(Token::dedent(2), Token::new(TK::Dedent, "  "));
     }
 
     #[test]

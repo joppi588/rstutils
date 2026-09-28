@@ -23,14 +23,14 @@ pub(crate) fn parse_comment(stream: &mut TokenStream) -> Result<NodeRef, ParserE
             match stream.kind_at_cursor() {
                 TK::Indent => {
                     absolute_indent += stream.take_at_cursor().len();
-                    text.push_str(&" ".repeat(absolute_indent - base_indent));
+                    text.push_str(&space!(absolute_indent - base_indent));
                 }
                 TK::Dedent => {
                     absolute_indent -= stream.take_at_cursor().len();
                     if absolute_indent == 0 {
                         break;
                     }
-                    text.push_str(&" ".repeat(absolute_indent - base_indent));
+                    text.push_str(&space!(absolute_indent - base_indent));
                 }
                 _ => text.push_str(&stream.take_at_cursor().lexeme),
             }
