@@ -85,11 +85,15 @@ fn set_indented_content(stream: &mut TokenStream, block: &NodeRef) -> Result<(),
 
     if text.is_empty() {
         return Err(ParserError::LiteralBlockError {
-            message: "literal block expected after literal marker".to_owned(),
+            message: "Literal block expected after literal marker".to_owned(),
         });
     }
     if text.ends_with("\n\n") {
         text.pop();
+    } else if stream.kind_at_cursor() != TK::EoF {
+        return Err(ParserError::LiteralBlockError {
+            message: "Blank line expected after literal block.".to_owned(),
+        });
     }
     block.with_attr("text", text);
     Ok(())

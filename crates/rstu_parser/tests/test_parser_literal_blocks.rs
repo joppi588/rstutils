@@ -32,6 +32,7 @@ fn parse_literal_block(#[case] test_case: &str) {
 #[rstest]
 #[case("indented_04")]
 #[case("indented_05")]
+#[case("indented_12")]
 #[case("quoted_03")]
 #[case("quoted_04")]
 #[case("quoted_05")]
@@ -61,5 +62,4 @@ fn accepts_consistent_quoted_literal_markers() {
 }
 
 // #[case("indented_10")] // Emits an informational possible-title warning.
-// #[case("indented_12")] // Emits a warning when no literal block follows.
 // #[case("indented_14")] // Emits a warning when the marker reaches EOF.
