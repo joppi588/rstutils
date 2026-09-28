@@ -22,11 +22,11 @@ RUN git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions \
 
 
 # Pin Rust toolchain and include rustfmt so cargo fmt is available by default.
-RUN rustup toolchain install 1.94 --profile minimal \
-    && rustup component add rustfmt --toolchain 1.94 \
-    && rustup component add rust-src --toolchain 1.94 \
-    && rustup component add clippy --toolchain 1.94 \
-    && rustup default 1.94
+RUN rustup toolchain install 1.96 --profile minimal \
+    && rustup component add rustfmt --toolchain 1.96 \
+    && rustup component add rust-src --toolchain 1.96 \
+    && rustup component add clippy --toolchain 1.96 \
+    && rustup default 1.96
 
 # Install cargo-nextest for aggregated Rust test execution and summaries.
 RUN cargo install --locked cargo-nextest \

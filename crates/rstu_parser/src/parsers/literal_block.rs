@@ -7,6 +7,7 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 use crate::parser_errors::ParserError;
 use crate::token::TokenKind as TK;
 use crate::token_stream::TokenStream;
+use std::debug_assert_matches;
 
 #[derive(Debug)]
 pub enum LiteralBlockType {
@@ -16,11 +17,10 @@ pub enum LiteralBlockType {
 }
 
 pub(crate) fn parse_literal_block(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
-    debug_assert!(stream.kind_at_cursor().is(&[
-        TK::LiteralBlock,
-        TK::LiteralBlockMinimized,
-        TK::LiteralBlockPartiallyMinimized
-    ]));
+    debug_assert_matches!(
+        stream.kind_at_cursor(),
+        TK::LiteralBlock | TK::LiteralBlockMinimized | TK::LiteralBlockPartiallyMinimized
+    );
 
     let block = AstNode::new_ref(NodeClass::LiteralBlock);
 

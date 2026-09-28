@@ -8,9 +8,10 @@ use super::{block::parse_block, list::parse_field_list};
 use crate::parser_errors::ParserError;
 use crate::token::TokenKind as TK;
 use crate::token_stream::TokenStream;
+use std::debug_assert_matches;
 
 pub(crate) fn parse_directive(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
-    debug_assert_eq!(stream.kind_at_cursor(), TK::Directive);
+    debug_assert_matches!(stream.kind_at_cursor(), TK::Directive);
 
     let directive_marker = stream.consume().lexeme;
     let marker_content = directive_marker
