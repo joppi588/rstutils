@@ -132,7 +132,18 @@ pub(super) fn enumerator_type(value: &str) -> Result<EnumType, ParserError> {
 pub(super) fn resolve_enumerator_type(
     marker_type: EnumType,
     list_type: Option<EnumType>,
+    previous_value: Option<&str>,
 ) -> EnumType {
+    match marker_type {
+        EnumType::UpperAmbiguousI if previous_value != Some("H") => {
+            return EnumType::Upperroman;
+        }
+        EnumType::LowerAmbiguousI if previous_value != Some("h") => {
+            return EnumType::Lowerroman;
+        }
+        _ => {}
+    }
+
     match (marker_type, list_type) {
         (
             EnumType::UpperAmbiguousI | EnumType::UpperAmbiguousC,
@@ -212,11 +223,11 @@ mod tests {
         // WHEN their types are resolved without an existing list type
         // THEN I is Roman and C is alphabetic
         assert_eq!(
-            resolve_enumerator_type(EnumType::UpperAmbiguousI, None,),
+            resolve_enumerator_type(EnumType::UpperAmbiguousI, None, None,),
             EnumType::Upperroman
         );
         assert_eq!(
-            resolve_enumerator_type(EnumType::LowerAmbiguousC, None,),
+            resolve_enumerator_type(EnumType::LowerAmbiguousC, None, None,),
             EnumType::Loweralpha
         );
     }
@@ -227,12 +238,44 @@ mod tests {
         // WHEN their types are resolved against the list type
         // THEN they use the existing list family and marker case
         assert_eq!(
-            resolve_enumerator_type(EnumType::UpperAmbiguousI, Some(EnumType::Upperalpha),),
+            resolve_enumerator_type(
+                EnumType::UpperAmbiguousI,
+                Some(EnumType::Upperalpha),
+                Some("H"),
+            ),
             EnumType::Upperalpha
         );
         assert_eq!(
-            resolve_enumerator_type(EnumType::UpperAmbiguousC, Some(EnumType::Lowerroman),),
+            resolve_enumerator_type(EnumType::UpperAmbiguousC, Some(EnumType::Lowerroman), None,),
             EnumType::Upperroman
+        );
+    }
+
+    #[test]
+    fn resolve_ambiguous_i_uses_the_previous_marker() {
+        assert_eq!(
+            resolve_enumerator_type(
+                EnumType::UpperAmbiguousI,
+                Some(EnumType::Upperalpha),
+                Some("G"),
+            ),
+            EnumType::Upperroman
+        );
+        assert_eq!(
+            resolve_enumerator_type(
+                EnumType::LowerAmbiguousI,
+                Some(EnumType::Loweralpha),
+                Some("g"),
+            ),
+            EnumType::Lowerroman
+        );
+        assert_eq!(
+            resolve_enumerator_type(
+                EnumType::LowerAmbiguousI,
+                Some(EnumType::Loweralpha),
+                Some("h"),
+            ),
+            EnumType::Loweralpha
         );
     }
 

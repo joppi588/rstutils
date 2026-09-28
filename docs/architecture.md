@@ -57,6 +57,12 @@ Option 2:
 - Further specialization via error messages
 Decision: TODO (depends on error handling)
 
+7. Warnings
+Warning messages are emitted by the linter, the parser rather emits only errors.
+Rationale: Syntax is ideally unambiguous.
+Warnings represent interpretation, which is on a semantic level -> linter.
+There are exceptions, e.g. the parser needs to decide if alphabet I (continue enum list) or roman 1 (start new list).
+
 # Architectural drivers
 Development speed, especially bug fixes -> Maintainability is key
 Execution speed
