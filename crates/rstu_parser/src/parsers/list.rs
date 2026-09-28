@@ -4,7 +4,7 @@
 
 use super::block::parse_block;
 use super::list_enum_helpers::{
-    enumerator_parts, enumerator_type, enumerator_value, resolve_enumerator_type,
+    enumerator_parts, enumerator_type, enumerator_value, resolve_enumerator_type, EnumType,
 };
 use crate::parser_errors::{ParserError, EXPECT_NEWLINE};
 use crate::token::{Token, TokenKind as TK};
@@ -127,18 +127,28 @@ pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef,
         .with_attr("suffix", suffix);
 
     let mut next_number = 1;
+    let mut previous_value: Option<String> = None;
     while stream.kind_at_cursor() == TK::EnumeratedListMarker {
         let marker = stream.consume().lexeme.to_owned();
         let (item_prefix, value, item_suffix) = enumerator_parts(&marker);
         let item_type = if value == "#" {
             enumtype
         } else {
-            resolve_enumerator_type(enumerator_type(value)?, Some(enumtype))
+            match enumerator_type(value)? {
+                EnumType::UpperAmbiguousI if previous_value.as_deref() != Some("H") => {
+                    EnumType::Upperroman
+                }
+                EnumType::LowerAmbiguousI if previous_value.as_deref() != Some("h") => {
+                    EnumType::Lowerroman
+                }
+                marker_type => resolve_enumerator_type(marker_type, Some(enumtype)),
+            }
         };
         if item_prefix != prefix || item_suffix != suffix || item_type != enumtype {
             stream.set_cursor(stream.cursor() - 1);
             break;
         }
+        previous_value = Some(value.to_owned());
         let item = AstNode::new_ref(NodeClass::EnumeratedListItem);
         item.with_attr("raw_value", value);
         let number = match value {
@@ -213,5 +223,22 @@ mod tests {
         // THEN I follows alpha and C follows Roman
         assert_eq!(list_types("H. first\nI. second\n"), ["upperalpha"]);
         assert_eq!(list_types("I. first\nC. second\n"), ["upperroman"]);
+    }
+
+    #[test]
+    fn ambiguous_i_starts_a_roman_list_unless_preceded_by_h() {
+        // GIVEN alpha lists whose next marker is I or i
+        // WHEN that marker is preceded by something other than H or h
+        // THEN it starts a Roman list
+        assert_eq!(
+            list_types("F. first\nI. second\nII. third\n"),
+            ["upperalpha", "upperroman"]
+        );
+        assert_eq!(
+            list_types("f. first\ni. second\nii. third\n"),
+            ["loweralpha", "lowerroman"]
+        );
+        assert_eq!(list_types("H. first\nI. second\n"), ["upperalpha"]);
+        assert_eq!(list_types("h. first\ni. second\n"), ["loweralpha"]);
     }
 }

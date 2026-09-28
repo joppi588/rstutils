@@ -163,9 +163,15 @@ children:
             text: |
               Item c.
   - class: BlankLine
+- class: EnumeratedList
+  attributes:
+    enumtype: lowerroman
+    prefix: ''
+    suffix: .
+  children:
   - class: EnumeratedListItem
     attributes:
-      number: 9
+      number: 1
       raw_value: i
     children:
     - class: Block
@@ -178,12 +184,6 @@ children:
           attributes:
             text: |
               Item i.
-- class: EnumeratedList
-  attributes:
-    enumtype: lowerroman
-    prefix: ''
-    suffix: .
-  children:
   - class: EnumeratedListItem
     attributes:
       number: 2
