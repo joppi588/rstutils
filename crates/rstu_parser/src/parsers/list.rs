@@ -4,7 +4,7 @@
 
 use super::block::parse_block;
 use super::list_enum_helpers::{
-    enumerator_parts, enumerator_type, enumerator_value, resolve_enumerator_type, EnumType,
+    enumerator_parts, enumerator_type, enumerator_value, resolve_enumerator_type,
 };
 use crate::parser_errors::{ParserError, EXPECT_NEWLINE};
 use crate::token::{Token, TokenKind as TK};
@@ -120,7 +120,7 @@ pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, Par
 pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     let first_marker = stream.token_at(stream.cursor()).lexeme.to_owned();
     let (prefix, first_value, suffix) = enumerator_parts(&first_marker);
-    let enumtype = resolve_enumerator_type(enumerator_type(first_value)?, None);
+    let enumtype = resolve_enumerator_type(enumerator_type(first_value)?, None, None);
     let list = AstNode::new_ref(NodeClass::EnumeratedList);
     list.with_attr("enumtype", format!("{enumtype:?}").to_lowercase())
         .with_attr("prefix", prefix)
@@ -134,15 +134,11 @@ pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef,
         let item_type = if value == "#" {
             enumtype
         } else {
-            match enumerator_type(value)? {
-                EnumType::UpperAmbiguousI if previous_value.as_deref() != Some("H") => {
-                    EnumType::Upperroman
-                }
-                EnumType::LowerAmbiguousI if previous_value.as_deref() != Some("h") => {
-                    EnumType::Lowerroman
-                }
-                marker_type => resolve_enumerator_type(marker_type, Some(enumtype)),
-            }
+            resolve_enumerator_type(
+                enumerator_type(value)?,
+                Some(enumtype),
+                previous_value.as_deref(),
+            )
         };
         if item_prefix != prefix || item_suffix != suffix || item_type != enumtype {
             stream.set_cursor(stream.cursor() - 1);
