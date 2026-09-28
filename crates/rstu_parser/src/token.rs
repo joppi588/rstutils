@@ -59,6 +59,18 @@ impl Token {
         }
     }
 
+    pub fn indent(width: usize) -> Self {
+        Self::new(TokenKind::Indent, space!(width))
+    }
+
+    pub fn dedent(width: usize) -> Self {
+        Self::new(TokenKind::Dedent, space!(width))
+    }
+
+    pub fn len(&self) -> usize {
+        self.lexeme.len()
+    }
+
     pub fn as_tuple(&self) -> (TokenKind, &str) {
         (self.kind, &self.lexeme)
     }
@@ -261,7 +273,23 @@ impl TokenKind {
 
 #[cfg(test)]
 mod tests {
-    use super::{TokenCategory, TokenKind as TK};
+    use super::{Token, TokenCategory, TokenKind as TK};
+
+    /// GIVEN a token with a multibyte lexeme
+    /// WHEN its length is queried
+    /// THEN the byte length is returned
+    #[test]
+    fn token_len_returns_lexeme_byte_length() {
+        let token = Token::new(TK::Word, "é");
+
+        assert_eq!(token.len(), 2);
+    }
+
+    #[test]
+    fn indent_and_dedent_constructors_create_space_tokens() {
+        assert_eq!(Token::indent(3), Token::new(TK::Indent, "   "));
+        assert_eq!(Token::dedent(2), Token::new(TK::Dedent, "  "));
+    }
 
     #[test]
     fn match_token_uses_centralized_token_list() {

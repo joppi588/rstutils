@@ -14,7 +14,7 @@ pub(crate) fn parse_block(stream: &mut TokenStream) -> Result<NodeRef, ParserErr
     let mut indent: usize = 0;
     if stream.kind_at_cursor() == TK::Indent {
         let token = stream.consume();
-        indent = token.lexeme.len();
+        indent = token.len();
         block.with_attr("indent", indent);
     }
     loop {
@@ -25,19 +25,19 @@ pub(crate) fn parse_block(stream: &mut TokenStream) -> Result<NodeRef, ParserErr
             }
             TK::BlankLine => {
                 let token = stream.consume();
-                block.push_blank_lines(token.lexeme.len());
+                block.push_blank_lines(token.len());
             }
             TK::Dedent => {
                 let dedent_token = stream.consume();
-                let dedent = dedent_token.lexeme.len();
+                let dedent = dedent_token.len();
                 if dedent != indent {
                     let cursor = stream.cursor();
-                    let kind = if dedent < indent {
-                        TK::Indent
+                    let width = dedent.abs_diff(indent);
+                    let rel_indent = if dedent < indent {
+                        Token::indent(width)
                     } else {
-                        TK::Dedent
+                        Token::dedent(width)
                     };
-                    let rel_indent = Token::new(kind, " ".repeat(dedent.abs_diff(indent)));
                     stream.insert_at(cursor, rel_indent);
                     stream.set_cursor(cursor);
                 }

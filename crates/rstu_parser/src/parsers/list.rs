@@ -28,18 +28,15 @@ fn prepare_item_block(stream: &mut TokenStream, dedent_len: usize) -> Result<(),
         Some(indent_index) => {
             let indent_token = stream.take_at(indent_index);
             let cursor = stream.cursor();
-            if indent_token.lexeme.len() <= dedent_len {
+            if indent_token.len() <= dedent_len {
                 stream.insert_at(cursor, indent_token);
             } else {
                 // If the next line is indented beyond the marker/field/...,
                 // we assume that it represents two subsequent indents.
-                stream.insert_at(cursor, Token::new(TK::Indent, " ".repeat(dedent_len)));
+                stream.insert_at(cursor, Token::indent(dedent_len));
                 stream.insert_at(
                     indent_index + 1,
-                    Token::new(
-                        TK::Indent,
-                        " ".repeat(indent_token.lexeme.len() - dedent_len),
-                    ),
+                    Token::indent(indent_token.len() - dedent_len),
                 );
             }
             stream.set_cursor(cursor);
@@ -52,15 +49,9 @@ fn prepare_item_block(stream: &mut TokenStream, dedent_len: usize) -> Result<(),
             | TK::EoF
             | TK::Dedent
             | TK::BlankLine => {
-                stream.insert_at(
-                    stream.cursor(),
-                    Token::new(TK::Indent, " ".repeat(dedent_len)),
-                );
+                stream.insert_at(stream.cursor(), Token::indent(dedent_len));
                 stream.set_cursor(stream.cursor() - 1);
-                stream.insert_at(
-                    next_line + 1,
-                    Token::new(TK::Dedent, " ".repeat(dedent_len)),
-                );
+                stream.insert_at(next_line + 1, Token::dedent(dedent_len));
             }
             _ => return Err(ParserError::ListEndError {}),
         },
@@ -78,7 +69,7 @@ fn finish_list_item(
     let mut dedent_len = dedent_len;
 
     if stream.kind_at_cursor() == TK::Spaces {
-        dedent_len += stream.consume().lexeme.len();
+        dedent_len += stream.consume().len();
     }
 
     prepare_item_block(stream, dedent_len)?;
@@ -87,7 +78,7 @@ fn finish_list_item(
     list.push_child(item);
     if stream.kind_at_cursor() == TK::BlankLine {
         let blank_token = stream.consume();
-        list.push_blank_lines(blank_token.lexeme.len());
+        list.push_blank_lines(blank_token.len());
     }
     Ok(())
 }
@@ -173,7 +164,7 @@ pub(crate) fn parse_field_list(stream: &mut TokenStream) -> Result<NodeRef, Pars
             .to_owned();
         item.with_attr("fieldname", field_name);
 
-        let dedent_len = field_token.lexeme.len();
+        let dedent_len = field_token.len();
         finish_list_item(stream, &list, item, dedent_len)?;
     }
 

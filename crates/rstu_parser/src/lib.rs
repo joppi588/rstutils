@@ -2,6 +2,12 @@
 //
 // SPDX-License-Identifier: MIT
 
+macro_rules! space {
+    ($width:expr) => {
+        " ".repeat($width)
+    };
+}
+
 pub mod lexer;
 mod parsers;
 use std::cell::RefCell;
@@ -60,7 +66,7 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
             }
             (TK::BlankLine, _) => {
                 let token = stream.consume();
-                current_parent.push_blank_lines(token.lexeme.len());
+                current_parent.push_blank_lines(token.len());
             }
 
             (TK::EoF, _) => {
@@ -96,7 +102,7 @@ pub fn match_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserE
     }
     let closing_token = &stream.tokens()[closing_index];
     let closing_style: String = closing_token.lexeme[..1].to_string();
-    let closing_len = closing_token.lexeme.len();
+    let closing_len = closing_token.len();
     let opening_len = if has_overline {
         let opening_token = &stream.tokens()[start_at];
         let opening_style = opening_token.lexeme[..1].to_string();
