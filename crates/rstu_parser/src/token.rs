@@ -98,7 +98,9 @@ impl TokenCategory {
         TokenKind::Separator,
         TokenKind::Indent,
         TokenKind::Dedent,
-        TokenKind::DoubleColon,
+        TokenKind::LiteralBlock,
+        TokenKind::LiteralBlockMinimized,
+        TokenKind::LiteralBlockPartiallyMinimized,
         TokenKind::EoF,
     ];
 
@@ -124,6 +126,12 @@ impl TokenCategory {
         TokenCategory::INLINE_MARKER,
         TokenCategory::INLINE_TOKEN,
         TokenCategory::PLAIN,
+        // LITERAL_BLOCK
+        &[
+            TokenKind::LiteralBlock,
+            TokenKind::LiteralBlockMinimized,
+            TokenKind::LiteralBlockPartiallyMinimized,
+        ],
     ];
 }
 
@@ -135,12 +143,11 @@ pub enum TokenKind {
     BulletListMarker,
     Dedent,
     Directive,
-    DoubleColon,
     DoubleDot,
-    EoF,
     EmphasisEnd,
     EmphasisStart,
     EnumeratedListMarker,
+    EoF,
     Field,
     FootnoteReference,
     HyperlinkReferenceEnd,
@@ -148,6 +155,9 @@ pub enum TokenKind {
     InlineInternalTargetStart,
     InlineLiteralEnd,
     InlineLiteralStart,
+    LiteralBlock,
+    LiteralBlockMinimized,
+    LiteralBlockPartiallyMinimized,
     LiteralChar,
     NewLine,
     Punctuation,
@@ -180,7 +190,9 @@ impl TokenKind {
         (DoubleDot, r"[\n\s]\.\.[\n\s]"),
 
         // Literal block
-        (DoubleColon, r"(.|\n)::(.|\n)"),
+        (LiteralBlockMinimized, r"[A-Za-z0-9]::\n(.|\n)"),
+        (LiteralBlockPartiallyMinimized, r".\s::\n(.|\n)"),
+        (LiteralBlock, r"(.|\n)::\n(.|\n)"),
 
         (TableHorizontal, r"\n=+(?:\s+=+)+\s*\n"),
 
@@ -329,13 +341,13 @@ mod tests {
     }
 
     #[test]
-    fn doublecolon_matches() {
-        assert!(TK::DoubleColon.is_match("e::\n"));
+    fn literal_block_matches() {
+        assert!(TK::LiteralBlock.is_match("e::\nt"));
     }
 
     #[test]
-    fn doublecolon_non_matching() {
-        assert!(!TK::DoubleColon.is_match("e:\n"));
+    fn literal_block_non_matching() {
+        assert!(!TK::LiteralBlock.is_match("e:\n"));
     }
 
     #[test]

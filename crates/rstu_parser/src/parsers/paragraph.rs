@@ -16,8 +16,18 @@ pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, Parse
             kind if kind.is(TC::INLINE_MARKER) => parse_inline(stream)?,
             kind if kind.is(TC::INLINE_TOKEN) => parse_inline_token(stream)?,
             //TODO: Concatenate TC::PLAIN and tokens to a new list
-            kind if kind.is(TC::PLAIN) || kind == TK::BulletListMarker || kind == TK::NewLine => {
-                parse_plain(stream)
+            kind if kind.is(TC::PLAIN) || kind == TK::BulletListMarker => {
+                let plain_text = parse_plain(stream);
+                if stream.kind_at_cursor() == TK::LiteralBlockMinimized {
+                    let text = plain_text
+                        .borrow()
+                        .attributes
+                        .get_str("text")
+                        .unwrap_or_default();
+
+                    plain_text.with_attr("text", format!("{text}:\n"));
+                }
+                plain_text
             }
             kind if kind.is(TC::PARAGRAPH_END) => break,
             _ => {
