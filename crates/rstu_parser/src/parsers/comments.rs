@@ -7,8 +7,11 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 use crate::parser_errors::{ParserError, EXPECT_NEWLINE};
 use crate::token::TokenKind as TK;
 use crate::token_stream::{self, TokenStream};
+use std::debug_assert_matches;
 
 pub(crate) fn parse_comment(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    debug_assert_matches!(stream.kind_at_cursor(), TK::DoubleDot);
+
     let comment = AstNode::new_ref(NodeClass::Comment);
     let index = stream.find_next_kind(&[TK::NewLine]).expect(EXPECT_NEWLINE);
     let mut text = token_stream::tokens_to_text(&stream.tokens()[stream.cursor() + 2..index + 1]);
