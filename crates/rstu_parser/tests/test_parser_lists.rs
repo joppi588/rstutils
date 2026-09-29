@@ -58,19 +58,20 @@ fn rejects_docutils_bullet_list_end(#[case] rst_filename: &str) {
 }
 
 #[rstest]
+#[case("docutils_mixed_auto_and_explicit")]
 #[case("nok_empty_item_no_blank")]
-#[case("ok_enumerated_list")]
-#[case("ok_no_blank_lines_between_items")]
-#[case("ok_different_enumeration_sequences")]
-#[case("ok_nested_enumerated_lists")]
 #[case("ok_auto_enumerator")]
-#[case("ok_potentially_ambiguous")]
+#[case("ok_auto_only")]
 #[case("ok_definitely_ambiguous")]
 #[case("ok_different_enumeration_formats")]
+#[case("ok_different_enumeration_sequences")]
+#[case("ok_enumerated_list")]
 #[case("ok_loweralpha_auto")]
 #[case("ok_lowerroman_auto")]
+#[case("ok_nested_enumerated_lists")]
+#[case("ok_no_blank_lines_between_items")]
 #[case("ok_non_marker_period")]
-#[case("docutils_mixed_auto_and_explicit")]
+#[case("ok_potentially_ambiguous")]
 fn parse_enumerated_list(#[case] test_case: &str) {
     rst_vs_yaml!("lists/enumerated_list", test_case)
 }
@@ -102,8 +103,6 @@ fn rejects_docutils_enumerated_list_errors(#[case] rst_filename: &str) {
 // NOT IMPLEMENTED: Non-breaking-space handling is not supported by the current lexer.
 // #[case("docutils_nonbreaking_space_workaround")]
 // #[case("ok_enumerated_item_indentation")]
-// NOT IMPLEMENTED: A list cannot currently start with an auto-enumerator.
-// #[case("ok_auto_only")]
 // #[case("ok_multiline_enumerated_items")]
 
 #[rstest]
