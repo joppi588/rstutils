@@ -9,6 +9,8 @@ use crate::token::{TokenCategory as TC, TokenKind as TK};
 use crate::token_stream::{tokens_to_text, TokenStream};
 
 pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    debug_assert!(stream.kind_at_cursor().nested_is(TC::PARAGRAPH));
+
     let paragraph = AstNode::new_ref(NodeClass::Paragraph);
     loop {
         let kind = stream.kind_at_cursor();
@@ -46,6 +48,8 @@ pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, Parse
 }
 
 pub(crate) fn parse_inline_token(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    debug_assert!(stream.kind_at_cursor().is(TC::INLINE_TOKEN));
+
     let at = stream.cursor();
     let node = AstNode::new_ref(NodeClass::Reference);
     let token = stream.consume();
@@ -81,6 +85,8 @@ pub(crate) fn parse_inline_token(stream: &mut TokenStream) -> Result<NodeRef, Pa
 }
 
 pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    debug_assert!(stream.kind_at_cursor().is(TC::INLINE_MARKER));
+
     let start_at = stream.cursor();
     let kind = stream.kind_at_cursor();
     let (markup, end_kind_candidates): (&str, &[TK]) = match kind {
@@ -124,6 +130,10 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
 }
 
 fn parse_plain(stream: &mut TokenStream) -> NodeRef {
+    debug_assert!(
+        stream.kind_at_cursor().is(TC::PLAIN) || stream.kind_at_cursor() == TK::BulletListMarker
+    );
+
     let mut text = String::new();
 
     loop {

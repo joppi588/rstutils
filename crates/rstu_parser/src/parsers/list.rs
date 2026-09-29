@@ -10,6 +10,7 @@ use crate::parser_errors::{ParserError, EXPECT_NEWLINE};
 use crate::token::{Token, TokenKind as TK};
 use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
+use std::debug_assert_matches;
 
 fn prepare_item_block(stream: &mut TokenStream, dedent_len: usize) -> Result<(), ParserError> {
     // List item cases
@@ -84,6 +85,8 @@ fn finish_list_item(
 }
 
 pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    debug_assert_matches!(stream.kind_at_cursor(), TK::BulletListMarker);
+
     let list = AstNode::new_ref(NodeClass::BulletList);
     let mut marker: Option<String> = None;
 
@@ -109,6 +112,8 @@ pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, Par
 }
 
 pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    debug_assert_matches!(stream.kind_at_cursor(), TK::EnumeratedListMarker);
+
     let first_marker = stream.token_at(stream.cursor()).lexeme.to_owned();
     let (prefix, first_value, suffix) = enumerator_parts(&first_marker);
     let enumtype = resolve_enumerator_type(enumerator_type(first_value)?, None, None);
@@ -151,6 +156,8 @@ pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef,
 }
 
 pub(crate) fn parse_field_list(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    debug_assert_matches!(stream.kind_at_cursor(), TK::Field);
+
     let list = AstNode::new_ref(NodeClass::FieldList);
 
     while stream.kind_at_cursor() == TK::Field {
