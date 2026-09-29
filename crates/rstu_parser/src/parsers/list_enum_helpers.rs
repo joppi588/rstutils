@@ -91,6 +91,7 @@ pub(super) fn enumerator_type(value: &str) -> Result<EnumType, ParserError> {
         "i" => Ok(EnumType::LowerAmbiguousI),
         "C" => Ok(EnumType::UpperAmbiguousC),
         "c" => Ok(EnumType::LowerAmbiguousC),
+        "#" => Ok(EnumType::Arabic),
         value
             if value.chars().count() > 1
                 && roman_value(value).is_some()
