@@ -3,7 +3,8 @@
 // SPDX-License-Identifier: MIT
 
 use rstu_parser::lexer::tokenize;
-use rstu_parser::token::{Token, TokenKind as TK};
+use rstu_parser::token::TokenKind as TK;
+use rstu_parser::token_stream::TokenStream;
 use std::fs;
 use std::path::Path;
 
@@ -13,9 +14,7 @@ fn tokenize_ok_mixed_lorem_ipsum_file() {
         Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/data/mixed/ok_mixed_lorem_ipsum.rst");
     let contents = fs::read_to_string(path).expect("failed to read mixed lorem ipsum test file");
 
-    let tokens: Vec<Token> = tokenize(&contents);
-    let kinds: Vec<(TK, &str)> = tokens.iter().map(|token| token.as_tuple()).collect();
-    let expected_kinds = vec![
+    let expected = TokenStream::from_pairs(&[
         (TK::Word, "Lorem"),
         (TK::Spaces, " "),
         (TK::Word, "Ipsum"),
@@ -84,9 +83,9 @@ fn tokenize_ok_mixed_lorem_ipsum_file() {
         (TK::StrongEnd, "**"),
         (TK::NewLine, "\n"),
         (TK::EoF, ""),
-    ];
+    ]);
 
-    assert_eq!(kinds, expected_kinds);
+    assert_eq!(tokenize(&contents), expected);
 }
 
 #[test]
@@ -95,9 +94,7 @@ fn tokenize_ok_indentation() {
         .join("tests/data/indentation/ok_indent_blankline.rst");
     let contents = fs::read_to_string(path).expect("failed to read test file");
 
-    let tokens: Vec<Token> = tokenize(&contents);
-    let kinds: Vec<(TK, &str)> = tokens.iter().map(|token| token.as_tuple()).collect();
-    let expected_kinds = vec![
+    let expected = TokenStream::from_pairs(&[
         (TK::Word, "First"),
         (TK::Spaces, " "),
         (TK::Word, "line"),
@@ -122,9 +119,9 @@ fn tokenize_ok_indentation() {
         (TK::Word, "Dedented2"),
         (TK::NewLine, "\n"),
         (TK::EoF, ""),
-    ];
+    ]);
 
-    assert_eq!(kinds, expected_kinds);
+    assert_eq!(tokenize(&contents), expected);
 }
 
 #[test]
@@ -133,9 +130,7 @@ fn tokenize_ok_indentation_2blanklines() {
         .join("tests/data/indentation/ok_indent_2blankline.rst");
     let contents = fs::read_to_string(path).expect("failed to read test file");
 
-    let tokens: Vec<Token> = tokenize(&contents);
-    let kinds: Vec<(TK, &str)> = tokens.iter().map(|token| token.as_tuple()).collect();
-    let expected_kinds = vec![
+    let expected = TokenStream::from_pairs(&[
         (TK::Word, "First_line"),
         (TK::NewLine, "\n"),
         (TK::Indent, "  "),
@@ -150,18 +145,16 @@ fn tokenize_ok_indentation_2blanklines() {
         (TK::Word, "Dedented"),
         (TK::NewLine, "\n"),
         (TK::EoF, ""),
-    ];
+    ]);
 
-    assert_eq!(kinds, expected_kinds);
+    assert_eq!(tokenize(&contents), expected);
 }
 
 #[test]
 fn tokenize_punctuation_bullet_list() {
     let contents = "\n:Authors: - Me\n";
 
-    let tokens: Vec<Token> = tokenize(&contents);
-    let kinds: Vec<(TK, &str)> = tokens.iter().map(|token| token.as_tuple()).collect();
-    let expected_kinds = vec![
+    let expected = TokenStream::from_pairs(&[
         (TK::BlankLine, "\n"),
         (TK::Field, ":Authors:"),
         (TK::Spaces, " "),
@@ -170,7 +163,7 @@ fn tokenize_punctuation_bullet_list() {
         (TK::Word, "Me"),
         (TK::NewLine, "\n"),
         (TK::EoF, ""),
-    ];
+    ]);
 
-    assert_eq!(kinds, expected_kinds);
+    assert_eq!(tokenize(contents), expected);
 }

@@ -36,7 +36,7 @@ use token_stream::TokenStream;
 /// Parser implementation:
 /// Lookahead one line -> Decide on element.
 pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
-    let mut stream = TokenStream::new(tokenize(input));
+    let mut stream = tokenize(input);
     let doc = AstNode::new_ref(NodeClass::Document);
     let mut current_parent = doc.clone();
 
