@@ -13,7 +13,7 @@ pub fn parse_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserE
     let mut opening_style: Option<String> = None;
 
     if stream.kind_at_cursor() == TK::Separator {
-        let opening_token = &stream.consume();
+        let opening_token = stream.consume();
         opening_style = Some(opening_token.lexeme[..1].to_string());
         section.with_attr("marker_len_opening", opening_token.len());
         stream.consume(); //Newline
@@ -33,7 +33,7 @@ pub fn parse_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserE
         });
     }
     stream.set_cursor(closing_index);
-    let closing_token = &stream.consume();
+    let closing_token = stream.consume();
     let closing_style: String = closing_token.lexeme[..1].to_string();
     let closing_len = closing_token.len();
 
