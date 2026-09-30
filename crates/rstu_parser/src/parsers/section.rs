@@ -6,7 +6,7 @@ use crate::token::TokenKind as TK;
 use crate::token_stream::{tokens_to_text, TokenStream};
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
-pub fn match_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+pub fn parse_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     let start_at = stream.cursor();
     let has_overline = stream.kind_at_cursor() == TK::Separator;
 

@@ -18,7 +18,7 @@ use parsers::directives::parse_directive;
 use parsers::list::{parse_bullet_list, parse_enumerated_list, parse_field_list};
 use parsers::literal_block::parse_literal_block;
 use parsers::paragraph::parse_paragraph;
-use parsers::section::match_section_header;
+use parsers::section::parse_section_header;
 
 pub mod parser_errors;
 pub mod token;
@@ -43,7 +43,7 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
     loop {
         match (stream.kind_at_cursor(), stream.kind_at_nextline()) {
             (TK::Separator, TK::Indent | TK::Word) | (TK::Word, TK::Separator) => {
-                let section = match_section_header(&mut stream)?;
+                let section = parse_section_header(&mut stream)?;
                 current_parent.push_section_ref(section.clone());
                 current_parent = section;
             }
