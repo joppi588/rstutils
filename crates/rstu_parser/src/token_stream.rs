@@ -17,6 +17,7 @@ pub fn tokens_to_text(tokens: &[Token]) -> String {
     }
     text
 }
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TokenStream {
     tokens: Vec<Token>,
     cursor: usize,
@@ -25,6 +26,15 @@ pub struct TokenStream {
 impl TokenStream {
     pub fn new(tokens: Vec<Token>) -> Self {
         Self { tokens, cursor: 0 }
+    }
+
+    pub fn from_pairs(tokens: &[(TokenKind, &str)]) -> Self {
+        Self::new(
+            tokens
+                .iter()
+                .map(|(kind, lexeme)| Token::new(*kind, *lexeme))
+                .collect(),
+        )
     }
 
     pub fn tokens(&self) -> &[Token] {
@@ -148,7 +158,7 @@ mod tests {
 
     #[test]
     fn kind_at_returns_eof_past_the_end() {
-        let stream = TokenStream::new(vec![Token::new(TokenKind::Word, "title")]);
+        let stream = TokenStream::from_pairs(&[(TokenKind::Word, "title")]);
 
         assert_eq!(stream.kind_at(0), TokenKind::Word);
         assert_eq!(stream.kind_at(1), TokenKind::EoF);
@@ -156,10 +166,10 @@ mod tests {
 
     #[test]
     fn find_next_kind_matches_any_requested_kind() {
-        let stream = TokenStream::new(vec![
-            Token::new(TokenKind::Word, "title"),
-            Token::new(TokenKind::Spaces, " "),
-            Token::new(TokenKind::NewLine, "\n"),
+        let stream = TokenStream::from_pairs(&[
+            (TokenKind::Word, "title"),
+            (TokenKind::Spaces, " "),
+            (TokenKind::NewLine, "\n"),
         ]);
 
         let found = stream.find_next_kind_from(&[TokenKind::BlankLine, TokenKind::NewLine], 0);
@@ -169,10 +179,8 @@ mod tests {
 
     #[test]
     fn kind_peek_relative_looks_ahead_of_the_cursor() {
-        let stream = TokenStream::new(vec![
-            Token::new(TokenKind::Word, "title"),
-            Token::new(TokenKind::NewLine, "\n"),
-        ]);
+        let stream =
+            TokenStream::from_pairs(&[(TokenKind::Word, "title"), (TokenKind::NewLine, "\n")]);
 
         assert_eq!(stream.kind_peek_relative(1), TokenKind::NewLine);
         assert_eq!(stream.kind_peek_relative(5), TokenKind::EoF);
@@ -180,10 +188,10 @@ mod tests {
 
     #[test]
     fn kind_at_nextline_returns_the_kind_after_the_next_newline() {
-        let stream = TokenStream::new(vec![
-            Token::new(TokenKind::Word, "title"),
-            Token::new(TokenKind::NewLine, "\n"),
-            Token::new(TokenKind::Indent, "  "),
+        let stream = TokenStream::from_pairs(&[
+            (TokenKind::Word, "title"),
+            (TokenKind::NewLine, "\n"),
+            (TokenKind::Indent, "  "),
         ]);
 
         assert_eq!(stream.kind_at_nextline(), TokenKind::Indent);
@@ -191,17 +199,15 @@ mod tests {
 
     #[test]
     fn kind_at_nextline_returns_eof_when_no_newline_remains() {
-        let stream = TokenStream::new(vec![Token::new(TokenKind::Word, "title")]);
+        let stream = TokenStream::from_pairs(&[(TokenKind::Word, "title")]);
 
         assert_eq!(stream.kind_at_nextline(), TokenKind::EoF);
     }
 
     #[test]
     fn consume_returns_the_token_and_advances_the_cursor() {
-        let mut stream = TokenStream::new(vec![
-            Token::new(TokenKind::Word, "title"),
-            Token::new(TokenKind::NewLine, "\n"),
-        ]);
+        let mut stream =
+            TokenStream::from_pairs(&[(TokenKind::Word, "title"), (TokenKind::NewLine, "\n")]);
 
         assert_eq!(stream.consume(), Token::new(TokenKind::Word, "title"));
         assert_eq!(stream.cursor(), 1);

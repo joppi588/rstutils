@@ -65,11 +65,10 @@ pub(crate) fn parse_directive(stream: &mut TokenStream) -> Result<NodeRef, Parse
 mod tests {
     use super::parse_directive;
     use crate::lexer::tokenize;
-    use crate::token_stream::TokenStream;
 
     #[test]
     fn parse_substitution_directive_marker() {
-        let mut stream = TokenStream::new(tokenize(".. | name | replace:: target\n"));
+        let mut stream = tokenize(".. | name | replace:: target\n");
 
         let directive = parse_directive(&mut stream).unwrap();
         let directive = directive.borrow();
