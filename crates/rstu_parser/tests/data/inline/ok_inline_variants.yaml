@@ -3,7 +3,6 @@ children:
   - class: Section
     attributes:
       marker_len: 18
-      marker_len_opening: 0
       section_marker: "-"
     children:
       - class: Title
@@ -43,7 +42,6 @@ children:
   - class: Section
     attributes:
       marker_len: 17
-      marker_len_opening: 0
       section_marker: "-"
     children:
       - class: Title
@@ -90,7 +88,6 @@ children:
   - class: Section
     attributes:
       marker_len: 23
-      marker_len_opening: 0
       section_marker: "-"
     children:
       - class: Title

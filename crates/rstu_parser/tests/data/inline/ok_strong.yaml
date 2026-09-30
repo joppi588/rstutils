@@ -3,7 +3,6 @@ children:
   - class: Section
     attributes:
       marker_len: 31
-      marker_len_opening: 0
       section_marker: "-"
     children:
       - class: Title

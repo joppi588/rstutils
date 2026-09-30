@@ -4,7 +4,6 @@ children:
     attributes:
       section_marker: "="
       marker_len: 9
-      marker_len_opening: 0
     children:
       - class: Title
         attributes:
@@ -20,7 +19,6 @@ children:
         attributes:
           section_marker: "-"
           marker_len: 10
-          marker_len_opening: 0
         children:
           - class: Title
             attributes:
@@ -36,7 +34,6 @@ children:
     attributes:
       section_marker: "="
       marker_len: 11
-      marker_len_opening: 0
     children:
       - class: Title
         attributes:
