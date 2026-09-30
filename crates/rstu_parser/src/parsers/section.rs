@@ -11,13 +11,11 @@ pub fn parse_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserE
 
     let start_at = stream.cursor();
     let mut opening_style: Option<String> = None;
-    let mut opening_len: usize = 0;
 
     if stream.kind_at_cursor() == TK::Separator {
-        let opening_token = Some(&stream.consume());
-        opening_style = Some(opening_token.expect("Just defined").lexeme[..1].to_string());
-        opening_len = opening_token.expect("Just defined").len();
-        section.with_attr("marker_len_opening", opening_len);
+        let opening_token = &stream.consume();
+        opening_style = Some(opening_token.lexeme[..1].to_string());
+        section.with_attr("marker_len_opening", opening_token.len());
         stream.consume(); //Newline
     }
     let title = AstNode::new_ref(NodeClass::Title);
@@ -39,10 +37,10 @@ pub fn parse_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserE
     let closing_style: String = closing_token.lexeme[..1].to_string();
     let closing_len = closing_token.len();
 
-    if opening_len > 0 && opening_style.as_deref().expect("Some") != closing_style {
+    if let Some(opening_style) = opening_style.filter(|style| style != &closing_style) {
         return Err(ParserError::SectionTitleUnbalancedStyle {
             opening_index: start_at,
-            opening_style: opening_style.expect("Opening style confirmed.").clone(),
+            opening_style,
             closing_style,
         });
     }
