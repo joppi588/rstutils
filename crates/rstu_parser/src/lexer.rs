@@ -3,8 +3,9 @@
 // SPDX-License-Identifier: MIT
 
 use crate::token::{Token, TokenKind as TK};
+use crate::token_stream::TokenStream;
 
-pub fn tokenize(input: &str) -> Vec<Token> {
+pub fn tokenize(input: &str) -> TokenStream {
     let input = format!("\n{input}\n"); // leading blank line
     let mut tokens: Vec<Token> = Vec::new();
     let mut last_token_kind = TK::BlankLine;
@@ -50,24 +51,24 @@ pub fn tokenize(input: &str) -> Vec<Token> {
         tokens.push(Token::dedent(current_indent))
     };
     tokens.push(Token::new(TK::EoF, ""));
-    tokens
+    TokenStream::new(tokens)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::token::TokenKind;
+    use crate::token_stream::TokenStream;
 
     #[test]
     fn tokenize_spaces_words() {
         let input = "Hello World\n";
-        let expected = vec![
-            Token::new(TK::Word, "Hello"),
-            Token::new(TK::Spaces, " "),
-            Token::new(TK::Word, "World"),
-            Token::new(TK::NewLine, "\n"),
-            Token::new(TK::EoF, ""),
-        ];
+        let expected = TokenStream::from_pairs(&[
+            (TK::Word, "Hello"),
+            (TK::Spaces, " "),
+            (TK::Word, "World"),
+            (TK::NewLine, "\n"),
+            (TK::EoF, ""),
+        ]);
 
         assert_eq!(tokenize(input), expected);
     }
@@ -75,13 +76,13 @@ mod tests {
     #[test]
     fn tokenize_treats_unmatched_input_as_literal_string() {
         let input = "abc\x07def\n";
-        let expected = vec![
-            Token::new(TK::Word, "abc"),
-            Token::new(TK::LiteralChar, "\x07"),
-            Token::new(TK::Word, "def"),
-            Token::new(TK::NewLine, "\n"),
-            Token::new(TK::EoF, ""),
-        ];
+        let expected = TokenStream::from_pairs(&[
+            (TK::Word, "abc"),
+            (TK::LiteralChar, "\x07"),
+            (TK::Word, "def"),
+            (TK::NewLine, "\n"),
+            (TK::EoF, ""),
+        ]);
 
         assert_eq!(tokenize(input), expected);
     }
@@ -89,51 +90,37 @@ mod tests {
     #[test]
     fn tokenize_converts_indents_to_relative_indents_and_dedents() {
         let input = "line_1\n    nested\n  dedented\n";
-        let tokens = tokenize(input);
-        let actual: Vec<(TokenKind, &str)> = tokens
-            .iter()
-            .map(|token| (token.kind, token.lexeme.as_str()))
-            .collect();
+        let expected = TokenStream::from_pairs(&[
+            (TK::Word, "line_1"),
+            (TK::NewLine, "\n"),
+            (TK::Indent, "    "),
+            (TK::Word, "nested"),
+            (TK::NewLine, "\n"),
+            (TK::Dedent, "  "),
+            (TK::Word, "dedented"),
+            (TK::NewLine, "\n"),
+            (TK::Dedent, "  "),
+            (TK::EoF, ""),
+        ]);
 
-        assert_eq!(
-            actual,
-            vec![
-                (TK::Word, "line_1"),
-                (TK::NewLine, "\n"),
-                (TK::Indent, "    "),
-                (TK::Word, "nested"),
-                (TK::NewLine, "\n"),
-                (TK::Dedent, "  "),
-                (TK::Word, "dedented"),
-                (TK::NewLine, "\n"),
-                (TK::Dedent, "  "),
-                (TK::EoF, ""),
-            ]
-        );
+        assert_eq!(tokenize(input), expected);
     }
 
     #[test]
     fn tokenize_emits_dedent_when_indented_block_returns_to_zero_indent() {
         let input = "line_1\n    nested\nplain\n";
-        let tokens = tokenize(input);
-        let actual: Vec<(TokenKind, &str)> = tokens
-            .iter()
-            .map(|token| (token.kind, token.lexeme.as_str()))
-            .collect();
+        let expected = TokenStream::from_pairs(&[
+            (TK::Word, "line_1"),
+            (TK::NewLine, "\n"),
+            (TK::Indent, "    "),
+            (TK::Word, "nested"),
+            (TK::NewLine, "\n"),
+            (TK::Dedent, "    "),
+            (TK::Word, "plain"),
+            (TK::NewLine, "\n"),
+            (TK::EoF, ""),
+        ]);
 
-        assert_eq!(
-            actual,
-            vec![
-                (TK::Word, "line_1"),
-                (TK::NewLine, "\n"),
-                (TK::Indent, "    "),
-                (TK::Word, "nested"),
-                (TK::NewLine, "\n"),
-                (TK::Dedent, "    "),
-                (TK::Word, "plain"),
-                (TK::NewLine, "\n"),
-                (TK::EoF, ""),
-            ]
-        );
+        assert_eq!(tokenize(input), expected);
     }
 }
