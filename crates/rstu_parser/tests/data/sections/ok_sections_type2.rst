@@ -6,7 +6,7 @@ Some Text
 
 ---------
 Heading 2
----------
+----------
 
 More Text
 
