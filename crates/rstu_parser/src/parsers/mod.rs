@@ -8,3 +8,4 @@ pub(crate) mod list;
 mod list_enum_helpers;
 pub(crate) mod literal_block;
 pub(crate) mod paragraph;
+pub(crate) mod section;
