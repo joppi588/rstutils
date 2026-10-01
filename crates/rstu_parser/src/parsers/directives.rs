@@ -40,7 +40,7 @@ pub(crate) fn parse_directive(stream: &mut TokenStream) -> Result<NodeRef, Parse
     if !directive_arguments.is_empty() {
         directive.with_attr("directive_arguments", directive_arguments);
     }
-    stream.consume(); // consume Newline
+    stream.consume_newline();
 
     if stream.kind_at_cursor() != TK::Indent {
         return Ok(directive);
