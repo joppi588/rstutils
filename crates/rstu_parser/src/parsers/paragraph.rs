@@ -88,7 +88,7 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
     debug_assert!(stream.token_at_cursor().kind.is(TC::INLINE_MARKER));
 
     let start_at = stream.cursor();
-    let kind = stream.token_at_cursor().kind;
+    let kind = stream.consume().kind;
     let (markup, end_kind_candidates): (&str, &[TK]) = match kind {
         TK::StrongStart => ("strong", &[TK::StrongEnd]),
         TK::EmphasisStart => ("emphasis", &[TK::EmphasisEnd]),
@@ -107,12 +107,12 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
         }
     };
 
-    let inline_final = stream
-        .find_next_kind_from(end_kind_candidates, start_at + 1)
-        .map_err(|_| ParserError::InlineMissingClosing {
+    let inline_final = stream.find_next_kind(end_kind_candidates).map_err(|_| {
+        ParserError::InlineMissingClosing {
             markup: markup.to_owned(),
             start_at,
-        })?;
+        }
+    })?;
 
     let effective_markup = match (kind, stream.tokens()[inline_final].kind) {
         (TK::BackquoteStart, TK::HyperlinkReferenceEnd) => "hyperlink_reference",

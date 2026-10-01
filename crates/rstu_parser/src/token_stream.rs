@@ -163,7 +163,7 @@ mod tests {
             (TokenKind::NewLine, "\n"),
         ]);
 
-        let found = stream.find_next_kind_from(&[TokenKind::BlankLine, TokenKind::NewLine], 0);
+        let found = stream.find_next_kind(&[TokenKind::BlankLine, TokenKind::NewLine]);
 
         assert_eq!(found, Ok(2));
     }
