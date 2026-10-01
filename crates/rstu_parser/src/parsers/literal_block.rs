@@ -73,7 +73,7 @@ fn set_text_indented_content(stream: &mut TokenStream, block: &NodeRef) -> Resul
                     stream.update_at_cursor(space!(dedent - rel_indent));
                     break;
                 } else if dedent == rel_indent {
-                    stream.set_cursor(stream.cursor() + 1);
+                    stream.consume();
                     break;
                 } else {
                     rel_indent -= dedent;
