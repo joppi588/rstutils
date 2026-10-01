@@ -50,7 +50,6 @@ pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, Parse
 pub(crate) fn parse_inline_token(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert!(stream.token_at_cursor().kind.is(TC::INLINE_TOKEN));
 
-    let at = stream.cursor();
     let node = AstNode::new_ref(NodeClass::Reference);
     let token = stream.consume();
     let kind = token.kind;
@@ -77,7 +76,7 @@ pub(crate) fn parse_inline_token(stream: &mut TokenStream) -> Result<NodeRef, Pa
             return Err(ParserError::UnexpectedToken {
                 expected: "Reference token".to_owned(),
                 found: format!("{:?}", kind),
-                index: at,
+                index: stream.cursor(),
             });
         }
     };
@@ -108,13 +107,14 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
     };
 
     let text = stream
-        .consume_text_until(start_at + 1, end_kind_candidates, false)
+        .consume_text_until(start_at + 1, end_kind_candidates)
         .map_err(|_| ParserError::InlineMissingClosing {
             markup: markup.to_owned(),
             start_at,
         })?;
 
-    let effective_markup = match (kind, stream.token_at(stream.cursor() - 1).kind) {
+    stream.unconsume();
+    let effective_markup = match (kind, stream.consume().kind) {
         (TK::BackquoteStart, TK::HyperlinkReferenceEnd) => "hyperlink_reference",
         (TK::BackquoteStart, TK::BackquoteEnd) => "interpreted_text",
         _ => markup,

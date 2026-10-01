@@ -111,7 +111,7 @@ pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, Par
 pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert_matches!(stream.token_at_cursor().kind, TK::EnumeratedListMarker);
 
-    let first_marker = stream.token_at(stream.cursor()).lexeme.to_owned();
+    let first_marker = stream.token_at_cursor().lexeme.to_owned();
     let (prefix, first_value, suffix) = enumerator_parts(&first_marker);
     let enumtype = resolve_enumerator_type(enumerator_type(first_value)?, None, None);
     let list = AstNode::new_ref(NodeClass::EnumeratedList);
