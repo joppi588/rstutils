@@ -16,7 +16,7 @@ pub(crate) fn parse_comment(stream: &mut TokenStream) -> Result<NodeRef, ParserE
     let comment = AstNode::new_ref(NodeClass::Comment);
     let mut text = stream
         .consume_text_until(stream.cursor() + 1, &[TK::NewLine], true)
-        .expect(EXPECT_NEWLINE);
+        .expect(EXPECT_NEWLINE); // TODO: move this into the loop, match token and next line token?
 
     if stream.token_at_cursor().kind == TK::Indent {
         let base_indent = stream.take_at_cursor().len();
