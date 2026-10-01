@@ -67,13 +67,13 @@ fn set_text_indented_content(stream: &mut TokenStream, block: &NodeRef) -> Resul
                 text.push_str(&indent.lexeme.to_string());
             }
             TK::Dedent => {
-                let dedent_token = stream.token_at(stream.cursor());
+                let dedent_token = stream.token_at_cursor();
                 let dedent = dedent_token.len();
                 if dedent > rel_indent {
                     stream.update_at_cursor(space!(dedent - rel_indent));
                     break;
                 } else if dedent == rel_indent {
-                    stream.set_cursor(stream.cursor() + 1);
+                    stream.consume();
                     break;
                 } else {
                     rel_indent -= dedent;

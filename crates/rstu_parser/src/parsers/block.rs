@@ -31,15 +31,13 @@ pub(crate) fn parse_block(stream: &mut TokenStream) -> Result<NodeRef, ParserErr
                 let dedent_token = stream.consume();
                 let dedent = dedent_token.len();
                 if dedent != indent {
-                    let cursor = stream.cursor();
                     let width = dedent.abs_diff(indent);
                     let rel_indent = if dedent < indent {
                         Token::indent(width)
                     } else {
                         Token::dedent(width)
                     };
-                    stream.insert_at(cursor, rel_indent);
-                    stream.set_cursor(cursor);
+                    stream.insert_before_cursor(rel_indent);
                 }
                 break;
             }
