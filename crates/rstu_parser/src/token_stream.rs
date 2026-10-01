@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: MIT
 
 use crate::token::{Token, TokenKind};
-use std::ops::Range;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum TokenSliceError {
@@ -31,21 +30,12 @@ impl TokenStream {
         )
     }
 
-    pub fn tokens(&self) -> &[Token] {
-        &self.tokens
-    }
-
-    fn tokens_to_text(&self, range: Range<usize>) -> String {
-        let mut text = String::new();
-        for token in &self.tokens[range] {
-            text.push_str(&token.lexeme);
-        }
-        text
-    }
-
     pub fn consume_text_until(&mut self, kinds: &[TokenKind]) -> Result<String, TokenSliceError> {
         let found = self.find_next_kind(kinds)?;
-        let text = self.tokens_to_text(self.cursor.min(found)..found);
+        let mut text = String::new();
+        for token in &self.tokens[self.cursor.min(found)..found] {
+            text.push_str(&token.lexeme);
+        }
         self.cursor = found;
         Ok(text)
     }
