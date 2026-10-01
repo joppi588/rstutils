@@ -32,7 +32,7 @@ pub(crate) fn parse_literal_block(stream: &mut TokenStream) -> Result<NodeRef, P
         _ => unreachable!(),
     };
     block.with_attr("type", format!("{literal_block_type:?}"));
-
+    stream.consume(); //NewLine
     if stream.consume().kind != TK::BlankLine {
         return Err(ParserError::LiteralBlockError {
             message: "literal block requires a blank line".to_owned(),
