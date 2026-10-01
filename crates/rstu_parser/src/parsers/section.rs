@@ -16,7 +16,7 @@ pub fn parse_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserE
         let opening_token = stream.consume();
         opening_style = Some(opening_token.lexeme[..1].to_string());
         section.with_attr("marker_len_opening", opening_token.len());
-        stream.consume(); //Newline
+        stream.consume_newline();
     }
     let title = AstNode::new_ref(NodeClass::Title);
     let title_end = stream.find_next_kind(&[TK::NewLine]).expect(EXPECT_NEWLINE);
@@ -49,6 +49,6 @@ pub fn parse_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserE
         .with_attr("section_marker", closing_style)
         .with_attr("marker_len", closing_len);
 
-    stream.consume(); //Newline
+    stream.consume_newline();
     Ok(section)
 }

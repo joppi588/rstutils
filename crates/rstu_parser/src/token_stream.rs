@@ -120,7 +120,14 @@ impl TokenStream {
             .get(self.cursor)
             .cloned()
             .unwrap_or_else(|| Token::new(TokenKind::EoF, ""));
-        self.cursor = self.cursor.saturating_add(1).min(self.tokens.len());
+        self.cursor += 1;
+        token
+    }
+
+    /// Consumes a token and asserts (debug only) that it is a `NewLine`.
+    pub fn consume_newline(&mut self) -> Token {
+        let token = self.consume();
+        debug_assert_eq!(token.kind, TokenKind::NewLine);
         token
     }
 
@@ -215,8 +222,8 @@ mod tests {
         assert_eq!(stream.cursor(), 2);
         assert!(stream.is_at_end());
 
-        // Consuming past the end stays at the boundary and yields a synthetic EoF token.
+        // Consuming past the end yields a synthetic EoF token.
         assert_eq!(stream.consume(), Token::new(TokenKind::EoF, ""));
-        assert_eq!(stream.cursor(), 2);
+        assert_eq!(stream.cursor(), 3);
     }
 }
