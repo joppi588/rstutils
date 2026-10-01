@@ -71,9 +71,8 @@ impl TokenStream {
         self.cursor >= self.tokens.len()
     }
 
-    /// Jumps the cursor to an absolute position, e.g. after slicing tokens by index.
-    pub fn set_cursor(&mut self, pos: usize) {
-        self.cursor = pos;
+    pub fn unconsume(&mut self) {
+        self.cursor = self.cursor.saturating_sub(1);
     }
 
     /// Panic-free lookahead by absolute index, treating out-of-bounds reads as a synthetic `EoF` token.
@@ -142,6 +141,13 @@ impl TokenStream {
         if index <= self.cursor {
             self.cursor += 1;
         }
+    }
+
+    /// Inserts a token right at the cursor, leaving the cursor pointing at it instead of past it.
+    pub fn insert_before_cursor(&mut self, token: Token) {
+        let cursor = self.cursor;
+        self.insert_at(cursor, token);
+        self.cursor = cursor;
     }
 
     /// Removes and returns the token at the cursor, leaving the cursor pointing at the next token.
