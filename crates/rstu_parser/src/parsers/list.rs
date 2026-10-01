@@ -122,7 +122,7 @@ pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef,
     let mut next_number = 1;
     let mut previous_value: Option<String> = None;
     while stream.token_at_cursor().kind == TK::EnumeratedListMarker {
-        let marker = stream.consume().lexeme.to_owned();
+        let marker = stream.token_at_cursor().lexeme.to_owned();
         let (item_prefix, value, item_suffix) = enumerator_parts(&marker);
         let item_type = if value == "#" {
             enumtype
@@ -134,9 +134,9 @@ pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef,
             )
         };
         if item_prefix != prefix || item_suffix != suffix || item_type != enumtype {
-            stream.unconsume(); // TODO: Can we avoid moving back?
             break;
         }
+        stream.consume(); // Consume the marker used above
         previous_value = Some(value.to_owned());
         let item = AstNode::new_ref(NodeClass::EnumeratedListItem);
         item.with_attr("raw_value", value);

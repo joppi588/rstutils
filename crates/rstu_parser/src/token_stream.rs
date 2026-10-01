@@ -46,7 +46,7 @@ impl TokenStream {
     pub fn consume_text_until(&mut self, kinds: &[TokenKind]) -> Result<String, TokenSliceError> {
         let found = self.find_next_kind(kinds)?;
         let text = self.tokens_to_text(self.cursor.min(found)..found);
-        self.cursor = found + 1;
+        self.cursor = found;
         Ok(text)
     }
 
@@ -105,10 +105,6 @@ impl TokenStream {
             .unwrap_or_else(|| Token::new(TokenKind::EoF, ""));
         self.cursor += 1;
         token
-    }
-
-    pub fn unconsume(&mut self) {
-        self.cursor = self.cursor.saturating_sub(1);
     }
 
     /// Consumes a token and asserts (debug only) that it is a `NewLine`.

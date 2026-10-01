@@ -113,7 +113,6 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
             start_at,
         })?;
 
-    stream.unconsume();
     let effective_markup = match (kind, stream.consume().kind) {
         (TK::BackquoteStart, TK::HyperlinkReferenceEnd) => "hyperlink_reference",
         (TK::BackquoteStart, TK::BackquoteEnd) => "interpreted_text",

@@ -26,6 +26,7 @@ pub fn parse_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserE
             .expect(EXPECT_NEWLINE), // TODO: Do not only check for NewLine
     );
     section.push_child(title);
+    stream.consume_newline();
 
     if stream.token_at_cursor().kind != TK::Separator {
         return Err(ParserError::SectionTitleMissingClosingAfterOpening {
