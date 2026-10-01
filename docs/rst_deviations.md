@@ -18,6 +18,10 @@ This document lists deviations from the rst specification / implementation.
     Checks regarding multiple / outside block quote / not ending a block quote are left to the
     subsequent processing tools (linter, renderer)
     Use empty comments (`..`) to explicitely split block quotes.
+- Indentation: The first indent defines the block indent, not the smallest.
+  Workaround: use empty comments
+  see test cases xxx. (TODO)
+
 
 # Interpretations
 Things that would be according to the spec book but not to the python parser implementation:
