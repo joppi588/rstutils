@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 use crate::token::{Token, TokenKind};
+use std::ops::Range;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum TokenSliceError {
@@ -10,13 +11,6 @@ pub enum TokenSliceError {
     NoRemainingToken,
 }
 
-pub fn tokens_to_text(tokens: &[Token]) -> String {
-    let mut text = String::new();
-    for token in tokens {
-        text.push_str(&token.lexeme);
-    }
-    text
-}
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TokenStream {
     tokens: Vec<Token>,
@@ -39,6 +33,15 @@ impl TokenStream {
 
     pub fn tokens(&self) -> &[Token] {
         &self.tokens
+    }
+
+    /// Concatenates the lexemes of the tokens in `range` into a single string.
+    pub fn tokens_to_text(&self, range: Range<usize>) -> String {
+        let mut text = String::new();
+        for token in &self.tokens[range] {
+            text.push_str(&token.lexeme);
+        }
+        text
     }
 
     pub fn cursor(&self) -> usize {

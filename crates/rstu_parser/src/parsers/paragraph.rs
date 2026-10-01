@@ -6,7 +6,7 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use crate::parser_errors::ParserError;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
-use crate::token_stream::{tokens_to_text, TokenStream};
+use crate::token_stream::TokenStream;
 
 pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert!(stream.token_at_cursor().kind.nested_is(TC::PARAGRAPH));
@@ -121,10 +121,9 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
     };
 
     let inline = AstNode::new_ref(NodeClass::InlineMarkup);
-    inline.with_attr("markup", effective_markup).with_attr(
-        "text",
-        tokens_to_text(&stream.tokens()[start_at + 1..inline_final]),
-    );
+    inline
+        .with_attr("markup", effective_markup)
+        .with_attr("text", stream.tokens_to_text(start_at + 1..inline_final));
     stream.set_cursor(inline_final + 1);
     Ok(inline)
 }

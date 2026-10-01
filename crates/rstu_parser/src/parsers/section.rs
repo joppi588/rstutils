@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 use crate::parser_errors::{ParserError, EXPECT_NEWLINE};
 use crate::token::TokenKind as TK;
-use crate::token_stream::{tokens_to_text, TokenStream};
+use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 pub fn parse_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
@@ -20,10 +20,7 @@ pub fn parse_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserE
     }
     let title = AstNode::new_ref(NodeClass::Title);
     let title_end = stream.find_next_kind(&[TK::NewLine]).expect(EXPECT_NEWLINE);
-    title.with_attr(
-        "text",
-        tokens_to_text(&stream.tokens()[stream.cursor()..title_end]),
-    );
+    title.with_attr("text", stream.tokens_to_text(stream.cursor()..title_end));
     section.push_child(title);
 
     let closing_index = title_end + 1;
