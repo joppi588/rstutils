@@ -71,17 +71,19 @@ impl TokenStream {
     }
 
     pub fn token_at_nextline(&self) -> Token {
-        let line_end = self
-            .find_next_kind(&[
-                TokenKind::BlankLine,
-                TokenKind::EoF,
-                TokenKind::LiteralBlock,
-                TokenKind::LiteralBlockMinimized,
-                TokenKind::LiteralBlockPartiallyMinimized,
-                TokenKind::NewLine,
-            ])
-            .unwrap_or(self.tokens.len());
-        self.token_at(line_end + 1)
+        self.token_at(self.find_end_of_line() + 1)
+    }
+
+    pub fn find_end_of_line(&self) -> usize {
+        self.find_next_kind(&[
+            TokenKind::BlankLine,
+            TokenKind::EoF,
+            TokenKind::LiteralBlock,
+            TokenKind::LiteralBlockMinimized,
+            TokenKind::LiteralBlockPartiallyMinimized,
+            TokenKind::NewLine,
+        ])
+        .unwrap_or(self.tokens.len())
     }
 
     /// Finds the next token matching `kinds` at or after the cursor, slicing past the

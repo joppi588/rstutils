@@ -6,7 +6,7 @@ use super::block::parse_block;
 use super::list_enum_helpers::{
     enumerator_parts, enumerator_type, enumerator_value, resolve_enumerator_type,
 };
-use crate::parser_errors::{ParserError, EXPECT_NEWLINE};
+use crate::parser_errors::ParserError;
 use crate::token::{Token, TokenKind as TK};
 use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
@@ -17,7 +17,7 @@ fn prepare_item_block(stream: &mut TokenStream, dedent_len: usize) -> Result<(),
     // 1. [Optional Blankline],  Indent -> Hanging indent block
     // 2. [Optional Blankline], list marker -> Single line item
     // 3. Non-indented paragraph etc -> Error
-    let next_line = stream.find_next_kind(&[TK::NewLine]).expect(EXPECT_NEWLINE) + 1;
+    let next_line = stream.find_end_of_line() + 1;
 
     let indent_ahead_index = match stream.token_at(next_line).kind {
         TK::Indent => Some(next_line),
