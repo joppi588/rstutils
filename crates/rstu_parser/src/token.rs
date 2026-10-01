@@ -202,9 +202,9 @@ impl TokenKind {
         (DoubleDot, r"[\n\s]\.\.[\n\s]"),
 
         // Literal block
-        (LiteralBlockMinimized, r"[A-Za-z0-9]::\n(.|\n)"),
-        (LiteralBlockPartiallyMinimized, r".\s::\n(.|\n)"),
-        (LiteralBlock, r"(.|\n)::\n(.|\n)"),
+        (LiteralBlockMinimized, r"[A-Za-z0-9]::(.|\n)"),
+        (LiteralBlockPartiallyMinimized, r".\s::(.|\n)"),
+        (LiteralBlock, r"(.|\n)::(.|\n)"),
 
         (TableHorizontal, r"\n=+(?:\s+=+)+\s*\n"),
 
