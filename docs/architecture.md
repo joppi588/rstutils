@@ -2,8 +2,8 @@
 
 ## Logical
 
-Parser - Syntactix analysis
-Linter - Semantic analysis
+Parser - Syntactic analysis
+Linter&Link checker - Semantic analysis
 Formatter - Auto-correct
 Transformation - Output
 Language Server
