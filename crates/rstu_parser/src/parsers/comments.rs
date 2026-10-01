@@ -12,13 +12,16 @@ use std::debug_assert_matches;
 pub(crate) fn parse_comment(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert_matches!(stream.token_at_cursor().kind, TK::DoubleDot);
 
-    stream.consume(); // Spaces
+    stream.consume(); // Comment marker
     let comment = AstNode::new_ref(NodeClass::Comment);
 
     // TODO: move this into the loop, match token and next line token?
+    if stream.token_at_cursor().kind == TK::Spaces {
+        stream.consume();
+    }
     let text_start = stream.cursor() + 1;
     let mut text = stream
-        .consume_text_until(text_start, &[TK::NewLine])
+        .consume_text_until(&[TK::NewLine])
         .expect(EXPECT_NEWLINE);
     let newline_index = stream.cursor() - 1;
     if text_start <= newline_index {

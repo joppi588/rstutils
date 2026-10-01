@@ -107,7 +107,7 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
     };
 
     let text = stream
-        .consume_text_until(start_at + 1, end_kind_candidates)
+        .consume_text_until(end_kind_candidates)
         .map_err(|_| ParserError::InlineMissingClosing {
             markup: markup.to_owned(),
             start_at,

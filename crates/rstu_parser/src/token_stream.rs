@@ -47,13 +47,9 @@ impl TokenStream {
     /// from `text_start` up to (excluding) the match into text, and advances the cursor
     /// past the match. `text_start` may legitimately land past `found` (e.g. a marker with
     /// no body before the match); this is clamped to an empty span rather than panicking.
-    pub fn consume_text_until(
-        &mut self,
-        text_start: usize,
-        kinds: &[TokenKind],
-    ) -> Result<String, TokenSliceError> {
+    pub fn consume_text_until(&mut self, kinds: &[TokenKind]) -> Result<String, TokenSliceError> {
         let found = self.find_next_kind(kinds)?;
-        let text = self.tokens_to_text(text_start.min(found)..found);
+        let text = self.tokens_to_text(self.cursor.min(found)..found);
         self.cursor = found + 1;
         Ok(text)
     }
