@@ -77,21 +77,13 @@ impl TokenStream {
         self.token_at(line_end + 1)
     }
 
+    /// Finds the next token matching `kinds` at or after the cursor, slicing past the
+    /// cursor instead of skipping element-by-element.
     pub fn find_next_kind(&self, kinds: &[TokenKind]) -> Result<usize, TokenSliceError> {
-        self.find_next_kind_from(kinds, self.cursor)
-    }
-
-    pub fn find_next_kind_from(
-        &self,
-        kinds: &[TokenKind],
-        start_at: usize,
-    ) -> Result<usize, TokenSliceError> {
-        self.tokens
+        self.tokens[self.cursor..]
             .iter()
-            .enumerate()
-            .skip(start_at)
-            .find(|(_, token)| token.kind.is(kinds))
-            .map(|(index, _)| index)
+            .position(|token| token.kind.is(kinds))
+            .map(|offset| offset + self.cursor)
             .ok_or(TokenSliceError::TokenNotFound {
                 kinds: kinds.to_vec(),
             })
