@@ -72,7 +72,14 @@ impl TokenStream {
 
     pub fn token_at_nextline(&self) -> Token {
         let line_end = self
-            .find_next_kind(&[TokenKind::NewLine, TokenKind::BlankLine, TokenKind::EoF])
+            .find_next_kind(&[
+                TokenKind::BlankLine,
+                TokenKind::EoF,
+                TokenKind::LiteralBlock,
+                TokenKind::LiteralBlockMinimized,
+                TokenKind::LiteralBlockPartiallyMinimized,
+                TokenKind::NewLine,
+            ])
             .unwrap_or(self.tokens.len());
         self.token_at(line_end + 1)
     }
