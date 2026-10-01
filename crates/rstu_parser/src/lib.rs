@@ -41,7 +41,10 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
     let mut current_parent = doc.clone();
 
     loop {
-        match (stream.kind_at_cursor(), stream.kind_at_nextline()) {
+        match (
+            stream.token_at_cursor().kind,
+            stream.token_at_nextline().kind,
+        ) {
             (TK::Separator, TK::Indent | TK::Word) | (TK::Word, TK::Separator) => {
                 let section = parse_section_header(&mut stream)?;
                 current_parent.push_section_ref(section.clone());
@@ -75,8 +78,8 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
             }
             _ => panic!(
                 "Unexpected token combination ({:?},{:?})",
-                stream.kind_at_cursor(),
-                stream.kind_at_nextline()
+                stream.token_at_cursor().kind,
+                stream.token_at_nextline().kind
             ),
         };
     }
@@ -88,7 +91,7 @@ fn parse_body_elements(
     stream: &mut TokenStream,
     current_parent: &Rc<RefCell<AstNode>>,
 ) -> Result<(), ParserError> {
-    match stream.kind_at_cursor() {
+    match stream.token_at_cursor().kind {
         TK::BulletListMarker => {
             let bullet_list = parse_bullet_list(stream)?;
             current_parent.push_child(bullet_list);
@@ -116,7 +119,7 @@ fn parse_body_elements(
         _ => {
             panic!(
                 "Token kind {:?} not in {:?}",
-                stream.kind_at_cursor(),
+                stream.token_at_cursor().kind,
                 TC::BODY_ELEMENTS
             );
         }

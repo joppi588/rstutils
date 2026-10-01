@@ -12,13 +12,13 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 pub(crate) fn parse_block(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     let block = AstNode::new_ref(NodeClass::Block);
     let mut indent: usize = 0;
-    if stream.kind_at_cursor() == TK::Indent {
+    if stream.token_at_cursor().kind == TK::Indent {
         let token = stream.consume();
         indent = token.len();
         block.with_attr("indent", indent);
     }
     loop {
-        match stream.kind_at_cursor() {
+        match stream.token_at_cursor().kind {
             TK::Word | TK::NewLine => {
                 let paragraph = parse_paragraph(stream)?;
                 block.push_child(paragraph);

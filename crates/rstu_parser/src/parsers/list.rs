@@ -19,9 +19,9 @@ fn prepare_item_block(stream: &mut TokenStream, dedent_len: usize) -> Result<(),
     // 3. Non-indented paragraph etc -> Error
     let next_line = stream.find_next_kind(&[TK::NewLine]).expect(EXPECT_NEWLINE) + 1;
 
-    let indent_ahead_index = match stream.kind_at(next_line) {
+    let indent_ahead_index = match stream.token_at(next_line).kind {
         TK::Indent => Some(next_line),
-        TK::BlankLine if stream.kind_at(next_line + 1) == TK::Indent => Some(next_line + 1),
+        TK::BlankLine if stream.token_at(next_line + 1).kind == TK::Indent => Some(next_line + 1),
         _ => None,
     };
 
@@ -42,7 +42,7 @@ fn prepare_item_block(stream: &mut TokenStream, dedent_len: usize) -> Result<(),
             }
             stream.set_cursor(cursor);
         }
-        None => match stream.kind_at(next_line) {
+        None => match stream.token_at(next_line).kind {
             // list end
             TK::Field
             | TK::BulletListMarker
@@ -69,7 +69,7 @@ fn finish_list_item(
 ) -> Result<(), ParserError> {
     let mut dedent_len = dedent_len;
 
-    if stream.kind_at_cursor() == TK::Spaces {
+    if stream.token_at_cursor().kind == TK::Spaces {
         dedent_len += stream.consume().len();
     }
 
@@ -77,7 +77,7 @@ fn finish_list_item(
     let block = parse_block(stream).map_err(|_| ParserError::ListEndError {})?;
     item.push_child(block);
     list.push_child(item);
-    if stream.kind_at_cursor() == TK::BlankLine {
+    if stream.token_at_cursor().kind == TK::BlankLine {
         let blank_token = stream.consume();
         list.push_blank_lines(blank_token.len());
     }
@@ -85,12 +85,12 @@ fn finish_list_item(
 }
 
 pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
-    debug_assert_matches!(stream.kind_at_cursor(), TK::BulletListMarker);
+    debug_assert_matches!(stream.token_at_cursor().kind, TK::BulletListMarker);
 
     let list = AstNode::new_ref(NodeClass::BulletList);
     let mut marker: Option<String> = None;
 
-    while stream.kind_at_cursor() == TK::BulletListMarker {
+    while stream.token_at_cursor().kind == TK::BulletListMarker {
         let item = AstNode::new_ref(NodeClass::BulletListItem);
         let marker_token = stream.consume();
         item.with_attr("marker", marker_token.lexeme.clone());
@@ -112,7 +112,7 @@ pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, Par
 }
 
 pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
-    debug_assert_matches!(stream.kind_at_cursor(), TK::EnumeratedListMarker);
+    debug_assert_matches!(stream.token_at_cursor().kind, TK::EnumeratedListMarker);
 
     let first_marker = stream.token_at(stream.cursor()).lexeme.to_owned();
     let (prefix, first_value, suffix) = enumerator_parts(&first_marker);
@@ -124,7 +124,7 @@ pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef,
 
     let mut next_number = 1;
     let mut previous_value: Option<String> = None;
-    while stream.kind_at_cursor() == TK::EnumeratedListMarker {
+    while stream.token_at_cursor().kind == TK::EnumeratedListMarker {
         let marker = stream.consume().lexeme.to_owned();
         let (item_prefix, value, item_suffix) = enumerator_parts(&marker);
         let item_type = if value == "#" {
@@ -156,11 +156,11 @@ pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef,
 }
 
 pub(crate) fn parse_field_list(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
-    debug_assert_matches!(stream.kind_at_cursor(), TK::Field);
+    debug_assert_matches!(stream.token_at_cursor().kind, TK::Field);
 
     let list = AstNode::new_ref(NodeClass::FieldList);
 
-    while stream.kind_at_cursor() == TK::Field {
+    while stream.token_at_cursor().kind == TK::Field {
         let item = AstNode::new_ref(NodeClass::FieldListItem);
         let field_token = stream.consume();
         let field_name = field_token

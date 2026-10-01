@@ -12,7 +12,7 @@ pub fn parse_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserE
     let start_at = stream.cursor();
     let mut opening_style: Option<String> = None;
 
-    if stream.kind_at_cursor() == TK::Separator {
+    if stream.token_at_cursor().kind == TK::Separator {
         let opening_token = stream.consume();
         opening_style = Some(opening_token.lexeme[..1].to_string());
         section.with_attr("marker_len_opening", opening_token.len());
@@ -27,7 +27,7 @@ pub fn parse_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserE
     section.push_child(title);
 
     let closing_index = title_end + 1;
-    if stream.kind_at(closing_index) != TK::Separator {
+    if stream.token_at(closing_index).kind != TK::Separator {
         return Err(ParserError::SectionTitleMissingClosingAfterOpening {
             opening_index: start_at,
         });

@@ -54,26 +54,27 @@ impl TokenStream {
         self.cursor = pos;
     }
 
-    /// Panic-free lookahead by absolute index, treating out-of-bounds reads as `TokenKind::EoF`.
-    pub fn kind_at(&self, index: usize) -> TokenKind {
+    /// Panic-free lookahead by absolute index, treating out-of-bounds reads as a synthetic `EoF` token.
+    pub fn token_at(&self, index: usize) -> Token {
         self.tokens
             .get(index)
-            .map_or(TokenKind::EoF, |token| token.kind)
+            .cloned()
+            .unwrap_or_else(|| Token::new(TokenKind::EoF, ""))
     }
 
-    pub fn kind_at_cursor(&self) -> TokenKind {
-        self.kind_at(self.cursor)
+    pub fn token_at_cursor(&self) -> Token {
+        self.token_at(self.cursor)
     }
 
-    pub fn kind_peek_relative(&self, delta: usize) -> TokenKind {
-        self.kind_at(self.cursor.saturating_add(delta))
+    pub fn token_peek_relative(&self, delta: usize) -> Token {
+        self.token_at(self.cursor.saturating_add(delta))
     }
 
-    pub fn kind_at_nextline(&self) -> TokenKind {
+    pub fn token_at_nextline(&self) -> Token {
         let line_end = self
             .find_next_kind(&[TokenKind::NewLine, TokenKind::BlankLine, TokenKind::EoF])
             .unwrap_or(self.tokens.len());
-        self.kind_at(line_end + 1)
+        self.token_at(line_end + 1)
     }
 
     pub fn find_next_kind(&self, kinds: &[TokenKind]) -> Result<usize, TokenSliceError> {
@@ -94,23 +95,6 @@ impl TokenStream {
             .ok_or(TokenSliceError::TokenNotFound {
                 kinds: kinds.to_vec(),
             })
-    }
-
-    pub fn token_at_nextline(&self) -> Token {
-        let line_end = self
-            .find_next_kind(&[TokenKind::NewLine, TokenKind::BlankLine, TokenKind::EoF])
-            .unwrap_or(self.tokens.len());
-        self.tokens
-            .get(line_end + 1)
-            .cloned()
-            .unwrap_or_else(|| Token::new(TokenKind::EoF, ""))
-    }
-
-    pub fn token_at(&self, index: usize) -> Token {
-        self.tokens
-            .get(index)
-            .cloned()
-            .unwrap_or_else(|| Token::new(TokenKind::EoF, ""))
     }
 
     /// Returns the token at the cursor (or a synthetic `EoF` token) and advances the cursor by one.
@@ -167,8 +151,8 @@ mod tests {
     fn kind_at_returns_eof_past_the_end() {
         let stream = TokenStream::from_pairs(&[(TokenKind::Word, "title")]);
 
-        assert_eq!(stream.kind_at(0), TokenKind::Word);
-        assert_eq!(stream.kind_at(1), TokenKind::EoF);
+        assert_eq!(stream.token_at(0).kind, TokenKind::Word);
+        assert_eq!(stream.token_at(1).kind, TokenKind::EoF);
     }
 
     #[test]
@@ -189,8 +173,8 @@ mod tests {
         let stream =
             TokenStream::from_pairs(&[(TokenKind::Word, "title"), (TokenKind::NewLine, "\n")]);
 
-        assert_eq!(stream.kind_peek_relative(1), TokenKind::NewLine);
-        assert_eq!(stream.kind_peek_relative(5), TokenKind::EoF);
+        assert_eq!(stream.token_peek_relative(1).kind, TokenKind::NewLine);
+        assert_eq!(stream.token_peek_relative(5).kind, TokenKind::EoF);
     }
 
     #[test]
@@ -201,14 +185,14 @@ mod tests {
             (TokenKind::Indent, "  "),
         ]);
 
-        assert_eq!(stream.kind_at_nextline(), TokenKind::Indent);
+        assert_eq!(stream.token_at_nextline().kind, TokenKind::Indent);
     }
 
     #[test]
     fn kind_at_nextline_returns_eof_when_no_newline_remains() {
         let stream = TokenStream::from_pairs(&[(TokenKind::Word, "title")]);
 
-        assert_eq!(stream.kind_at_nextline(), TokenKind::EoF);
+        assert_eq!(stream.token_at_nextline().kind, TokenKind::EoF);
     }
 
     #[test]

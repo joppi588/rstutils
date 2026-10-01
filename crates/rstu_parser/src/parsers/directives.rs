@@ -11,7 +11,7 @@ use crate::token_stream::TokenStream;
 use std::debug_assert_matches;
 
 pub(crate) fn parse_directive(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
-    debug_assert_matches!(stream.kind_at_cursor(), TK::Directive);
+    debug_assert_matches!(stream.token_at_cursor().kind, TK::Directive);
 
     let directive_marker = stream.consume().lexeme;
     let marker_content = directive_marker
@@ -33,7 +33,7 @@ pub(crate) fn parse_directive(stream: &mut TokenStream) -> Result<NodeRef, Parse
     );
 
     let mut directive_arguments = String::new();
-    while !matches!(stream.kind_at_cursor(), TK::NewLine | TK::EoF) {
+    while !matches!(stream.token_at_cursor().kind, TK::NewLine | TK::EoF) {
         directive_arguments.push_str(&stream.consume().lexeme);
     }
     let directive_arguments = directive_arguments.trim();
@@ -42,18 +42,18 @@ pub(crate) fn parse_directive(stream: &mut TokenStream) -> Result<NodeRef, Parse
     }
     stream.consume_newline();
 
-    if stream.kind_at_cursor() != TK::Indent {
+    if stream.token_at_cursor().kind != TK::Indent {
         return Ok(directive);
     }
     directive.with_attr("indent", stream.tokens()[stream.cursor()].len());
 
-    if stream.kind_peek_relative(1) == TK::Field {
+    if stream.token_peek_relative(1).kind == TK::Field {
         stream.consume(); // Skip the shared Indent token; parse_block consumes it otherwise.
         let options = parse_field_list(stream)?;
         directive.push_child(options);
     }
 
-    if stream.kind_at_cursor() != TK::Dedent && stream.kind_at_cursor() != TK::EoF {
+    if stream.token_at_cursor().kind != TK::Dedent && stream.token_at_cursor().kind != TK::EoF {
         let content = parse_block(stream)?;
         directive.push_child(content);
     }
