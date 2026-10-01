@@ -18,7 +18,7 @@ pub enum LiteralBlockType {
 
 pub(crate) fn parse_literal_block(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert_matches!(
-        stream.kind_at_cursor(),
+        stream.token_at_cursor().kind,
         TK::LiteralBlock | TK::LiteralBlockMinimized | TK::LiteralBlockPartiallyMinimized
     );
 
@@ -38,9 +38,9 @@ pub(crate) fn parse_literal_block(stream: &mut TokenStream) -> Result<NodeRef, P
             message: "literal block requires a blank line".to_owned(),
         });
     }
-    if stream.kind_at_cursor() == TK::Indent {
+    if stream.token_at_cursor().kind == TK::Indent {
         set_text_indented_content(stream, &block)?;
-    } else if stream.kind_at_cursor() != TK::EoF {
+    } else if stream.token_at_cursor().kind != TK::EoF {
         set_text_quoted_content(stream, &block)?;
     } else {
         return Err(ParserError::LiteralBlockError {
@@ -57,7 +57,7 @@ fn set_text_indented_content(stream: &mut TokenStream, block: &NodeRef) -> Resul
 
     let mut text = String::new();
     loop {
-        match stream.kind_at_cursor() {
+        match stream.token_at_cursor().kind {
             TK::EoF => {
                 break;
             }
@@ -90,7 +90,7 @@ fn set_text_indented_content(stream: &mut TokenStream, block: &NodeRef) -> Resul
     }
     if text.ends_with("\n\n") {
         text.pop();
-    } else if stream.kind_at_cursor() != TK::EoF {
+    } else if stream.token_at_cursor().kind != TK::EoF {
         return Err(ParserError::LiteralBlockError {
             message: "Blank line expected after literal block.".to_owned(),
         });
