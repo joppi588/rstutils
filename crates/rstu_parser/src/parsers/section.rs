@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 use crate::parser_errors::{ParserError, EXPECT_NEWLINE};
 use crate::token::TokenKind as TK;
-use crate::token_stream::{tokens_to_text, TokenStream};
+use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 pub fn parse_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
@@ -19,20 +19,19 @@ pub fn parse_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserE
         stream.consume_newline();
     }
     let title = AstNode::new_ref(NodeClass::Title);
-    let title_end = stream.find_next_kind(&[TK::NewLine]).expect(EXPECT_NEWLINE);
     title.with_attr(
         "text",
-        tokens_to_text(&stream.tokens()[stream.cursor()..title_end]),
+        stream
+            .consume_text_until(&[TK::NewLine])
+            .expect(EXPECT_NEWLINE), // TODO: Do not only check for NewLine
     );
     section.push_child(title);
 
-    let closing_index = title_end + 1;
-    if stream.token_at(closing_index).kind != TK::Separator {
+    if stream.token_at_cursor().kind != TK::Separator {
         return Err(ParserError::SectionTitleMissingClosingAfterOpening {
             opening_index: start_at,
         });
     }
-    stream.set_cursor(closing_index);
     let closing_token = stream.consume();
     let closing_style: String = closing_token.lexeme[..1].to_string();
     let closing_len = closing_token.len();

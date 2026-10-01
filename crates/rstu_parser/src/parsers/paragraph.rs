@@ -6,7 +6,7 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use crate::parser_errors::ParserError;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
-use crate::token_stream::{tokens_to_text, TokenStream};
+use crate::token_stream::TokenStream;
 
 pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert!(stream.token_at_cursor().kind.nested_is(TC::PARAGRAPH));
@@ -50,7 +50,6 @@ pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, Parse
 pub(crate) fn parse_inline_token(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert!(stream.token_at_cursor().kind.is(TC::INLINE_TOKEN));
 
-    let at = stream.cursor();
     let node = AstNode::new_ref(NodeClass::Reference);
     let token = stream.consume();
     let kind = token.kind;
@@ -77,7 +76,7 @@ pub(crate) fn parse_inline_token(stream: &mut TokenStream) -> Result<NodeRef, Pa
             return Err(ParserError::UnexpectedToken {
                 expected: "Reference token".to_owned(),
                 found: format!("{:?}", kind),
-                index: at,
+                index: stream.cursor(),
             });
         }
     };
@@ -88,7 +87,7 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
     debug_assert!(stream.token_at_cursor().kind.is(TC::INLINE_MARKER));
 
     let start_at = stream.cursor();
-    let kind = stream.token_at_cursor().kind;
+    let kind = stream.consume().kind;
     let (markup, end_kind_candidates): (&str, &[TK]) = match kind {
         TK::StrongStart => ("strong", &[TK::StrongEnd]),
         TK::EmphasisStart => ("emphasis", &[TK::EmphasisEnd]),
@@ -107,25 +106,24 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
         }
     };
 
-    let inline_final = stream
-        .find_next_kind_from(end_kind_candidates, start_at + 1)
+    let text = stream
+        .consume_text_until(end_kind_candidates)
         .map_err(|_| ParserError::InlineMissingClosing {
             markup: markup.to_owned(),
             start_at,
         })?;
 
-    let effective_markup = match (kind, stream.tokens()[inline_final].kind) {
+    stream.unconsume();
+    let effective_markup = match (kind, stream.consume().kind) {
         (TK::BackquoteStart, TK::HyperlinkReferenceEnd) => "hyperlink_reference",
         (TK::BackquoteStart, TK::BackquoteEnd) => "interpreted_text",
         _ => markup,
     };
 
     let inline = AstNode::new_ref(NodeClass::InlineMarkup);
-    inline.with_attr("markup", effective_markup).with_attr(
-        "text",
-        tokens_to_text(&stream.tokens()[start_at + 1..inline_final]),
-    );
-    stream.set_cursor(inline_final + 1);
+    inline
+        .with_attr("markup", effective_markup)
+        .with_attr("text", text);
     Ok(inline)
 }
 

@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 use crate::token::{Token, TokenKind};
+use std::ops::Range;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum TokenSliceError {
@@ -10,13 +11,6 @@ pub enum TokenSliceError {
     NoRemainingToken,
 }
 
-pub fn tokens_to_text(tokens: &[Token]) -> String {
-    let mut text = String::new();
-    for token in tokens {
-        text.push_str(&token.lexeme);
-    }
-    text
-}
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TokenStream {
     tokens: Vec<Token>,
@@ -41,6 +35,25 @@ impl TokenStream {
         &self.tokens
     }
 
+    fn tokens_to_text(&self, range: Range<usize>) -> String {
+        let mut text = String::new();
+        for token in &self.tokens[range] {
+            text.push_str(&token.lexeme);
+        }
+        text
+    }
+
+    /// Finds the next token matching `kinds` at or after the cursor, converts the tokens
+    /// from `text_start` up to (excluding) the match into text, and advances the cursor
+    /// past the match. `text_start` may legitimately land past `found` (e.g. a marker with
+    /// no body before the match); this is clamped to an empty span rather than panicking.
+    pub fn consume_text_until(&mut self, kinds: &[TokenKind]) -> Result<String, TokenSliceError> {
+        let found = self.find_next_kind(kinds)?;
+        let text = self.tokens_to_text(self.cursor.min(found)..found);
+        self.cursor = found + 1;
+        Ok(text)
+    }
+
     pub fn cursor(&self) -> usize {
         self.cursor
     }
@@ -49,9 +62,8 @@ impl TokenStream {
         self.cursor >= self.tokens.len()
     }
 
-    /// Jumps the cursor to an absolute position, e.g. after slicing tokens by index.
-    pub fn set_cursor(&mut self, pos: usize) {
-        self.cursor = pos;
+    pub fn unconsume(&mut self) {
+        self.cursor = self.cursor.saturating_sub(1);
     }
 
     /// Panic-free lookahead by absolute index, treating out-of-bounds reads as a synthetic `EoF` token.
@@ -72,26 +84,25 @@ impl TokenStream {
 
     pub fn token_at_nextline(&self) -> Token {
         let line_end = self
-            .find_next_kind(&[TokenKind::NewLine, TokenKind::BlankLine, TokenKind::EoF])
+            .find_next_kind(&[
+                TokenKind::BlankLine,
+                TokenKind::EoF,
+                TokenKind::LiteralBlock,
+                TokenKind::LiteralBlockMinimized,
+                TokenKind::LiteralBlockPartiallyMinimized,
+                TokenKind::NewLine,
+            ])
             .unwrap_or(self.tokens.len());
         self.token_at(line_end + 1)
     }
 
+    /// Finds the next token matching `kinds` at or after the cursor, slicing past the
+    /// cursor instead of skipping element-by-element.
     pub fn find_next_kind(&self, kinds: &[TokenKind]) -> Result<usize, TokenSliceError> {
-        self.find_next_kind_from(kinds, self.cursor)
-    }
-
-    pub fn find_next_kind_from(
-        &self,
-        kinds: &[TokenKind],
-        start_at: usize,
-    ) -> Result<usize, TokenSliceError> {
-        self.tokens
+        self.tokens[self.cursor..]
             .iter()
-            .enumerate()
-            .skip(start_at)
-            .find(|(_, token)| token.kind.is(kinds))
-            .map(|(index, _)| index)
+            .position(|token| token.kind.is(kinds))
+            .map(|offset| offset + self.cursor)
             .ok_or(TokenSliceError::TokenNotFound {
                 kinds: kinds.to_vec(),
             })
@@ -121,6 +132,13 @@ impl TokenStream {
         if index <= self.cursor {
             self.cursor += 1;
         }
+    }
+
+    /// Inserts a token right at the cursor, leaving the cursor pointing at it instead of past it.
+    pub fn insert_before_cursor(&mut self, token: Token) {
+        let cursor = self.cursor;
+        self.insert_at(cursor, token);
+        self.cursor = cursor;
     }
 
     /// Removes and returns the token at the cursor, leaving the cursor pointing at the next token.
@@ -163,7 +181,7 @@ mod tests {
             (TokenKind::NewLine, "\n"),
         ]);
 
-        let found = stream.find_next_kind_from(&[TokenKind::BlankLine, TokenKind::NewLine], 0);
+        let found = stream.find_next_kind(&[TokenKind::BlankLine, TokenKind::NewLine]);
 
         assert_eq!(found, Ok(2));
     }

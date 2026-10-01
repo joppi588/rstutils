@@ -28,19 +28,17 @@ fn prepare_item_block(stream: &mut TokenStream, dedent_len: usize) -> Result<(),
     match indent_ahead_index {
         Some(indent_index) => {
             let indent_token = stream.take_at(indent_index);
-            let cursor = stream.cursor();
             if indent_token.len() <= dedent_len {
-                stream.insert_at(cursor, indent_token);
+                stream.insert_before_cursor(indent_token);
             } else {
                 // If the next line is indented beyond the marker/field/...,
                 // we assume that it represents two subsequent indents.
-                stream.insert_at(cursor, Token::indent(dedent_len));
+                stream.insert_before_cursor(Token::indent(dedent_len));
                 stream.insert_at(
                     indent_index + 1,
                     Token::indent(indent_token.len() - dedent_len),
                 );
             }
-            stream.set_cursor(cursor);
         }
         None => match stream.token_at(next_line).kind {
             // list end
@@ -50,8 +48,7 @@ fn prepare_item_block(stream: &mut TokenStream, dedent_len: usize) -> Result<(),
             | TK::EoF
             | TK::Dedent
             | TK::BlankLine => {
-                stream.insert_at(stream.cursor(), Token::indent(dedent_len));
-                stream.set_cursor(stream.cursor() - 1);
+                stream.insert_before_cursor(Token::indent(dedent_len));
                 stream.insert_at(next_line + 1, Token::dedent(dedent_len));
             }
             _ => return Err(ParserError::ListEndError {}),
@@ -114,7 +111,7 @@ pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, Par
 pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert_matches!(stream.token_at_cursor().kind, TK::EnumeratedListMarker);
 
-    let first_marker = stream.token_at(stream.cursor()).lexeme.to_owned();
+    let first_marker = stream.token_at_cursor().lexeme.to_owned();
     let (prefix, first_value, suffix) = enumerator_parts(&first_marker);
     let enumtype = resolve_enumerator_type(enumerator_type(first_value)?, None, None);
     let list = AstNode::new_ref(NodeClass::EnumeratedList);
@@ -137,7 +134,7 @@ pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef,
             )
         };
         if item_prefix != prefix || item_suffix != suffix || item_type != enumtype {
-            stream.set_cursor(stream.cursor() - 1);
+            stream.unconsume(); // TODO: Can we avoid moving back?
             break;
         }
         previous_value = Some(value.to_owned());
