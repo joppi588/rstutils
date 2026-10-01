@@ -40,10 +40,12 @@ impl TokenStream {
         Ok(text)
     }
 
+    // TODO: Remove
     pub fn cursor(&self) -> usize {
         self.cursor
     }
 
+    // TODO: Remove
     /// Panic-free lookahead by absolute index, treating out-of-bounds reads as a synthetic `EoF` token.
     pub fn token_at(&self, index: usize) -> Token {
         self.tokens
@@ -56,6 +58,7 @@ impl TokenStream {
         self.token_at(self.cursor)
     }
 
+    // TODO: Keep this or token_at, but not both
     pub fn token_peek_relative(&self, delta: usize) -> Token {
         self.token_at(self.cursor.saturating_add(delta))
     }
@@ -76,8 +79,6 @@ impl TokenStream {
         .unwrap_or(self.tokens.len())
     }
 
-    /// Finds the next token matching `kinds` at or after the cursor, slicing past the
-    /// cursor instead of skipping element-by-element.
     pub fn find_next_kind(&self, kinds: &[TokenKind]) -> Result<usize, TokenSliceError> {
         self.tokens[self.cursor..]
             .iter()
@@ -88,7 +89,6 @@ impl TokenStream {
             })
     }
 
-    /// Returns the token at the cursor (or a synthetic `EoF` token) and advances the cursor by one.
     pub fn consume(&mut self) -> Token {
         let token = self
             .tokens
@@ -99,14 +99,12 @@ impl TokenStream {
         token
     }
 
-    /// Consumes a token and asserts (debug only) that it is a `NewLine`.
     pub fn consume_newline(&mut self) -> Token {
         let token = self.consume();
         debug_assert_eq!(token.kind, TokenKind::NewLine);
         token
     }
 
-    /// Inserts a token at an absolute index, shifting the cursor if it lies at or after the insertion point.
     pub fn insert_at(&mut self, index: usize, token: Token) {
         self.tokens.insert(index, token);
         if index <= self.cursor {
@@ -114,23 +112,20 @@ impl TokenStream {
         }
     }
 
-    /// Inserts a token right at the cursor, leaving the cursor pointing at it instead of past it.
     pub fn insert_before_cursor(&mut self, token: Token) {
         let cursor = self.cursor;
         self.insert_at(cursor, token);
         self.cursor = cursor;
     }
 
-    /// Removes and returns the token at the cursor, leaving the cursor pointing at the next token.
-    pub fn take_at_cursor(&mut self) -> Token {
-        self.take_at(self.cursor)
-    }
-
     pub fn update_at_cursor(&mut self, new_lexeme: String) {
         self.tokens[self.cursor].lexeme = new_lexeme;
     }
 
-    /// Removes and returns the token at an absolute index, shifting the cursor if it precedes it.
+    pub fn take_at_cursor(&mut self) -> Token {
+        self.take_at(self.cursor)
+    }
+
     pub fn take_at(&mut self, index: usize) -> Token {
         let token = self.tokens.remove(index);
         if index < self.cursor {
