@@ -12,9 +12,10 @@ use std::debug_assert_matches;
 pub(crate) fn parse_comment(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert_matches!(stream.token_at_cursor().kind, TK::DoubleDot);
 
+    stream.consume(); // Spaces
     let comment = AstNode::new_ref(NodeClass::Comment);
     let index = stream.find_next_kind(&[TK::NewLine]).expect(EXPECT_NEWLINE);
-    let mut text = stream.tokens_to_text(stream.cursor() + 2..index + 1);
+    let mut text = stream.tokens_to_text(stream.cursor() + 1..index + 1);
 
     stream.set_cursor(index + 1);
     if stream.token_at_cursor().kind == TK::Indent {
