@@ -43,10 +43,6 @@ impl TokenStream {
         text
     }
 
-    /// Finds the next token matching `kinds` at or after the cursor, converts the tokens
-    /// from `text_start` up to (excluding) the match into text, and advances the cursor
-    /// past the match. `text_start` may legitimately land past `found` (e.g. a marker with
-    /// no body before the match); this is clamped to an empty span rather than panicking.
     pub fn consume_text_until(&mut self, kinds: &[TokenKind]) -> Result<String, TokenSliceError> {
         let found = self.find_next_kind(kinds)?;
         let text = self.tokens_to_text(self.cursor.min(found)..found);
@@ -56,14 +52,6 @@ impl TokenStream {
 
     pub fn cursor(&self) -> usize {
         self.cursor
-    }
-
-    pub fn is_at_end(&self) -> bool {
-        self.cursor >= self.tokens.len()
-    }
-
-    pub fn unconsume(&mut self) {
-        self.cursor = self.cursor.saturating_sub(1);
     }
 
     /// Panic-free lookahead by absolute index, treating out-of-bounds reads as a synthetic `EoF` token.
@@ -117,6 +105,10 @@ impl TokenStream {
             .unwrap_or_else(|| Token::new(TokenKind::EoF, ""));
         self.cursor += 1;
         token
+    }
+
+    pub fn unconsume(&mut self) {
+        self.cursor = self.cursor.saturating_sub(1);
     }
 
     /// Consumes a token and asserts (debug only) that it is a `NewLine`.
@@ -222,7 +214,6 @@ mod tests {
         assert_eq!(stream.cursor(), 1);
         assert_eq!(stream.consume(), Token::new(TokenKind::NewLine, "\n"));
         assert_eq!(stream.cursor(), 2);
-        assert!(stream.is_at_end());
 
         // Consuming past the end yields a synthetic EoF token.
         assert_eq!(stream.consume(), Token::new(TokenKind::EoF, ""));
