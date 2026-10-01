@@ -19,17 +19,19 @@ pub fn parse_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserE
         stream.consume_newline();
     }
     let title = AstNode::new_ref(NodeClass::Title);
-    let title_end = stream.find_next_kind(&[TK::NewLine]).expect(EXPECT_NEWLINE);
-    title.with_attr("text", stream.tokens_to_text(stream.cursor()..title_end));
+    title.with_attr(
+        "text",
+        stream
+            .consume_text_until(stream.cursor(), &[TK::NewLine], false)
+            .expect(EXPECT_NEWLINE),
+    );
     section.push_child(title);
 
-    let closing_index = title_end + 1;
-    if stream.token_at(closing_index).kind != TK::Separator {
+    if stream.token_at_cursor().kind != TK::Separator {
         return Err(ParserError::SectionTitleMissingClosingAfterOpening {
             opening_index: start_at,
         });
     }
-    stream.set_cursor(closing_index);
     let closing_token = stream.consume();
     let closing_style: String = closing_token.lexeme[..1].to_string();
     let closing_len = closing_token.len();

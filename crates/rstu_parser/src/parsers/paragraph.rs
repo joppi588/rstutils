@@ -107,14 +107,14 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
         }
     };
 
-    let inline_final = stream.find_next_kind(end_kind_candidates).map_err(|_| {
-        ParserError::InlineMissingClosing {
+    let text = stream
+        .consume_text_until(start_at + 1, end_kind_candidates, false)
+        .map_err(|_| ParserError::InlineMissingClosing {
             markup: markup.to_owned(),
             start_at,
-        }
-    })?;
+        })?;
 
-    let effective_markup = match (kind, stream.tokens()[inline_final].kind) {
+    let effective_markup = match (kind, stream.token_at(stream.cursor() - 1).kind) {
         (TK::BackquoteStart, TK::HyperlinkReferenceEnd) => "hyperlink_reference",
         (TK::BackquoteStart, TK::BackquoteEnd) => "interpreted_text",
         _ => markup,
@@ -123,8 +123,7 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
     let inline = AstNode::new_ref(NodeClass::InlineMarkup);
     inline
         .with_attr("markup", effective_markup)
-        .with_attr("text", stream.tokens_to_text(start_at + 1..inline_final));
-    stream.set_cursor(inline_final + 1);
+        .with_attr("text", text);
     Ok(inline)
 }
 

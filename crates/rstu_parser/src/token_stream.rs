@@ -35,13 +35,32 @@ impl TokenStream {
         &self.tokens
     }
 
-    /// Concatenates the lexemes of the tokens in `range` into a single string.
-    pub fn tokens_to_text(&self, range: Range<usize>) -> String {
+    fn tokens_to_text(&self, range: Range<usize>) -> String {
         let mut text = String::new();
         for token in &self.tokens[range] {
             text.push_str(&token.lexeme);
         }
         text
+    }
+
+    /// Finds the next token matching `kinds` at or after the cursor, converts the tokens
+    /// from `text_start` up to the match into text (including the matched token's lexeme
+    /// when `include_match` is set), and advances the cursor past the match. `text_start`
+    /// may legitimately land past `found` (e.g. a marker with no body before the match);
+    /// this is clamped to an empty span rather than panicking.
+    pub fn consume_text_until(
+        &mut self,
+        text_start: usize,
+        kinds: &[TokenKind],
+        include_match: bool,
+    ) -> Result<String, TokenSliceError> {
+        let found = self.find_next_kind(kinds)?;
+        let mut text = self.tokens_to_text(text_start.min(found)..found);
+        if include_match && text_start <= found {
+            text.push_str(&self.tokens[found].lexeme);
+        }
+        self.cursor = found + 1;
+        Ok(text)
     }
 
     pub fn cursor(&self) -> usize {

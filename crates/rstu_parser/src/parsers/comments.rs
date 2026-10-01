@@ -14,10 +14,10 @@ pub(crate) fn parse_comment(stream: &mut TokenStream) -> Result<NodeRef, ParserE
 
     stream.consume(); // Spaces
     let comment = AstNode::new_ref(NodeClass::Comment);
-    let index = stream.find_next_kind(&[TK::NewLine]).expect(EXPECT_NEWLINE);
-    let mut text = stream.tokens_to_text(stream.cursor() + 1..index + 1);
+    let mut text = stream
+        .consume_text_until(stream.cursor() + 1, &[TK::NewLine], true)
+        .expect(EXPECT_NEWLINE);
 
-    stream.set_cursor(index + 1);
     if stream.token_at_cursor().kind == TK::Indent {
         let base_indent = stream.take_at_cursor().len();
         comment.with_attr("indent", base_indent);
