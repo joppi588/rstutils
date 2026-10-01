@@ -22,7 +22,7 @@ pub fn parse_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserE
     title.with_attr(
         "text",
         stream
-            .consume_text_until(stream.cursor(), &[TK::NewLine], false)
+            .consume_text_until(stream.cursor(), &[TK::NewLine])
             .expect(EXPECT_NEWLINE), // TODO: Do not only check for NewLine
     );
     section.push_child(title);

@@ -44,21 +44,16 @@ impl TokenStream {
     }
 
     /// Finds the next token matching `kinds` at or after the cursor, converts the tokens
-    /// from `text_start` up to the match into text (including the matched token's lexeme
-    /// when `include_match` is set), and advances the cursor past the match. `text_start`
-    /// may legitimately land past `found` (e.g. a marker with no body before the match);
-    /// this is clamped to an empty span rather than panicking.
+    /// from `text_start` up to (excluding) the match into text, and advances the cursor
+    /// past the match. `text_start` may legitimately land past `found` (e.g. a marker with
+    /// no body before the match); this is clamped to an empty span rather than panicking.
     pub fn consume_text_until(
         &mut self,
         text_start: usize,
         kinds: &[TokenKind],
-        include_match: bool,
     ) -> Result<String, TokenSliceError> {
         let found = self.find_next_kind(kinds)?;
-        let mut text = self.tokens_to_text(text_start.min(found)..found);
-        if include_match && text_start <= found {
-            text.push_str(&self.tokens[found].lexeme);
-        }
+        let text = self.tokens_to_text(text_start.min(found)..found);
         self.cursor = found + 1;
         Ok(text)
     }
