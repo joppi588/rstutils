@@ -35,7 +35,7 @@ Option 2: Generic node with an attribute for element type (composition)
 Use composition.
 Rationale: more simple AST definition
 
-4. Tokenizer approach
+4. Lexer approach
 Use a 1 character context before and after the token.
 
 Drawback Information leakage:
@@ -62,6 +62,12 @@ Warning messages are emitted by the linter, the parser rather emits only errors.
 Rationale: Syntax is ideally unambiguous.
 Warnings represent interpretation, which is on a semantic level -> linter.
 There are exceptions, e.g. the parser needs to decide if alphabet I (continue enum list) or roman 1 (start new list).
+
+8. Blank lines and indentation:
+- Blank lines before a dedent are interpreted as dedented.
+- Blank lines before an indent are interpreted as not indented.
+
+Affects the lexer.
 
 # Architectural drivers
 Development speed, especially bug fixes -> Maintainability is key

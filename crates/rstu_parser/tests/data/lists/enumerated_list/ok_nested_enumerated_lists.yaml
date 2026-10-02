@@ -75,7 +75,7 @@ children:
                               - class: PlainText
                                 attributes:
                                   text: "Item C).\n"
-                  - class: BlankLine
+      - class: BlankLine
       - class: EnumeratedListItem
         attributes:
           number: 2
@@ -160,7 +160,7 @@ children:
                                           - class: PlainText
                                             attributes:
                                               text: "Item III).\n"
-                              - class: BlankLine
+                  - class: BlankLine
                   - class: EnumeratedListItem
                     attributes:
                       number: 2
@@ -239,7 +239,7 @@ children:
                                           - class: PlainText
                                             attributes:
                                               text: "Item (iii).\n"
-                              - class: BlankLine
+      - class: BlankLine
       - class: EnumeratedListItem
         attributes:
           number: 3

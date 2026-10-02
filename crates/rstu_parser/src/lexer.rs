@@ -18,24 +18,37 @@ pub fn tokenize(input: &str) -> TokenStream {
             .unwrap_or_else(|| panic!("No token matched input: {sub_str:?}"));
 
         let new_token = Token::new(token_kind, lexeme);
-        match (last_token_kind, token_kind) {
-            // these special cases need more than one character context
-            (TK::NewLine | TK::BlankLine, TK::Indent) => {
+        match (token_kind, last_token_kind) {
+            (TK::BlankLine, _) => tokens.push(new_token),
+            (TK::Indent, _) => {
                 let new_indent = lexeme.len();
                 if new_indent > current_indent {
                     let indent_token = Token::indent(new_indent - current_indent);
                     tokens.push(indent_token);
                 } else if new_indent < current_indent {
                     let dedent_token = Token::dedent(current_indent - new_indent);
-                    tokens.push(dedent_token);
+                    if last_token_kind == TK::BlankLine {
+                        tokens.insert(tokens.len() - 1, dedent_token);
+                    } else {
+                        tokens.push(dedent_token);
+                    }
                 }
                 current_indent = new_indent;
             }
-            (TK::NewLine, TK::BlankLine) => tokens.push(new_token), // Blank line does not change indent
-            (TK::NewLine | TK::BlankLine, _) => {
+            (_, TK::NewLine) => {
+                // Not indented
                 if current_indent > 0 {
                     let dedent_token = Token::dedent(current_indent);
                     tokens.push(dedent_token);
+                }
+                current_indent = 0;
+                tokens.push(new_token);
+            }
+            (_, TK::BlankLine) => {
+                // Not indented, insert dedent before blankline
+                if current_indent > 0 {
+                    let dedent_token = Token::dedent(current_indent);
+                    tokens.insert(tokens.len() - 1, dedent_token);
                 }
                 current_indent = 0;
                 tokens.push(new_token);

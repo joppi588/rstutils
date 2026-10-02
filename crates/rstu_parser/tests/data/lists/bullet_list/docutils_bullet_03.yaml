@@ -21,7 +21,7 @@ children:
                   - class: PlainText
                     attributes:
                       text: "item 1, para 2.\n"
-              - class: BlankLine
+      - class: BlankLine
       - class: BulletListItem
         attributes:
           marker: "-"
