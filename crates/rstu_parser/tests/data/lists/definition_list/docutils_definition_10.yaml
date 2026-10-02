@@ -44,7 +44,7 @@ children:
             children:
               - class: PlainText
                 attributes:
-                  text: "Term : not a classifier\n"
+                  text: "Term \\: not a classifier\n"
           - class: Definition
             children:
               - class: Block
