@@ -58,13 +58,10 @@ impl TokenStream {
         self.token_at(self.cursor)
     }
 
-    pub fn token_before_cursor(&self) -> Token {
-        self.token_at(self.cursor.saturating_sub(1))
-    }
-
     // TODO: Keep this or token_at, but not both
-    pub fn token_peek_relative(&self, delta: usize) -> Token {
-        self.token_at(self.cursor.saturating_add(delta))
+    pub fn token_peek_relative(&self, delta: isize) -> Token {
+        let index = self.cursor.checked_add_signed(delta).unwrap_or(usize::MAX);
+        self.token_at(index)
     }
 
     pub fn token_at_nextline(&self) -> Token {

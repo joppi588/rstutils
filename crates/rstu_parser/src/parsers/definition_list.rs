@@ -26,7 +26,7 @@ pub(crate) fn parse_definition_list(stream: &mut TokenStream) -> Result<NodeRef,
         }
     }
     if stream.token_at_cursor().kind == TK::EoF
-        || stream.token_before_cursor().kind == TK::BlankLine
+        || stream.token_peek_relative(-1).kind == TK::BlankLine
         || (stream.token_at_cursor().kind == TK::Dedent
             && stream.token_peek_relative(1).kind == TK::BlankLine)
     {
