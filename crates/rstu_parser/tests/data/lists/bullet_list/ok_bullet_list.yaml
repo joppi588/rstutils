@@ -33,7 +33,7 @@ children:
                 - class: PlainText
                   attributes:
                     text: "Indented paragraph 2.\n"
-              - class: BlankLine
+      - class: BlankLine
       - class: BulletListItem
         attributes:
           marker: "-"

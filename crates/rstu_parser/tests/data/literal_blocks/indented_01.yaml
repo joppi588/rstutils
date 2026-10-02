@@ -10,6 +10,7 @@ children:
       indent: 4
       text: "A literal block.\n"
       type: FullyMinimized
+  - class: BlankLine
   - class: Paragraph
     children:
       - class: PlainText
@@ -18,8 +19,10 @@ children:
   - class: LiteralBlock
     attributes:
       indent: 4
-      text: "Another literal block.\nWith two blank lines following.\n\n"
+      text: "Another literal block.\nWith two blank lines following.\n"
       type: FullyMinimized
+  - class: BlankLine
+  - class: BlankLine
   - class: Paragraph
     children:
       - class: PlainText

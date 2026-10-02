@@ -57,7 +57,7 @@ children:
                               - class: PlainText
                                 attributes:
                                   text: "I\n"
-                  - class: BlankLine
+      - class: BlankLine
       - class: FieldListItem
         attributes:
           fieldname: Abstract
@@ -87,6 +87,7 @@ children:
                   text: |
                         def f(x):
                             return x**2 + x
+              - class: BlankLine
               - class: Paragraph
                 children:
                   - class: PlainText
