@@ -21,14 +21,18 @@ pub(crate) fn parse_definition_list(stream: &mut TokenStream) -> Result<NodeRef,
     while is_definition_list_item(stream) {
         let item = parse_definition_list_item(stream)?;
         list.push_child(item);
-        let blank_line = stream.consume();
-        if !matches!(blank_line.kind, TK::EoF | TK::BlankLine) {
-            return Err(ParserError::ListEndError {});
+        if stream.token_at_cursor().kind == TK::BlankLine {
+            list.push_blank_lines(stream.consume().len());
         }
-        list.push_blank_lines(blank_line.len());
     }
-
-    Ok(list)
+    if stream.token_at_cursor().kind == TK::EoF
+        || stream.token_before_cursor().kind == TK::BlankLine
+        || (stream.token_at_cursor().kind == TK::Dedent
+            && stream.token_peek_relative(1).kind == TK::BlankLine)
+    {
+        return Ok(list);
+    }
+    Err(ParserError::ListMissingBlankLineError {})
 }
 
 fn parse_definition_list_item(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {

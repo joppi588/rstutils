@@ -79,7 +79,7 @@ children:
                       - class: PlainText
                         attributes:
                           text: "definition 2\n"
-  - class: BlankLine
+      - class: BlankLine
   - class: Paragraph
     children:
       - class: PlainText

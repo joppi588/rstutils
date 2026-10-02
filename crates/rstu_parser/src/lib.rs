@@ -112,23 +112,7 @@ fn parse_body_elements(
 
         kind if kind.nested_is(TC::PARAGRAPH) && is_definition_list_item(stream) => {
             let definition_list = parse_definition_list(stream)?;
-            let mut trailing_blank_lines = Vec::new();
-            if current_parent.borrow().class == NodeClass::Block
-                || contains_nested_definition_list(&definition_list)
-            {
-                while definition_list
-                    .borrow()
-                    .children
-                    .last()
-                    .is_some_and(|child| child.borrow().class == NodeClass::BlankLine)
-                {
-                    trailing_blank_lines.push(definition_list.borrow_mut().children.pop().unwrap());
-                }
-            }
             current_parent.push_child(definition_list);
-            for blank_line in trailing_blank_lines.into_iter().rev() {
-                current_parent.push_child(blank_line);
-            }
         }
 
         kind if kind.nested_is(TC::PARAGRAPH) => {
@@ -150,11 +134,4 @@ fn parse_body_elements(
     }
 
     Ok(())
-}
-
-fn contains_nested_definition_list(node: &NodeRef) -> bool {
-    let children = node.borrow().children.clone();
-    children.iter().any(|child| {
-        child.borrow().class == NodeClass::DefinitionList || contains_nested_definition_list(child)
-    })
 }

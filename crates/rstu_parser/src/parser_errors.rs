@@ -36,6 +36,7 @@ pub enum ParserError {
         conflicting_marker: String,
     },
     ListEndError {},
+    ListMissingBlankLineError {},
     UnexpectedBlockEndError {},
     InvalidDedent {
         expected: usize,

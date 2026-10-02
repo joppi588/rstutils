@@ -58,6 +58,10 @@ impl TokenStream {
         self.token_at(self.cursor)
     }
 
+    pub fn token_before_cursor(&self) -> Token {
+        self.token_at(self.cursor.saturating_sub(1))
+    }
+
     // TODO: Keep this or token_at, but not both
     pub fn token_peek_relative(&self, delta: usize) -> Token {
         self.token_at(self.cursor.saturating_add(delta))
@@ -88,7 +92,7 @@ impl TokenStream {
             .get(self.cursor)
             .cloned()
             .unwrap_or_else(|| Token::new(TokenKind::EoF, ""));
-        self.cursor += 1;
+        self.cursor = self.cursor.saturating_add(1);
         token
     }
 
