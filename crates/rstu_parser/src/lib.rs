@@ -62,7 +62,7 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
             }
 
             (TK::Indent, _) => {
-                return Err(ParserError::UnexpectedBlockEndError {});
+                return Err(ParserError::UnexpectedIndentError {});
             }
             (TK::Dedent, _) => {
                 stream.consume();
@@ -110,7 +110,7 @@ fn parse_body_elements(
             current_parent.push_child(enumerated_list);
         }
 
-        kind if kind.nested_is(TC::PARAGRAPH) && is_definition_list_item(stream) => {
+        _ if is_definition_list_item(stream) => {
             let definition_list = parse_definition_list(stream)?;
             current_parent.push_child(definition_list);
         }

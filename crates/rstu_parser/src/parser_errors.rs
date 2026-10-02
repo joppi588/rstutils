@@ -37,7 +37,7 @@ pub enum ParserError {
     },
     ListEndError {},
     ListMissingBlankLineError {},
-    UnexpectedBlockEndError {},
+    UnexpectedIndentError {},
     InvalidDedent {
         expected: usize,
         is: usize,
