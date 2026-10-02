@@ -1,0 +1,31 @@
+class: Document
+children:
+  - class: DefinitionList
+    children:
+      - class: DefinitionListItem
+        children:
+          - class: Term
+            children:
+              - class: PlainText
+                attributes:
+                  text: "Term\n"
+          - class: Classifier
+            children:
+              - class: Reference
+                attributes:
+                  refname: reference
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: "reference"
+          - class: Definition
+            children:
+              - class: Block
+                attributes:
+                  indent: 4
+                children:
+                  - class: Paragraph
+                    children:
+                      - class: PlainText
+                        attributes:
+                          text: "classifier starting with a reference crashes from release 8197 to ...\n"

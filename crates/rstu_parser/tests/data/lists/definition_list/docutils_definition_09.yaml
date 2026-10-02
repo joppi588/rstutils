@@ -1,0 +1,27 @@
+class: Document
+children:
+  - class: DefinitionList
+    children:
+      - class: DefinitionListItem
+        children:
+          - class: Term
+            children:
+              - class: PlainText
+                attributes:
+                  text: "Term\n"
+          - class: Classifier
+            children:
+              - class: PlainText
+                attributes:
+                  text: "classifier\n"
+          - class: Definition
+            children:
+              - class: Block
+                attributes:
+                  indent: 4
+                children:
+                  - class: Paragraph
+                    children:
+                      - class: PlainText
+                        attributes:
+                          text: "The ' : ' indicates a classifier in\ndefinition list item terms only.\n"

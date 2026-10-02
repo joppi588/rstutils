@@ -14,6 +14,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use parsers::comments::parse_comment;
+use parsers::definition_list::{is_definition_list_item, parse_definition_list};
 use parsers::directives::parse_directive;
 use parsers::list::{parse_bullet_list, parse_enumerated_list, parse_field_list};
 use parsers::literal_block::parse_literal_block;
@@ -60,8 +61,10 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
                 current_parent.push_child(comment);
             }
 
-            // TODO: Do not simply ignore these
-            (TK::Indent, _) | (TK::Dedent, _) => {
+            (TK::Indent, _) => {
+                return Err(ParserError::UnexpectedBlockEndError {});
+            }
+            (TK::Dedent, _) => {
                 stream.consume();
             }
 
@@ -107,6 +110,27 @@ fn parse_body_elements(
             current_parent.push_child(enumerated_list);
         }
 
+        kind if kind.nested_is(TC::PARAGRAPH) && is_definition_list_item(stream) => {
+            let definition_list = parse_definition_list(stream)?;
+            let mut trailing_blank_lines = Vec::new();
+            if current_parent.borrow().class == NodeClass::Block
+                || contains_nested_definition_list(&definition_list)
+            {
+                while definition_list
+                    .borrow()
+                    .children
+                    .last()
+                    .is_some_and(|child| child.borrow().class == NodeClass::BlankLine)
+                {
+                    trailing_blank_lines.push(definition_list.borrow_mut().children.pop().unwrap());
+                }
+            }
+            current_parent.push_child(definition_list);
+            for blank_line in trailing_blank_lines.into_iter().rev() {
+                current_parent.push_child(blank_line);
+            }
+        }
+
         kind if kind.nested_is(TC::PARAGRAPH) => {
             let paragraph = parse_paragraph(stream)?;
             current_parent.push_child(paragraph);
@@ -126,4 +150,11 @@ fn parse_body_elements(
     }
 
     Ok(())
+}
+
+fn contains_nested_definition_list(node: &NodeRef) -> bool {
+    let children = node.borrow().children.clone();
+    children.iter().any(|child| {
+        child.borrow().class == NodeClass::DefinitionList || contains_nested_definition_list(child)
+    })
 }

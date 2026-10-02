@@ -116,6 +116,15 @@ impl TokenCategory {
         TokenKind::EoF,
     ];
 
+    pub const NEWLINE: &'static [TokenKind] = &[
+        TokenKind::BlankLine,
+        TokenKind::EoF,
+        TokenKind::LiteralBlock,
+        TokenKind::LiteralBlockMinimized,
+        TokenKind::LiteralBlockPartiallyMinimized,
+        TokenKind::NewLine,
+    ];
+
     pub const LIST_MARKER: &'static [TokenKind] = &[
         TokenKind::BulletListMarker,
         TokenKind::EnumeratedListMarker,

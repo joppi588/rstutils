@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-use crate::token::{Token, TokenKind};
+use crate::token::{Token, TokenCategory, TokenKind};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum TokenSliceError {
@@ -68,15 +68,8 @@ impl TokenStream {
     }
 
     pub fn find_end_of_line(&self) -> usize {
-        self.find_next_kind(&[
-            TokenKind::BlankLine,
-            TokenKind::EoF,
-            TokenKind::LiteralBlock,
-            TokenKind::LiteralBlockMinimized,
-            TokenKind::LiteralBlockPartiallyMinimized,
-            TokenKind::NewLine,
-        ])
-        .unwrap_or(self.tokens.len())
+        self.find_next_kind(TokenCategory::NEWLINE)
+            .unwrap_or(self.tokens.len())
     }
 
     pub fn find_next_kind(&self, kinds: &[TokenKind]) -> Result<usize, TokenSliceError> {
