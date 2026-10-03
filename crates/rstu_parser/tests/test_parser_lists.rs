@@ -11,7 +11,6 @@ use std::path::Path;
 mod test_parser;
 use test_parser::rst_vs_yaml;
 #[rstest]
-// TODO: Activate tests
 #[case("docutils_bullet_00")]
 #[case("docutils_bullet_01")]
 #[case("docutils_bullet_02")]
@@ -21,7 +20,8 @@ use test_parser::rst_vs_yaml;
 #[case("ok_bullet_list")]
 #[case("ok_compact_bullet_list")]
 #[case("ok_nested_bullet_list")]
-// #[case("docutils_bullet_09")]
+// TODO: Activate tests
+// #[case("docutils_bullet_09")] Unicode bullets
 fn parse_bullet_list(#[case] test_case: &str) {
     rst_vs_yaml!("lists/bullet_list", test_case)
 }
