@@ -11,7 +11,7 @@ use std::path::Path;
 #[test]
 fn tokenize_ok_mixed_lorem_ipsum_file() {
     let path =
-        Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/data/mixed/ok_mixed_lorem_ipsum.rst");
+        Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/data/various/ok_mixed_lorem_ipsum.rst");
     let contents = fs::read_to_string(path).expect("failed to read mixed lorem ipsum test file");
 
     let expected = TokenStream::from_pairs(&[

@@ -100,6 +100,7 @@ impl TokenCategory {
     pub const PLAIN: &'static [TokenKind] = &[
         TokenKind::Spaces,
         TokenKind::Word,
+        TokenKind::EscapedChar,
         TokenKind::Punctuation,
         TokenKind::LiteralChar,
         TokenKind::NewLine,
@@ -170,6 +171,7 @@ pub enum TokenKind {
     EmphasisStart,
     EnumeratedListMarker,
     EoF,
+    EscapedChar,
     Field,
     FootnoteReference,
     HyperlinkReferenceEnd,
@@ -212,7 +214,7 @@ impl TokenKind {
         (DoubleDot, r"[\n\s]\.\.[\n\s]"),
 
         // Literal block
-        (LiteralBlockMinimized, r"[A-Za-z0-9]::(.|\n)"),
+        (LiteralBlockMinimized, r"[^\s\t]::(.|\n)"),
         (LiteralBlockPartiallyMinimized, r".\s::(.|\n)"),
         (LiteralBlock, r"(.|\n)::(.|\n)"),
 
@@ -251,6 +253,7 @@ impl TokenKind {
         // Plain text
         (Spaces, r"[^ \t\n][ \t]+[^ \t]"),
         (Word, r"[^\w]\w+[^\w]"),
+        (EscapedChar,r"(.|\n)\\.(.|\n)"),
         (Punctuation, r"(.|\n)[[:punct:]](.|\n)"),
 
         (Dedent, r"\b\B"), // never matches, assigned by the lexer

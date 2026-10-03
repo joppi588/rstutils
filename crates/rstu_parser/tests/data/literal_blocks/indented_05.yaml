@@ -1,0 +1,19 @@
+class: Document
+children:
+  - class: BlankLine
+  - class: Paragraph
+    children:
+      - class: PlainText
+        attributes:
+          text: "A paragraph\\\\:\n"
+  - class: LiteralBlock
+    attributes:
+      indent: 4
+      text: "A literal block.\n"
+      type: FullyMinimized
+  - class: BlankLine
+  - class: Paragraph
+    children:
+      - class: PlainText
+        attributes:
+          text: "A paragraph\\::\nNot a literal block.\n"
