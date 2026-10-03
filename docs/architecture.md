@@ -69,6 +69,11 @@ There are exceptions, e.g. the parser needs to decide if alphabet I (continue en
 
 Affects the lexer.
 
+9. Formatter
+Write back rst from AST.
+TODO: Some elements contain the trailing newline, some not.
+Make this consistent
+
 # Architectural drivers
 Development speed, especially bug fixes -> Maintainability is key
 Execution speed

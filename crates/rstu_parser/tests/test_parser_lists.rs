@@ -130,6 +130,40 @@ fn parse_field_list(#[case] test_case: &str) {
 }
 
 #[rstest]
+#[case("docutils_definition_00")]
+#[case("docutils_definition_01")]
+#[case("docutils_definition_05")]
+#[case("docutils_definition_06")]
+#[case("docutils_definition_08")]
+#[case("docutils_definition_09")]
+// #[case("docutils_definition_10")] TODO: Needs escaping
+#[case("docutils_definition_11")]
+#[case("docutils_definition_13")]
+#[case("docutils_definition_14")]
+#[case("docutils_definition_15")]
+#[case("ok_inline_markup")]
+fn parse_definition_list(#[case] test_case: &str) {
+    rst_vs_yaml!("lists/definition_list", test_case);
+}
+
+#[rstest]
+#[case("docutils_definition_02")]
+#[case("docutils_definition_03")]
+#[case("docutils_definition_04")]
+#[case("docutils_definition_07")]
+#[case("docutils_definition_12")]
+fn rejects_definition_list_diagnostics(#[case] test_case: &str) {
+    let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("tests/data")
+        .join("lists/definition_list")
+        .join(format!("{}.rst", test_case));
+    let rst_contents = fs::read_to_string(&rst_path)
+        .unwrap_or_else(|_| panic!("failed to read fixture file: {}", rst_path.display()));
+
+    parse(&rst_contents).expect_err("expected definition-list diagnostic to fail parsing");
+}
+
+#[rstest]
 #[case("nok_empty_item_no_blank.rst")]
 #[case("nok_list_end_no_blank.rst")]
 fn rejects_docutils_field_list_end(#[case] rst_filename: &str) {

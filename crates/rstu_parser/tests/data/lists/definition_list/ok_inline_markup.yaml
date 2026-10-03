@@ -1,0 +1,30 @@
+class: Document
+children:
+  - class: DefinitionList
+    children:
+      - class: DefinitionListItem
+        children:
+          - class: Term
+            children:
+              - class: InlineMarkup
+                attributes:
+                  markup: hyperlink_reference
+                  text: linked term
+              - class: PlainText
+                attributes:
+                  text: " with "
+              - class: InlineMarkup
+                attributes:
+                  markup: inline_literal
+                  text: literal
+          - class: Definition
+            children:
+              - class: Block
+                attributes:
+                  indent: 4
+                children:
+                  - class: Paragraph
+                    children:
+                      - class: PlainText
+                        attributes:
+                          text: "Definition.\n"

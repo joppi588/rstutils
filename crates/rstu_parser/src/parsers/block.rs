@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: MIT
 
-use super::paragraph::parse_paragraph;
 use crate::parse_body_elements;
 use crate::parser_errors::ParserError;
 use crate::token::{Token, TokenCategory as TC, TokenKind as TK};
@@ -19,10 +18,6 @@ pub(crate) fn parse_block(stream: &mut TokenStream) -> Result<NodeRef, ParserErr
     }
     loop {
         match stream.token_at_cursor().kind {
-            TK::Word | TK::NewLine => {
-                let paragraph = parse_paragraph(stream)?;
-                block.push_child(paragraph);
-            }
             TK::BlankLine => {
                 let token = stream.consume();
                 block.push_blank_lines(token.len());

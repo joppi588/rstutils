@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-use crate::token::{Token, TokenKind};
+use crate::token::{Token, TokenCategory, TokenKind};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum TokenSliceError {
@@ -59,8 +59,9 @@ impl TokenStream {
     }
 
     // TODO: Keep this or token_at, but not both
-    pub fn token_peek_relative(&self, delta: usize) -> Token {
-        self.token_at(self.cursor.saturating_add(delta))
+    pub fn token_peek_relative(&self, delta: isize) -> Token {
+        let index = self.cursor.checked_add_signed(delta).unwrap_or(usize::MAX);
+        self.token_at(index)
     }
 
     pub fn token_at_nextline(&self) -> Token {
@@ -68,15 +69,8 @@ impl TokenStream {
     }
 
     pub fn find_end_of_line(&self) -> usize {
-        self.find_next_kind(&[
-            TokenKind::BlankLine,
-            TokenKind::EoF,
-            TokenKind::LiteralBlock,
-            TokenKind::LiteralBlockMinimized,
-            TokenKind::LiteralBlockPartiallyMinimized,
-            TokenKind::NewLine,
-        ])
-        .unwrap_or(self.tokens.len())
+        self.find_next_kind(TokenCategory::NEWLINE)
+            .unwrap_or(self.tokens.len())
     }
 
     pub fn find_next_kind(&self, kinds: &[TokenKind]) -> Result<usize, TokenSliceError> {
@@ -95,7 +89,7 @@ impl TokenStream {
             .get(self.cursor)
             .cloned()
             .unwrap_or_else(|| Token::new(TokenKind::EoF, ""));
-        self.cursor += 1;
+        self.cursor = self.cursor.saturating_add(1);
         token
     }
 
