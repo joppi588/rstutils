@@ -43,14 +43,11 @@ fn parse_definition_list_item(stream: &mut TokenStream) -> Result<NodeRef, Parse
         item.push_child(node);
         node_class = NodeClass::Classifier;
 
-        match stream.token_at_cursor().kind {
-            TK::ClassifierSeparator => {
-                stream.consume();
-            }
-            _ => {
-                stream.consume_newline();
-                break;
-            }
+        if stream.token_at_cursor().kind == TK::ClassifierSeparator {
+            stream.consume();
+        } else {
+            stream.consume_newline();
+            break;
         }
     }
 
