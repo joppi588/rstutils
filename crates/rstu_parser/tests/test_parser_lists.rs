@@ -141,6 +141,7 @@ fn parse_field_list(#[case] test_case: &str) {
 #[case("docutils_definition_13")]
 #[case("docutils_definition_14")]
 #[case("docutils_definition_15")]
+#[case("ok_inline_markup")]
 fn parse_definition_list(#[case] test_case: &str) {
     rst_vs_yaml!("lists/definition_list", test_case);
 }

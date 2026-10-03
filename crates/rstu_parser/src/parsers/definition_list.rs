@@ -70,24 +70,7 @@ fn parse_term_or_classifier(stream: &mut TokenStream, node: &NodeRef) -> Result<
             TK::NewLine | TK::ClassifierSeparator | TK::EoF => break,
             kind if kind.is(TC::INLINE_MARKER) => {
                 let inline = parse_inline(stream)?;
-                let markup = inline.borrow().attributes.get_str("markup");
-                let text = inline.borrow().attributes.get_str("text");
-                match markup.as_deref() {
-                    Some("inline_literal") => {
-                        inline.with_attr("markup", "literal");
-                        node.push_child(inline);
-                    }
-                    Some("hyperlink_reference") => {
-                        let text = text.unwrap_or_default();
-                        let reference = AstNode::new_ref(NodeClass::Reference);
-                        reference.with_attr("refname", text.clone());
-                        let plain_text = AstNode::new_ref(NodeClass::PlainText);
-                        plain_text.with_attr("text", text);
-                        reference.push_child(plain_text);
-                        node.push_child(reference);
-                    }
-                    _ => node.push_child(inline),
-                }
+                node.push_child(inline);
             }
             kind if kind.is(TC::INLINE_TOKEN) => node.push_child(parse_inline_token(stream)?),
             kind if is_term_text(kind) => {

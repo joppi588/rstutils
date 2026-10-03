@@ -8,7 +8,7 @@ children:
             children:
               - class: InlineMarkup
                 attributes:
-                  markup: literal
+                  markup: inline_literal
                   text: "Term : not a classifier"
           - class: Definition
             children:

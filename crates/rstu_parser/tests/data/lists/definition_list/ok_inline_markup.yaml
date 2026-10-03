@@ -6,26 +6,17 @@ children:
         children:
           - class: Term
             children:
-              - class: PlainText
-                attributes:
-                  text: "Term"
-          - class: Classifier
-            children:
-              - class: PlainText
-                attributes:
-                  text: "a "
               - class: InlineMarkup
                 attributes:
                   markup: hyperlink_reference
-                  text: reference
+                  text: linked term
               - class: PlainText
                 attributes:
-                  text: " in text"
-          - class: Classifier
-            children:
-              - class: PlainText
+                  text: " with "
+              - class: InlineMarkup
                 attributes:
-                  text: "second"
+                  markup: inline_literal
+                  text: literal
           - class: Definition
             children:
               - class: Block
@@ -36,4 +27,4 @@ children:
                     children:
                       - class: PlainText
                         attributes:
-                          text: "classifier with reference crashes from release 8197 to ...\n"
+                          text: "Definition.\n"
