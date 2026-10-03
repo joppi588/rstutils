@@ -162,6 +162,7 @@ pub enum TokenKind {
     BackquoteStart,
     BlankLine,
     BulletListMarker,
+    ClassifierSeperator,
     Dedent,
     Directive,
     DoubleDot,
@@ -243,6 +244,9 @@ impl TokenKind {
         (Field,r"[\n\s]:[\w\s]+:[\n\s]"),
         (EnumeratedListMarker, r"[\n\s](?:(?:#|[0-9]+|[A-Za-z]+|[IVXLCDMivxlcdm]+)(?:\.|\))[ \t]|\([A-Za-z0-9]+\)[ \t])"),
         (BulletListMarker, r"(\s|\n)[\-\+\*•‣⁃](\s|\n)"),
+
+        // Classifiers for definition list
+        (ClassifierSeperator,r"\s:\s"),
 
         // Plain text
         (Spaces, r"[^ \t\n][ \t]+[^ \t]"),
