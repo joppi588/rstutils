@@ -65,9 +65,8 @@ There are exceptions, e.g. the parser needs to decide if alphabet I (continue en
 
 8. Blank lines and indentation:
 - Blank lines before a dedent are interpreted as dedented.
-- Blank lines before an indent are interpreted as not indented.
-
-Affects the lexer.
+- Blank lines before an indent are interpreted as indented.
+  except after bullet list item, field list item, directives
 
 9. Formatter
 Write back rst from AST.

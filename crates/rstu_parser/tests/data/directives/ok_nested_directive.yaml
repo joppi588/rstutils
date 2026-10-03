@@ -2,21 +2,26 @@ class: Document
 children:
   - class: Directive
     attributes:
-      directive_type: note
-      indent: 3
+      directive_arguments: "picture.png"
+      directive_type: figure
     children:
+      - class: BlankLine
       - class: Block
         attributes:
           indent: 3
         children:
-          - class: Paragraph
+          - class: Directive
+            attributes:
+              directive_arguments: This is the caption
+              directive_type: note
             children:
-              - class: PlainText
+              - class: BlankLine
+              - class: Block
                 attributes:
-                  text: "This is inside the note.\n"
-          - class: BlankLine
-          - class: Paragraph
-            children:
-              - class: PlainText
-                attributes:
-                  text: "This paragraph follows the note.\n"
+                  indent: 3
+                children:
+                  - class: Paragraph
+                    children:
+                      - class: PlainText
+                        attributes:
+                          text: "with nested text.\n"

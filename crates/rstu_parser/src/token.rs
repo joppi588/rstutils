@@ -154,6 +154,9 @@ impl TokenCategory {
             TokenKind::LiteralBlockMinimized,
             TokenKind::LiteralBlockPartiallyMinimized,
         ],
+        &[TokenKind::Directive],
+        // COMMENT
+        &[TokenKind::DoubleDot],
     ];
 }
 

@@ -51,15 +51,6 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
                 current_parent.push_section_ref(section.clone());
                 current_parent = section;
             }
-            (TK::Directive, _) => {
-                let directive = parse_directive(&mut stream)?;
-                current_parent.push_child(directive);
-            }
-
-            (TK::DoubleDot, _) => {
-                let comment = parse_comment(&mut stream)?;
-                current_parent.push_child(comment);
-            }
 
             (TK::Indent, _) => {
                 return Err(ParserError::UnexpectedIndentError {});
@@ -98,6 +89,15 @@ fn parse_body_elements(
         TK::BulletListMarker => {
             let bullet_list = parse_bullet_list(stream)?;
             current_parent.push_child(bullet_list);
+        }
+        TK::Directive => {
+            let directive = parse_directive(stream)?;
+            current_parent.push_child(directive);
+        }
+
+        TK::DoubleDot => {
+            let comment = parse_comment(stream)?;
+            current_parent.push_child(comment);
         }
 
         TK::Field => {

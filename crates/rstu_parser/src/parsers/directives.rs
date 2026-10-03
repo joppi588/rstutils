@@ -16,6 +16,10 @@ pub(crate) fn parse_directive(stream: &mut TokenStream) -> Result<NodeRef, Parse
     let directive = AstNode::new_ref(NodeClass::Directive);
     parse_directive_header(stream, &directive);
 
+    if stream.token_at_cursor().kind == TK::BlankLine {
+        directive.push_blank_lines(stream.consume().len())
+    }
+
     if stream.token_at_cursor().kind == TK::Indent {
         let content = parse_block(stream)?;
         directive.push_child(content);

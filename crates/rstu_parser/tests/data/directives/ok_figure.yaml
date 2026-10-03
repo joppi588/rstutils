@@ -2,51 +2,16 @@ class: Document
 children:
   - class: Directive
     attributes:
-      directive_arguments: "https://example.com/sample.png"
-      directive_type: image
+      directive_arguments: "picture.png"
+      directive_type: figure
     children:
+      - class: BlankLine
       - class: Block
         attributes:
           indent: 3
         children:
-          - class: FieldList
+          - class: Paragraph
             children:
-              - class: FieldListItem
+              - class: PlainText
                 attributes:
-                  fieldname: height
-                children:
-                  - class: Block
-                    attributes:
-                      indent: 9
-                    children:
-                      - class: Paragraph
-                        children:
-                          - class: PlainText
-                            attributes:
-                              text: "20mm\n"
-              - class: FieldListItem
-                attributes:
-                  fieldname: width
-                children:
-                  - class: Block
-                    attributes:
-                      indent: 8
-                    children:
-                      - class: Paragraph
-                        children:
-                          - class: PlainText
-                            attributes:
-                              text: "300px\n"
-              - class: FieldListItem
-                attributes:
-                  fieldname: scale
-                children:
-                  - class: Block
-                    attributes:
-                      indent: 8
-                    children:
-                      - class: Paragraph
-                        children:
-                          - class: PlainText
-                            attributes:
-                              text: "75\n"
+                  text: "A picture with a caption.\n"
