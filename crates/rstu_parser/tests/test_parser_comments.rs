@@ -8,7 +8,7 @@ mod test_parser;
 use test_parser::rst_vs_yaml;
 
 #[rstest]
-#[case("ok_comment")]
+#[case("comment")]
 fn parse_comment(#[case] test_case: &str) {
-    rst_vs_yaml!("comments", test_case)
+    rst_vs_yaml!("comments/ok", test_case)
 }

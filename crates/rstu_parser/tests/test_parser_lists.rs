@@ -11,27 +11,27 @@ use std::path::Path;
 mod test_parser;
 use test_parser::rst_vs_yaml;
 #[rstest]
-#[case("docutils_bullet_00")]
-#[case("docutils_bullet_01")]
-#[case("docutils_bullet_02")]
-#[case("docutils_bullet_03")]
-#[case("docutils_bullet_04")]
-#[case("docutils_bullet_07")]
-#[case("ok_bullet_list")]
-#[case("ok_compact_bullet_list")]
-#[case("ok_nested_bullet_list")]
+#[case("bullet_00")]
+#[case("bullet_01")]
+#[case("bullet_02")]
+#[case("bullet_03")]
+#[case("bullet_04")]
+#[case("bullet_07")]
+#[case("bullet_list")]
+#[case("compact_bullet_list")]
+#[case("nested_bullet_list")]
 // TODO: Activate tests
-// #[case("docutils_bullet_09")] Unicode bullets
+// #[case("bullet_09")] Unicode bullets
 fn parse_bullet_list(#[case] test_case: &str) {
-    rst_vs_yaml!("lists/bullet_list", test_case)
+    rst_vs_yaml!("lists/bullet_list/ok", test_case)
 }
 
 #[rstest]
-#[case("docutils_bullet_05.rst")]
+#[case("bullet_05.rst")]
 fn rejects_docutils_bullet_list_style(#[case] rst_filename: &str) {
     let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tests/data")
-        .join("lists/bullet_list")
+        .join("lists/bullet_list/err")
         .join(rst_filename);
     let rst_contents = fs::read_to_string(&rst_path)
         .unwrap_or_else(|_| panic!("failed to read fixture file: {}", rst_path.display()));
@@ -42,12 +42,12 @@ fn rejects_docutils_bullet_list_style(#[case] rst_filename: &str) {
 }
 
 #[rstest]
-#[case("docutils_bullet_06.rst")]
-#[case("docutils_bullet_08.rst")]
+#[case("bullet_06.rst")]
+#[case("bullet_08.rst")]
 fn rejects_docutils_bullet_list_end(#[case] rst_filename: &str) {
     let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tests/data")
-        .join("lists/bullet_list")
+        .join("lists/bullet_list/err")
         .join(rst_filename);
     let rst_contents = fs::read_to_string(&rst_path)
         .unwrap_or_else(|_| panic!("failed to read fixture file: {}", rst_path.display()));
@@ -58,30 +58,30 @@ fn rejects_docutils_bullet_list_end(#[case] rst_filename: &str) {
 }
 
 #[rstest]
-#[case("docutils_mixed_auto_and_explicit")]
-#[case("nok_empty_item_no_blank")]
-#[case("ok_auto_enumerator")]
-#[case("ok_auto_only")]
-#[case("ok_definitely_ambiguous")]
-#[case("ok_different_enumeration_formats")]
-#[case("ok_different_enumeration_sequences")]
-#[case("ok_enumerated_list")]
-#[case("ok_loweralpha_auto")]
-#[case("ok_lowerroman_auto")]
-#[case("ok_nested_enumerated_lists")]
-#[case("ok_no_blank_lines_between_items")]
-#[case("ok_non_marker_period")]
-#[case("ok_potentially_ambiguous")]
+#[case("auto_enumerator")]
+#[case("auto_only")]
+#[case("definitely_ambiguous")]
+#[case("different_enumeration_formats")]
+#[case("different_enumeration_sequences")]
+#[case("empty_item_no_blank")]
+#[case("enumerated_list")]
+#[case("loweralpha_auto")]
+#[case("lowerroman_auto")]
+#[case("mixed_auto_and_explicit")]
+#[case("nested_enumerated_lists")]
+#[case("no_blank_lines_between_items")]
+#[case("non_marker_period")]
+#[case("potentially_ambiguous")]
 fn parse_enumerated_list(#[case] test_case: &str) {
-    rst_vs_yaml!("lists/enumerated_list", test_case)
+    rst_vs_yaml!("lists/enumerated_list/ok", test_case)
 }
 
 #[rstest]
-#[case("nok_unindented_enumerated_continuation.rst")]
+#[case("unindented_enumerated_continuation.rst")]
 fn rejects_docutils_enumerated_list_errors(#[case] rst_filename: &str) {
     let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tests/data")
-        .join("lists/enumerated_list")
+        .join("lists/enumerated_list/err")
         .join(rst_filename);
     let rst_contents = fs::read_to_string(&rst_path)
         .unwrap_or_else(|_| panic!("failed to read fixture file: {}", rst_path.display()));
@@ -93,17 +93,17 @@ fn rejects_docutils_enumerated_list_errors(#[case] rst_filename: &str) {
 
 // TODO
 // NOT IMPLEMENTED: Docutils emits system messages for ordinal validation.
-// #[case("docutils_scrambled_sequences")]
-// #[case("docutils_skipping_item")]
-// #[case("docutils_nonordinal_starts")]
+// #[case("scrambled_sequences")]
+// #[case("skipping_item")]
+// #[case("nonordinal_starts")]
 // NOT IMPLEMENTED: Roman numeral validation and recovery differ.
-// #[case("docutils_bad_roman_numerals")]
+// #[case("bad_roman_numerals")]
 // NOT IMPLEMENTED: Docutils recovers misaligned continuation lines as warnings/block quotes.
-// #[case("docutils_misaligned_multiline_items")]
+// #[case("misaligned_multiline_items")]
 // NOT IMPLEMENTED: Non-breaking-space handling is not supported by the current lexer.
-// #[case("docutils_nonbreaking_space_workaround")]
-// #[case("ok_enumerated_item_indentation")]
-// #[case("ok_multiline_enumerated_items")]
+// #[case("nonbreaking_space_workaround")]
+// #[case("enumerated_item_indentation")]
+// #[case("multiline_enumerated_items")]
 
 #[rstest]
 #[case("bodies_next_line")]
@@ -112,7 +112,7 @@ fn rejects_docutils_enumerated_list_errors(#[case] rst_filename: &str) {
 #[case("multiple_arguments")]
 #[case("multiple_body_elements")]
 #[case("nested_one_line")]
-#[case("ok_field_list")]
+#[case("field_list")]
 #[case("oneliners_no_blank")]
 // TODO: NOT IMPLEMENTED:
 // #[case("inline_markup_in_name")]
@@ -126,36 +126,36 @@ fn parse_field_list(#[case] test_case: &str) {
     // WHEN we parse and compare them against YAML snapshots
     // THEN this acts as a compatibility porting test surface (expected to fail for now)
 
-    rst_vs_yaml!("lists/field_list", test_case);
+    rst_vs_yaml!("lists/field_list/ok", test_case);
 }
 
 #[rstest]
-#[case("docutils_definition_00")]
-#[case("docutils_definition_01")]
-#[case("docutils_definition_05")]
-#[case("docutils_definition_06")]
-#[case("docutils_definition_08")]
-#[case("docutils_definition_09")]
-#[case("docutils_definition_10")]
-#[case("docutils_definition_11")]
-#[case("docutils_definition_13")]
-#[case("docutils_definition_14")]
-#[case("docutils_definition_15")]
-#[case("ok_inline_markup")]
+#[case("definition_00")]
+#[case("definition_01")]
+#[case("definition_05")]
+#[case("definition_06")]
+#[case("definition_08")]
+#[case("definition_09")]
+#[case("definition_10")]
+#[case("definition_11")]
+#[case("definition_13")]
+#[case("definition_14")]
+#[case("definition_15")]
+#[case("inline_markup")]
 fn parse_definition_list(#[case] test_case: &str) {
-    rst_vs_yaml!("lists/definition_list", test_case);
+    rst_vs_yaml!("lists/definition_list/ok", test_case);
 }
 
 #[rstest]
-#[case("docutils_definition_02")]
-#[case("docutils_definition_03")]
-#[case("docutils_definition_04")]
-#[case("docutils_definition_07")]
-#[case("docutils_definition_12")]
+#[case("definition_02")]
+#[case("definition_03")]
+#[case("definition_04")]
+#[case("definition_07")]
+#[case("definition_12")]
 fn rejects_definition_list_diagnostics(#[case] test_case: &str) {
     let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tests/data")
-        .join("lists/definition_list")
+        .join("lists/definition_list/err")
         .join(format!("{}.rst", test_case));
     let rst_contents = fs::read_to_string(&rst_path)
         .unwrap_or_else(|_| panic!("failed to read fixture file: {}", rst_path.display()));
@@ -164,12 +164,12 @@ fn rejects_definition_list_diagnostics(#[case] test_case: &str) {
 }
 
 #[rstest]
-#[case("nok_empty_item_no_blank.rst")]
-#[case("nok_list_end_no_blank.rst")]
+#[case("empty_item_no_blank.rst")]
+#[case("list_end_no_blank.rst")]
 fn rejects_docutils_field_list_end(#[case] rst_filename: &str) {
     let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tests/data")
-        .join("lists/field_list")
+        .join("lists/field_list/err")
         .join(rst_filename);
     let rst_contents = fs::read_to_string(&rst_path)
         .unwrap_or_else(|_| panic!("failed to read fixture file: {}", rst_path.display()));

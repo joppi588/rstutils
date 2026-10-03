@@ -8,7 +8,7 @@ This document lists deviations from the rst specification.
   Rationale: Field names are like identifiers.
 - Bullet list:
   Indentation must align with the last paragraph
-  (nok_indented_bullet_list, tbc could be interpreted as a definition list)
+  (err/indented_bullet_list, tbc could be interpreted as a definition list)
 - Enumerated list:
     * Auto in between explicit markers is accepted.
       (test case docutils_mixed_auto_and_explicit, docutils does not accept that.)

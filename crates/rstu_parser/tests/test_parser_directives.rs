@@ -8,13 +8,13 @@ mod test_parser;
 use test_parser::rst_vs_yaml;
 
 #[rstest]
-#[case("ok_figure")]
-#[case("ok_image_numeric_options")]
-#[case("ok_image_options_and_content")]
-#[case("ok_nested_directive")]
-#[case("ok_note_compound_block")]
-#[case("ok_note_simple")]
-#[case("ok_note_then_paragraph")]
+#[case("figure")]
+#[case("image_numeric_options")]
+#[case("image_options_and_content")]
+#[case("nested_directive")]
+#[case("note_compound_block")]
+#[case("note_simple")]
+#[case("note_then_paragraph")]
 fn parse_directive(#[case] test_case: &str) {
-    rst_vs_yaml!("directives", test_case)
+    rst_vs_yaml!("directives/ok", test_case)
 }

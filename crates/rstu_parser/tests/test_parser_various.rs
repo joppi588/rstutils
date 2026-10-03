@@ -11,5 +11,5 @@ use test_parser::rst_vs_yaml;
 #[case("escaping")]
 
 fn parse_various(#[case] test_case: &str) {
-    rst_vs_yaml!("various", test_case)
+    rst_vs_yaml!("various/ok", test_case)
 }
