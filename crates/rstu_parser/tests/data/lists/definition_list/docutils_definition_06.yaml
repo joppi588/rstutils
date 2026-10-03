@@ -8,7 +8,7 @@ children:
             children:
               - class: PlainText
                 attributes:
-                  text: "term 1\n"
+                  text: "term 1"
           - class: Definition
             children:
               - class: Block
@@ -26,7 +26,7 @@ children:
             children:
               - class: PlainText
                 attributes:
-                  text: "term 2\n"
+                  text: "term 2"
           - class: Definition
             children:
               - class: Block

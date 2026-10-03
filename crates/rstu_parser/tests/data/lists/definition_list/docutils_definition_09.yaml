@@ -13,7 +13,7 @@ children:
             children:
               - class: PlainText
                 attributes:
-                  text: "classifier\n"
+                  text: "classifier"
           - class: Definition
             children:
               - class: Block

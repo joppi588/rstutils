@@ -8,7 +8,7 @@ children:
             children:
               - class: PlainText
                 attributes:
-                  text: "Term: not a classifier\n"
+                  text: "Term: not a classifier"
           - class: Definition
             children:
               - class: Block
@@ -26,7 +26,7 @@ children:
             children:
               - class: PlainText
                 attributes:
-                  text: "Term :not a classifier\n"
+                  text: "Term :not a classifier"
           - class: Definition
             children:
               - class: Block
@@ -44,7 +44,7 @@ children:
             children:
               - class: PlainText
                 attributes:
-                  text: "Term \\: not a classifier\n"
+                  text: "Term \\: not a classifier"
           - class: Definition
             children:
               - class: Block

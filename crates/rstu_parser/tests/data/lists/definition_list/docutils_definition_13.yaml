@@ -8,7 +8,7 @@ children:
             children:
               - class: PlainText
                 attributes:
-                  text: "Term\n"
+                  text: "Term"
           - class: Classifier
             children:
               - class: Reference

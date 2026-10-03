@@ -55,7 +55,7 @@ fn parse_definition_list_item(stream: &mut TokenStream) -> Result<NodeRef, Parse
     }
 
     let definition = AstNode::new_ref(NodeClass::Definition);
-    let block = parse_block(stream).map_err(|_| ParserError::ListEndError {})?;
+    let block = parse_block(stream)?;
 
     definition.push_child(block);
     item.push_child(definition);
@@ -100,19 +100,6 @@ fn parse_term_or_classifier(stream: &mut TokenStream, node: &NodeRef) -> Result<
                     kind != TK::NewLine && is_term_text(kind)
                 } {
                     text.push_str(&stream.consume().lexeme);
-                }
-                // Fixtures expect trailing plain text of each segment to end with a newline.
-                if node.borrow().children.is_empty() {
-                    text = text.trim_start().to_owned();
-                }
-                if matches!(
-                    stream.token_at_cursor().kind,
-                    TK::NewLine | TK::ClassifierSeparator
-                ) {
-                    text.truncate(text.trim_end().len());
-                    if !text.is_empty() {
-                        text.push('\n');
-                    }
                 }
                 if !text.is_empty() {
                     let plain_text = AstNode::new_ref(NodeClass::PlainText);

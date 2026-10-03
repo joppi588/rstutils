@@ -241,7 +241,7 @@ impl TokenKind {
         (SimpleHyperlinkReference,r"[\s\n]\w+_\s"),
 
         // Classifiers for definition list (must precede Field: " : x :" would match Field)
-        (ClassifierSeparator,r"\s:\s"),
+        (ClassifierSeparator,r"(.|\n)\s+:\s+(.|\n)"),
 
         // Lists
         (Field,r"[\n\s]:[\w\s]+:[\n\s]"),
