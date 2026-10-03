@@ -19,15 +19,15 @@ fn data_path(directory: &str, filename: &str) -> std::path::PathBuf {
 }
 
 #[rstest]
-#[case("ok_sections_type1")]
-#[case("ok_sections_type2")]
+#[case("sections_type1")]
+#[case("sections_type2")]
 fn parse_section(#[case] test_case: &str) {
-    rst_vs_yaml!("sections", test_case)
+    rst_vs_yaml!("sections/ok", test_case)
 }
 
 #[test]
 fn test_missing_closing() {
-    let path = data_path("sections", "nok_sections_missing_closing.rst");
+    let path = data_path("sections/err", "sections_missing_closing.rst");
     let contents =
         fs::read_to_string(path).unwrap_or_else(|_| panic!("failed to read sections test file"));
 
@@ -41,7 +41,7 @@ fn test_missing_closing() {
 
 #[test]
 fn test_unbalanced_section_style() {
-    let path = data_path("sections", "nok_sections_unbalanced_style.rst");
+    let path = data_path("sections/err", "sections_unbalanced_style.rst");
     let contents =
         fs::read_to_string(path).unwrap_or_else(|_| panic!("failed to read sections test file"));
 

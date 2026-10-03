@@ -13,7 +13,8 @@ Standing on the shoulders of giants:
 
 
 What does "rstu" stand for?
+
 Pick one:
-"Uh, u was just the next letter in the alphabet."
-"Rust was already taken, so I permuted the letters."
-"RST Utils."
+- "Uh, u was just the next letter in the alphabet."
+- "Rust was already taken, so I permuted the letters."
+- "RST Utils."

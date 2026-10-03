@@ -8,8 +8,8 @@ mod test_parser;
 use test_parser::rst_vs_yaml;
 
 #[rstest]
-#[case("ok_strong")]
-#[case("ok_inline_variants")]
+#[case("inline_variants")]
+#[case("strong")]
 fn parse_inline(#[case] test_case: &str) {
-    rst_vs_yaml!("inline", test_case)
+    rst_vs_yaml!("inline/ok", test_case)
 }

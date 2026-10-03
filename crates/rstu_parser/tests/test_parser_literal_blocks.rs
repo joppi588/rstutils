@@ -25,7 +25,7 @@ use test_parser::rst_vs_yaml;
 #[case("quoted_02")]
 
 fn parse_literal_block(#[case] test_case: &str) {
-    rst_vs_yaml!("literal_blocks", test_case);
+    rst_vs_yaml!("literal_blocks/ok", test_case);
 }
 
 #[rstest]
@@ -36,11 +36,11 @@ fn parse_literal_block(#[case] test_case: &str) {
 #[case("quoted_03")]
 #[case("quoted_04")]
 #[case("quoted_05")]
-#[case("nok_quoted_block_01")]
-#[case("nok_quoted_block_02")]
+#[case("quoted_block_01")]
+#[case("quoted_block_02")]
 fn rejects_literal_block_errors(#[case] test_case: &str) {
     let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("tests/data/literal_blocks")
+        .join("tests/data/literal_blocks/err")
         .join(format!("{test_case}.rst"));
     let rst_contents = fs::read_to_string(rst_path).unwrap();
 

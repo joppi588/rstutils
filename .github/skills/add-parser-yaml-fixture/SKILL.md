@@ -10,8 +10,8 @@ Use this skill when asked to create an expected YAML tree fixture for an `.rst` 
 ## Process
 
 1. Locate the source `.rst` fixture and identify its test area.
-   - Keep section fixtures in `tests/data/sections`.
-   - Keep body fixtures in `tests/data/body`.
+   - Keep section fixtures in `tests/data/sections/ok` (or `err`).
+   - Keep body fixtures in `tests/data/body/ok` (or `err`).
 
 2. Derive the expected AST from current parser behavior.
    - Read `crates/rstu_parser/src/lib.rs` to confirm what `parse()` currently handles.
