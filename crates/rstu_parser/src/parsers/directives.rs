@@ -4,7 +4,7 @@
 
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
-use super::{block::parse_block, list::parse_field_list};
+use super::block::parse_block;
 use crate::parser_errors::ParserError;
 use crate::token::TokenKind as TK;
 use crate::token_stream::TokenStream;
@@ -13,6 +13,17 @@ use std::debug_assert_matches;
 pub(crate) fn parse_directive(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert_matches!(stream.token_at_cursor().kind, TK::Directive);
 
+    let directive = AstNode::new_ref(NodeClass::Directive);
+    parse_directive_header(stream, &directive);
+
+    if stream.token_at_cursor().kind == TK::Indent {
+        let content = parse_block(stream)?;
+        directive.push_child(content);
+    }
+    Ok(directive)
+}
+
+fn parse_directive_header(stream: &mut TokenStream, directive: &NodeRef) {
     let directive_marker = stream.consume().lexeme;
     let marker_content = directive_marker
         .strip_prefix(".. ")
@@ -23,7 +34,6 @@ pub(crate) fn parse_directive(stream: &mut TokenStream) -> Result<NodeRef, Parse
         .filter(|part| !part.is_empty())
         .collect();
 
-    let directive = AstNode::new_ref(NodeClass::Directive);
     if marker_parts.len() >= 2 {
         directive.with_attr("substitution", marker_parts[0]);
     }
@@ -41,24 +51,6 @@ pub(crate) fn parse_directive(stream: &mut TokenStream) -> Result<NodeRef, Parse
         directive.with_attr("directive_arguments", directive_arguments);
     }
     stream.consume_newline();
-
-    if stream.token_at_cursor().kind != TK::Indent {
-        return Ok(directive);
-    }
-    directive.with_attr("indent", stream.token_at_cursor().len());
-
-    if stream.token_peek_relative(1).kind == TK::Field {
-        stream.consume(); // Skip the shared Indent token; parse_block consumes it otherwise.
-        let options = parse_field_list(stream)?;
-        directive.push_child(options);
-    }
-
-    if stream.token_at_cursor().kind != TK::Dedent && stream.token_at_cursor().kind != TK::EoF {
-        let content = parse_block(stream)?;
-        directive.push_child(content);
-    }
-
-    Ok(directive)
 }
 
 #[cfg(test)]
