@@ -13,34 +13,8 @@ use std::debug_assert_matches;
 pub(crate) fn parse_directive(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert_matches!(stream.token_at_cursor().kind, TK::Directive);
 
-    let directive_marker = stream.consume().lexeme;
-    let marker_content = directive_marker
-        .strip_prefix(".. ")
-        .and_then(|marker| marker.strip_suffix("::"))
-        .unwrap_or_default();
-    let marker_parts: Vec<_> = marker_content
-        .split('|')
-        .filter(|part| !part.is_empty())
-        .collect();
-
     let directive = AstNode::new_ref(NodeClass::Directive);
-    if marker_parts.len() >= 2 {
-        directive.with_attr("substitution", marker_parts[0]);
-    }
-    directive.with_attr(
-        "directive_type",
-        marker_parts.last().copied().unwrap_or_default().trim(),
-    );
-
-    let mut directive_arguments = String::new();
-    while !matches!(stream.token_at_cursor().kind, TK::NewLine | TK::EoF) {
-        directive_arguments.push_str(&stream.consume().lexeme);
-    }
-    let directive_arguments = directive_arguments.trim();
-    if !directive_arguments.is_empty() {
-        directive.with_attr("directive_arguments", directive_arguments);
-    }
-    stream.consume_newline();
+    parse_directive_header(stream, &directive);
 
     if stream.token_at_cursor().kind != TK::Indent {
         return Ok(directive);
@@ -59,6 +33,36 @@ pub(crate) fn parse_directive(stream: &mut TokenStream) -> Result<NodeRef, Parse
     }
 
     Ok(directive)
+}
+
+fn parse_directive_header(stream: &mut TokenStream, directive: &NodeRef) {
+    let directive_marker = stream.consume().lexeme;
+    let marker_content = directive_marker
+        .strip_prefix(".. ")
+        .and_then(|marker| marker.strip_suffix("::"))
+        .unwrap_or_default();
+    let marker_parts: Vec<_> = marker_content
+        .split('|')
+        .filter(|part| !part.is_empty())
+        .collect();
+
+    if marker_parts.len() >= 2 {
+        directive.with_attr("substitution", marker_parts[0]);
+    }
+    directive.with_attr(
+        "directive_type",
+        marker_parts.last().copied().unwrap_or_default().trim(),
+    );
+
+    let mut directive_arguments = String::new();
+    while !matches!(stream.token_at_cursor().kind, TK::NewLine | TK::EoF) {
+        directive_arguments.push_str(&stream.consume().lexeme);
+    }
+    let directive_arguments = directive_arguments.trim();
+    if !directive_arguments.is_empty() {
+        directive.with_attr("directive_arguments", directive_arguments);
+    }
+    stream.consume_newline();
 }
 
 #[cfg(test)]
