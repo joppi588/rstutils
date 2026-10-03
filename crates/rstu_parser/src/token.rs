@@ -170,6 +170,7 @@ pub enum TokenKind {
     EmphasisStart,
     EnumeratedListMarker,
     EoF,
+    EscapedChar,
     Field,
     FootnoteReference,
     HyperlinkReferenceEnd,
@@ -252,6 +253,7 @@ impl TokenKind {
         (Spaces, r"[^ \t\n][ \t]+[^ \t]"),
         (Word, r"[^\w]\w+[^\w]"),
         (Punctuation, r"(.|\n)[[:punct:]](.|\n)"),
+        (EscapedChar,r"(.|\n)\\.(.|\n)"),
 
         (Dedent, r"\b\B"), // never matches, assigned by the lexer
         (EoF, r"\b\B"), // never matches, only assigned by lexer / returned by TokenStream::kind_at
