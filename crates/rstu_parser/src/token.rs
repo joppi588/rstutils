@@ -162,7 +162,7 @@ pub enum TokenKind {
     BackquoteStart,
     BlankLine,
     BulletListMarker,
-    ClassifierSeperator,
+    ClassifierSeparator,
     Dedent,
     Directive,
     DoubleDot,
@@ -240,13 +240,13 @@ impl TokenKind {
         (SimpleAnonymousHyperLinkReference,r"[\s\n]\w+__\s"),
         (SimpleHyperlinkReference,r"[\s\n]\w+_\s"),
 
+        // Classifiers for definition list (must precede Field: " : x :" would match Field)
+        (ClassifierSeparator,r"\s:\s"),
+
         // Lists
         (Field,r"[\n\s]:[\w\s]+:[\n\s]"),
         (EnumeratedListMarker, r"[\n\s](?:(?:#|[0-9]+|[A-Za-z]+|[IVXLCDMivxlcdm]+)(?:\.|\))[ \t]|\([A-Za-z0-9]+\)[ \t])"),
         (BulletListMarker, r"(\s|\n)[\-\+\*•‣⁃](\s|\n)"),
-
-        // Classifiers for definition list
-        (ClassifierSeperator,r"\s:\s"),
 
         // Plain text
         (Spaces, r"[^ \t\n][ \t]+[^ \t]"),

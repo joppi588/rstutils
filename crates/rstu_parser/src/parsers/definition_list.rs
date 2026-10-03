@@ -3,9 +3,8 @@
 // SPDX-License-Identifier: MIT
 
 use super::block::parse_block;
-use super::paragraph::parse_inline_children;
-use crate::lexer::tokenize;
-use crate::parser_errors::{ParserError, EXPECT_NEWLINE};
+use super::paragraph::{parse_inline, parse_inline_token};
+use crate::parser_errors::ParserError;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
 use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
@@ -37,20 +36,23 @@ pub(crate) fn parse_definition_list(stream: &mut TokenStream) -> Result<NodeRef,
 
 fn parse_definition_list_item(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     let item = AstNode::new_ref(NodeClass::DefinitionListItem);
-    let line_text = stream
-        .consume_text_until(&[TK::NewLine])
-        .expect(EXPECT_NEWLINE);
-    let segments = split_term_and_classifiers(&line_text);
+    let mut node_class = NodeClass::Term;
+    loop {
+        let node = AstNode::new_ref(node_class);
+        parse_term_or_classifier(stream, &node)?;
+        item.push_child(node);
+        node_class = NodeClass::Classifier;
 
-    let term = AstNode::new_ref(NodeClass::Term);
-    parse_line_segment(&segments[0], &term)?;
-    item.push_child(term);
-    for segment in segments.iter().skip(1) {
-        let classifier = AstNode::new_ref(NodeClass::Classifier);
-        parse_line_segment(segment, &classifier)?;
-        item.push_child(classifier);
+        match stream.token_at_cursor().kind {
+            TK::ClassifierSeparator => {
+                stream.consume();
+            }
+            _ => {
+                stream.consume_newline();
+                break;
+            }
+        }
     }
-    stream.consume_newline();
 
     let definition = AstNode::new_ref(NodeClass::Definition);
     let block = parse_block(stream).map_err(|_| ParserError::ListEndError {})?;
@@ -60,76 +62,72 @@ fn parse_definition_list_item(stream: &mut TokenStream) -> Result<NodeRef, Parse
     Ok(item)
 }
 
-fn split_term_and_classifiers(line: &str) -> Vec<String> {
-    let line = line.trim_end_matches('\n');
-    let mut delimiters = Vec::new();
-    let mut index = 0;
-    let mut in_inline = false;
-    while index < line.len() {
-        let remaining = &line[index..];
-        if remaining.starts_with('`') {
-            in_inline = !in_inline;
-            index += if remaining.starts_with("``") { 2 } else { 1 };
-        } else if !in_inline && remaining.starts_with(" : ") {
-            let escaped = line[..index].ends_with('\\');
-            if !escaped {
-                delimiters.push(index);
-            }
-            index += 3;
-        } else {
-            index += remaining.chars().next().unwrap().len_utf8();
-        }
-    }
-
-    let mut segments = Vec::with_capacity(delimiters.len() + 1);
-    let mut start = 0;
-    for delimiter in delimiters {
-        segments.push(line[start..delimiter].trim().replace("\\:", ":"));
-        start = delimiter + 3;
-    }
-    segments.push(line[start..].trim().replace("\\:", ":"));
-    segments
+fn is_term_text(kind: TK) -> bool {
+    kind.is(TC::PLAIN) || matches!(kind, TK::BulletListMarker | TK::Field)
 }
 
-fn parse_line_segment(text: &str, node: &NodeRef) -> Result<(), ParserError> {
-    let mut stream = tokenize(&format!("{text}\n"));
-    parse_inline_children(&mut stream, node)?;
-
-    let children = std::mem::take(&mut node.borrow_mut().children);
-    for child in children {
-        let (class, markup, text) = {
-            let borrowed = child.borrow();
-            (
-                borrowed.class,
-                borrowed.attributes.get_str("markup"),
-                borrowed.attributes.get_str("text"),
-            )
-        };
-        if class == NodeClass::InlineMarkup && markup.as_deref() == Some("inline_literal") {
-            child.with_attr("markup", "literal");
-        }
-        if class == NodeClass::InlineMarkup && markup.as_deref() == Some("hyperlink_reference") {
-            let text = text.unwrap_or_default();
-            let reference = AstNode::new_ref(NodeClass::Reference);
-            reference.with_attr("refname", text.clone());
-            let plain_text = AstNode::new_ref(NodeClass::PlainText);
-            plain_text.with_attr("text", text);
-            reference.push_child(plain_text);
-            node.push_child(reference);
-        } else if class == NodeClass::PlainText
-            && text.as_deref() == Some("\n")
-            && node.borrow().children.last().is_some_and(|last| {
-                matches!(
-                    last.borrow().class,
-                    NodeClass::InlineMarkup | NodeClass::Reference
-                )
-            })
-        {
-            continue;
-        } else {
-            node.push_child(child);
+fn parse_term_or_classifier(stream: &mut TokenStream, node: &NodeRef) -> Result<(), ParserError> {
+    loop {
+        let kind = stream.token_at_cursor().kind;
+        match kind {
+            TK::NewLine | TK::ClassifierSeparator | TK::EoF => break,
+            kind if kind.is(TC::INLINE_MARKER) => {
+                let inline = parse_inline(stream)?;
+                let markup = inline.borrow().attributes.get_str("markup");
+                let text = inline.borrow().attributes.get_str("text");
+                match markup.as_deref() {
+                    Some("inline_literal") => {
+                        inline.with_attr("markup", "literal");
+                        node.push_child(inline);
+                    }
+                    Some("hyperlink_reference") => {
+                        let text = text.unwrap_or_default();
+                        let reference = AstNode::new_ref(NodeClass::Reference);
+                        reference.with_attr("refname", text.clone());
+                        let plain_text = AstNode::new_ref(NodeClass::PlainText);
+                        plain_text.with_attr("text", text);
+                        reference.push_child(plain_text);
+                        node.push_child(reference);
+                    }
+                    _ => node.push_child(inline),
+                }
+            }
+            kind if kind.is(TC::INLINE_TOKEN) => node.push_child(parse_inline_token(stream)?),
+            kind if is_term_text(kind) => {
+                let mut text = String::new();
+                while {
+                    let kind = stream.token_at_cursor().kind;
+                    kind != TK::NewLine && is_term_text(kind)
+                } {
+                    text.push_str(&stream.consume().lexeme);
+                }
+                // Fixtures expect trailing plain text of each segment to end with a newline.
+                if node.borrow().children.is_empty() {
+                    text = text.trim_start().to_owned();
+                }
+                if matches!(
+                    stream.token_at_cursor().kind,
+                    TK::NewLine | TK::ClassifierSeparator
+                ) {
+                    text.truncate(text.trim_end().len());
+                    if !text.is_empty() {
+                        text.push('\n');
+                    }
+                }
+                if !text.is_empty() {
+                    let plain_text = AstNode::new_ref(NodeClass::PlainText);
+                    plain_text.with_attr("text", text);
+                    node.push_child(plain_text);
+                }
+            }
+            _ => {
+                return Err(ParserError::UnexpectedToken {
+                    expected: "Inline/plain".to_owned(),
+                    found: format!("{:?}", kind),
+                    index: stream.cursor(),
+                });
+            }
         }
     }
-
     Ok(())
 }
