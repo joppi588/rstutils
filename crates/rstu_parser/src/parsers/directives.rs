@@ -4,7 +4,7 @@
 
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
-use super::{block::parse_block, list::parse_field_list};
+use super::block::parse_block;
 use crate::parser_errors::ParserError;
 use crate::token::TokenKind as TK;
 use crate::token_stream::TokenStream;
@@ -16,22 +16,10 @@ pub(crate) fn parse_directive(stream: &mut TokenStream) -> Result<NodeRef, Parse
     let directive = AstNode::new_ref(NodeClass::Directive);
     parse_directive_header(stream, &directive);
 
-    if stream.token_at_cursor().kind != TK::Indent {
-        return Ok(directive);
-    }
-    directive.with_attr("indent", stream.token_at_cursor().len());
-
-    if stream.token_peek_relative(1).kind == TK::Field {
-        stream.consume(); // Skip the shared Indent token; parse_block consumes it otherwise.
-        let options = parse_field_list(stream)?;
-        directive.push_child(options);
-    }
-
-    if stream.token_at_cursor().kind != TK::Dedent && stream.token_at_cursor().kind != TK::EoF {
+    if stream.token_at_cursor().kind == TK::Indent {
         let content = parse_block(stream)?;
         directive.push_child(content);
     }
-
     Ok(directive)
 }
 

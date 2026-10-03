@@ -4,46 +4,49 @@ children:
     attributes:
       directive_arguments: "https://example.com/sample.png"
       directive_type: image
-      indent: 3
     children:
-      - class: FieldList
+      - class: Block
+        attributes:
+          indent: 3
         children:
-          - class: FieldListItem
-            attributes:
-              fieldname: height
+          - class: FieldList
             children:
-              - class: Block
+              - class: FieldListItem
                 attributes:
-                  indent: 9
+                  fieldname: height
                 children:
-                - class: Paragraph
-                  children:
-                    - class: PlainText
-                      attributes:
-                        text: "20mm\n"
-          - class: FieldListItem
-            attributes:
-              fieldname: width
-            children:
-              - class: Block
-                attributes:
-                  indent: 8
-                children:
-                  - class: Paragraph
+                  - class: Block
+                    attributes:
+                      indent: 9
                     children:
-                      - class: PlainText
-                        attributes:
-                          text: "300px\n"
-          - class: FieldListItem
-            attributes:
-              fieldname: scale
-            children:
-              - class: Block
+                      - class: Paragraph
+                        children:
+                          - class: PlainText
+                            attributes:
+                              text: "20mm\n"
+              - class: FieldListItem
                 attributes:
-                  indent: 8
+                  fieldname: width
                 children:
-                  - class: Paragraph
+                  - class: Block
+                    attributes:
+                      indent: 8
                     children:
-                      - class: PlainText
-                        attributes:
-                          text: "75\n"
+                      - class: Paragraph
+                        children:
+                          - class: PlainText
+                            attributes:
+                              text: "300px\n"
+              - class: FieldListItem
+                attributes:
+                  fieldname: scale
+                children:
+                  - class: Block
+                    attributes:
+                      indent: 8
+                    children:
+                      - class: Paragraph
+                        children:
+                          - class: PlainText
+                            attributes:
+                              text: "75\n"
