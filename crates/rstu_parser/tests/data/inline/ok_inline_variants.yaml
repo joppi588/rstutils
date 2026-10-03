@@ -72,7 +72,14 @@ children:
               text: " "
           - class: Reference
             attributes:
-              text: "1]_ [CIT"
+              text: "1"
+              type: footnote
+          - class: PlainText
+            attributes:
+              text: " "
+          - class: Reference
+            attributes:
+              text: "CIT"
               type: footnote
           - class: PlainText
             attributes:
