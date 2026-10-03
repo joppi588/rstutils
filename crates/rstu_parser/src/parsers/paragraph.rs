@@ -12,6 +12,15 @@ pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, Parse
     debug_assert!(stream.token_at_cursor().kind.nested_is(TC::PARAGRAPH));
 
     let paragraph = AstNode::new_ref(NodeClass::Paragraph);
+    parse_inline_children(stream, &paragraph)?;
+
+    Ok(paragraph)
+}
+
+pub(crate) fn parse_inline_children(
+    stream: &mut TokenStream,
+    parent: &NodeRef,
+) -> Result<(), ParserError> {
     loop {
         let kind = stream.token_at_cursor().kind;
         let node = match kind {
@@ -41,10 +50,10 @@ pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, Parse
                 });
             }
         };
-        paragraph.push_child(node);
+        parent.push_child(node);
     }
 
-    Ok(paragraph)
+    Ok(())
 }
 
 pub(crate) fn parse_inline_token(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
@@ -136,7 +145,10 @@ fn parse_plain(stream: &mut TokenStream) -> NodeRef {
 
     loop {
         match stream.token_at_cursor().kind {
-            kind if kind.is(&TC::PLAIN) || kind == TK::BulletListMarker => {
+            kind if kind.is(&TC::PLAIN)
+                || kind == TK::BulletListMarker
+                || kind == TK::ClassifierSeparator =>
+            {
                 text.push_str(&stream.consume().lexeme);
             }
             _ => break,

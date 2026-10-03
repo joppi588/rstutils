@@ -116,6 +116,15 @@ impl TokenCategory {
         TokenKind::EoF,
     ];
 
+    pub const NEWLINE: &'static [TokenKind] = &[
+        TokenKind::BlankLine,
+        TokenKind::EoF,
+        TokenKind::LiteralBlock,
+        TokenKind::LiteralBlockMinimized,
+        TokenKind::LiteralBlockPartiallyMinimized,
+        TokenKind::NewLine,
+    ];
+
     pub const LIST_MARKER: &'static [TokenKind] = &[
         TokenKind::BulletListMarker,
         TokenKind::EnumeratedListMarker,
@@ -153,6 +162,7 @@ pub enum TokenKind {
     BackquoteStart,
     BlankLine,
     BulletListMarker,
+    ClassifierSeparator,
     Dedent,
     Directive,
     DoubleDot,
@@ -229,6 +239,9 @@ impl TokenKind {
         (HyperlinkReferenceEnd, format!(r"(?:[^\s]`_|[^\s]_){}", INLINE_POST_CHARS)),
         (SimpleAnonymousHyperLinkReference,r"[\s\n]\w+__\s"),
         (SimpleHyperlinkReference,r"[\s\n]\w+_\s"),
+
+        // Classifiers for definition list (must precede Field: " : x :" would match Field)
+        (ClassifierSeparator,r"(.|\n)\s+:\s+(.|\n)"),
 
         // Lists
         (Field,r"[\n\s]:[\w\s]+:[\n\s]"),
