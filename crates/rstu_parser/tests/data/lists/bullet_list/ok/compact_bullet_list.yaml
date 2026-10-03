@@ -1,0 +1,49 @@
+class: Document
+children:
+  - class: Paragraph
+    children:
+      - class: PlainText
+        attributes:
+          text: "This is a bullet list without blanklines:\n"
+  - class: BlankLine
+  - class: BulletList
+    children:
+      - class: BulletListItem
+        attributes:
+          marker: "-"
+        children:
+          - class: Block
+            attributes:
+              indent: 2
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: "First item\n"
+      - class: BulletListItem
+        attributes:
+          marker: "-"
+        children:
+          - class: Block
+            attributes:
+              indent: 1
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: "\n"
+      - class: BulletListItem
+        attributes:
+          marker: "-"
+        children:
+          - class: Block
+            attributes:
+              indent: 3
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: "Second item\n"

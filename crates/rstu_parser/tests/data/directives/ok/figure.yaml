@@ -1,0 +1,17 @@
+class: Document
+children:
+  - class: Directive
+    attributes:
+      directive_arguments: "picture.png"
+      directive_type: figure
+    children:
+      - class: BlankLine
+      - class: Block
+        attributes:
+          indent: 3
+        children:
+          - class: Paragraph
+            children:
+              - class: PlainText
+                attributes:
+                  text: "A picture with a caption.\n"

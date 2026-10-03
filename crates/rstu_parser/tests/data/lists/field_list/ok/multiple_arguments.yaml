@@ -1,0 +1,17 @@
+class: Document
+children:
+  - class: FieldList
+    children:
+      - class: FieldListItem
+        attributes:
+          fieldname: Parameter i j k
+        children:
+          - class: Block
+            attributes:
+              indent: 18
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: "multiple arguments\n"

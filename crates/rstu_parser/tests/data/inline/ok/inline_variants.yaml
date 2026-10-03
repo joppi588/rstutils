@@ -1,0 +1,111 @@
+class: Document
+children:
+  - class: Section
+    attributes:
+      marker_len: 18
+      section_marker: "-"
+    children:
+      - class: Title
+        attributes:
+          text: "All inline markups"
+      - class: Paragraph
+        children:
+          - class: InlineMarkup
+            attributes:
+              text: em
+              markup: emphasis
+          - class: PlainText
+            attributes:
+              text: " "
+          - class: InlineMarkup
+            attributes:
+              text: strong
+              markup: strong
+          - class: PlainText
+            attributes:
+              text: " "
+          - class: InlineMarkup
+            attributes:
+              text: lit
+              markup: inline_literal
+          - class: PlainText
+            attributes:
+              text: " "
+          - class: InlineMarkup
+            attributes:
+              text: interp
+              markup: interpreted_text
+          - class: PlainText
+            attributes:
+              text: "\n"
+      - class: BlankLine
+  - class: Section
+    attributes:
+      marker_len: 17
+      section_marker: "-"
+    children:
+      - class: Title
+        attributes:
+          text: "Inline references"
+      - class: Paragraph
+        children:
+          - class: Reference
+            attributes:
+              text: simple_reference
+              type: simple_ref
+          - class: PlainText
+            attributes:
+              text: " "
+          - class: Reference
+            attributes:
+              text: anonymous_reference
+              type: simple_anonymous_ref
+          - class: PlainText
+            attributes:
+              text: " "
+          - class: InlineMarkup
+            attributes:
+              text: link
+              markup: hyperlink_reference
+          - class: PlainText
+            attributes:
+              text: " "
+          - class: Reference
+            attributes:
+              text: "1"
+              type: footnote
+          - class: PlainText
+            attributes:
+              text: " "
+          - class: Reference
+            attributes:
+              text: "CIT"
+              type: footnote
+          - class: PlainText
+            attributes:
+              text: " "
+          - class: Reference
+            attributes:
+              text: "sub"
+              type: sub
+          - class: PlainText
+            attributes:
+              text: "\n"
+      - class: BlankLine
+  - class: Section
+    attributes:
+      marker_len: 23
+      section_marker: "-"
+    children:
+      - class: Title
+        attributes:
+          text: "Inline internal targets"
+      - class: Paragraph
+        children:
+          - class: InlineMarkup
+            attributes:
+              text: target
+              markup: inline_internal_target
+          - class: PlainText
+            attributes:
+              text: "\n"

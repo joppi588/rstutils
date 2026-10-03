@@ -1,0 +1,107 @@
+class: Document
+children:
+  - class: Paragraph
+    children:
+      - class: PlainText
+        attributes:
+          text: "This is a field list:\n"
+  - class: BlankLine
+  - class: FieldList
+    children:
+      - class: FieldListItem
+        attributes:
+          fieldname: field_9
+        children:
+        - class: Block
+          attributes:
+            indent: 11
+          children:
+            - class: Paragraph
+              children:
+                - class: PlainText
+                  attributes:
+                    text: "Some Text\n"
+      - class: FieldListItem
+        attributes:
+          fieldname: field_10
+        children:
+          - class: Block
+            attributes:
+              indent: 11
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: "More Text\n"
+      - class: BlankLine
+  - class: Paragraph
+    children:
+      - class: PlainText
+        attributes:
+          text: "A field list with hanging indent:\n"
+  - class: BlankLine
+  - class: FieldList
+    children:
+      - class: FieldListItem
+        attributes:
+          fieldname: long_field_name
+        children:
+          - class: Block
+            attributes:
+              indent: 4
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: "Text here\nreads better if\nwrapped around.\n"
+      - class: FieldListItem
+        attributes:
+          fieldname: field_2
+        children:
+          - class: Block
+            attributes:
+              indent: 10
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: "more Text\n"
+      - class: BlankLine
+  - class: Paragraph
+    children:
+      - class: PlainText
+        attributes:
+          text: "In field lists\n"
+  - class: BlankLine
+  - class: FieldList
+    children:
+      - class: FieldListItem
+        attributes:
+          fieldname: field_1
+        children:
+          - class: Block
+            attributes:
+              indent: 10
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: "Blank lines\n"
+      - class: BlankLine
+      - class: FieldListItem
+        attributes:
+          fieldname: field_2
+        children:
+          - class: Block
+            attributes:
+              indent: 10
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: "will not start a new list\n"

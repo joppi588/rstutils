@@ -1,0 +1,15 @@
+class: Document
+children:
+  - class: Paragraph
+    children:
+      - class: PlainText
+        attributes:
+          text: "This is a paragraph - even if it contains a bullet.\n"
+  - class: BlankLine
+  - class: Paragraph
+    children:
+      - class: PlainText
+        attributes:
+          text: |
+            This as well
+            - even if it looks like a list.
