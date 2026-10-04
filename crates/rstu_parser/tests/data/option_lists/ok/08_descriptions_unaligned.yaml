@@ -1,0 +1,53 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: 'Multiple lines in descriptions, not aligned:'
+- class: BlankLine
+- class: OptionList
+  children:
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: -a
+    - class: Description
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: "option -a, line 1\nline 2"
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: -b
+        - class: OptionArgument
+          attributes:
+            delimiter: ' '
+          children:
+          - class: PlainText
+            attributes:
+              text: file
+    - class: Description
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: "option -b, line 1\nline 2"
