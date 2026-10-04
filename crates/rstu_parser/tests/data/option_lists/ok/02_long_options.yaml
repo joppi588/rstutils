@@ -1,0 +1,114 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: 'Long options:'
+- class: BlankLine
+- class: OptionList
+  children:
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: --aaaa
+    - class: Description
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: option --aaaa
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: --bbbb
+        - class: OptionArgument
+          attributes:
+            delimiter: '='
+          children:
+          - class: PlainText
+            attributes:
+              text: file
+    - class: Description
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: option --bbbb
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: --cccc
+        - class: OptionArgument
+          attributes:
+            delimiter: ' '
+          children:
+          - class: PlainText
+            attributes:
+              text: name
+    - class: Description
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: option --cccc
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: --d-e-f-g
+    - class: Description
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: option --d-e-f-g
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: --h_i_j_k
+    - class: Description
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: option --h_i_j_k

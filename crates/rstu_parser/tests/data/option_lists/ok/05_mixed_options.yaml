@@ -1,0 +1,146 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: 'Mixed short, long, and VMS/DOS options:'
+- class: BlankLine
+- class: OptionList
+  children:
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: -a
+    - class: Description
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: option -a
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: --bbbb
+        - class: OptionArgument
+          attributes:
+            delimiter: '='
+          children:
+          - class: PlainText
+            attributes:
+              text: file
+    - class: Description
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: option -bbbb
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: /C
+    - class: Description
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: option /C
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: --dddd
+        - class: OptionArgument
+          attributes:
+            delimiter: ' '
+          children:
+          - class: PlainText
+            attributes:
+              text: name
+    - class: Description
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: option --dddd
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: -e
+        - class: OptionArgument
+          attributes:
+            delimiter: ' '
+          children:
+          - class: PlainText
+            attributes:
+              text: string
+    - class: Description
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: option -e
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: /F
+        - class: OptionArgument
+          attributes:
+            delimiter: ' '
+          children:
+          - class: PlainText
+            attributes:
+              text: file
+    - class: Description
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: option /F

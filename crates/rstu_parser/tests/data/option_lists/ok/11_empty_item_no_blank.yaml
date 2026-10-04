@@ -1,0 +1,7 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "--option\nempty item above, no blank line\n"

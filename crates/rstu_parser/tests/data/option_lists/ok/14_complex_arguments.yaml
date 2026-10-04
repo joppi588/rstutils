@@ -1,0 +1,260 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: 'Complex optargs:'
+- class: BlankLine
+- class: OptionList
+  children:
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: --source-url
+        - class: OptionArgument
+          attributes:
+            delimiter: '='
+          children:
+          - class: PlainText
+            attributes:
+              text: <URL>
+    - class: Description
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: Use the supplied <URL> verbatim.
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: --output-encoding
+        - class: OptionArgument
+          attributes:
+            delimiter: '='
+          children:
+          - class: PlainText
+            attributes:
+              text: <name[:handler]>
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: -o
+        - class: OptionArgument
+          attributes:
+            delimiter: ''
+          children:
+          - class: PlainText
+            attributes:
+              text: <name[:handler]>
+    - class: Description
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: Specify the text encoding for output.
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: --af
+        - class: OptionArgument
+          attributes:
+            delimiter: '='
+          children:
+          - class: PlainText
+            attributes:
+              text: <filter1[=parameter1:parameter2:...],filter2,...>
+    - class: Description
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: "Setup a chain of audio filters.\nOption argument containing delimiter "
+        - class: InlineMarkup
+          attributes:
+            text: '='
+            markup: inline_literal
+          children:
+          - class: PlainText
+            attributes:
+              text: '='
+        - class: PlainText
+          attributes:
+            text: .
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: -f
+        - class: OptionArgument
+          attributes:
+            delimiter: ' '
+          children:
+          - class: PlainText
+            attributes:
+              text: <[path]filename>
+    - class: Description
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: Send output to file.
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: -d
+        - class: OptionArgument
+          attributes:
+            delimiter: ' '
+          children:
+          - class: PlainText
+            attributes:
+              text: <src dest>
+    - class: Description
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: Use diff from <src> to <dest>.
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: --point
+        - class: OptionArgument
+          attributes:
+            delimiter: '='
+          children:
+          - class: PlainText
+            attributes:
+              text: <x y z>
+    - class: Description
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: 3D coordinates.
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: --vector
+        - class: OptionArgument
+          attributes:
+            delimiter: ' '
+          children:
+          - class: PlainText
+            attributes:
+              text: <"x, y, z">
+    - class: Description
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: Another option expecting 3 arguments.
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: --cvs
+        - class: OptionArgument
+          attributes:
+            delimiter: '='
+          children:
+          - class: PlainText
+            attributes:
+              text: <'a[, b[, ...]]]'>
+    - class: Description
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: Comma separated arguments.
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: -g
+        - class: OptionArgument
+          attributes:
+            delimiter: ' '
+          children:
+          - class: PlainText
+            attributes:
+              text: <a, , c>
+    - class: Description
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: Complex arg with empty list element.

@@ -1,0 +1,95 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: 'Aliased options:'
+- class: BlankLine
+- class: OptionList
+  children:
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: -a
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: --aaaa
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: /A
+    - class: Description
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: option -a, --aaaa, /A
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: -b
+        - class: OptionArgument
+          attributes:
+            delimiter: ' '
+          children:
+          - class: PlainText
+            attributes:
+              text: file
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: --bbbb
+        - class: OptionArgument
+          attributes:
+            delimiter: '='
+          children:
+          - class: PlainText
+            attributes:
+              text: file
+      - class: Option
+        children:
+        - class: OptionString
+          children:
+          - class: PlainText
+            attributes:
+              text: /B
+        - class: OptionArgument
+          attributes:
+            delimiter: ' '
+          children:
+          - class: PlainText
+            attributes:
+              text: file
+    - class: Description
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: option -b, --bbbb, /B

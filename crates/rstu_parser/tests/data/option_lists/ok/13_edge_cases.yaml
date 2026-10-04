@@ -1,0 +1,102 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: 'Some edge cases:'
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: --option=arg arg  too many arguments
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: --option=arg,arg  not supported (yet?)
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: --option=arg=arg  too many arguments
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: --option arg arg  too many arguments
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: -a letter arg2    too many arguments
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: /A letter arg2    too many arguments
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: --option=         argument missing
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: --=argument       option missing
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: --                everything missing
+- class: BlankLine
+- class: BulletList
+  children:
+  - class: BulletListItem
+    attributes:
+      marker: '-'
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: this should be a bullet list item
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: 'These next ones should be simple paragraphs:'
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: '-1'
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: --option
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: --1
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: -1 and this one too.

@@ -1,0 +1,13 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: Incorrect option syntax → no option list.
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "-f, , --force   Empty synonym.\n-f <a, , b      Unbalanced angle bracket.\n-f a, , b>      Unbalanced angle bracket."
