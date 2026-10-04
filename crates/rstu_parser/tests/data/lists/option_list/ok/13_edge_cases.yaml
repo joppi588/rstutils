@@ -4,61 +4,61 @@ children:
   children:
   - class: PlainText
     attributes:
-      text: 'Some edge cases:'
+      text: "Some edge cases:\n"
 - class: BlankLine
 - class: Paragraph
   children:
   - class: PlainText
     attributes:
-      text: --option=arg arg  too many arguments
+      text: "--option=arg arg  too many arguments\n"
 - class: BlankLine
 - class: Paragraph
   children:
   - class: PlainText
     attributes:
-      text: --option=arg,arg  not supported (yet?)
+      text: "--option=arg,arg  not supported (yet?)\n"
 - class: BlankLine
 - class: Paragraph
   children:
   - class: PlainText
     attributes:
-      text: --option=arg=arg  too many arguments
+      text: "--option=arg=arg  too many arguments\n"
 - class: BlankLine
 - class: Paragraph
   children:
   - class: PlainText
     attributes:
-      text: --option arg arg  too many arguments
+      text: "--option arg arg  too many arguments\n"
 - class: BlankLine
 - class: Paragraph
   children:
   - class: PlainText
     attributes:
-      text: -a letter arg2    too many arguments
+      text: "-a letter arg2    too many arguments\n"
 - class: BlankLine
 - class: Paragraph
   children:
   - class: PlainText
     attributes:
-      text: /A letter arg2    too many arguments
+      text: "/A letter arg2    too many arguments\n"
 - class: BlankLine
 - class: Paragraph
   children:
   - class: PlainText
     attributes:
-      text: --option=         argument missing
+      text: "--option=         argument missing\n"
 - class: BlankLine
 - class: Paragraph
   children:
   - class: PlainText
     attributes:
-      text: --=argument       option missing
+      text: "--=argument       option missing\n"
 - class: BlankLine
 - class: Paragraph
   children:
   - class: PlainText
     attributes:
-      text: --                everything missing
+      text: "--                everything missing\n"
 - class: BlankLine
 - class: BulletList
   children:
@@ -66,37 +66,42 @@ children:
     attributes:
       marker: '-'
     children:
-    - class: Paragraph
+    - class: Block
+      attributes:
+        indent: 18
       children:
-      - class: PlainText
-        attributes:
-          text: this should be a bullet list item
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: "this should be a bullet list item\n"
+  - class: BlankLine
 - class: Paragraph
   children:
   - class: PlainText
     attributes:
-      text: 'These next ones should be simple paragraphs:'
+      text: "These next ones should be simple paragraphs:\n"
 - class: BlankLine
 - class: Paragraph
   children:
   - class: PlainText
     attributes:
-      text: '-1'
+      text: "-1\n"
 - class: BlankLine
 - class: Paragraph
   children:
   - class: PlainText
     attributes:
-      text: --option
+      text: "--option\n"
 - class: BlankLine
 - class: Paragraph
   children:
   - class: PlainText
     attributes:
-      text: --1
+      text: "--1\n"
 - class: BlankLine
 - class: Paragraph
   children:
   - class: PlainText
     attributes:
-      text: -1 and this one too.
+      text: "-1 and this one too.\n"

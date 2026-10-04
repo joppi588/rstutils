@@ -27,5 +27,5 @@ use test_parser::rst_vs_yaml;
 // TODO: Lexer currently panics on the Unicode arrow in this paragraph.
 // #[case("15_incorrect_syntax")]
 fn parse_option_list(#[case] test_case: &str) {
-    rst_vs_yaml!("option_lists/ok", test_case)
+    rst_vs_yaml!("lists/option_list/ok", test_case)
 }
