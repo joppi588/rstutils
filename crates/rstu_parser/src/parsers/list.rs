@@ -68,11 +68,14 @@ fn parse_item_body(
     let block = parse_block(stream).map_err(|_| ParserError::ListEndError {})?;
     item.push_child(block);
     list.push_child(item);
+    Ok(())
+}
+
+fn consume_trailing_blank_lines(stream: &mut TokenStream, list: &NodeRef) {
     if stream.token_at_cursor().kind == TK::BlankLine {
         let blank_token = stream.consume();
         list.push_blank_lines(blank_token.len());
     }
-    Ok(())
 }
 
 pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
@@ -97,6 +100,7 @@ pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, Par
         }
 
         parse_item_body(stream, &list, item, 1)?;
+        consume_trailing_blank_lines(stream, &list);
     }
 
     Ok(list)
@@ -141,6 +145,7 @@ pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef,
         item.with_attr("number", number);
         next_number = number + 1;
         parse_item_body(stream, &list, item, marker.len())?;
+        consume_trailing_blank_lines(stream, &list);
     }
 
     Ok(list)
@@ -164,6 +169,7 @@ pub(crate) fn parse_field_list(stream: &mut TokenStream) -> Result<NodeRef, Pars
 
         let dedent_len = field_token.len();
         parse_item_body(stream, &list, item, dedent_len)?;
+        consume_trailing_blank_lines(stream, &list);
     }
 
     Ok(list)
