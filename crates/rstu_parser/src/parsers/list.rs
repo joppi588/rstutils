@@ -12,12 +12,7 @@ use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 use std::debug_assert_matches;
 
-fn parse_item_body(
-    stream: &mut TokenStream,
-    list: &NodeRef,
-    item: NodeRef,
-    dedent_len: usize,
-) -> Result<(), ParserError> {
+fn parse_item_body(stream: &mut TokenStream, dedent_len: usize) -> Result<NodeRef, ParserError> {
     let mut dedent_len = dedent_len;
 
     if stream.token_at_cursor().kind == TK::Spaces {
@@ -65,10 +60,7 @@ fn parse_item_body(
             _ => return Err(ParserError::ListEndError {}),
         },
     }
-    let block = parse_block(stream).map_err(|_| ParserError::ListEndError {})?;
-    item.push_child(block);
-    list.push_child(item);
-    Ok(())
+    parse_block(stream)
 }
 
 fn consume_trailing_blank_lines(stream: &mut TokenStream, list: &NodeRef) {
@@ -99,7 +91,8 @@ pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, Par
             marker = Some(marker_token.lexeme);
         }
 
-        parse_item_body(stream, &list, item, 1)?;
+        item.push_child(parse_item_body(stream, 1)?);
+        list.push_child(item);
         consume_trailing_blank_lines(stream, &list);
     }
 
@@ -144,7 +137,8 @@ pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef,
         };
         item.with_attr("number", number);
         next_number = number + 1;
-        parse_item_body(stream, &list, item, marker.len())?;
+        item.push_child(parse_item_body(stream, marker.len())?);
+        list.push_child(item);
         consume_trailing_blank_lines(stream, &list);
     }
 
@@ -168,7 +162,8 @@ pub(crate) fn parse_field_list(stream: &mut TokenStream) -> Result<NodeRef, Pars
         item.with_attr("fieldname", field_name);
 
         let dedent_len = field_token.len();
-        parse_item_body(stream, &list, item, dedent_len)?;
+        item.push_child(parse_item_body(stream, dedent_len)?);
+        list.push_child(item);
         consume_trailing_blank_lines(stream, &list);
     }
 
