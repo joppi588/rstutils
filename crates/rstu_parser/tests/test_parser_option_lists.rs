@@ -9,8 +9,8 @@ mod test_parser;
 use test_parser::rst_vs_yaml;
 
 #[rstest]
+#[case("01_short_options")]
 // TODO: Activate when option-list parsing is implemented.
-// #[case("01_short_options")]
 // #[case("02_long_options")]
 // #[case("03_old_gnu_options")]
 // #[case("04_vms_dos_options")]

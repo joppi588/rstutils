@@ -3,6 +3,9 @@
 // SPDX-License-Identifier: MIT
 
 use crate::parser_errors::ParserError;
+use regex::Regex;
+use rstu_ast::NodeRef;
+use rstu_ast::{AstNode, NodeClass, NodeRefExt};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) enum EnumType {
@@ -170,10 +173,45 @@ pub(super) fn resolve_enumerator_type(
     }
 }
 
+pub(super) fn parse_option_group(text: &str) -> Result<NodeRef, ParserError> {
+    let option_group = AstNode::new_ref(NodeClass::OptionGroup);
+    for option in text.split(',') {
+        let option = parse_option(option)?;
+        option_group.push_child(option);
+    }
+    Ok(option_group)
+}
+
+fn parse_option(text: &str) -> Result<NodeRef, ParserError> {
+    let option = AstNode::new_ref(NodeClass::Option);
+
+    let option_regexp_short = r"^(\-[a-z]{1})(.*)"; // TODO: Make this global and use in Token regexp
+    let option_regexp_long = r"^(\-\-(([a-z]+)(\-[a-z]+)*)+)$"; // TODO: Make this global and use in Token regexp
+
+    let option_match = if let Some(option_match) = Regex::new(option_regexp_short)
+        .expect("valid short option regex")
+        .captures(text)
+    {
+        option.with_attr("arg", option_match.get(2).unwrap().as_str().to_string());
+        option_match.get(1)
+    } else if let Some(option_match) = Regex::new(option_regexp_long)
+        .expect("valid long option regex")
+        .captures(text)
+    {
+        option_match.get(0)
+    } else {
+        return Err(ParserError::NoOptionFound {
+            text: text.to_string(),
+        });
+    };
+    option.with_attr("flag", option_match.unwrap().as_str().to_string());
+    Ok(option)
+}
+
 #[cfg(test)]
 mod tests {
     use super::{enumerator_type, enumerator_value, resolve_enumerator_type, EnumType};
-    use crate::parser_errors::ParserError;
+    use crate::{parser_errors::ParserError, parsers::list_enum_helpers::parse_option_group};
 
     #[test]
     fn enumerator_type_identifies_supported_marker_types() {
@@ -297,5 +335,20 @@ mod tests {
                 })
             );
         }
+    }
+
+    #[test]
+    fn parse_short_option_argument() {
+        // GIVEN A short option with an argument
+        // WHEN the option is parsed
+        // An option group is returned
+
+        let option = "-a arg";
+        let result = parse_option_group(option).expect("Can be parsed.");
+        let child = &result.borrow().children[0];
+        let attrs = &child.borrow().attributes;
+
+        assert_eq!(attrs.get_str("flag"), Some("-a".to_string()));
+        assert_eq!(attrs.get_str("arg"), Some(" arg".to_string()));
     }
 }

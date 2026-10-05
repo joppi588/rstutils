@@ -7,7 +7,7 @@ use super::list_enum_helpers::{
     enumerator_parts, enumerator_type, enumerator_value, resolve_enumerator_type,
 };
 use crate::parser_errors::ParserError;
-use crate::token::{Token, TokenKind as TK};
+use crate::token::{Token, TokenCategory as TC, TokenKind as TK};
 use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 use std::debug_assert_matches;
@@ -51,6 +51,7 @@ fn parse_item_body(stream: &mut TokenStream, dedent_len: usize) -> Result<NodeRe
             TK::Field
             | TK::BulletListMarker
             | TK::EnumeratedListMarker
+            | TK::OptionStart
             | TK::EoF
             | TK::Dedent
             | TK::BlankLine => {
@@ -169,6 +170,44 @@ pub(crate) fn parse_field_list(stream: &mut TokenStream) -> Result<NodeRef, Pars
 
     Ok(list)
 }
+
+pub(crate) fn parse_option_list(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    debug_assert_matches!(stream.token_at_cursor().kind, TK::OptionStart);
+
+    let list = AstNode::new_ref(NodeClass::OptionList);
+
+    while stream.token_at_cursor().kind.is(TC::OPTION_MARKER) {
+        let item = AstNode::new_ref(NodeClass::OptionListItem);
+        let option_token = stream.consume();
+        let (option, option_type) = if option_token.lexeme.starts_with("--") {
+            (option_token.lexeme[2..].to_owned(), "long")
+        } else {
+            (option_token.lexeme[1..].to_owned(), "short")
+        };
+        let option_group = AstNode::new_ref(NodeClass::OptionGroup);
+        let option_item = AstNode::new_ref(NodeClass::Option);
+        option_item.with_attr("option_type", option_type.to_string());
+        option_item.with_attr("option", option);
+        option_group.push_child(option_item);
+        let spaces = stream.consume();
+        if !(spaces.kind == TK::Spaces) || spaces.len() < 2 {
+            return Err(ParserError::UnexpectedToken {
+                expected: ">2 Spaces".to_owned(),
+                found: format!("{:?}({:?})", spaces.kind, spaces.len()),
+                index: stream.cursor(),
+            });
+        }
+
+        let dedent_len = option_token.len() + spaces.len();
+        item.push_child(parse_item_body(stream, dedent_len)?);
+        list.push_child(item);
+        consume_trailing_blank_lines(stream, &list);
+    }
+
+    Ok(list)
+}
+
+// fn parse_option(option_token:Token)
 
 #[cfg(test)]
 mod tests {
