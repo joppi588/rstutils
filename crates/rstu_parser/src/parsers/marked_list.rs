@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 use super::block::parse_block;
-use super::list_enum_helpers::{
+use super::list_helpers::{
     enumerator_parts, enumerator_type, enumerator_value, resolve_enumerator_type,
 };
 use crate::parser_errors::ParserError;

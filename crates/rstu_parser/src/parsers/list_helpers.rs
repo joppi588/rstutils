@@ -211,7 +211,7 @@ fn parse_option(text: &str) -> Result<NodeRef, ParserError> {
 #[cfg(test)]
 mod tests {
     use super::{enumerator_type, enumerator_value, resolve_enumerator_type, EnumType};
-    use crate::{parser_errors::ParserError, parsers::list_enum_helpers::parse_option_group};
+    use crate::{parser_errors::ParserError, parsers::list_helpers::parse_option_group};
 
     #[test]
     fn enumerator_type_identifies_supported_marker_types() {
