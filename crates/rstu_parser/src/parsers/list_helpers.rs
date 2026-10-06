@@ -191,14 +191,20 @@ fn parse_option(text: &str) -> Result<NodeRef, ParserError> {
         .captures(text)
     {
         option.with_attr("arg", option_match.get(3).unwrap().as_str().to_string());
-        option.with_attr("op", option_match.get(2).unwrap().as_str().to_string());
+        option.with_attr(
+            "delimiter",
+            option_match.get(2).unwrap().as_str().to_string(),
+        );
         option_match.get(1)
     } else if let Some(option_match) = Regex::new(LONG_OPTIONS_MATCH_GROUPS)
         .expect("valid long option regex")
         .captures(text)
     {
         option.with_attr("arg", option_match.get(3).unwrap().as_str().to_string());
-        option.with_attr("op", option_match.get(2).unwrap().as_str().to_string());
+        option.with_attr(
+            "delimiter",
+            option_match.get(2).unwrap().as_str().to_string(),
+        );
         option_match.get(1)
     } else {
         return Err(ParserError::NoOptionFound {
@@ -350,7 +356,7 @@ mod tests {
         let attrs = &child.borrow().attributes;
 
         assert_eq!(attrs.get_str("flag"), Some("-a".to_string()));
-        assert_eq!(attrs.get_str("op"), Some(" ".to_string()));
+        assert_eq!(attrs.get_str("delimiter"), Some(" ".to_string()));
         assert_eq!(attrs.get_str("arg"), Some("arg".to_string()));
     }
 }

@@ -16,7 +16,7 @@ children:
         attributes:
           arg: ''
           flag: --aaaa
-          op: ''
+          delimiter: ''
     - class: Block
       attributes:
         indent: 13
@@ -34,7 +34,7 @@ children:
         attributes:
           arg: file
           flag: --bbbb
-          op: '='
+          delimiter: '='
     - class: Block
       attributes:
         indent: 13
@@ -52,7 +52,7 @@ children:
         attributes:
           arg: name
           flag: --cccc
-          op: ' '
+          delimiter: ' '
     - class: Block
       attributes:
         indent: 13
@@ -70,7 +70,7 @@ children:
         attributes:
           arg: ''
           flag: --d-e-f-g
-          op: ''
+          delimiter: ''
     - class: Block
       attributes:
         indent: 13
@@ -88,7 +88,7 @@ children:
         attributes:
           arg: ''
           flag: --h_i_j_k
-          op: ''
+          delimiter: ''
     - class: Block
       attributes:
         indent: 13

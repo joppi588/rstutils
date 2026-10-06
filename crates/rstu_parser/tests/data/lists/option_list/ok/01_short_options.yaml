@@ -16,7 +16,7 @@ children:
         attributes:
           arg: ""
           flag: -a
-          op: ""
+          delimiter: ""
     - class: Block
       attributes:
         indent: 9
@@ -35,7 +35,7 @@ children:
         attributes:
           arg: "file"
           flag: -b
-          op: " "
+          delimiter: " "
     - class: Block
       attributes:
         indent: 9
@@ -54,7 +54,7 @@ children:
         attributes:
           arg: "name"
           flag: -c
-          op: " "
+          delimiter: " "
     - class: Block
       attributes:
         indent: 9
