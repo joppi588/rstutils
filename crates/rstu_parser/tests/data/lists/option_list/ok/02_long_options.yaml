@@ -4,7 +4,7 @@ children:
   children:
   - class: PlainText
     attributes:
-      text: 'Long options:'
+      text: "Long options:\n"
 - class: BlankLine
 - class: OptionList
   children:
@@ -13,102 +13,88 @@ children:
     - class: OptionGroup
       children:
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: --aaaa
-    - class: Description
+        attributes:
+          arg: ''
+          flag: --aaaa
+          op: ''
+    - class: Block
+      attributes:
+        indent: 13
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: option --aaaa
+            text: "option --aaaa\n"
   - class: OptionListItem
     children:
     - class: OptionGroup
       children:
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: --bbbb
-        - class: OptionArgument
-          attributes:
-            delimiter: '='
-          children:
-          - class: PlainText
-            attributes:
-              text: file
-    - class: Description
+        attributes:
+          arg: file
+          flag: --bbbb
+          op: '='
+    - class: Block
+      attributes:
+        indent: 13
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: option --bbbb
+            text: "option --bbbb\n"
   - class: OptionListItem
     children:
     - class: OptionGroup
       children:
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: --cccc
-        - class: OptionArgument
-          attributes:
-            delimiter: ' '
-          children:
-          - class: PlainText
-            attributes:
-              text: name
-    - class: Description
+        attributes:
+          arg: name
+          flag: --cccc
+          op: ' '
+    - class: Block
+      attributes:
+        indent: 13
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: option --cccc
+            text: "option --cccc\n"
   - class: OptionListItem
     children:
     - class: OptionGroup
       children:
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: --d-e-f-g
-    - class: Description
+        attributes:
+          arg: ''
+          flag: --d-e-f-g
+          op: ''
+    - class: Block
+      attributes:
+        indent: 13
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: option --d-e-f-g
+            text: "option --d-e-f-g\n"
   - class: OptionListItem
     children:
     - class: OptionGroup
       children:
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: --h_i_j_k
-    - class: Description
+        attributes:
+          arg: ''
+          flag: --h_i_j_k
+          op: ''
+    - class: Block
+      attributes:
+        indent: 13
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: option --h_i_j_k
+            text: "option --h_i_j_k\n"

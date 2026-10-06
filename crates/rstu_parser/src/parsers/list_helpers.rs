@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 use crate::parser_errors::ParserError;
+use crate::token::{LONG_OPTIONS_MATCH_GROUPS, SHORT_OPTIONS_MATCH_GROUPS};
 use regex::Regex;
 use rstu_ast::NodeRef;
 use rstu_ast::{AstNode, NodeClass, NodeRefExt};
@@ -185,21 +186,20 @@ pub(super) fn parse_option_group(text: &str) -> Result<NodeRef, ParserError> {
 fn parse_option(text: &str) -> Result<NodeRef, ParserError> {
     let option = AstNode::new_ref(NodeClass::Option);
 
-    let option_regexp_short = r"^(\-[a-z]{1})([\s=]?)(.*)$"; // TODO: Make this global and use in Token regexp
-    let option_regexp_long = r"^(\-\-(([a-z]+)(\-[a-z]+)*)+)$"; // TODO: Make this global and use in Token regexp
-
-    let option_match = if let Some(option_match) = Regex::new(option_regexp_short)
+    let option_match = if let Some(option_match) = Regex::new(SHORT_OPTIONS_MATCH_GROUPS)
         .expect("valid short option regex")
         .captures(text)
     {
         option.with_attr("arg", option_match.get(3).unwrap().as_str().to_string());
         option.with_attr("op", option_match.get(2).unwrap().as_str().to_string());
         option_match.get(1)
-    } else if let Some(option_match) = Regex::new(option_regexp_long)
+    } else if let Some(option_match) = Regex::new(LONG_OPTIONS_MATCH_GROUPS)
         .expect("valid long option regex")
         .captures(text)
     {
-        option_match.get(0)
+        option.with_attr("arg", option_match.get(3).unwrap().as_str().to_string());
+        option.with_attr("op", option_match.get(2).unwrap().as_str().to_string());
+        option_match.get(1)
     } else {
         return Err(ParserError::NoOptionFound {
             text: text.to_string(),

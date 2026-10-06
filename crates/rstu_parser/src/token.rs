@@ -10,6 +10,18 @@ static INLINE_PRE_CHARS: &str = r#"(?:[\n\s\-:/'"<(\[{]|\p{Ps}|\p{Pi}|\p{Pf}|\p{
 static INLINE_POST_CHARS: &str =
     r#"(?:[\n\s\-\.,:;!?\\/'")\]}>]|\p{Pe}|\p{Pi}|\p{Pf}|\p{Pd}|\p{Po})"#;
 
+// Match groups are used in the parser, but not the lexer (performance)
+// Content is the same, update together.
+pub(crate) static SHORT_OPTIONS_MATCH_GROUPS: &str = r"^(\-[a-z]{1})([\s=]?)(.*)$";
+pub(crate) static LONG_OPTIONS_MATCH_GROUPS: &str = r"^(\-\-[a-z]+(?:[\-_][a-z]+)*)([\s=]?)(.*)$";
+static OPTION_GROUPS: &str = concat!(
+    "(",
+    r"\n\-[a-z](?:\s[a-z]+)?\s", // short
+    "|",
+    r"\n\-\-[a-z]+(?:[\-_][a-z]+)*(?:(=|\s)[a-z]+)?\s", // long
+    ")"
+);
+
 macro_rules! count_idents {
     ($($ident:ident),* $(,)?) => {
         <[()]>::len(&[$(count_idents!(@sub $ident)),*])
@@ -256,7 +268,7 @@ impl TokenKind {
         (Field,r"[\n\s]:[\w\s]+:[\n\s]"),
         (EnumeratedListMarker, r"[\n\s](?:(?:#|[0-9]+|[A-Za-z]+|[IVXLCDMivxlcdm]+)(?:\.|\))[ \t]|\([A-Za-z0-9]+\)[ \t])"),
         (BulletListMarker, r"(\s|\n)[\-\+\*•‣⁃](\s|\n)"),
-        (OptionGroup, r"\n\-[a-z](\s[a-z]+)?\s"),
+        (OptionGroup, OPTION_GROUPS),
 
         // Plain text
         (Spaces, r"[^ \t\n][ \t]+[^ \t]"),
