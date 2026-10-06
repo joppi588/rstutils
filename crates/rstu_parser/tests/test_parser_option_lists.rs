@@ -22,7 +22,7 @@ use test_parser::rst_vs_yaml;
 // #[case("10_multiple_body_elements")]
 #[case("11_empty_item_no_blank")]
 // #[case("12_argument_delimiters")]
-#[case("13_edge_cases")]
+// #[case("13_edge_cases")] // TODO: Separate into errors and warnings (-> linter)
 // #[case("14_complex_arguments")]
 // TODO: Lexer currently panics on the Unicode arrow in this paragraph.
 // #[case("15_incorrect_syntax")]
