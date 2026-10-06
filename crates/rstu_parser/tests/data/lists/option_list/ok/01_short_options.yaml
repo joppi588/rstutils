@@ -4,7 +4,7 @@ children:
   children:
   - class: PlainText
     attributes:
-      text: 'Short options:'
+      text: "Short options:\n"
 - class: BlankLine
 - class: OptionList
   children:
@@ -13,66 +13,54 @@ children:
     - class: OptionGroup
       children:
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: -a
-    - class: Description
+        attributes:
+          arg: ""
+          flag: -a
+          op: ""
+    - class: Block
+      attributes:
+        indent: 9
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: option -a
+            text: "option -a\n"
+  - class: BlankLine
   - class: OptionListItem
     children:
     - class: OptionGroup
       children:
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: -b
-        - class: OptionArgument
-          attributes:
-            delimiter: ' '
-          children:
-          - class: PlainText
-            attributes:
-              text: file
-    - class: Description
+        attributes:
+          arg: "file"
+          flag: -b
+          op: " "
+    - class: Block
+      attributes:
+        indent: 9
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: option -b
+            text: "option -b\n"
+  - class: BlankLine
   - class: OptionListItem
     children:
     - class: OptionGroup
       children:
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: -c
-        - class: OptionArgument
-          attributes:
-            delimiter: ' '
-          children:
-          - class: PlainText
-            attributes:
-              text: name
-    - class: Description
+        attributes:
+          arg: "name"
+          flag: -c
+          op: " "
+    - class: Block
+      attributes:
+        indent: 9
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: option -c
+            text: "option -c\n"

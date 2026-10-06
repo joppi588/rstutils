@@ -117,7 +117,7 @@ fn parse_body_elements(
             current_parent.push_child(definition_list);
         }
 
-        TK::OptionStart => {
+        TK::OptionGroup => {
             let option_list = parse_option_list(stream)?;
             current_parent.push_child(option_list);
         }

@@ -130,10 +130,10 @@ impl TokenCategory {
         TokenKind::BulletListMarker,
         TokenKind::EnumeratedListMarker,
         TokenKind::Field,
-        TokenKind::OptionStart,
+        TokenKind::OptionGroup,
     ];
 
-    pub const OPTION_MARKER: &'static [TokenKind] = &[TokenKind::OptionStart];
+    pub const OPTION_MARKER: &'static [TokenKind] = &[TokenKind::OptionGroup];
 
     pub const TABLE: &'static [TokenKind] = &[TokenKind::TableHorizontal];
 
@@ -190,7 +190,7 @@ pub enum TokenKind {
     LiteralBlockPartiallyMinimized,
     LiteralChar,
     NewLine,
-    OptionStart,
+    OptionGroup,
     Punctuation,
     Separator,
     SimpleAnonymousHyperLinkReference,
@@ -256,7 +256,7 @@ impl TokenKind {
         (Field,r"[\n\s]:[\w\s]+:[\n\s]"),
         (EnumeratedListMarker, r"[\n\s](?:(?:#|[0-9]+|[A-Za-z]+|[IVXLCDMivxlcdm]+)(?:\.|\))[ \t]|\([A-Za-z0-9]+\)[ \t])"),
         (BulletListMarker, r"(\s|\n)[\-\+\*•‣⁃](\s|\n)"),
-        (OptionStart, r"\n\-\-?[a-z](\s|\n|,)"),
+        (OptionGroup, r"\n\-[a-z](\s[a-z]+)?\s"),
 
         // Plain text
         (Spaces, r"[^ \t\n][ \t]+[^ \t]"),
