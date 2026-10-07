@@ -4,7 +4,8 @@ children:
   children:
   - class: PlainText
     attributes:
-      text: 'Mixed short, long, and VMS/DOS options:'
+      text: |
+        Mixed short, long, and VMS/DOS options:
 - class: BlankLine
 - class: OptionList
   children:
@@ -13,134 +14,108 @@ children:
     - class: OptionGroup
       children:
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: -a
-    - class: Description
+        attributes:
+          flag: -a
+    - class: Block
+      attributes:
+        indent: 13
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: option -a
+            text: |
+              option -a
   - class: OptionListItem
     children:
     - class: OptionGroup
       children:
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: --bbbb
-        - class: OptionArgument
-          attributes:
-            delimiter: '='
-          children:
-          - class: PlainText
-            attributes:
-              text: file
-    - class: Description
+        attributes:
+          arg: file
+          delimiter: "="
+          flag: --bbbb
+    - class: Block
+      attributes:
+        indent: 13
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: option -bbbb
+            text: |
+              option -bbbb
   - class: OptionListItem
     children:
     - class: OptionGroup
       children:
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: /C
-    - class: Description
+        attributes:
+          flag: /C
+    - class: Block
+      attributes:
+        indent: 13
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: option /C
+            text: |
+              option /C
   - class: OptionListItem
     children:
     - class: OptionGroup
       children:
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: --dddd
-        - class: OptionArgument
-          attributes:
-            delimiter: ' '
-          children:
-          - class: PlainText
-            attributes:
-              text: name
-    - class: Description
+        attributes:
+          arg: name
+          delimiter: ' '
+          flag: --dddd
+    - class: Block
+      attributes:
+        indent: 13
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: option --dddd
+            text: |
+              option --dddd
   - class: OptionListItem
     children:
     - class: OptionGroup
       children:
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: -e
-        - class: OptionArgument
-          attributes:
-            delimiter: ' '
-          children:
-          - class: PlainText
-            attributes:
-              text: string
-    - class: Description
+        attributes:
+          arg: string
+          delimiter: ' '
+          flag: -e
+    - class: Block
+      attributes:
+        indent: 13
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: option -e
+            text: |
+              option -e
   - class: OptionListItem
     children:
     - class: OptionGroup
       children:
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: /F
-        - class: OptionArgument
-          attributes:
-            delimiter: ' '
-          children:
-          - class: PlainText
-            attributes:
-              text: file
-    - class: Description
+        attributes:
+          arg: file
+          delimiter: ' '
+          flag: /F
+    - class: Block
+      attributes:
+        indent: 13
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: option /F
+            text: |
+              option /F
