@@ -21,14 +21,17 @@ enum Commands {
         #[arg(long)]
         output: Option<OutputFormat>,
     },
-    Parse {
+    Convert {
         file: String,
+        #[arg(short, long, value_enum, default_value = "json")]
+        output: OutputFormat,
     },
 }
 
 #[derive(Clone, Debug, ValueEnum)]
 enum OutputFormat {
-    Json,
+    JSON,
+    YAML,
 }
 
 fn main() {
@@ -45,7 +48,7 @@ fn main() {
 
             println!("Subcommand format, option file={file}, output={option_value}");
         }
-        Commands::Parse { file } => {
+        Commands::Convert { file, output } => {
             let input = std::fs::read_to_string(&file).unwrap_or_else(|error| {
                 eprintln!("error: cannot read {file}: {error}");
                 std::process::exit(1);
@@ -53,9 +56,22 @@ fn main() {
 
             match rstu_parser::parse(&input) {
                 Ok(document) => {
-                    let json = serde_json::to_string(&rstu_ast::AstNode::to_json(&document))
-                        .expect("AST serialization should not fail");
-                    println!("{json}");
+                    let serialized = match output {
+                        OutputFormat::JSON => {
+                            serde_json::to_string(&rstu_ast::AstNode::to_json(&document))
+                                .expect("AST serialization should not fail")
+                        }
+                        OutputFormat::YAML => {
+                            rstu_ast::AstNode::to_yaml(&document).unwrap_or_else(|error| {
+                                eprintln!("error: failed to serialize {file}: {error}");
+                                std::process::exit(1);
+                            })
+                        }
+                    };
+                    print!("{serialized}");
+                    if !serialized.ends_with('\n') {
+                        println!();
+                    }
                 }
                 Err(error) => {
                     eprintln!("error: failed to parse {file}: {error:?}");
