@@ -5,7 +5,8 @@
 use super::{consume_trailing_blank_lines, parse_item_body};
 use crate::parser_errors::ParserError;
 use crate::token::{
-    TokenCategory as TC, TokenKind as TK, LONG_OPTIONS_MATCH_GROUPS, SHORT_OPTIONS_MATCH_GROUPS,
+    TokenCategory as TC, TokenKind as TK, DOS_OPTIONS_MATCH_GROUPS, LONG_OPTIONS_MATCH_GROUPS,
+    SHORT_OPTIONS_MATCH_GROUPS,
 };
 use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
@@ -48,9 +49,13 @@ fn parse_option_group(text: &str) -> Result<NodeRef, ParserError> {
 
 fn parse_option(text: &str) -> Result<NodeRef, ParserError> {
     let option = AstNode::new_ref(NodeClass::Option);
-    let captures = [&SHORT_OPTIONS_MATCH_GROUPS, &LONG_OPTIONS_MATCH_GROUPS]
-        .iter()
-        .find_map(|regex| regex.captures(text));
+    let captures = [
+        &SHORT_OPTIONS_MATCH_GROUPS,
+        &LONG_OPTIONS_MATCH_GROUPS,
+        &DOS_OPTIONS_MATCH_GROUPS,
+    ]
+    .iter()
+    .find_map(|regex| regex.captures(text));
 
     match captures {
         Some(caps) => {

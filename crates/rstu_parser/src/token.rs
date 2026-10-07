@@ -16,11 +16,15 @@ pub(crate) static SHORT_OPTIONS_MATCH_GROUPS: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"^([\-\+][a-z]{1})([\s=]?)(.*)$").unwrap());
 pub(crate) static LONG_OPTIONS_MATCH_GROUPS: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"^(\-\-[a-z]+(?:[\-_][a-z]+)*)([\s=]?)(.*)$").unwrap());
+pub(crate) static DOS_OPTIONS_MATCH_GROUPS: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"^(/[A-Z]+)([\s=]?)([a-z]*)$").unwrap());
 static OPTION_GROUPS: &str = concat!(
     "(",
     r"\n[\-\+][a-z](?:\s[a-z]+)?\s", // short and old GNU (+)
     "|",
     r"\n\-\-[a-z]+(?:[\-_][a-z]+)*(?:(=|\s)[a-z]+)?\s", // long
+    "|",
+    r"\n/[A-Z]+(?:[\s=][a-z]+)?\s", // DOS
     ")"
 );
 

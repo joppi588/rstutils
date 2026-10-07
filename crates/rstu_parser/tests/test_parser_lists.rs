@@ -183,7 +183,7 @@ fn rejects_docutils_field_list_end(#[case] rst_filename: &str) {
 #[case("01_short_options")]
 #[case("02_long_options")]
 #[case("03_old_gnu_options")]
-// #[case("04_vms_dos_options")]
+#[case("04_vms_dos_options")]
 // #[case("05_mixed_options")]
 // #[case("06_aliased_options")]
 // #[case("07_descriptions_aligned")]
