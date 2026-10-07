@@ -17,7 +17,9 @@ use parsers::comments::parse_comment;
 use parsers::definition_list::{is_definition_list_item, parse_definition_list};
 use parsers::directives::parse_directive;
 use parsers::literal_block::parse_literal_block;
-use parsers::marked_list::{parse_bullet_list, parse_enumerated_list, parse_field_list};
+use parsers::marked_list::{
+    parse_bullet_list, parse_enumerated_list, parse_field_list, parse_option_list,
+};
 use parsers::paragraph::parse_paragraph;
 use parsers::section::parse_section_header;
 
@@ -113,6 +115,11 @@ fn parse_body_elements(
         _ if is_definition_list_item(stream) => {
             let definition_list = parse_definition_list(stream)?;
             current_parent.push_child(definition_list);
+        }
+
+        TK::OptionGroup => {
+            let option_list = parse_option_list(stream)?;
+            current_parent.push_child(option_list);
         }
 
         kind if kind.nested_is(TC::PARAGRAPH) => {
