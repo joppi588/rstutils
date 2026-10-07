@@ -12,11 +12,11 @@ static INLINE_POST_CHARS: &str =
 
 // Match groups are used in the parser, but not the lexer (performance)
 // Content is the same, update together.
-pub(crate) static SHORT_OPTIONS_MATCH_GROUPS: &str = r"^(\-[a-z]{1})([\s=]?)(.*)$";
+pub(crate) static SHORT_OPTIONS_MATCH_GROUPS: &str = r"^([\-\+][a-z]{1})([\s=]?)(.*)$";
 pub(crate) static LONG_OPTIONS_MATCH_GROUPS: &str = r"^(\-\-[a-z]+(?:[\-_][a-z]+)*)([\s=]?)(.*)$";
 static OPTION_GROUPS: &str = concat!(
     "(",
-    r"\n\-[a-z](?:\s[a-z]+)?\s", // short
+    r"\n[\-\+][a-z](?:\s[a-z]+)?\s", // short and old GNU (+)
     "|",
     r"\n\-\-[a-z]+(?:[\-_][a-z]+)*(?:(=|\s)[a-z]+)?\s", // long
     ")"
@@ -530,6 +530,13 @@ mod tests {
         assert!(TK::Word.is(TokenCategory::PLAIN));
         assert!(TK::Punctuation.is(TokenCategory::PLAIN));
         assert!(!TK::Separator.is(TokenCategory::PLAIN));
+    }
+
+    #[test]
+    fn option_group_matches_old_gnu_style() {
+        assert!(TK::OptionGroup.is_match("\n+a  "));
+        assert_eq!(TK::OptionGroup.find_lexeme("\n+b file  "), Some("+b file"));
+        assert!(!TK::OptionGroup.is_match("\n+1 "));
     }
 
     #[test]

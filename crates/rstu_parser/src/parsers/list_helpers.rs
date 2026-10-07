@@ -186,33 +186,25 @@ pub(super) fn parse_option_group(text: &str) -> Result<NodeRef, ParserError> {
 fn parse_option(text: &str) -> Result<NodeRef, ParserError> {
     let option = AstNode::new_ref(NodeClass::Option);
 
-    let option_match = if let Some(option_match) = Regex::new(SHORT_OPTIONS_MATCH_GROUPS)
-        .expect("valid short option regex")
-        .captures(text)
-    {
-        option.with_attr("arg", option_match.get(3).unwrap().as_str().to_string());
-        option.with_attr(
-            "delimiter",
-            option_match.get(2).unwrap().as_str().to_string(),
-        );
-        option_match.get(1)
-    } else if let Some(option_match) = Regex::new(LONG_OPTIONS_MATCH_GROUPS)
-        .expect("valid long option regex")
-        .captures(text)
-    {
-        option.with_attr("arg", option_match.get(3).unwrap().as_str().to_string());
-        option.with_attr(
-            "delimiter",
-            option_match.get(2).unwrap().as_str().to_string(),
-        );
-        option_match.get(1)
-    } else {
-        return Err(ParserError::NoOptionFound {
-            text: text.to_string(),
+    let captures = [SHORT_OPTIONS_MATCH_GROUPS, LONG_OPTIONS_MATCH_GROUPS]
+        .iter()
+        .find_map(|pattern| {
+            Regex::new(pattern)
+                .expect("valid option regex")
+                .captures(text)
         });
-    };
-    option.with_attr("flag", option_match.unwrap().as_str().to_string());
-    Ok(option)
+
+    match captures {
+        Some(caps) => {
+            option.with_attr("arg", caps[3].to_string());
+            option.with_attr("delimiter", caps[2].to_string());
+            option.with_attr("flag", caps[1].to_string());
+            Ok(option)
+        }
+        None => Err(ParserError::NoOptionFound {
+            text: text.to_string(),
+        }),
+    }
 }
 
 #[cfg(test)]
@@ -358,5 +350,16 @@ mod tests {
         assert_eq!(attrs.get_str("flag"), Some("-a".to_string()));
         assert_eq!(attrs.get_str("delimiter"), Some(" ".to_string()));
         assert_eq!(attrs.get_str("arg"), Some("arg".to_string()));
+    }
+
+    #[test]
+    fn parse_old_gnu_option_argument() {
+        let result = parse_option_group("+b file").expect("Can be parsed.");
+        let child = &result.borrow().children[0];
+        let attrs = &child.borrow().attributes;
+
+        assert_eq!(attrs.get_str("flag"), Some("+b".to_string()));
+        assert_eq!(attrs.get_str("delimiter"), Some(" ".to_string()));
+        assert_eq!(attrs.get_str("arg"), Some("file".to_string()));
     }
 }
