@@ -151,3 +151,30 @@ fn to_yaml_serializes_node_tree_without_parent() {
 
     assert_eq!(actual, expected);
 }
+
+#[test]
+fn serializers_preserve_node_and_attribute_key_order() {
+    let root = AstNode::new_ref(NodeClass::Document);
+    root.with_attr("zeta", "last").with_attr("alpha", "first");
+
+    let paragraph = AstNode::new_ref(NodeClass::Paragraph);
+    paragraph
+        .with_attr("zeta", "last")
+        .with_attr("alpha", "first");
+    paragraph.push_child(AstNode::new_ref(NodeClass::Title));
+    let section = AstNode::new_ref(NodeClass::Section);
+    root.push_child(paragraph);
+    root.push_child(section);
+
+    let json = serde_json::to_string(&AstNode::to_json(&root)).unwrap();
+    assert_eq!(
+        json,
+        r#"{"class":"Document","attributes":{"alpha":"first","zeta":"last"},"children":[{"class":"Paragraph","attributes":{"alpha":"first","zeta":"last"},"children":[{"class":"Title"}]},{"class":"Section"}]}"#
+    );
+
+    let yaml = AstNode::to_yaml(&root).unwrap();
+    assert_eq!(
+        yaml,
+        "class: Document\nattributes:\n  alpha: first\n  zeta: last\nchildren:\n- class: Paragraph\n  attributes:\n    alpha: first\n    zeta: last\n  children:\n  - class: Title\n- class: Section\n"
+    );
+}
