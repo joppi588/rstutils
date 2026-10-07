@@ -10,6 +10,20 @@ static INLINE_PRE_CHARS: &str = r#"(?:[\n\s\-:/'"<(\[{]|\p{Ps}|\p{Pi}|\p{Pf}|\p{
 static INLINE_POST_CHARS: &str =
     r#"(?:[\n\s\-\.,:;!?\\/'")\]}>]|\p{Pe}|\p{Pi}|\p{Pf}|\p{Pd}|\p{Po})"#;
 
+// Match groups are used in the parser, but not the lexer (performance)
+// Content is the same, update together.
+pub(crate) static SHORT_OPTIONS_MATCH_GROUPS: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"^([\-\+][a-z]{1})([\s=]?)(.*)$").unwrap());
+pub(crate) static LONG_OPTIONS_MATCH_GROUPS: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"^(\-\-[a-z]+(?:[\-_][a-z]+)*)([\s=]?)(.*)$").unwrap());
+static OPTION_GROUPS: &str = concat!(
+    "(",
+    r"\n[\-\+][a-z](?:\s[a-z]+)?\s", // short and old GNU (+)
+    "|",
+    r"\n\-\-[a-z]+(?:[\-_][a-z]+)*(?:(=|\s)[a-z]+)?\s", // long
+    ")"
+);
+
 macro_rules! count_idents {
     ($($ident:ident),* $(,)?) => {
         <[()]>::len(&[$(count_idents!(@sub $ident)),*])
@@ -130,7 +144,10 @@ impl TokenCategory {
         TokenKind::BulletListMarker,
         TokenKind::EnumeratedListMarker,
         TokenKind::Field,
+        TokenKind::OptionGroup,
     ];
+
+    pub const OPTION_MARKER: &'static [TokenKind] = &[TokenKind::OptionGroup];
 
     pub const TABLE: &'static [TokenKind] = &[TokenKind::TableHorizontal];
 
@@ -187,6 +204,7 @@ pub enum TokenKind {
     LiteralBlockPartiallyMinimized,
     LiteralChar,
     NewLine,
+    OptionGroup,
     Punctuation,
     Separator,
     SimpleAnonymousHyperLinkReference,
@@ -252,6 +270,7 @@ impl TokenKind {
         (Field,r"[\n\s]:[\w\s]+:[\n\s]"),
         (EnumeratedListMarker, r"[\n\s](?:(?:#|[0-9]+|[A-Za-z]+|[IVXLCDMivxlcdm]+)(?:\.|\))[ \t]|\([A-Za-z0-9]+\)[ \t])"),
         (BulletListMarker, r"(\s|\n)[\-\+\*•‣⁃](\s|\n)"),
+        (OptionGroup, OPTION_GROUPS),
 
         // Plain text
         (Spaces, r"[^ \t\n][ \t]+[^ \t]"),
@@ -513,6 +532,13 @@ mod tests {
         assert!(TK::Word.is(TokenCategory::PLAIN));
         assert!(TK::Punctuation.is(TokenCategory::PLAIN));
         assert!(!TK::Separator.is(TokenCategory::PLAIN));
+    }
+
+    #[test]
+    fn option_group_matches_old_gnu_style() {
+        assert!(TK::OptionGroup.is_match("\n+a  "));
+        assert_eq!(TK::OptionGroup.find_lexeme("\n+b file  "), Some("+b file"));
+        assert!(!TK::OptionGroup.is_match("\n+1 "));
     }
 
     #[test]

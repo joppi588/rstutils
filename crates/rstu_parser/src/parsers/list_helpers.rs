@@ -3,6 +3,9 @@
 // SPDX-License-Identifier: MIT
 
 use crate::parser_errors::ParserError;
+use crate::token::{LONG_OPTIONS_MATCH_GROUPS, SHORT_OPTIONS_MATCH_GROUPS};
+use rstu_ast::NodeRef;
+use rstu_ast::{AstNode, NodeClass, NodeRefExt};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) enum EnumType {
@@ -170,10 +173,42 @@ pub(super) fn resolve_enumerator_type(
     }
 }
 
+pub(super) fn parse_option_group(text: &str) -> Result<NodeRef, ParserError> {
+    let option_group = AstNode::new_ref(NodeClass::OptionGroup);
+    for option in text.split(',') {
+        let option = parse_option(option)?;
+        option_group.push_child(option);
+    }
+    Ok(option_group)
+}
+
+fn parse_option(text: &str) -> Result<NodeRef, ParserError> {
+    let option = AstNode::new_ref(NodeClass::Option);
+
+    let captures = [&SHORT_OPTIONS_MATCH_GROUPS, &LONG_OPTIONS_MATCH_GROUPS]
+        .iter()
+        .find_map(|regex| regex.captures(text));
+
+    match captures {
+        Some(caps) => {
+            for (name, group) in [("arg", 3), ("delimiter", 2)] {
+                if !caps[group].is_empty() {
+                    option.with_attr(name, caps[group].to_string());
+                }
+            }
+            option.with_attr("flag", caps[1].to_string());
+            Ok(option)
+        }
+        None => Err(ParserError::NoOptionFound {
+            text: text.to_string(),
+        }),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::{enumerator_type, enumerator_value, resolve_enumerator_type, EnumType};
-    use crate::parser_errors::ParserError;
+    use crate::{parser_errors::ParserError, parsers::list_helpers::parse_option_group};
 
     #[test]
     fn enumerator_type_identifies_supported_marker_types() {
@@ -297,5 +332,32 @@ mod tests {
                 })
             );
         }
+    }
+
+    #[test]
+    fn parse_short_option_argument() {
+        // GIVEN A short option with an argument
+        // WHEN the option is parsed
+        // An option group is returned
+
+        let option = "-a arg";
+        let result = parse_option_group(option).expect("Can be parsed.");
+        let child = &result.borrow().children[0];
+        let attrs = &child.borrow().attributes;
+
+        assert_eq!(attrs.get_str("flag"), Some("-a".to_string()));
+        assert_eq!(attrs.get_str("delimiter"), Some(" ".to_string()));
+        assert_eq!(attrs.get_str("arg"), Some("arg".to_string()));
+    }
+
+    #[test]
+    fn parse_old_gnu_option_argument() {
+        let result = parse_option_group("+b file").expect("Can be parsed.");
+        let child = &result.borrow().children[0];
+        let attrs = &child.borrow().attributes;
+
+        assert_eq!(attrs.get_str("flag"), Some("+b".to_string()));
+        assert_eq!(attrs.get_str("delimiter"), Some(" ".to_string()));
+        assert_eq!(attrs.get_str("arg"), Some("file".to_string()));
     }
 }

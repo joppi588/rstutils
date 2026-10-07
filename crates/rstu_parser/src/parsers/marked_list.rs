@@ -3,11 +3,12 @@
 // SPDX-License-Identifier: MIT
 
 use super::block::parse_block;
-use super::list_enum_helpers::{
+use super::list_helpers::{
     enumerator_parts, enumerator_type, enumerator_value, resolve_enumerator_type,
 };
 use crate::parser_errors::ParserError;
-use crate::token::{Token, TokenKind as TK};
+use crate::parsers::list_helpers::parse_option_group;
+use crate::token::{Token, TokenCategory as TC, TokenKind as TK};
 use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 use std::debug_assert_matches;
@@ -51,6 +52,7 @@ fn parse_item_body(stream: &mut TokenStream, dedent_len: usize) -> Result<NodeRe
             TK::Field
             | TK::BulletListMarker
             | TK::EnumeratedListMarker
+            | TK::OptionGroup
             | TK::EoF
             | TK::Dedent
             | TK::BlankLine => {
@@ -164,6 +166,34 @@ pub(crate) fn parse_field_list(stream: &mut TokenStream) -> Result<NodeRef, Pars
         let dedent_len = field_token.len();
         item.push_child(parse_item_body(stream, dedent_len)?);
         list.push_child(item);
+        consume_trailing_blank_lines(stream, &list);
+    }
+
+    Ok(list)
+}
+
+pub(crate) fn parse_option_list(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    debug_assert_matches!(stream.token_at_cursor().kind, TK::OptionGroup);
+
+    let list = AstNode::new_ref(NodeClass::OptionList);
+
+    while stream.token_at_cursor().kind.is(TC::OPTION_MARKER) {
+        let option_item = AstNode::new_ref(NodeClass::OptionListItem);
+        let option_token = stream.consume();
+        let option_group = parse_option_group(&option_token.lexeme)?;
+        option_item.push_child(option_group);
+        let spaces = stream.consume();
+        if !(spaces.kind == TK::Spaces) || spaces.len() < 2 {
+            return Err(ParserError::UnexpectedToken {
+                expected: ">2 Spaces".to_owned(),
+                found: format!("{:?} (len {:?})", spaces.kind, spaces.len()),
+                index: stream.cursor(),
+            });
+        }
+
+        let dedent_len = option_token.len() + spaces.len();
+        option_item.push_child(parse_item_body(stream, dedent_len)?);
+        list.push_child(option_item);
         consume_trailing_blank_lines(stream, &list);
     }
 
