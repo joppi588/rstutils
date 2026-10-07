@@ -2,13 +2,15 @@
 //
 // SPDX-License-Identifier: MIT
 
+use super::{consume_trailing_blank_lines, parse_item_body};
 use crate::parser_errors::ParserError;
-use crate::token::{LONG_OPTIONS_MATCH_GROUPS, SHORT_OPTIONS_MATCH_GROUPS};
-use rstu_ast::NodeRef;
-use rstu_ast::{AstNode, NodeClass, NodeRefExt};
+use crate::token::TokenKind as TK;
+use crate::token_stream::TokenStream;
+use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
+use std::debug_assert_matches;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub(super) enum EnumType {
+enum EnumType {
     Arabic,
     Upperalpha,
     Loweralpha,
@@ -20,7 +22,53 @@ pub(super) enum EnumType {
     LowerAmbiguousC,
 }
 
-pub(super) fn alphabetic_value(value: &str) -> Option<usize> {
+pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    debug_assert_matches!(stream.token_at_cursor().kind, TK::EnumeratedListMarker);
+
+    let first_marker = stream.token_at_cursor().lexeme.to_owned();
+    let (prefix, first_value, suffix) = enumerator_parts(&first_marker);
+    let enumtype = resolve_enumerator_type(enumerator_type(first_value)?, None, None);
+    let list = AstNode::new_ref(NodeClass::EnumeratedList);
+    list.with_attr("enumtype", format!("{enumtype:?}").to_lowercase())
+        .with_attr("prefix", prefix)
+        .with_attr("suffix", suffix);
+
+    let mut next_number = 1;
+    let mut previous_value: Option<String> = None;
+    while stream.token_at_cursor().kind == TK::EnumeratedListMarker {
+        let marker = stream.token_at_cursor().lexeme.to_owned();
+        let (item_prefix, value, item_suffix) = enumerator_parts(&marker);
+        let item_type = if value == "#" {
+            enumtype
+        } else {
+            resolve_enumerator_type(
+                enumerator_type(value)?,
+                Some(enumtype),
+                previous_value.as_deref(),
+            )
+        };
+        if item_prefix != prefix || item_suffix != suffix || item_type != enumtype {
+            break;
+        }
+        stream.consume();
+        previous_value = Some(value.to_owned());
+        let item = AstNode::new_ref(NodeClass::EnumeratedListItem);
+        item.with_attr("raw_value", value);
+        let number = match value {
+            "#" => next_number,
+            _ => enumerator_value(value, enumtype)?,
+        };
+        item.with_attr("number", number);
+        next_number = number + 1;
+        item.push_child(parse_item_body(stream, marker.len())?);
+        list.push_child(item);
+        consume_trailing_blank_lines(stream, &list);
+    }
+
+    Ok(list)
+}
+
+fn alphabetic_value(value: &str) -> Option<usize> {
     if value.is_empty()
         || !value
             .chars()
@@ -34,7 +82,7 @@ pub(super) fn alphabetic_value(value: &str) -> Option<usize> {
     }))
 }
 
-pub(super) fn roman_value(value: &str) -> Option<usize> {
+fn roman_value(value: &str) -> Option<usize> {
     if value.is_empty() {
         return None;
     }
@@ -62,7 +110,7 @@ pub(super) fn roman_value(value: &str) -> Option<usize> {
     Some(total)
 }
 
-pub(super) fn enumerator_parts(marker: &str) -> (&str, &str, &str) {
+fn enumerator_parts(marker: &str) -> (&str, &str, &str) {
     let (prefix, value, suffix) = if marker.starts_with('(') && marker.ends_with(')') {
         ("(", &marker[1..marker.len() - 1], ")")
     } else {
@@ -72,7 +120,7 @@ pub(super) fn enumerator_parts(marker: &str) -> (&str, &str, &str) {
     (prefix, value, suffix)
 }
 
-pub(super) fn enumerator_value(value: &str, enumtype: EnumType) -> Result<usize, ParserError> {
+fn enumerator_value(value: &str, enumtype: EnumType) -> Result<usize, ParserError> {
     let converted_value = match enumtype {
         EnumType::Arabic => value.parse().ok(),
         EnumType::Upperalpha | EnumType::Loweralpha => alphabetic_value(value),
@@ -82,12 +130,12 @@ pub(super) fn enumerator_value(value: &str, enumtype: EnumType) -> Result<usize,
         | EnumType::UpperAmbiguousC
         | EnumType::LowerAmbiguousC => None,
     };
-    return converted_value.ok_or_else(|| ParserError::ListMarkerError {
-        marker: (value.to_string()),
-    });
+    converted_value.ok_or_else(|| ParserError::ListMarkerError {
+        marker: value.to_string(),
+    })
 }
 
-pub(super) fn enumerator_type(value: &str) -> Result<EnumType, ParserError> {
+fn enumerator_type(value: &str) -> Result<EnumType, ParserError> {
     match value {
         value if value.chars().all(|character| character.is_ascii_digit()) => Ok(EnumType::Arabic),
         "I" => Ok(EnumType::UpperAmbiguousI),
@@ -133,88 +181,62 @@ pub(super) fn enumerator_type(value: &str) -> Result<EnumType, ParserError> {
     }
 }
 
-pub(super) fn resolve_enumerator_type(
+fn resolve_enumerator_type(
     marker_type: EnumType,
     list_type: Option<EnumType>,
     previous_value: Option<&str>,
 ) -> EnumType {
     match marker_type {
-        EnumType::UpperAmbiguousI if previous_value != Some("H") => {
-            return EnumType::Upperroman;
-        }
-        EnumType::LowerAmbiguousI if previous_value != Some("h") => {
-            return EnumType::Lowerroman;
-        }
-        _ => {}
-    }
-
-    match (marker_type, list_type) {
-        (
-            EnumType::UpperAmbiguousI | EnumType::UpperAmbiguousC,
-            Some(EnumType::Upperroman | EnumType::Lowerroman),
-        ) => EnumType::Upperroman,
-        (
-            EnumType::LowerAmbiguousI | EnumType::LowerAmbiguousC,
-            Some(EnumType::Upperroman | EnumType::Lowerroman),
-        ) => EnumType::Lowerroman,
-        (
-            EnumType::UpperAmbiguousI | EnumType::UpperAmbiguousC,
-            Some(EnumType::Upperalpha | EnumType::Loweralpha),
-        ) => EnumType::Upperalpha,
-        (
-            EnumType::LowerAmbiguousI | EnumType::LowerAmbiguousC,
-            Some(EnumType::Upperalpha | EnumType::Loweralpha),
-        ) => EnumType::Loweralpha,
-        (EnumType::UpperAmbiguousI, None) => EnumType::Upperroman,
-        (EnumType::LowerAmbiguousI, None) => EnumType::Lowerroman,
-        (EnumType::UpperAmbiguousC, None) => EnumType::Upperalpha,
-        (EnumType::LowerAmbiguousC, None) => EnumType::Loweralpha,
-        (marker_type, _) => marker_type,
-    }
-}
-
-pub(super) fn parse_option_group(text: &str) -> Result<NodeRef, ParserError> {
-    let option_group = AstNode::new_ref(NodeClass::OptionGroup);
-    for option in text.split(',') {
-        let option = parse_option(option)?;
-        option_group.push_child(option);
-    }
-    Ok(option_group)
-}
-
-fn parse_option(text: &str) -> Result<NodeRef, ParserError> {
-    let option = AstNode::new_ref(NodeClass::Option);
-
-    let captures = [&SHORT_OPTIONS_MATCH_GROUPS, &LONG_OPTIONS_MATCH_GROUPS]
-        .iter()
-        .find_map(|regex| regex.captures(text));
-
-    match captures {
-        Some(caps) => {
-            for (name, group) in [("arg", 3), ("delimiter", 2)] {
-                if !caps[group].is_empty() {
-                    option.with_attr(name, caps[group].to_string());
-                }
-            }
-            option.with_attr("flag", caps[1].to_string());
-            Ok(option)
-        }
-        None => Err(ParserError::NoOptionFound {
-            text: text.to_string(),
-        }),
+        EnumType::UpperAmbiguousI if previous_value != Some("H") => EnumType::Upperroman,
+        EnumType::LowerAmbiguousI if previous_value != Some("h") => EnumType::Lowerroman,
+        _ => match (marker_type, list_type) {
+            (
+                EnumType::UpperAmbiguousI | EnumType::UpperAmbiguousC,
+                Some(EnumType::Upperroman | EnumType::Lowerroman),
+            ) => EnumType::Upperroman,
+            (
+                EnumType::LowerAmbiguousI | EnumType::LowerAmbiguousC,
+                Some(EnumType::Upperroman | EnumType::Lowerroman),
+            ) => EnumType::Lowerroman,
+            (
+                EnumType::UpperAmbiguousI | EnumType::UpperAmbiguousC,
+                Some(EnumType::Upperalpha | EnumType::Loweralpha),
+            ) => EnumType::Upperalpha,
+            (
+                EnumType::LowerAmbiguousI | EnumType::LowerAmbiguousC,
+                Some(EnumType::Upperalpha | EnumType::Loweralpha),
+            ) => EnumType::Loweralpha,
+            (EnumType::UpperAmbiguousI, None) => EnumType::Upperroman,
+            (EnumType::LowerAmbiguousI, None) => EnumType::Lowerroman,
+            (EnumType::UpperAmbiguousC, None) => EnumType::Upperalpha,
+            (EnumType::LowerAmbiguousC, None) => EnumType::Loweralpha,
+            (marker_type, _) => marker_type,
+        },
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{enumerator_type, enumerator_value, resolve_enumerator_type, EnumType};
-    use crate::{parser_errors::ParserError, parsers::list_helpers::parse_option_group};
+    use super::{
+        alphabetic_value, enumerator_type, enumerator_value, resolve_enumerator_type, roman_value,
+        EnumType,
+    };
+    use crate::{parse, parser_errors::ParserError};
+    use rstu_ast::NodeClass;
+
+    fn list_types(input: &str) -> Vec<String> {
+        parse(input)
+            .unwrap()
+            .borrow()
+            .children
+            .iter()
+            .filter(|child| child.borrow().class == NodeClass::EnumeratedList)
+            .map(|child| child.borrow().attributes.get_str("enumtype").unwrap())
+            .collect()
+    }
 
     #[test]
     fn enumerator_type_identifies_supported_marker_types() {
-        // GIVEN markers using each supported enumeration style
-        // WHEN their enumeration types are detected
-        // THEN each marker is assigned its matching type
         assert_eq!(enumerator_type("12"), Ok(EnumType::Arabic));
         assert_eq!(enumerator_type("ABC"), Ok(EnumType::Upperalpha));
         assert_eq!(enumerator_type("abc"), Ok(EnumType::Loweralpha));
@@ -228,9 +250,6 @@ mod tests {
 
     #[test]
     fn enumerator_type_rejects_invalid_markers() {
-        // GIVEN markers that contain invalid or mixed characters
-        // WHEN their enumeration types are detected
-        // THEN a list marker error containing the original marker is returned
         for marker in ["a1", "A!", "aB", "Xl"] {
             assert_eq!(
                 enumerator_type(marker),
@@ -242,10 +261,15 @@ mod tests {
     }
 
     #[test]
+    fn alphabetic_and_roman_values_convert_supported_values() {
+        assert_eq!(alphabetic_value("C"), Some(3));
+        assert_eq!(alphabetic_value("z"), Some(26));
+        assert_eq!(roman_value("XL"), Some(40));
+        assert_eq!(roman_value("xl"), Some(40));
+    }
+
+    #[test]
     fn enumerator_value_converts_supported_marker_values() {
-        // GIVEN valid values for each supported enumeration type
-        // WHEN their numeric values are converted
-        // THEN the corresponding ordinal value is returned
         assert_eq!(enumerator_value("12", EnumType::Arabic), Ok(12));
         assert_eq!(enumerator_value("C", EnumType::Upperalpha), Ok(3));
         assert_eq!(enumerator_value("z", EnumType::Loweralpha), Ok(26));
@@ -255,24 +279,18 @@ mod tests {
 
     #[test]
     fn resolve_enumerator_type_uses_initial_marker_rules() {
-        // GIVEN ambiguous markers starting a list
-        // WHEN their types are resolved without an existing list type
-        // THEN I is Roman and C is alphabetic
         assert_eq!(
-            resolve_enumerator_type(EnumType::UpperAmbiguousI, None, None,),
+            resolve_enumerator_type(EnumType::UpperAmbiguousI, None, None),
             EnumType::Upperroman
         );
         assert_eq!(
-            resolve_enumerator_type(EnumType::LowerAmbiguousC, None, None,),
+            resolve_enumerator_type(EnumType::LowerAmbiguousC, None, None),
             EnumType::Loweralpha
         );
     }
 
     #[test]
     fn resolve_enumerator_type_uses_existing_list_type() {
-        // GIVEN ambiguous markers inside established lists
-        // WHEN their types are resolved against the list type
-        // THEN they use the existing list family and marker case
         assert_eq!(
             resolve_enumerator_type(
                 EnumType::UpperAmbiguousI,
@@ -282,7 +300,7 @@ mod tests {
             EnumType::Upperalpha
         );
         assert_eq!(
-            resolve_enumerator_type(EnumType::UpperAmbiguousC, Some(EnumType::Lowerroman), None,),
+            resolve_enumerator_type(EnumType::UpperAmbiguousC, Some(EnumType::Lowerroman), None),
             EnumType::Upperroman
         );
     }
@@ -316,10 +334,37 @@ mod tests {
     }
 
     #[test]
+    fn ambiguous_i_starts_a_roman_list() {
+        assert_eq!(list_types("I. first\nII. second\n"), ["upperroman"]);
+    }
+
+    #[test]
+    fn ambiguous_c_starts_an_alpha_list() {
+        assert_eq!(list_types("C. first\nD. second\n"), ["upperalpha"]);
+    }
+
+    #[test]
+    fn ambiguous_markers_use_the_existing_list_style() {
+        assert_eq!(list_types("H. first\nI. second\n"), ["upperalpha"]);
+        assert_eq!(list_types("I. first\nC. second\n"), ["upperroman"]);
+    }
+
+    #[test]
+    fn ambiguous_i_starts_a_roman_list_unless_preceded_by_h() {
+        assert_eq!(
+            list_types("F. first\nI. second\nII. third\n"),
+            ["upperalpha", "upperroman"]
+        );
+        assert_eq!(
+            list_types("f. first\ni. second\nii. third\n"),
+            ["loweralpha", "lowerroman"]
+        );
+        assert_eq!(list_types("H. first\nI. second\n"), ["upperalpha"]);
+        assert_eq!(list_types("h. first\ni. second\n"), ["loweralpha"]);
+    }
+
+    #[test]
     fn enumerator_value_rejects_invalid_values() {
-        // GIVEN values that cannot be converted for their requested type
-        // WHEN their numeric values are converted
-        // THEN a list marker error containing the original value is returned
         for (value, enumtype) in [
             ("not-a-number", EnumType::Arabic),
             ("A1", EnumType::Upperalpha),
@@ -332,32 +377,5 @@ mod tests {
                 })
             );
         }
-    }
-
-    #[test]
-    fn parse_short_option_argument() {
-        // GIVEN A short option with an argument
-        // WHEN the option is parsed
-        // An option group is returned
-
-        let option = "-a arg";
-        let result = parse_option_group(option).expect("Can be parsed.");
-        let child = &result.borrow().children[0];
-        let attrs = &child.borrow().attributes;
-
-        assert_eq!(attrs.get_str("flag"), Some("-a".to_string()));
-        assert_eq!(attrs.get_str("delimiter"), Some(" ".to_string()));
-        assert_eq!(attrs.get_str("arg"), Some("arg".to_string()));
-    }
-
-    #[test]
-    fn parse_old_gnu_option_argument() {
-        let result = parse_option_group("+b file").expect("Can be parsed.");
-        let child = &result.borrow().children[0];
-        let attrs = &child.borrow().attributes;
-
-        assert_eq!(attrs.get_str("flag"), Some("+b".to_string()));
-        assert_eq!(attrs.get_str("delimiter"), Some(" ".to_string()));
-        assert_eq!(attrs.get_str("arg"), Some("file".to_string()));
     }
 }
