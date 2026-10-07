@@ -4,7 +4,6 @@
 
 use crate::parser_errors::ParserError;
 use crate::token::{LONG_OPTIONS_MATCH_GROUPS, SHORT_OPTIONS_MATCH_GROUPS};
-use regex::Regex;
 use rstu_ast::NodeRef;
 use rstu_ast::{AstNode, NodeClass, NodeRefExt};
 
@@ -186,18 +185,17 @@ pub(super) fn parse_option_group(text: &str) -> Result<NodeRef, ParserError> {
 fn parse_option(text: &str) -> Result<NodeRef, ParserError> {
     let option = AstNode::new_ref(NodeClass::Option);
 
-    let captures = [SHORT_OPTIONS_MATCH_GROUPS, LONG_OPTIONS_MATCH_GROUPS]
+    let captures = [&SHORT_OPTIONS_MATCH_GROUPS, &LONG_OPTIONS_MATCH_GROUPS]
         .iter()
-        .find_map(|pattern| {
-            Regex::new(pattern)
-                .expect("valid option regex")
-                .captures(text)
-        });
+        .find_map(|regex| regex.captures(text));
 
     match captures {
         Some(caps) => {
-            option.with_attr("arg", caps[3].to_string());
-            option.with_attr("delimiter", caps[2].to_string());
+            for (name, group) in [("arg", 3), ("delimiter", 2)] {
+                if !caps[group].is_empty() {
+                    option.with_attr(name, caps[group].to_string());
+                }
+            }
             option.with_attr("flag", caps[1].to_string());
             Ok(option)
         }

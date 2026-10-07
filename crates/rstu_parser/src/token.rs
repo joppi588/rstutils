@@ -12,8 +12,10 @@ static INLINE_POST_CHARS: &str =
 
 // Match groups are used in the parser, but not the lexer (performance)
 // Content is the same, update together.
-pub(crate) static SHORT_OPTIONS_MATCH_GROUPS: &str = r"^([\-\+][a-z]{1})([\s=]?)(.*)$";
-pub(crate) static LONG_OPTIONS_MATCH_GROUPS: &str = r"^(\-\-[a-z]+(?:[\-_][a-z]+)*)([\s=]?)(.*)$";
+pub(crate) static SHORT_OPTIONS_MATCH_GROUPS: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"^([\-\+][a-z]{1})([\s=]?)(.*)$").unwrap());
+pub(crate) static LONG_OPTIONS_MATCH_GROUPS: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"^(\-\-[a-z]+(?:[\-_][a-z]+)*)([\s=]?)(.*)$").unwrap());
 static OPTION_GROUPS: &str = concat!(
     "(",
     r"\n[\-\+][a-z](?:\s[a-z]+)?\s", // short and old GNU (+)

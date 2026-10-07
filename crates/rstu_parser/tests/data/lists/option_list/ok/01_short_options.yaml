@@ -14,9 +14,7 @@ children:
       children:
       - class: Option
         attributes:
-          arg: ""
           flag: -a
-          delimiter: ""
     - class: Block
       attributes:
         indent: 9

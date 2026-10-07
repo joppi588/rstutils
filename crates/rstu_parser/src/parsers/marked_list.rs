@@ -200,8 +200,6 @@ pub(crate) fn parse_option_list(stream: &mut TokenStream) -> Result<NodeRef, Par
     Ok(list)
 }
 
-// fn parse_option(option_token:Token)
-
 #[cfg(test)]
 mod tests {
     use crate::parse;
