@@ -16,10 +16,10 @@ use std::rc::Rc;
 use parsers::comments::parse_comment;
 use parsers::definition_list::{is_definition_list_item, parse_definition_list};
 use parsers::directives::parse_directive;
-use parsers::literal_block::parse_literal_block;
-use parsers::marked_list::{
+use parsers::lists::{
     parse_bullet_list, parse_enumerated_list, parse_field_list, parse_option_list,
 };
+use parsers::literal_block::parse_literal_block;
 use parsers::paragraph::parse_paragraph;
 use parsers::section::parse_section_header;
 
