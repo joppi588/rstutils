@@ -15,13 +15,13 @@ children:
       children:
       - class: Option
         attributes:
-          flag: -a
+          option_string: -a
       - class: Option
         attributes:
-          flag: --aaaa
+          option_string: --aaaa
       - class: Option
         attributes:
-          flag: /A
+          option_string: /A
     - class: Block
       attributes:
         indent: 31
@@ -40,17 +40,17 @@ children:
         attributes:
           arg: file
           delimiter: ' '
-          flag: -b
+          option_string: -b
       - class: Option
         attributes:
           arg: file
           delimiter: "="
-          flag: --bbbb
+          option_string: --bbbb
       - class: Option
         attributes:
           arg: file
           delimiter: ' '
-          flag: /B
+          option_string: /B
     - class: Block
       attributes:
         indent: 31

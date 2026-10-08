@@ -17,7 +17,7 @@ children:
         attributes:
           arg: arg1
           delimiter: "="
-          flag: --long1
+          option_string: --long1
     - class: Block
       attributes:
         indent: 14
@@ -36,7 +36,7 @@ children:
         attributes:
           arg: arg2
           delimiter: "="
-          flag: --long2
+          option_string: --long2
     - class: Block
       attributes:
         indent: 14
@@ -65,7 +65,7 @@ children:
         attributes:
           arg: arg1
           delimiter: ' '
-          flag: --long1
+          option_string: --long1
     - class: Block
       attributes:
         indent: 14
@@ -84,7 +84,7 @@ children:
         attributes:
           arg: arg2
           delimiter: ' '
-          flag: --long2
+          option_string: --long2
     - class: Block
       attributes:
         indent: 14
@@ -113,7 +113,7 @@ children:
         attributes:
           arg: arg1
           delimiter: "="
-          flag: --long1
+          option_string: --long1
     - class: Block
       attributes:
         indent: 14
@@ -132,7 +132,7 @@ children:
         attributes:
           arg: arg2
           delimiter: ' '
-          flag: --long2
+          option_string: --long2
     - class: Block
       attributes:
         indent: 14
@@ -161,12 +161,12 @@ children:
         attributes:
           arg: arg1
           delimiter: "="
-          flag: --long1
+          option_string: --long1
       - class: Option
         attributes:
           arg: arg2
           delimiter: ' '
-          flag: --long2
+          option_string: --long2
     - class: Block
       attributes:
         indent: 28
