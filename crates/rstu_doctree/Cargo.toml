@@ -1,6 +1,6 @@
 [package]
-name = "rst_doctree"
-version = "0.1.0"
+name = "rstu_doctree"
+version = "0.0.1"
 edition.workspace = true
 rust-version.workspace = true
 
