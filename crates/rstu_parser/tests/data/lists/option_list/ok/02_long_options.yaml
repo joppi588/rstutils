@@ -14,7 +14,7 @@ children:
       children:
       - class: Option
         attributes:
-          flag: --aaaa
+          option_string: --aaaa
     - class: Block
       attributes:
         indent: 13
@@ -31,7 +31,7 @@ children:
       - class: Option
         attributes:
           arg: file
-          flag: --bbbb
+          option_string: --bbbb
           delimiter: '='
     - class: Block
       attributes:
@@ -49,7 +49,7 @@ children:
       - class: Option
         attributes:
           arg: name
-          flag: --cccc
+          option_string: --cccc
           delimiter: ' '
     - class: Block
       attributes:
@@ -66,7 +66,7 @@ children:
       children:
       - class: Option
         attributes:
-          flag: --d-e-f-g
+          option_string: --d-e-f-g
     - class: Block
       attributes:
         indent: 13
@@ -82,7 +82,7 @@ children:
       children:
       - class: Option
         attributes:
-          flag: --h_i_j_k
+          option_string: --h_i_j_k
     - class: Block
       attributes:
         indent: 13

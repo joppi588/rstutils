@@ -14,7 +14,7 @@ children:
       children:
       - class: Option
         attributes:
-          flag: -a
+          option_string: -a
     - class: Block
       attributes:
         indent: 9
@@ -32,7 +32,7 @@ children:
       - class: Option
         attributes:
           arg: "file"
-          flag: -b
+          option_string: -b
           delimiter: " "
     - class: Block
       attributes:
@@ -51,7 +51,7 @@ children:
       - class: Option
         attributes:
           arg: "name"
-          flag: -c
+          option_string: -c
           delimiter: " "
     - class: Block
       attributes:

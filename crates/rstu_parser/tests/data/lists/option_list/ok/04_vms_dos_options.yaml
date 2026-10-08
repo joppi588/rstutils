@@ -1,121 +1,102 @@
 class: Document
 children:
-- class: Paragraph
-  children:
-  - class: PlainText
-    attributes:
-      text: 'VMS/DOS-style options:'
-- class: BlankLine
-- class: OptionList
-  children:
-  - class: OptionListItem
+  - class: Paragraph
     children:
-    - class: OptionGroup
-      children:
-      - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: /A
-    - class: Description
-      children:
-      - class: Paragraph
-        children:
-        - class: PlainText
-          attributes:
-            text: option /A
-  - class: OptionListItem
+      - class: PlainText
+        attributes:
+          text: |
+            VMS/DOS-style options:
+  - class: BlankLine
+  - class: OptionList
     children:
-    - class: OptionGroup
-      children:
-      - class: Option
+      - class: OptionListItem
         children:
-        - class: OptionString
-          children:
-          - class: PlainText
+          - class: OptionGroup
+            children:
+              - class: Option
+                attributes:
+                  option_string: /A
+          - class: Block
             attributes:
-              text: /B
-        - class: OptionArgument
-          attributes:
-            delimiter: ' '
-          children:
-          - class: PlainText
+              indent: 10
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: |
+                        option /A
+      - class: OptionListItem
+        children:
+          - class: OptionGroup
+            children:
+              - class: Option
+                attributes:
+                  arg: file
+                  delimiter: " "
+                  option_string: /B
+          - class: Block
             attributes:
-              text: file
-    - class: Description
-      children:
-      - class: Paragraph
+              indent: 10
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: |
+                        option /B
+      - class: OptionListItem
         children:
-        - class: PlainText
-          attributes:
-            text: option /B
-  - class: OptionListItem
-    children:
-    - class: OptionGroup
-      children:
-      - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
+          - class: OptionGroup
+            children:
+              - class: Option
+                attributes:
+                  option_string: /CCC
+          - class: Block
             attributes:
-              text: /CCC
-    - class: Description
-      children:
-      - class: Paragraph
+              indent: 10
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: |
+                        option /CCC
+      - class: OptionListItem
         children:
-        - class: PlainText
-          attributes:
-            text: option /CCC
-  - class: OptionListItem
-    children:
-    - class: OptionGroup
-      children:
-      - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
+          - class: OptionGroup
+            children:
+              - class: Option
+                attributes:
+                  arg: string
+                  delimiter: " "
+                  option_string: /DDD
+          - class: Block
             attributes:
-              text: /DDD
-        - class: OptionArgument
-          attributes:
-            delimiter: ' '
-          children:
-          - class: PlainText
-            attributes:
-              text: string
-    - class: Description
-      children:
-      - class: Paragraph
+              indent: 13
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: |
+                        option /DDD
+      - class: OptionListItem
         children:
-        - class: PlainText
-          attributes:
-            text: option /DDD
-  - class: OptionListItem
-    children:
-    - class: OptionGroup
-      children:
-      - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
+          - class: OptionGroup
+            children:
+              - class: Option
+                attributes:
+                  arg: int
+                  delimiter: "="
+                  option_string: /EEE
+          - class: Block
             attributes:
-              text: /EEE
-        - class: OptionArgument
-          attributes:
-            delimiter: '='
-          children:
-          - class: PlainText
-            attributes:
-              text: int
-    - class: Description
-      children:
-      - class: Paragraph
-        children:
-        - class: PlainText
-          attributes:
-            text: option /EEE
+              indent: 10
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: |
+                        option /EEE

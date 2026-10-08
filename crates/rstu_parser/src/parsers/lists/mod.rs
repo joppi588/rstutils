@@ -35,7 +35,8 @@ fn parse_item_body(stream: &mut TokenStream, dedent_len: usize) -> Result<NodeRe
     match indent_ahead_index {
         Some(indent_index) => {
             let indent_token = stream.take_at(indent_index);
-            if indent_token.len() <= dedent_len {
+            if (indent_token.len() <= dedent_len) || (stream.token_at_cursor().kind == TK::NewLine)
+            {
                 stream.insert_before_cursor(indent_token);
             } else {
                 stream.insert_before_cursor(Token::indent(dedent_len));
@@ -49,7 +50,7 @@ fn parse_item_body(stream: &mut TokenStream, dedent_len: usize) -> Result<NodeRe
             TK::Field
             | TK::BulletListMarker
             | TK::EnumeratedListMarker
-            | TK::OptionGroup
+            | TK::Option
             | TK::EoF
             | TK::Dedent
             | TK::BlankLine => {

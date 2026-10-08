@@ -9,8 +9,6 @@ use crate::token::{TokenCategory as TC, TokenKind as TK};
 use crate::token_stream::TokenStream;
 
 pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
-    debug_assert!(stream.token_at_cursor().kind.nested_is(TC::PARAGRAPH));
-
     let paragraph = AstNode::new_ref(NodeClass::Paragraph);
     parse_inline_children(stream, &paragraph)?;
 
@@ -26,13 +24,11 @@ pub(crate) fn parse_inline_children(
         let node = match kind {
             kind if kind.is(TC::INLINE_MARKER) => parse_inline(stream)?,
             kind if kind.is(TC::INLINE_TOKEN) => parse_inline_token(stream)?,
-            //TODO: Concatenate TC::PLAIN and tokens to a new list
-            kind if kind.is(TC::PLAIN)
-                || kind == TK::BulletListMarker
-                || kind.is(TC::OPTION_MARKER) =>
-            {
+            kind if kind.is(TC::PARAGRAPH_END) => break,
+            _ => {
                 let plain_text = parse_plain(stream);
                 if stream.token_at_cursor().kind == TK::LiteralBlockMinimized {
+                    // TODO: Adds a colon, simplify this
                     let text = plain_text
                         .borrow()
                         .attributes
@@ -42,15 +38,6 @@ pub(crate) fn parse_inline_children(
                     plain_text.with_attr("text", format!("{text}:\n"));
                 }
                 plain_text
-            }
-            kind if kind.is(TC::PARAGRAPH_END) => break,
-            _ => {
-                // TODO: Unreachable? Or unexpected_token! macro
-                return Err(ParserError::UnexpectedToken {
-                    expected: "Inline/plain".to_owned(),
-                    found: format!("{:?}", kind),
-                    index: stream.cursor(),
-                });
             }
         };
         parent.push_child(node);
@@ -141,8 +128,10 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
 fn parse_plain(stream: &mut TokenStream) -> NodeRef {
     debug_assert!(
         stream.token_at_cursor().kind.is(TC::PLAIN)
-            || stream.token_at_cursor().kind == TK::BulletListMarker
-            || stream.token_at_cursor().kind.is(TC::OPTION_MARKER)
+            || matches!(
+                stream.token_at_cursor().kind,
+                TK::BulletListMarker | TK::Option
+            )
     );
 
     let mut text = String::new();
@@ -150,8 +139,10 @@ fn parse_plain(stream: &mut TokenStream) -> NodeRef {
     loop {
         match stream.token_at_cursor().kind {
             kind if kind.is(&TC::PLAIN)
-                || kind == TK::BulletListMarker
-                || kind == TK::ClassifierSeparator =>
+                || matches!(
+                    kind,
+                    TK::BulletListMarker | TK::ClassifierSeparator | TK::Option
+                ) =>
             {
                 text.push_str(&stream.consume().lexeme);
             }

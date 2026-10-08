@@ -4,7 +4,8 @@ children:
   children:
   - class: PlainText
     attributes:
-      text: 'Multiple body elements in descriptions:'
+      text: |
+        Multiple body elements in descriptions:
 - class: BlankLine
 - class: OptionList
   children:
@@ -13,53 +14,49 @@ children:
     - class: OptionGroup
       children:
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: -a
-    - class: Description
+        attributes:
+          option_string: -a
+    - class: Block
+      attributes:
+        indent: 4
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: option -a, para 1
+            text: |
+              option -a, para 1
       - class: BlankLine
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: para 2
+            text: |
+              para 2
   - class: OptionListItem
     children:
     - class: OptionGroup
       children:
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: -b
-        - class: OptionArgument
-          attributes:
-            delimiter: ' '
-          children:
-          - class: PlainText
-            attributes:
-              text: file
-    - class: Description
+        attributes:
+          arg: file
+          delimiter: ' '
+          option_string: -b
+    - class: Block
+      attributes:
+        indent: 4
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: option -b, para 1
+            text: |2
+
+              option -b, para 1
       - class: BlankLine
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: para 2
+            text: |
+              para 2

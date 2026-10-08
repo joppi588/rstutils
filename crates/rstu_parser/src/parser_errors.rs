@@ -45,7 +45,7 @@ pub enum ParserError {
     LiteralBlockError {
         message: String,
     },
-    NoOptionFound {
+    OptionError {
         text: String,
     },
 }

@@ -87,6 +87,25 @@ mod tests {
     }
 
     #[test]
+    fn tokenize_option_no_newline() {
+        // GIVEN A string with and option like structure
+        // WHEN parsed
+        // THEN the Option token does not eat the newline
+        let input = "--option\nempty item\n";
+        let expected = TokenStream::from_pairs(&[
+            (TK::Option, "--option"),
+            (TK::NewLine, "\n"),
+            (TK::Word, "empty"),
+            (TK::Spaces, " "),
+            (TK::Word, "item"),
+            (TK::NewLine, "\n"),
+            (TK::EoF, ""),
+        ]);
+
+        assert_eq!(tokenize(input), expected);
+    }
+
+    #[test]
     fn tokenize_treats_unmatched_input_as_literal_string() {
         let input = "abc\x07def\n";
         let expected = TokenStream::from_pairs(&[
