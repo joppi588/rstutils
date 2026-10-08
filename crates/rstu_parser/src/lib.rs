@@ -117,26 +117,24 @@ fn parse_body_elements(
             current_parent.push_child(definition_list);
         }
 
-        TK::OptionGroup => {
+        TK::Option
+            if matches!(
+                stream.token_at_nextline().kind,
+                TK::BlankLine | TK::Option | TK::Indent | TK::EoF
+            ) =>
+        {
             let option_list = parse_option_list(stream)?;
             current_parent.push_child(option_list);
         }
 
-        kind if kind.nested_is(TC::PARAGRAPH) => {
-            let paragraph = parse_paragraph(stream)?;
-            current_parent.push_child(paragraph);
-        }
         TK::LiteralBlock | TK::LiteralBlockMinimized | TK::LiteralBlockPartiallyMinimized => {
             let literal_block = parse_literal_block(stream)?;
             current_parent.push_child(literal_block);
         }
 
         _ => {
-            panic!(
-                "Token kind {:?} not in {:?}",
-                stream.token_at_cursor().kind,
-                TC::BODY_ELEMENTS
-            );
+            let paragraph = parse_paragraph(stream)?;
+            current_parent.push_child(paragraph);
         }
     }
 

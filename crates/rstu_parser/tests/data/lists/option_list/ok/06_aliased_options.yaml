@@ -4,7 +4,8 @@ children:
   children:
   - class: PlainText
     attributes:
-      text: 'Aliased options:'
+      text: |
+        Aliased options:
 - class: BlankLine
 - class: OptionList
   children:
@@ -13,83 +14,50 @@ children:
     - class: OptionGroup
       children:
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: -a
+        attributes:
+          option_string: -a
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: --aaaa
+        attributes:
+          option_string: --aaaa
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: /A
-    - class: Description
+        attributes:
+          option_string: /A
+    - class: Block
+      attributes:
+        indent: 31
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: option -a, --aaaa, /A
+            text: |
+              option -a, --aaaa, /A
   - class: OptionListItem
     children:
     - class: OptionGroup
       children:
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: -b
-        - class: OptionArgument
-          attributes:
-            delimiter: ' '
-          children:
-          - class: PlainText
-            attributes:
-              text: file
+        attributes:
+          arg: file
+          delimiter: ' '
+          option_string: -b
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: --bbbb
-        - class: OptionArgument
-          attributes:
-            delimiter: '='
-          children:
-          - class: PlainText
-            attributes:
-              text: file
+        attributes:
+          arg: file
+          delimiter: "="
+          option_string: --bbbb
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: /B
-        - class: OptionArgument
-          attributes:
-            delimiter: ' '
-          children:
-          - class: PlainText
-            attributes:
-              text: file
-    - class: Description
+        attributes:
+          arg: file
+          delimiter: ' '
+          option_string: /B
+    - class: Block
+      attributes:
+        indent: 31
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: option -b, --bbbb, /B
+            text: |
+              option -b, --bbbb, /B

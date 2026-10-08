@@ -4,7 +4,8 @@ children:
   children:
   - class: PlainText
     attributes:
-      text: 'An option list using equals:'
+      text: |
+        An option list using equals:
 - class: BlankLine
 - class: OptionList
   children:
@@ -13,57 +14,46 @@ children:
     - class: OptionGroup
       children:
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: --long1
-        - class: OptionArgument
-          attributes:
-            delimiter: '='
-          children:
-          - class: PlainText
-            attributes:
-              text: arg1
-    - class: Description
+        attributes:
+          arg: arg1
+          delimiter: "="
+          option_string: --long1
+    - class: Block
+      attributes:
+        indent: 14
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: Description 1
+            text: |
+              Description 1
   - class: OptionListItem
     children:
     - class: OptionGroup
       children:
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: --long2
-        - class: OptionArgument
-          attributes:
-            delimiter: '='
-          children:
-          - class: PlainText
-            attributes:
-              text: arg2
-    - class: Description
+        attributes:
+          arg: arg2
+          delimiter: "="
+          option_string: --long2
+    - class: Block
+      attributes:
+        indent: 14
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: Description 2
-- class: BlankLine
+            text: |
+              Description 2
+  - class: BlankLine
 - class: Paragraph
   children:
   - class: PlainText
     attributes:
-      text: 'An option list using spaces:'
+      text: |
+        An option list using spaces:
 - class: BlankLine
 - class: OptionList
   children:
@@ -72,57 +62,46 @@ children:
     - class: OptionGroup
       children:
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: --long1
-        - class: OptionArgument
-          attributes:
-            delimiter: ' '
-          children:
-          - class: PlainText
-            attributes:
-              text: arg1
-    - class: Description
+        attributes:
+          arg: arg1
+          delimiter: ' '
+          option_string: --long1
+    - class: Block
+      attributes:
+        indent: 14
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: Description 1
+            text: |
+              Description 1
   - class: OptionListItem
     children:
     - class: OptionGroup
       children:
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: --long2
-        - class: OptionArgument
-          attributes:
-            delimiter: ' '
-          children:
-          - class: PlainText
-            attributes:
-              text: arg2
-    - class: Description
+        attributes:
+          arg: arg2
+          delimiter: ' '
+          option_string: --long2
+    - class: Block
+      attributes:
+        indent: 14
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: Description 2
-- class: BlankLine
+            text: |
+              Description 2
+  - class: BlankLine
 - class: Paragraph
   children:
   - class: PlainText
     attributes:
-      text: 'An option list using mixed delimiters:'
+      text: |
+        An option list using mixed delimiters:
 - class: BlankLine
 - class: OptionList
   children:
@@ -131,57 +110,46 @@ children:
     - class: OptionGroup
       children:
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: --long1
-        - class: OptionArgument
-          attributes:
-            delimiter: '='
-          children:
-          - class: PlainText
-            attributes:
-              text: arg1
-    - class: Description
+        attributes:
+          arg: arg1
+          delimiter: "="
+          option_string: --long1
+    - class: Block
+      attributes:
+        indent: 14
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: Description 1
+            text: |
+              Description 1
   - class: OptionListItem
     children:
     - class: OptionGroup
       children:
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: --long2
-        - class: OptionArgument
-          attributes:
-            delimiter: ' '
-          children:
-          - class: PlainText
-            attributes:
-              text: arg2
-    - class: Description
+        attributes:
+          arg: arg2
+          delimiter: ' '
+          option_string: --long2
+    - class: Block
+      attributes:
+        indent: 14
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: Description 2
-- class: BlankLine
+            text: |
+              Description 2
+  - class: BlankLine
 - class: Paragraph
   children:
   - class: PlainText
     attributes:
-      text: 'An option list using mixed delimiters in one line:'
+      text: |
+        An option list using mixed delimiters in one line:
 - class: BlankLine
 - class: OptionList
   children:
@@ -190,37 +158,22 @@ children:
     - class: OptionGroup
       children:
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: --long1
-        - class: OptionArgument
-          attributes:
-            delimiter: '='
-          children:
-          - class: PlainText
-            attributes:
-              text: arg1
+        attributes:
+          arg: arg1
+          delimiter: "="
+          option_string: --long1
       - class: Option
-        children:
-        - class: OptionString
-          children:
-          - class: PlainText
-            attributes:
-              text: --long2
-        - class: OptionArgument
-          attributes:
-            delimiter: ' '
-          children:
-          - class: PlainText
-            attributes:
-              text: arg2
-    - class: Description
+        attributes:
+          arg: arg2
+          delimiter: ' '
+          option_string: --long2
+    - class: Block
+      attributes:
+        indent: 28
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: Description
+            text: |
+              Description
