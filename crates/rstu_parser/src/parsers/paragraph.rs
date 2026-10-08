@@ -27,7 +27,7 @@ pub(crate) fn parse_inline_children(
             kind if kind.is(TC::INLINE_MARKER) => parse_inline(stream)?,
             kind if kind.is(TC::INLINE_TOKEN) => parse_inline_token(stream)?,
             //TODO: Concatenate TC::PLAIN and tokens to a new list
-            kind if kind.is(TC::PLAIN) || kind == TK::BulletListMarker || kind == TK::Option => {
+            kind if kind.is(TC::PLAIN) || kind == TK::BulletListMarker => {
                 let plain_text = parse_plain(stream);
                 if stream.token_at_cursor().kind == TK::LiteralBlockMinimized {
                     let text = plain_text
@@ -139,7 +139,6 @@ fn parse_plain(stream: &mut TokenStream) -> NodeRef {
     debug_assert!(
         stream.token_at_cursor().kind.is(TC::PLAIN)
             || stream.token_at_cursor().kind == TK::BulletListMarker
-            || stream.token_at_cursor().kind == TK::Option
     );
 
     let mut text = String::new();
@@ -148,8 +147,7 @@ fn parse_plain(stream: &mut TokenStream) -> NodeRef {
         match stream.token_at_cursor().kind {
             kind if kind.is(&TC::PLAIN)
                 || kind == TK::BulletListMarker
-                || kind == TK::ClassifierSeparator
-                || kind == TK::Option =>
+                || kind == TK::ClassifierSeparator =>
             {
                 text.push_str(&stream.consume().lexeme);
             }
