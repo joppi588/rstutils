@@ -117,7 +117,12 @@ fn parse_body_elements(
             current_parent.push_child(definition_list);
         }
 
-        TK::OptionGroup => {
+        TK::Option
+            if matches!(
+                stream.token_peek_relative(-1).kind,
+                TK::NewLine | TK::BlankLine
+            ) =>
+        {
             let option_list = parse_option_list(stream)?;
             current_parent.push_child(option_list);
         }

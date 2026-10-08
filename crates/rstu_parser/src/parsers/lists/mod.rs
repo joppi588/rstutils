@@ -49,7 +49,7 @@ fn parse_item_body(stream: &mut TokenStream, dedent_len: usize) -> Result<NodeRe
             TK::Field
             | TK::BulletListMarker
             | TK::EnumeratedListMarker
-            | TK::OptionGroup
+            | TK::Option
             | TK::EoF
             | TK::Dedent
             | TK::BlankLine => {
