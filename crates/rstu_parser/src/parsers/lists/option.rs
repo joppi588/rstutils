@@ -23,12 +23,21 @@ pub(crate) fn parse_option_list(stream: &mut TokenStream) -> Result<NodeRef, Par
         let mut text = String::new();
 
         loop {
-            let token = stream.consume();
-            dedent_len += token.len();
-            if (token.kind == TK::Spaces && token.len() >= 2) || token.kind == TK::NewLine {
-                break;
+            match stream.token_at_cursor() {
+                token if (token.kind == TK::Spaces && token.len() >= 2) => {
+                    dedent_len += token.len();
+                    stream.consume();
+                    break;
+                }
+                token if token.kind == TK::NewLine => {
+                    break;
+                }
+                token => {
+                    dedent_len += token.len();
+                    text.push_str(&token.lexeme);
+                    stream.consume();
+                }
             }
-            text.push_str(&token.lexeme);
         }
         let option_group = parse_option_group(&text)?;
         option_item.push_child(option_group);
