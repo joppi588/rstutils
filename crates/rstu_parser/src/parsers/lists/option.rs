@@ -104,4 +104,17 @@ mod tests {
         assert_eq!(attrs.get_str("delimiter"), Some(" ".to_string()));
         assert_eq!(attrs.get_str("arg"), Some("file".to_string()));
     }
+
+    /// GIVEN a long option with digits in its name and argument
+    /// WHEN the option is parsed
+    /// THEN its flag, delimiter, and argument are preserved
+    #[test]
+    fn parse_long_option_with_alphanumeric_name_and_argument() {
+        let result = parse_option("--long1=arg1").expect("Can be parsed.");
+        let attrs = &result.borrow().attributes;
+
+        assert_eq!(attrs.get_str("flag"), Some("--long1".to_string()));
+        assert_eq!(attrs.get_str("delimiter"), Some("=".to_string()));
+        assert_eq!(attrs.get_str("arg"), Some("arg1".to_string()));
+    }
 }

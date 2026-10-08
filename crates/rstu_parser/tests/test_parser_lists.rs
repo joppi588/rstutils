@@ -191,7 +191,7 @@ fn rejects_docutils_field_list_end(#[case] rst_filename: &str) {
 #[case("09_descriptions_next_line")]
 #[case("10_multiple_body_elements")]
 #[case("11_empty_item_no_blank")]
-// #[case("12_argument_delimiters")]
+#[case("12_argument_delimiters")]
 // #[case("13_edge_cases")] // TODO: Separate into errors and warnings (-> linter)
 // #[case("14_complex_arguments")]
 // TODO: Lexer currently panics on the Unicode arrow in this paragraph.

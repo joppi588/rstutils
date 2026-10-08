@@ -7,14 +7,47 @@ children:
       text: |
         An option list using equals:
 - class: BlankLine
-- class: Paragraph
+- class: OptionList
   children:
-  - class: PlainText
-    attributes:
-      text: |
-        --long1=arg1  Description 1
-        --long2=arg2  Description 2
-- class: BlankLine
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        attributes:
+          arg: arg1
+          delimiter: "="
+          flag: --long1
+    - class: Block
+      attributes:
+        indent: 14
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: |
+              Description 1
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        attributes:
+          arg: arg2
+          delimiter: "="
+          flag: --long2
+    - class: Block
+      attributes:
+        indent: 14
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: |
+              Description 2
+  - class: BlankLine
 - class: Paragraph
   children:
   - class: PlainText
@@ -22,14 +55,47 @@ children:
       text: |
         An option list using spaces:
 - class: BlankLine
-- class: Paragraph
+- class: OptionList
   children:
-  - class: PlainText
-    attributes:
-      text: |
-        --long1 arg1  Description 1
-        --long2 arg2  Description 2
-- class: BlankLine
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        attributes:
+          arg: arg1
+          delimiter: ' '
+          flag: --long1
+    - class: Block
+      attributes:
+        indent: 14
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: |
+              Description 1
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        attributes:
+          arg: arg2
+          delimiter: ' '
+          flag: --long2
+    - class: Block
+      attributes:
+        indent: 14
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: |
+              Description 2
+  - class: BlankLine
 - class: Paragraph
   children:
   - class: PlainText
@@ -37,14 +103,47 @@ children:
       text: |
         An option list using mixed delimiters:
 - class: BlankLine
-- class: Paragraph
+- class: OptionList
   children:
-  - class: PlainText
-    attributes:
-      text: |
-        --long1=arg1  Description 1
-        --long2 arg2  Description 2
-- class: BlankLine
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        attributes:
+          arg: arg1
+          delimiter: "="
+          flag: --long1
+    - class: Block
+      attributes:
+        indent: 14
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: |
+              Description 1
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        attributes:
+          arg: arg2
+          delimiter: ' '
+          flag: --long2
+    - class: Block
+      attributes:
+        indent: 14
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: |
+              Description 2
+  - class: BlankLine
 - class: Paragraph
   children:
   - class: PlainText
@@ -52,9 +151,29 @@ children:
       text: |
         An option list using mixed delimiters in one line:
 - class: BlankLine
-- class: Paragraph
+- class: OptionList
   children:
-  - class: PlainText
-    attributes:
-      text: |
-        --long1=arg1, --long2 arg2  Description
+  - class: OptionListItem
+    children:
+    - class: OptionGroup
+      children:
+      - class: Option
+        attributes:
+          arg: arg1
+          delimiter: "="
+          flag: --long1
+      - class: Option
+        attributes:
+          arg: arg2
+          delimiter: ' '
+          flag: --long2
+    - class: Block
+      attributes:
+        indent: 28
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: |
+              Description

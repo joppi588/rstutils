@@ -14,18 +14,19 @@ static INLINE_POST_CHARS: &str =
 // Content is the same, update together.
 pub(crate) static SHORT_OPTIONS_MATCH: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"^\s?([\-\+][a-z]{1})([ \t=]?)(.*)$").unwrap());
-pub(crate) static LONG_OPTIONS_MATCH: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^\s?(\-\-[a-z]+(?:[\-_][a-z]+)*)([ \t=]?)(.*)$").unwrap());
+pub(crate) static LONG_OPTIONS_MATCH: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"^\s?(\-\-[a-z][a-z0-9]*(?:[\-_][a-z][a-z0-9]*)*)([ \t=]?)(.*)$").unwrap()
+});
 pub(crate) static DOS_OPTIONS_MATCH: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"^\s?(/[A-Z]+)([ \t=]?)([a-z]*)$").unwrap());
 static OPTION: &str = concat!(
     r"\n(?:",
     r"[\-\+][a-z](?:[ \t][a-z]+)?", // short and old GNU (+)
     "|",
-    r"\-\-[a-z]+(?:[\-_][a-z]+)*(?:(=|[ \t])[a-z]+)?", // long
+    r"\-\-[a-z][a-z0-9]*(?:[\-_][a-z][a-z0-9]*)*(?:[ \t=][a-z][a-z0-9]*)?", // long
     "|",
     r"/[A-Z]+(?:[ \t=][a-z]+)?", // DOS
-    r")(?:\s|,|\n)"
+    r")[ ,\n]"
 );
 
 macro_rules! count_idents {
@@ -553,6 +554,17 @@ mod tests {
         assert_eq!(
             TK::Option.find_lexeme("\n--option\nempty item\n"),
             Some("--option")
+        );
+    }
+
+    /// GIVEN a long option with digits in its name and argument
+    /// WHEN the option token is matched
+    /// THEN the complete option is returned
+    #[test]
+    fn long_option_matches_alphanumeric_name_and_argument() {
+        assert_eq!(
+            TK::Option.find_lexeme("\n--long1=arg1\n"),
+            Some("--long1=arg1")
         );
     }
 
