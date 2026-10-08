@@ -13,18 +13,18 @@ static INLINE_POST_CHARS: &str =
 // Match groups are used in the parser, but not the lexer (performance)
 // Content is the same, update together.
 pub(crate) static SHORT_OPTIONS_MATCH: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^\s?([\-\+][a-z]{1})([\s=]?)(.*)$").unwrap());
+    LazyLock::new(|| Regex::new(r"^\s?([\-\+][a-z]{1})([ \t=]?)(.*)$").unwrap());
 pub(crate) static LONG_OPTIONS_MATCH: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^\s?(\-\-[a-z]+(?:[\-_][a-z]+)*)([\s=]?)(.*)$").unwrap());
+    LazyLock::new(|| Regex::new(r"^\s?(\-\-[a-z]+(?:[\-_][a-z]+)*)([ \t=]?)(.*)$").unwrap());
 pub(crate) static DOS_OPTIONS_MATCH: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^\s?(/[A-Z]+)([\s=]?)([a-z]*)$").unwrap());
+    LazyLock::new(|| Regex::new(r"^\s?(/[A-Z]+)([ \t=]?)([a-z]*)$").unwrap());
 static OPTION: &str = concat!(
     r"\n(?:",
-    r"[\-\+][a-z](?:\s[a-z]+)?", // short and old GNU (+)
+    r"[\-\+][a-z](?:[ \t][a-z]+)?", // short and old GNU (+)
     "|",
-    r"\-\-[a-z]+(?:[\-_][a-z]+)*(?:(=|\s)[a-z]+)?", // long
+    r"\-\-[a-z]+(?:[\-_][a-z]+)*(?:(=|[ \t])[a-z]+)?", // long
     "|",
-    r"/[A-Z]+(?:[\s=][a-z]+)?", // DOS
+    r"/[A-Z]+(?:[ \t=][a-z]+)?", // DOS
     r")(?:\s|,|\n)"
 );
 
@@ -543,6 +543,17 @@ mod tests {
         assert!(TK::Option.is_match("\n+a  "));
         assert_eq!(TK::Option.find_lexeme("\n+b file  "), Some("+b file"));
         assert!(!TK::Option.is_match("\n+1 "));
+    }
+
+    /// GIVEN an option followed by a new line
+    /// WHEN the option token is matched
+    /// THEN only the option on that line is returned
+    #[test]
+    fn option_does_not_consume_the_next_line() {
+        assert_eq!(
+            TK::Option.find_lexeme("\n--option\nempty item\n"),
+            Some("--option")
+        );
     }
 
     #[test]

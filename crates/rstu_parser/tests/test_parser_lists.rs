@@ -187,7 +187,7 @@ fn rejects_docutils_field_list_end(#[case] rst_filename: &str) {
 #[case("05_mixed_options")]
 #[case("06_aliased_options")]
 #[case("07_descriptions_aligned")]
-// #[case("08_descriptions_unaligned")]
+#[case("08_descriptions_unaligned")]
 // #[case("09_descriptions_next_line")]
 // #[case("10_multiple_body_elements")]
 #[case("11_empty_item_no_blank")]
