@@ -179,6 +179,8 @@ impl TokenCategory {
         &[TokenKind::Directive],
         // COMMENT
         &[TokenKind::DoubleDot],
+        // BLOCKQUOTE
+        &[TokenKind::Indent],
     ];
 }
 

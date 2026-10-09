@@ -13,6 +13,7 @@ mod parsers;
 use std::cell::RefCell;
 use std::rc::Rc;
 
+use parsers::block_quote::parse_block_quote;
 use parsers::comments::parse_comment;
 use parsers::definition_list::{is_definition_list_item, parse_definition_list};
 use parsers::directives::parse_directive;
@@ -30,7 +31,7 @@ pub mod token_stream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use crate::lexer::tokenize;
-use crate::token::{TokenCategory as TC, TokenKind as TK};
+use crate::token::TokenKind as TK;
 use parser_errors::ParserError;
 use token_stream::TokenStream;
 
@@ -53,30 +54,16 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
                 current_parent.push_section_ref(section.clone());
                 current_parent = section;
             }
-
             (TK::Indent, _) => {
                 return Err(ParserError::UnexpectedIndentError {});
             }
-            (TK::Dedent, _) => {
-                stream.consume();
-            }
-
-            (kind, _) if kind.nested_is(TC::BODY_ELEMENTS) => {
-                parse_body_elements(&mut stream, &current_parent)?;
-            }
-            (TK::BlankLine, _) => {
-                let token = stream.consume();
-                current_parent.push_blank_lines(token.len());
-            }
-
             (TK::EoF, _) => {
                 break;
             }
-            _ => panic!(
-                "Unexpected token combination ({:?},{:?})",
-                stream.token_at_cursor().kind,
-                stream.token_at_nextline().kind
-            ),
+
+            _ => {
+                parse_body_elements(&mut stream, &current_parent)?;
+            }
         };
     }
 
@@ -132,6 +119,13 @@ fn parse_body_elements(
             current_parent.push_child(literal_block);
         }
 
+        TK::BlankLine if stream.token_at_nextline().kind == TK::Indent => {
+            let block_quote = parse_block_quote(stream)?;
+            current_parent.push_child(block_quote);
+        }
+        TK::BlankLine => {
+            current_parent.push_blank_lines(stream.consume().len());
+        }
         _ => {
             let paragraph = parse_paragraph(stream)?;
             current_parent.push_child(paragraph);
