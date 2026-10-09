@@ -163,25 +163,6 @@ impl TokenCategory {
         TokenCategory::INLINE_TOKEN,
         TokenCategory::PLAIN,
     ];
-
-    pub const BODY_ELEMENTS: &'static [&[TokenKind]] = &[
-        TokenCategory::LIST_MARKER,
-        // PARAGRAPH (type system does not allow nesting of a nested list)
-        TokenCategory::INLINE_MARKER,
-        TokenCategory::INLINE_TOKEN,
-        TokenCategory::PLAIN,
-        // LITERAL_BLOCK
-        &[
-            TokenKind::LiteralBlock,
-            TokenKind::LiteralBlockMinimized,
-            TokenKind::LiteralBlockPartiallyMinimized,
-        ],
-        &[TokenKind::Directive],
-        // COMMENT
-        &[TokenKind::DoubleDot],
-        // BLOCKQUOTE
-        &[TokenKind::Indent],
-    ];
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

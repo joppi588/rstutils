@@ -13,8 +13,7 @@ use test_parser::rst_vs_yaml;
 
 #[rstest]
 #[case("block_quote_00")]
-// TODO: Nested block quotes currently do not terminate parsing.
-// #[case("block_quote_01")]
+#[case("block_quote_01")]
 // TODO: Nested block quotes currently do not terminate parsing.
 // #[case("block_quote_04")]
 // TODO: Attribution nodes are not implemented.
