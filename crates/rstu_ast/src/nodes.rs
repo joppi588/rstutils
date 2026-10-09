@@ -8,6 +8,7 @@ use serde::Deserialize;
 pub enum NodeClass {
     BlankLine,
     Block,
+    BlockQuote,
     BulletList,
     BulletListItem,
     Classifier,
