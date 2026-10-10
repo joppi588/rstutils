@@ -106,7 +106,7 @@ impl TokenStream {
         }
     }
 
-    pub fn insert_before_cursor(&mut self, token: Token) {
+    pub fn insert_at_cursor(&mut self, token: Token) {
         let cursor = self.cursor;
         self.insert_at(cursor, token);
         self.cursor = cursor;
