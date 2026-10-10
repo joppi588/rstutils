@@ -32,7 +32,7 @@ pub(crate) fn parse_block(stream: &mut TokenStream) -> Result<NodeRef, ParserErr
                     } else {
                         Token::dedent(width)
                     };
-                    stream.insert_before_cursor(rel_indent);
+                    stream.insert_at_cursor(rel_indent);
                 }
                 break;
             }
