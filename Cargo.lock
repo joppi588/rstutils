@@ -282,15 +282,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ba39f3699c378cd8970968dcbff9c43159ea4cfbd88d43c00b22f2ef10a435d2"
 
 [[package]]
-name = "rst_doctree"
-version = "0.1.0"
-dependencies = [
- "serde",
- "serde_json",
- "serde_yaml",
-]
-
-[[package]]
 name = "rstest"
 version = "0.24.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -322,7 +313,7 @@ dependencies = [
 
 [[package]]
 name = "rstu"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "clap",
  "rstu_ast",
@@ -332,7 +323,16 @@ dependencies = [
 
 [[package]]
 name = "rstu_ast"
-version = "0.1.0"
+version = "0.0.1"
+dependencies = [
+ "serde",
+ "serde_json",
+ "serde_yaml",
+]
+
+[[package]]
+name = "rstu_doctree"
+version = "0.0.1"
 dependencies = [
  "serde",
  "serde_json",
@@ -341,7 +341,7 @@ dependencies = [
 
 [[package]]
 name = "rstu_parser"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "regex",
  "rstest",

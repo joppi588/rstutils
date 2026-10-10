@@ -3,5 +3,12 @@ members = ["crates/*"]
 resolver = "2"
 
 [workspace.package]
+version = "0.0.1"
 edition = "2024"
 rust-version = "1.96"
+license = "MIT"
+repository = "https://github.com/joppi588/rstutils"
+
+[workspace.dependencies]
+rstu_ast = { version = "0.0.1", path = "crates/rstu_ast" }
+rstu_parser = { version = "0.0.1", path = "crates/rstu_parser" }
