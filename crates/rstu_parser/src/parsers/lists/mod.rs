@@ -37,9 +37,9 @@ fn parse_item_body(stream: &mut TokenStream, dedent_len: usize) -> Result<NodeRe
             let indent_token = stream.take_at(indent_index);
             if (indent_token.len() <= dedent_len) || (stream.token_at_cursor().kind == TK::NewLine)
             {
-                stream.insert_before_cursor(indent_token);
+                stream.insert_at_cursor(indent_token);
             } else {
-                stream.insert_before_cursor(Token::indent(dedent_len));
+                stream.insert_at_cursor(Token::indent(dedent_len));
                 stream.insert_at(
                     indent_index + 1,
                     Token::indent(indent_token.len() - dedent_len),
@@ -54,7 +54,7 @@ fn parse_item_body(stream: &mut TokenStream, dedent_len: usize) -> Result<NodeRe
             | TK::EoF
             | TK::Dedent
             | TK::BlankLine => {
-                stream.insert_before_cursor(Token::indent(dedent_len));
+                stream.insert_at_cursor(Token::indent(dedent_len));
                 stream.insert_at(next_line + 1, Token::dedent(dedent_len));
             }
             _ => return Err(ParserError::ListEndError {}),
