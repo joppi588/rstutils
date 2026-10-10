@@ -1,6 +1,6 @@
-This document lists deviations from the rst specification.
+This document lists deviations from the rst specification / implementation.
 
-# Deviations
+# Spec deviations
 - Allowed section/transition markers: restrict to the "recommended" set.
 - Minimum length for section header marker: 4 chars (tbc)
 - character_level_inline_markup = False
@@ -12,8 +12,9 @@ This document lists deviations from the rst specification.
 - Enumerated list:
     * Auto in between explicit markers is accepted.
       (test case docutils_mixed_auto_and_explicit, docutils does not accept that.)
-- Attribution markers must be followed by a space to avoid confusion with long options.
 
 # Interpretations
+Things that would be according to the spec book but not to the python parser implementation:
+- Attribution markers must be followed by a space to avoid confusion with long options.
 
 # Proposals
