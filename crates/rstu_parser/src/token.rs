@@ -213,7 +213,7 @@ impl TokenKind {
         // The order of the enum matters, as the first matching token will be picked.
         // Format (name, token regex)
         (Separator, format!(r"\n[{0}]{{4,}}\n", RECOMMENDED_SECTION_CHARS)),
-        (Attribution, r"\s(?:—|---|--) *(?:.|\n)"),
+        (Attribution, r" (?:—|--|---) +(?:.|\n)"),
 
         (Indent, r"\n[ \t]+[^ \t\n]"),
         (BlankLine, r"\n[ \t]*\n+(.|\n)"),

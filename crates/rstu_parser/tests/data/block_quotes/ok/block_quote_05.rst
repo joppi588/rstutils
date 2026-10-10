@@ -8,4 +8,4 @@ Paragraph.
 
    Block quote.
 
-   --Attribution
+   --Interpreted as text, not as attribution

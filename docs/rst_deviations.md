@@ -12,6 +12,7 @@ This document lists deviations from the rst specification.
 - Enumerated list:
     * Auto in between explicit markers is accepted.
       (test case docutils_mixed_auto_and_explicit, docutils does not accept that.)
+- Attribution markers must be followed by a space to avoid confusion with long options.
 
 # Interpretations
 

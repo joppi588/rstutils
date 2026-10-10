@@ -128,7 +128,7 @@ fn parse_body_elements(
         }
         TK::Attribution => {
             let attribution = AstNode::new_ref(NodeClass::Attribution);
-            attribution.with_attr("marker", stream.token_at_cursor().lexeme);
+            attribution.with_attr("marker", stream.consume().lexeme);
             attribution.push_child(parse_paragraph(stream)?);
             current_parent.push_child(attribution);
         }

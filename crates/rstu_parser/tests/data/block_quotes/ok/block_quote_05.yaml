@@ -20,12 +20,16 @@ children:
           text: |
             Block quote.
     - class: BlankLine
-    - class: Paragraph
+    - class: Attribution
+      attributes:
+        marker: '-- '
       children:
-      - class: PlainText
-        attributes:
-          text: |
-            -- Attribution
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: |
+              Attribution
 - class: BlankLine
 - class: Paragraph
   children:
@@ -52,4 +56,4 @@ children:
       - class: PlainText
         attributes:
           text: |
-            --Attribution
+            --Interpreted as text, not as attribution
