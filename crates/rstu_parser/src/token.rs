@@ -163,27 +163,11 @@ impl TokenCategory {
         TokenCategory::INLINE_TOKEN,
         TokenCategory::PLAIN,
     ];
-
-    pub const BODY_ELEMENTS: &'static [&[TokenKind]] = &[
-        TokenCategory::LIST_MARKER,
-        // PARAGRAPH (type system does not allow nesting of a nested list)
-        TokenCategory::INLINE_MARKER,
-        TokenCategory::INLINE_TOKEN,
-        TokenCategory::PLAIN,
-        // LITERAL_BLOCK
-        &[
-            TokenKind::LiteralBlock,
-            TokenKind::LiteralBlockMinimized,
-            TokenKind::LiteralBlockPartiallyMinimized,
-        ],
-        &[TokenKind::Directive],
-        // COMMENT
-        &[TokenKind::DoubleDot],
-    ];
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TokenKind {
+    Attribution,
     BackquoteEnd,
     BackquoteStart,
     BlankLine,
@@ -229,6 +213,7 @@ impl TokenKind {
         // The order of the enum matters, as the first matching token will be picked.
         // Format (name, token regex)
         (Separator, format!(r"\n[{0}]{{4,}}\n", RECOMMENDED_SECTION_CHARS)),
+        (Attribution, r" (?:—|--|---) +(?:.|\n)"),
 
         (Indent, r"\n[ \t]+[^ \t\n]"),
         (BlankLine, r"\n[ \t]*\n+(.|\n)"),
@@ -302,7 +287,7 @@ impl TokenKind {
             .find_map(|&kind| kind.find_lexeme(input).map(|lexeme| (kind, lexeme)))
     }
 
-    pub fn find_lexeme(self, input: &str) -> Option<&str> {
+    fn find_lexeme(self, input: &str) -> Option<&str> {
         self.regex()
             .find(input)
             .map(|m| &(m.as_str())[1..m.len() - 1])
@@ -317,6 +302,7 @@ impl TokenKind {
 #[cfg(test)]
 mod tests {
     use super::{Token, TokenCategory, TokenKind as TK};
+    use rstest::rstest;
 
     /// GIVEN a token with a multibyte lexeme
     /// WHEN its length is queried
@@ -347,6 +333,24 @@ mod tests {
         assert!(TK::Separator.is_match("\n====\n"));
         assert!(!TK::Separator.is_match("\n==a=\n"));
         assert!(!TK::Separator.is_match("\n===\n"));
+    }
+
+    #[rstest]
+    #[case("--")]
+    #[case("---")]
+    #[case("—")]
+    fn attribution_matches_supported_markers(#[case] marker: &str) {
+        assert_eq!(
+            TK::Attribution.find_lexeme(&format!(" {marker} Holmes")),
+            Some(format!("{marker} ")).as_deref()
+        );
+    }
+
+    #[test]
+    fn attribution_rejects_other_dash_sequences() {
+        assert!(!TK::Attribution.is_match(" - Holmes"));
+        assert!(!TK::Attribution.is_match(" ---- Holmes"));
+        assert!(!TK::Attribution.is_match("word -- Holmes"));
     }
 
     #[test]

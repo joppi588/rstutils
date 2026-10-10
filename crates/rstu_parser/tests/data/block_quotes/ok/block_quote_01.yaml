@@ -1,0 +1,35 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: |
+        Line 1.
+        Line 2.
+- class: BlockQuote
+  children:
+  - class: BlankLine
+  - class: Block
+    attributes:
+      indent: 3
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: |
+            Indented 1.
+    - class: BlockQuote
+      children:
+      - class: BlankLine
+      - class: Block
+        attributes:
+          indent: 3
+        children:
+        - class: Paragraph
+          children:
+          - class: PlainText
+            attributes:
+              text: |
+                Indented 2.

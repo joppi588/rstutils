@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 pub(crate) mod block;
+pub(crate) mod block_quote;
 pub(crate) mod comments;
 pub(crate) mod definition_list;
 pub(crate) mod directives;

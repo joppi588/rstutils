@@ -6,19 +6,19 @@ description: Convert docutils tests
 # Convert docutils tests
 
 Use this skill when converting docutils tests.
-Docutils tests are written in python.
+Docutils tests are written in python and located in
+/workspaces/rstutils/docutils/test/test_parsers/test_rst
 They contain hard-coded rst snippets and the expected parsing result.
 
 For each test file, create two new rust test function types:
     Expected error: If the parsing result has a system_message, create a test case expecting an error
-    Ok: Otherwise assert that the parsing result mathes the yaml fixture
-For each test case in the test file, create rst and yaml fixtures, and a test case for rstest.
+    Ok: Otherwise assert that the parsing result matches the yaml fixture
+For each test case in the test file, create a rst fixture, and a test case for rstest.
+Store the fixtures in rstutils/crates/rstu_parser/tests/data
 Delete test functions without associated test cases.
-
-In the yaml fixtures, sort the subelements in the order class - attributes - children
 
 Comment out test cases that use features not implemented so far.
 
-Run the tests, but allow the test cases to fail.
+Don't run the tests yet.
 
-Double check that no test cases are missed (count the <document source> tags)
+Double check that no test cases are missed (count the <document source> tags or `["""`)
