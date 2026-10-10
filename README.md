@@ -1,4 +1,4 @@
-Tools to process RST files
+# Tools to process RST files
 
 - Parser
 - Linter
@@ -12,9 +12,14 @@ Standing on the shoulders of giants:
 - docutils
 
 
-What does "rstu" stand for?
+# What does "rstu" stand for?
 
 Pick one:
 - "Uh, u was just the next letter in the alphabet."
 - "Rust was already taken, so I permuted the letters."
 - "RST Utils."
+
+# Note
+Early development stage.
+Currently parser only, rst spec only partially implemented.
+Changelog will be added once the parser supports all features.
