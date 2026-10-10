@@ -14,9 +14,9 @@ use test_parser::rst_vs_yaml;
 #[rstest]
 #[case("block_quote_00")]
 #[case("block_quote_01")]
-#[case("block_quote_04")]
-// TODO: Attribution nodes are not implemented.
-// #[case("block_quote_05")]
+// TODO: Second indent smaller than first not implemented
+// #[case("block_quote_04")]
+#[case("block_quote_05")]
 // TODO: Unicode em-dash currently panics in the lexer; attribution is also unsupported.
 // #[case("block_quote_06")]
 // TODO: Attribution nodes are not implemented.

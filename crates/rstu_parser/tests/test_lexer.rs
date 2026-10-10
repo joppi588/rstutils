@@ -167,3 +167,27 @@ fn tokenize_punctuation_bullet_list() {
 
     assert_eq!(tokenize(contents), expected);
 }
+
+#[test]
+fn tokenize_block_quote_attribution_marker() {
+    let contents = "Block quote.\n    -- Sherlock Holmes\n";
+
+    let expected = TokenStream::from_pairs(&[
+        (TK::Word, "Block"),
+        (TK::Spaces, " "),
+        (TK::Word, "quote"),
+        (TK::Punctuation, "."),
+        (TK::NewLine, "\n"),
+        (TK::Indent, "    "),
+        (TK::Attribution, "--"),
+        (TK::Spaces, " "),
+        (TK::Word, "Sherlock"),
+        (TK::Spaces, " "),
+        (TK::Word, "Holmes"),
+        (TK::NewLine, "\n"),
+        (TK::Dedent, "    "),
+        (TK::EoF, ""),
+    ]);
+
+    assert_eq!(tokenize(contents), expected);
+}

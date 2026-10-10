@@ -167,6 +167,7 @@ impl TokenCategory {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TokenKind {
+    Attribution,
     BackquoteEnd,
     BackquoteStart,
     BlankLine,
@@ -212,6 +213,7 @@ impl TokenKind {
         // The order of the enum matters, as the first matching token will be picked.
         // Format (name, token regex)
         (Separator, format!(r"\n[{0}]{{4,}}\n", RECOMMENDED_SECTION_CHARS)),
+        (Attribution, r" (?:—|--|---) *(?:.|\n)"),
 
         (Indent, r"\n[ \t]+[^ \t\n]"),
         (BlankLine, r"\n[ \t]*\n+(.|\n)"),
@@ -330,6 +332,23 @@ mod tests {
         assert!(TK::Separator.is_match("\n====\n"));
         assert!(!TK::Separator.is_match("\n==a=\n"));
         assert!(!TK::Separator.is_match("\n===\n"));
+    }
+
+    #[test]
+    fn attribution_matches_supported_markers() {
+        for marker in ["--", "---", "—"] {
+            assert_eq!(
+                TK::Attribution.find_lexeme(&format!(" {marker} Holmes")),
+                Some(marker)
+            );
+        }
+    }
+
+    #[test]
+    fn attribution_rejects_other_dash_sequences() {
+        assert!(!TK::Attribution.is_match(" - Holmes"));
+        assert!(!TK::Attribution.is_match(" ---- Holmes"));
+        assert!(!TK::Attribution.is_match("word -- Holmes"));
     }
 
     #[test]
