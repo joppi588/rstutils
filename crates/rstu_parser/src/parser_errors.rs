@@ -48,6 +48,7 @@ pub enum ParserError {
     OptionError {
         text: String,
     },
+    BlockQuoteMissingBlankLineError {},
 }
 
 pub(crate) static EXPECT_NEWLINE: &str = "There is at least one newline at the end of tokens.";

@@ -1,0 +1,11 @@
+Alternative: true em-dash.
+
+   Block quote.
+
+   — Attribution
+
+Alternative: three hyphens.
+
+   Block quote.
+
+   --- Attribution
