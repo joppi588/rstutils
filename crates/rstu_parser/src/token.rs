@@ -128,7 +128,6 @@ impl TokenCategory {
     pub const PARAGRAPH_END: &'static [TokenKind] = &[
         TokenKind::BlankLine,
         TokenKind::Separator,
-        TokenKind::Indent,
         TokenKind::Dedent,
         TokenKind::LiteralBlock,
         TokenKind::LiteralBlockMinimized,
