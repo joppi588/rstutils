@@ -10,15 +10,6 @@ use crate::token_stream::TokenStream;
 
 pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     let paragraph = AstNode::new_ref(NodeClass::Paragraph);
-    parse_inline_children(stream, &paragraph)?;
-
-    Ok(paragraph)
-}
-
-pub(crate) fn parse_inline_children(
-    stream: &mut TokenStream,
-    parent: &NodeRef,
-) -> Result<(), ParserError> {
     loop {
         let kind = stream.token_at_cursor().kind;
         let node = match kind {
@@ -40,10 +31,10 @@ pub(crate) fn parse_inline_children(
                 plain_text
             }
         };
-        parent.push_child(node);
+        paragraph.push_child(node);
     }
 
-    Ok(())
+    Ok(paragraph)
 }
 
 pub(crate) fn parse_inline_token(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
