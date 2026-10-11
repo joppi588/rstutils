@@ -292,11 +292,6 @@ impl TokenKind {
             .find(input)
             .map(|m| &(m.as_str())[1..m.len() - 1])
     }
-
-    pub fn is_match(self, input: &str) -> bool {
-        let result = self.find_lexeme(input);
-        result.is_some()
-    }
 }
 
 #[cfg(test)]
