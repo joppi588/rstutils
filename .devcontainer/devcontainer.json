@@ -23,6 +23,9 @@
       ]
     }
   },
+    "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
   "postCreateCommand": "pre-commit install --install-hooks",
   "remoteUser": "vscode"
 }
