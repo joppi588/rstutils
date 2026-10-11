@@ -7,30 +7,28 @@ children:
       text: |
         Paragraph.
 - class: BlockQuote
+  attributes:
+    indent: 3
   children:
   - class: BlankLine
-  - class: Block
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: |
+          Block quote.
+  - class: BlankLine
+  - class: Attribution
     attributes:
-      indent: 3
+      marker: '-- '
     children:
     - class: Paragraph
       children:
       - class: PlainText
         attributes:
           text: |
-            Block quote.
-    - class: BlankLine
-    - class: Attribution
-      attributes:
-        marker: '-- '
-      children:
-      - class: Paragraph
-        children:
-        - class: PlainText
-          attributes:
-            text: |
-              Attribution
-- class: BlankLine
+            Attribution
+  - class: BlankLine
 - class: Paragraph
   children:
   - class: PlainText
@@ -38,22 +36,20 @@ children:
       text: |
         Paragraph.
 - class: BlockQuote
+  attributes:
+    indent: 3
   children:
   - class: BlankLine
-  - class: Block
-    attributes:
-      indent: 3
+  - class: Paragraph
     children:
-    - class: Paragraph
-      children:
-      - class: PlainText
-        attributes:
-          text: |
-            Block quote.
-    - class: BlankLine
-    - class: Paragraph
-      children:
-      - class: PlainText
-        attributes:
-          text: |
-            --Interpreted as text, not as attribution
+    - class: PlainText
+      attributes:
+        text: |
+          Block quote.
+  - class: BlankLine
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: |
+          --Interpreted as text, not as attribution

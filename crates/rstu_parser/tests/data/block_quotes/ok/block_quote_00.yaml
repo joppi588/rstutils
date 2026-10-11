@@ -8,15 +8,13 @@ children:
         Line 1.
         Line 2.
 - class: BlockQuote
+  attributes:
+    indent: 3
   children:
   - class: BlankLine
-  - class: Block
-    attributes:
-      indent: 3
+  - class: Paragraph
     children:
-    - class: Paragraph
-      children:
-      - class: PlainText
-        attributes:
-          text: |
-            Indented.
+    - class: PlainText
+      attributes:
+        text: |
+          Indented.

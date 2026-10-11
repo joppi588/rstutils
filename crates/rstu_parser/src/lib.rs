@@ -126,34 +126,6 @@ fn parse_body_element(
         TK::BlankLine => {
             current_parent.push_blank_lines(stream.consume().len());
         }
-        TK::Attribution => {
-            let attribution = AstNode::new_ref(NodeClass::Attribution);
-
-            attribution.with_attr("marker", stream.consume().lexeme);
-            // Allow indented paragraph
-            let index_next_line = stream.find_end_of_line() + 1;
-            let paragraph = if stream.token_at(index_next_line).kind == TK::Indent {
-                let indent = stream.take_at(index_next_line);
-                attribution.with_attr("hanging_indent", indent.len());
-
-                let paragraph = parse_paragraph(stream)?;
-                let dedent = stream.token_at_cursor();
-                if dedent.kind != TK::Dedent {
-                    return Err(ParserError::UnexpectedToken {
-                        expected: "Dedent".to_string(),
-                        found: format!("{:?}", dedent.kind),
-                        index: stream.cursor(),
-                    });
-                } else if dedent.len() > indent.len() {
-                    stream.update_at_cursor(" ".repeat(dedent.len() - indent.len()));
-                }
-                paragraph
-            } else {
-                parse_paragraph(stream)?
-            };
-            attribution.push_child(paragraph);
-            current_parent.push_child(attribution);
-        }
         _ => {
             let paragraph = parse_paragraph(stream)?;
             current_parent.push_child(paragraph);
