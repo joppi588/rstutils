@@ -68,6 +68,16 @@ fn parse_attribution(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
         parse_paragraph(stream)?
     };
 
+    if stream.token_at_cursor().kind != TK::Dedent {
+        // Attribute ends block quote, so insert a fake dedent-blankline-indent
+        stream.insert_at_cursor(Token::dedent(3));
+        stream.insert_at(stream.cursor() + 1, Token::new(TK::BlankLine, ""));
+        // cursor + 2 is Blankline
+        stream.insert_at(stream.cursor() + 3, Token::indent(3));
+        // FIXME: Use the "real indent" here
+        // TODO: Ugly workaround, clean up
+    };
+
     attribution.push_child(paragraph);
     Ok(attribution)
 }
