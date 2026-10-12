@@ -21,7 +21,9 @@ pub(crate) fn parse_block_quote(stream: &mut TokenStream) -> Result<NodeRef, Par
         stream.token_at_cursor().kind,
         TK::BlankLine | TK::Dedent | TK::EoF
     ) {
-        return Err(ParserError::BlockQuoteMissingBlankLineError {});
+        return Err(ParserError::BlockQuoteMissingBlankLineError {
+            position: stream.position_at_cursor(),
+        });
     }
     Ok(block)
 }

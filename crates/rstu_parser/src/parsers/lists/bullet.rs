@@ -17,6 +17,7 @@ pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, Par
 
     while stream.token_at_cursor().kind == TK::BulletListMarker {
         let item = AstNode::new_ref(NodeClass::BulletListItem);
+        let position = stream.position_at_cursor();
         let marker_token = stream.consume();
         item.with_attr("marker", marker_token.lexeme.clone());
         if let Some(existing_marker) = &marker {
@@ -24,6 +25,7 @@ pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, Par
                 return Err(ParserError::ListStyleError {
                     marker: existing_marker.clone(),
                     conflicting_marker: marker_token.lexeme,
+                    position,
                 });
             }
         } else {

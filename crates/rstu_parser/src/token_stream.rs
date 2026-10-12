@@ -10,14 +10,51 @@ pub enum TokenSliceError {
     NoRemainingToken,
 }
 
+/// 1-based source position; columns count Unicode scalar values.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Position {
+    pub line: usize,
+    pub column: usize,
+}
+
+impl Default for Position {
+    fn default() -> Self {
+        Self { line: 1, column: 1 }
+    }
+}
+
+impl Position {
+    pub fn advance(self, text: &str) -> Self {
+        text.chars().fold(self, |position, character| {
+            if character == '\n' {
+                Self {
+                    line: position.line + 1,
+                    column: 1,
+                }
+            } else {
+                Self {
+                    column: position.column + 1,
+                    ..position
+                }
+            }
+        })
+    }
+}
+
+impl std::fmt::Display for Position {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(formatter, "line {}, column {}", self.line, self.column)
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TokenStream {
-    tokens: Vec<Token>,
+    tokens: Vec<(Token, Position)>,
     cursor: usize,
 }
 
 impl TokenStream {
-    pub fn new(tokens: Vec<Token>) -> Self {
+    pub fn new(tokens: Vec<(Token, Position)>) -> Self {
         Self { tokens, cursor: 0 }
     }
 
@@ -25,15 +62,32 @@ impl TokenStream {
         Self::new(
             tokens
                 .iter()
-                .map(|(kind, lexeme)| Token::new(*kind, *lexeme))
+                .map(|(kind, lexeme)| (Token::new(*kind, *lexeme), Position::default()))
                 .collect(),
         )
+    }
+
+    pub fn tokens(&self) -> Vec<Token> {
+        self.tokens.iter().map(|(token, _)| token.clone()).collect()
+    }
+
+    /// Position of the token at `index`; past the end this is the last token's position.
+    pub fn position_at(&self, index: usize) -> Position {
+        self.tokens
+            .get(index)
+            .or_else(|| self.tokens.last())
+            .map(|(_, position)| *position)
+            .unwrap_or_default()
+    }
+
+    pub fn position_at_cursor(&self) -> Position {
+        self.position_at(self.cursor)
     }
 
     pub fn consume_text_until(&mut self, kinds: &[TokenKind]) -> Result<String, TokenSliceError> {
         let found = self.find_next_kind(kinds)?;
         let mut text = String::new();
-        for token in &self.tokens[self.cursor.min(found)..found] {
+        for (token, _) in &self.tokens[self.cursor.min(found)..found] {
             text.push_str(&token.lexeme);
         }
         self.cursor = found;
@@ -50,7 +104,7 @@ impl TokenStream {
     pub fn token_at(&self, index: usize) -> Token {
         self.tokens
             .get(index)
-            .cloned()
+            .map(|(token, _)| token.clone())
             .unwrap_or_else(|| Token::new(TokenKind::EoF, ""))
     }
 
@@ -76,7 +130,7 @@ impl TokenStream {
     pub fn find_next_kind(&self, kinds: &[TokenKind]) -> Result<usize, TokenSliceError> {
         self.tokens[self.cursor..]
             .iter()
-            .position(|token| token.kind.is(kinds))
+            .position(|(token, _)| token.kind.is(kinds))
             .map(|offset| offset + self.cursor)
             .ok_or(TokenSliceError::TokenNotFound {
                 kinds: kinds.to_vec(),
@@ -84,11 +138,7 @@ impl TokenStream {
     }
 
     pub fn consume(&mut self) -> Token {
-        let token = self
-            .tokens
-            .get(self.cursor)
-            .cloned()
-            .unwrap_or_else(|| Token::new(TokenKind::EoF, ""));
+        let token = self.token_at(self.cursor);
         self.cursor = self.cursor.saturating_add(1);
         token
     }
@@ -99,8 +149,10 @@ impl TokenStream {
         token
     }
 
+    /// The inserted token takes the position of the token it displaces.
     pub fn insert_at(&mut self, index: usize, token: Token) {
-        self.tokens.insert(index, token);
+        let position = self.position_at(index);
+        self.tokens.insert(index, (token, position));
         if index <= self.cursor {
             self.cursor += 1;
         }
@@ -113,7 +165,7 @@ impl TokenStream {
     }
 
     pub fn update_at_cursor(&mut self, new_lexeme: String) {
-        self.tokens[self.cursor].lexeme = new_lexeme;
+        self.tokens[self.cursor].0.lexeme = new_lexeme;
     }
 
     pub fn take_at_cursor(&mut self) -> Token {
@@ -121,7 +173,7 @@ impl TokenStream {
     }
 
     pub fn take_at(&mut self, index: usize) -> Token {
-        let token = self.tokens.remove(index);
+        let (token, _) = self.tokens.remove(index);
         if index < self.cursor {
             self.cursor -= 1;
         }
@@ -131,7 +183,7 @@ impl TokenStream {
 
 #[cfg(test)]
 mod tests {
-    use super::TokenStream;
+    use super::{Position, TokenStream};
     use crate::token::{Token, TokenKind};
 
     #[test]
@@ -195,5 +247,46 @@ mod tests {
         // Consuming past the end yields a synthetic EoF token.
         assert_eq!(stream.consume(), Token::new(TokenKind::EoF, ""));
         assert_eq!(stream.cursor(), 3);
+    }
+
+    /// GIVEN text with newlines and multibyte characters
+    /// WHEN a position is advanced over it
+    /// THEN lines increment on newline and columns count characters
+    #[test]
+    fn position_advance_counts_characters_and_lines() {
+        let position = Position::default().advance("\u{e9}a\nb\t");
+
+        assert_eq!(position, Position { line: 2, column: 3 });
+    }
+
+    /// GIVEN a stream with a token inserted at the cursor
+    /// WHEN positions are queried
+    /// THEN the inserted token shares the displaced token's position
+    #[test]
+    fn inserted_token_takes_displaced_position() {
+        let mut stream = TokenStream::new(vec![(
+            Token::new(TokenKind::Word, "a"),
+            Position { line: 4, column: 2 },
+        )]);
+
+        stream.insert_at_cursor(Token::indent(2));
+
+        assert_eq!(stream.position_at(0), Position { line: 4, column: 2 });
+        assert_eq!(stream.position_at(1), Position { line: 4, column: 2 });
+    }
+
+    /// GIVEN an empty stream or an index past the end
+    /// WHEN a position is queried
+    /// THEN the last known position (or 1:1) is returned
+    #[test]
+    fn position_past_the_end_uses_last_position() {
+        let empty = TokenStream::new(vec![]);
+        let stream = TokenStream::new(vec![(
+            Token::new(TokenKind::EoF, ""),
+            Position { line: 3, column: 1 },
+        )]);
+
+        assert_eq!(empty.position_at(5), Position::default());
+        assert_eq!(stream.position_at(9), Position { line: 3, column: 1 });
     }
 }

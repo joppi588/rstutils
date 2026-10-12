@@ -93,6 +93,7 @@ fn parse_term_or_classifier(stream: &mut TokenStream, node: &NodeRef) -> Result<
                     expected: "Inline/plain".to_owned(),
                     found: format!("{:?}", kind),
                     index: stream.cursor(),
+                    position: stream.position_at_cursor(),
                 });
             }
         }
