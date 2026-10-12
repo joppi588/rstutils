@@ -1,13 +1,13 @@
 Paragraph.
 
-   -- Not a valid attribution
+   -- Parsed as attribution, though at the beginning of the block quote.
 
    Block quote 1.
 
-   --Attribution 1
+   --Not an attribution (no blank after the --)
 
    --Invalid attribution
 
-   Block quote 2.
+   Still block quote 1.
 
-   --Attribution 2
+   -- Attribution 2 within the same block quote.

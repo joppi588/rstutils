@@ -1,0 +1,64 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: |
+        Paragraph.
+- class: BlockQuote
+  children:
+  - class: BlankLine
+  - class: Block
+    attributes:
+      indent: 3
+    children:
+    - class: Attribution
+      attributes:
+        marker: '-- '
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: |
+              Parsed as attribution, though at the beginning of the block quote.
+    - class: BlankLine
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: |
+            Block quote 1.
+    - class: BlankLine
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: |
+            --Not an attribution (no blank after the --)
+    - class: BlankLine
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: |
+            --Invalid attribution
+    - class: BlankLine
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: |
+            Still block quote 1.
+    - class: BlankLine
+    - class: Attribution
+      attributes:
+        marker: '-- '
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: |
+              Attribution 2 within the same block quote.
