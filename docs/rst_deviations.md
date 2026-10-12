@@ -12,9 +12,14 @@ This document lists deviations from the rst specification / implementation.
 - Enumerated list:
     * Auto in between explicit markers is accepted.
       (test case docutils_mixed_auto_and_explicit, docutils does not accept that.)
+- Block quotes:
+  * Attribution markers must be followed by a space to avoid confusion with long options.
+  * The parser treats attributions like other body elements.
+    Checks regarding multiple / outside block quote / not ending a block quote are left to the
+    subsequent processing tools (linter, renderer)
 
 # Interpretations
 Things that would be according to the spec book but not to the python parser implementation:
-- Attribution markers must be followed by a space to avoid confusion with long options.
+- (empty)
 
 # Proposals
