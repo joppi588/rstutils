@@ -85,7 +85,7 @@ fn tokenize_ok_mixed_lorem_ipsum_file() {
         (TK::EoF, ""),
     ]);
 
-    assert_eq!(tokenize(&contents), expected);
+    assert_eq!(tokenize(&contents).tokens(), expected.tokens());
 }
 
 #[test]
@@ -121,7 +121,7 @@ fn tokenize_ok_indentation() {
         (TK::EoF, ""),
     ]);
 
-    assert_eq!(tokenize(&contents), expected);
+    assert_eq!(tokenize(&contents).tokens(), expected.tokens());
 }
 
 #[test]
@@ -147,7 +147,7 @@ fn tokenize_ok_indentation_2blanklines() {
         (TK::EoF, ""),
     ]);
 
-    assert_eq!(tokenize(&contents), expected);
+    assert_eq!(tokenize(&contents).tokens(), expected.tokens());
 }
 
 #[test]
@@ -165,7 +165,7 @@ fn tokenize_punctuation_bullet_list() {
         (TK::EoF, ""),
     ]);
 
-    assert_eq!(tokenize(contents), expected);
+    assert_eq!(tokenize(contents).tokens(), expected.tokens());
 }
 
 #[test]
@@ -188,5 +188,5 @@ fn tokenize_block_quote_attribution_marker() {
         (TK::EoF, ""),
     ]);
 
-    assert_eq!(tokenize(contents), expected);
+    assert_eq!(tokenize(contents).tokens(), expected.tokens());
 }

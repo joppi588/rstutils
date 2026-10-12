@@ -55,7 +55,9 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
                 current_parent = section;
             }
             (TK::Indent, _) => {
-                return Err(ParserError::UnexpectedIndentError {});
+                return Err(ParserError::UnexpectedIndentError {
+                    position: stream.position_at_cursor(),
+                });
             }
             (TK::EoF, _) => {
                 break;
@@ -143,6 +145,7 @@ fn parse_body_element(
                         expected: "Dedent".to_string(),
                         found: format!("{:?}", dedent.kind),
                         index: stream.cursor(),
+                        position: stream.position_at_cursor(),
                     });
                 } else if dedent.len() > indent.len() {
                     stream.update_at_cursor(" ".repeat(dedent.len() - indent.len()));
