@@ -62,7 +62,7 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
             }
 
             _ => {
-                parse_body_elements(&mut stream, &current_parent)?;
+                parse_body_element(&mut stream, &current_parent)?;
             }
         };
     }
@@ -70,7 +70,7 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
     Ok(doc)
 }
 
-fn parse_body_elements(
+fn parse_body_element(
     stream: &mut TokenStream,
     current_parent: &Rc<RefCell<AstNode>>,
 ) -> Result<(), ParserError> {
