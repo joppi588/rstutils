@@ -6,7 +6,7 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use crate::parser_errors::ParserError;
 use crate::token::TokenKind as TK;
-use crate::token_stream::TokenStream;
+use crate::token_stream::{Position, TokenStream};
 use std::debug_assert_matches;
 
 #[derive(Debug)]
@@ -33,9 +33,11 @@ pub(crate) fn parse_literal_block(stream: &mut TokenStream) -> Result<NodeRef, P
     };
     block.with_attr("type", format!("{literal_block_type:?}"));
     stream.consume_newline();
+    let blank_line_position = stream.position_at_cursor();
     if stream.consume().kind != TK::BlankLine {
         return Err(ParserError::LiteralBlockError {
             message: "literal block requires a blank line".to_owned(),
+            position: blank_line_position,
         });
     }
     if stream.token_at_cursor().kind == TK::Indent {
@@ -45,6 +47,7 @@ pub(crate) fn parse_literal_block(stream: &mut TokenStream) -> Result<NodeRef, P
     } else {
         return Err(ParserError::LiteralBlockError {
             message: "literal block expected after literal marker".to_owned(),
+            position: stream.position_at_cursor(),
         });
     }
 
@@ -86,11 +89,13 @@ fn set_text_indented_content(stream: &mut TokenStream, block: &NodeRef) -> Resul
     if text.is_empty() {
         return Err(ParserError::LiteralBlockError {
             message: "Literal block expected after literal marker".to_owned(),
+            position: stream.position_at_cursor(),
         });
     }
     if !matches!(stream.token_at_cursor().kind, TK::BlankLine | TK::EoF) {
         return Err(ParserError::LiteralBlockError {
             message: "Blank line expected after literal block.".to_owned(),
+            position: stream.position_at_cursor(),
         });
     }
     block.with_attr("text", text);
@@ -102,6 +107,7 @@ fn set_text_quoted_content(stream: &mut TokenStream, block: &NodeRef) -> Result<
     let mut at_line_start = true;
     let mut marker = None;
     loop {
+        let position = stream.position_at_cursor();
         let token = stream.consume();
         match token.kind {
             TK::BlankLine | TK::EoF => {
@@ -114,7 +120,7 @@ fn set_text_quoted_content(stream: &mut TokenStream, block: &NodeRef) -> Result<
             _ => {
                 if at_line_start {
                     let first_char = token.lexeme.chars().nth(0).expect("lexeme is not empty.");
-                    check_quoted_marker(&mut marker, first_char)?;
+                    check_quoted_marker(&mut marker, first_char, position)?;
                     at_line_start = false;
                 }
                 text.push_str(&token.lexeme);
@@ -124,6 +130,7 @@ fn set_text_quoted_content(stream: &mut TokenStream, block: &NodeRef) -> Result<
     if text.is_empty() {
         return Err(ParserError::LiteralBlockError {
             message: "literal block expected after literal marker".to_owned(),
+            position: stream.position_at_cursor(),
         });
     }
 
@@ -131,18 +138,24 @@ fn set_text_quoted_content(stream: &mut TokenStream, block: &NodeRef) -> Result<
     Ok(())
 }
 
-fn check_quoted_marker(marker: &mut Option<char>, candidate: char) -> Result<(), ParserError> {
+fn check_quoted_marker(
+    marker: &mut Option<char>,
+    candidate: char,
+    position: Position,
+) -> Result<(), ParserError> {
     const ALLOWED_MARKERS: &str = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
 
     if !ALLOWED_MARKERS.contains(candidate) {
         return Err(ParserError::LiteralBlockError {
             message: "Invalid quoted literal block marker".to_owned(),
+            position,
         });
     }
 
     if marker.is_some_and(|marker| marker != candidate) {
         return Err(ParserError::LiteralBlockError {
             message: "Inconsistent quoted literal block".to_owned(),
+            position,
         });
     }
 

@@ -74,7 +74,7 @@ fn main() {
                     }
                 }
                 Err(error) => {
-                    eprintln!("error: failed to parse {file}: {error:?}");
+                    eprintln!("error: failed to parse {file}: {error}");
                     std::process::exit(1);
                 }
             }

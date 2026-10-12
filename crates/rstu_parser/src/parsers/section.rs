@@ -10,6 +10,7 @@ pub fn parse_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserE
     let section = AstNode::new_ref(NodeClass::Section);
 
     let start_at = stream.cursor();
+    let start_position = stream.position_at_cursor();
     let mut opening_style: Option<String> = None;
 
     if stream.token_at_cursor().kind == TK::Separator {
@@ -31,6 +32,7 @@ pub fn parse_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserE
     if stream.token_at_cursor().kind != TK::Separator {
         return Err(ParserError::SectionTitleMissingClosingAfterOpening {
             opening_index: start_at,
+            position: start_position,
         });
     }
     let closing_token = stream.consume();
@@ -42,6 +44,7 @@ pub fn parse_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserE
             opening_index: start_at,
             opening_style,
             closing_style,
+            position: start_position,
         });
     }
 

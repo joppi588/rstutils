@@ -41,6 +41,7 @@ pub(crate) fn parse_inline_token(stream: &mut TokenStream) -> Result<NodeRef, Pa
     debug_assert!(stream.token_at_cursor().kind.is(TC::INLINE_TOKEN));
 
     let node = AstNode::new_ref(NodeClass::Reference);
+    let position = stream.position_at_cursor();
     let token = stream.consume();
     let kind = token.kind;
     let lexeme = &token.lexeme;
@@ -67,6 +68,7 @@ pub(crate) fn parse_inline_token(stream: &mut TokenStream) -> Result<NodeRef, Pa
                 expected: "Reference token".to_owned(),
                 found: format!("{:?}", kind),
                 index: stream.cursor(),
+                position,
             });
         }
     };
@@ -77,6 +79,7 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
     debug_assert!(stream.token_at_cursor().kind.is(TC::INLINE_MARKER));
 
     let start_at = stream.cursor();
+    let position = stream.position_at_cursor();
     let kind = stream.consume().kind;
     let (markup, end_kind_candidates): (&str, &[TK]) = match kind {
         TK::StrongStart => ("strong", &[TK::StrongEnd]),
@@ -92,6 +95,7 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
                 expected: "Inline start token".to_owned(),
                 found: format!("{:?}", kind),
                 index: start_at,
+                position,
             });
         }
     };
@@ -101,6 +105,7 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
         .map_err(|_| ParserError::InlineMissingClosing {
             markup: markup.to_owned(),
             start_at,
+            position,
         })?;
 
     let effective_markup = match (kind, stream.consume().kind) {

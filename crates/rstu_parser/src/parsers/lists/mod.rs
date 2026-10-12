@@ -57,7 +57,11 @@ fn parse_item_body(stream: &mut TokenStream, dedent_len: usize) -> Result<NodeRe
                 stream.insert_at_cursor(Token::indent(dedent_len));
                 stream.insert_at(next_line + 1, Token::dedent(dedent_len));
             }
-            _ => return Err(ParserError::ListEndError {}),
+            _ => {
+                return Err(ParserError::ListEndError {
+                    position: stream.position_at(next_line),
+                });
+            }
         },
     }
     parse_block(stream)

@@ -288,9 +288,12 @@ impl TokenKind {
     }
 
     fn find_lexeme(self, input: &str) -> Option<&str> {
-        self.regex()
-            .find(input)
-            .map(|m| &(m.as_str())[1..m.len() - 1])
+        self.regex().find(input).and_then(|matched| {
+            let text = matched.as_str();
+            let first_len = text.chars().next()?.len_utf8();
+            let last_start = text.char_indices().next_back()?.0;
+            text.get(first_len..last_start)
+        })
     }
 }
 
