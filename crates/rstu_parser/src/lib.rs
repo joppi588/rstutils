@@ -31,6 +31,7 @@ pub mod token_stream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use crate::lexer::tokenize;
+use crate::parsers::paragraph::parse_paragraph_hanging_indent;
 use crate::token::TokenKind as TK;
 use parser_errors::ParserError;
 use token_stream::TokenStream;
@@ -131,12 +132,12 @@ fn parse_body_element(
         TK::Attribution => {
             let attribution = AstNode::new_ref(NodeClass::Attribution);
             attribution.with_attr("marker", stream.consume().lexeme);
-            let paragraph = parse_paragraph(stream, true)?;
+            let paragraph = parse_paragraph_hanging_indent(stream)?;
             attribution.push_child(paragraph);
             current_parent.push_child(attribution);
         }
         _ => {
-            let paragraph = parse_paragraph(stream, false)?;
+            let paragraph = parse_paragraph(stream)?;
             current_parent.push_child(paragraph);
         }
     }

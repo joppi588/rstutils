@@ -8,17 +8,33 @@ use crate::parser_errors::ParserError;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
 use crate::token_stream::TokenStream;
 
-pub(crate) fn parse_paragraph(
+pub(crate) fn parse_paragraph_hanging_indent(
     stream: &mut TokenStream,
-    allow_hanging_indent: bool,
 ) -> Result<NodeRef, ParserError> {
     let index_next_line = stream.find_end_of_line() + 1;
-    let indent = match allow_hanging_indent {
-        true if stream.token_at(index_next_line).kind == TK::Indent => {
-            stream.take_at(index_next_line).len()
-        }
+    let indent = match stream.token_at(index_next_line).kind {
+        TK::Indent => stream.take_at(index_next_line).len(),
         _ => 0,
     };
+    let paragraph = parse_paragraph(stream)?;
+    if indent > 0 {
+        paragraph.with_attr("hanging_indent", indent);
+        let dedent = stream.token_at_cursor();
+        if dedent.kind != TK::Dedent {
+            return Err(ParserError::UnexpectedToken {
+                expected: "Dedent".to_string(),
+                found: format!("{:?}", dedent.kind),
+                index: stream.cursor(),
+                position: stream.position_at_cursor(),
+            });
+        } else if dedent.len() > indent {
+            stream.update_at_cursor(" ".repeat(dedent.len() - indent));
+        }
+    }
+    Ok(paragraph)
+}
+
+pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     let paragraph = AstNode::new_ref(NodeClass::Paragraph);
     loop {
         let kind = stream.token_at_cursor().kind;
@@ -43,21 +59,6 @@ pub(crate) fn parse_paragraph(
         };
         paragraph.push_child(node);
     }
-    if indent > 0 {
-        paragraph.with_attr("hanging_indent", indent);
-        let dedent = stream.token_at_cursor();
-        if dedent.kind != TK::Dedent {
-            return Err(ParserError::UnexpectedToken {
-                expected: "Dedent".to_string(),
-                found: format!("{:?}", dedent.kind),
-                index: stream.cursor(),
-                position: stream.position_at_cursor(),
-            });
-        } else if dedent.len() > indent {
-            stream.update_at_cursor(" ".repeat(dedent.len() - indent));
-        }
-    }
-
     Ok(paragraph)
 }
 
@@ -186,7 +187,8 @@ mod tests {
         let input = "First line\n   second line\n";
         let mut stream = tokenize(input);
 
-        let paragraph = parse_paragraph(&mut stream, true).expect("Paragraph parses successfully");
+        let paragraph =
+            parse_paragraph_hanging_indent(&mut stream).expect("Paragraph parses successfully");
         let paragraph = paragraph.borrow();
 
         assert_eq!(
@@ -209,7 +211,8 @@ mod tests {
         let input = "First line\n   second line\n   third line\n";
         let mut stream = tokenize(input);
 
-        let paragraph = parse_paragraph(&mut stream, true).expect("Paragraph parses successfully");
+        let paragraph =
+            parse_paragraph_hanging_indent(&mut stream).expect("Paragraph parses successfully");
         let paragraph = paragraph.borrow();
 
         assert_eq!(
