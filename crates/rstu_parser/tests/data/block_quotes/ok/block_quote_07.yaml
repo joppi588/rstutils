@@ -54,10 +54,11 @@ children:
     - class: BlankLine
     - class: Attribution
       attributes:
-        hanging_indent: 3
         marker: '-- '
       children:
       - class: Paragraph
+        attributes:
+          hanging_indent: 3
         children:
         - class: PlainText
           attributes:
