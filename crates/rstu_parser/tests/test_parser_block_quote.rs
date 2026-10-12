@@ -19,8 +19,7 @@ use test_parser::rst_vs_yaml;
 #[case("block_quote_05")]
 // TODO: Unicode em-dash currently panics in the lexer; attribution is also unsupported.
 // #[case("block_quote_06")]
-// TODO: Attribution nodes are not implemented.
-// #[case("block_quote_07")]
+#[case("block_quote_07")]
 // TODO: Attribution nodes are not implemented.
 // #[case("block_quote_08")]
 // TODO: Attribution nodes are not implemented.
