@@ -8,13 +8,20 @@ use crate::parser_errors::ParserError;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
 use crate::token_stream::TokenStream;
 
-pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+pub(crate) fn parse_paragraph(
+    stream: &mut TokenStream,
+    indent: usize,
+) -> Result<NodeRef, ParserError> {
     let paragraph = AstNode::new_ref(NodeClass::Paragraph);
     loop {
         let kind = stream.token_at_cursor().kind;
         let node = match kind {
             kind if kind.is(TC::INLINE_MARKER) => parse_inline(stream)?,
             kind if kind.is(TC::INLINE_TOKEN) => parse_inline_token(stream)?,
+            kind if kind == TK::Indent && stream.token_at_cursor().len() == indent => {
+                stream.consume(); // Indent
+                continue;
+            }
             kind if kind.is(TC::PARAGRAPH_END) => break,
             _ => {
                 let plain_text = parse_plain(stream);
@@ -32,6 +39,20 @@ pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, Parse
             }
         };
         paragraph.push_child(node);
+    }
+    if indent > 0 {
+        paragraph.with_attr("hanging_indent", indent);
+        let dedent = stream.token_at_cursor();
+        if dedent.kind != TK::Dedent {
+            return Err(ParserError::UnexpectedToken {
+                expected: "Dedent".to_string(),
+                found: format!("{:?}", dedent.kind),
+                index: stream.cursor(),
+                position: stream.position_at_cursor(),
+            });
+        } else if dedent.len() > indent {
+            stream.update_at_cursor(" ".repeat(dedent.len() - indent));
+        }
     }
 
     Ok(paragraph)
