@@ -131,17 +131,12 @@ fn parse_body_element(
         TK::Attribution => {
             let attribution = AstNode::new_ref(NodeClass::Attribution);
             attribution.with_attr("marker", stream.consume().lexeme);
-            let index_next_line = stream.find_end_of_line() + 1;
-            let indent = match stream.token_at(index_next_line).kind {
-                TK::Indent => stream.take_at(index_next_line).len(),
-                _ => 0,
-            };
-            let paragraph = parse_paragraph(stream, indent)?;
+            let paragraph = parse_paragraph(stream, true)?;
             attribution.push_child(paragraph);
             current_parent.push_child(attribution);
         }
         _ => {
-            let paragraph = parse_paragraph(stream, 0)?;
+            let paragraph = parse_paragraph(stream, false)?;
             current_parent.push_child(paragraph);
         }
     }

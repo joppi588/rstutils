@@ -10,18 +10,21 @@ use crate::token_stream::TokenStream;
 
 pub(crate) fn parse_paragraph(
     stream: &mut TokenStream,
-    indent: usize,
+    has_hanging_indent: bool,
 ) -> Result<NodeRef, ParserError> {
+    let index_next_line = stream.find_end_of_line() + 1;
+    let indent = match has_hanging_indent {
+        true if stream.token_at(index_next_line).kind == TK::Indent => {
+            stream.take_at(index_next_line).len()
+        }
+        _ => 0,
+    };
     let paragraph = AstNode::new_ref(NodeClass::Paragraph);
     loop {
         let kind = stream.token_at_cursor().kind;
         let node = match kind {
             kind if kind.is(TC::INLINE_MARKER) => parse_inline(stream)?,
             kind if kind.is(TC::INLINE_TOKEN) => parse_inline_token(stream)?,
-            kind if kind == TK::Indent && stream.token_at_cursor().len() == indent => {
-                stream.consume(); // Indent
-                continue;
-            }
             kind if kind.is(TC::PARAGRAPH_END) => break,
             _ => {
                 let plain_text = parse_plain(stream);
@@ -40,7 +43,7 @@ pub(crate) fn parse_paragraph(
         };
         paragraph.push_child(node);
     }
-    if indent > 0 {
+    if has_hanging_indent {
         paragraph.with_attr("hanging_indent", indent);
         let dedent = stream.token_at_cursor();
         if dedent.kind != TK::Dedent {
@@ -169,4 +172,63 @@ fn parse_plain(stream: &mut TokenStream) -> NodeRef {
     let sentence = AstNode::new_ref(NodeClass::PlainText);
     sentence.with_attr("text", text);
     sentence
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::lexer::tokenize;
+
+    /// GIVEN a paragraph consisting of a base line and an indented continuation line
+    /// WHEN parse_paragraph is invoked with the expected hanging indent width
+    /// THEN the paragraph has the hanging_indent attribute and contains both lines
+    #[test]
+    fn parse_paragraph_with_hanging_indent_two_lines() {
+        let input = "First line\n   second line\n";
+        let mut stream = tokenize(input);
+
+        let paragraph = parse_paragraph(&mut stream, true).expect("Paragraph parses successfully");
+        let paragraph = paragraph.borrow();
+
+        assert_eq!(
+            paragraph.attributes.get_str("hanging_indent").as_deref(),
+            Some("3")
+        );
+        assert_eq!(paragraph.children.len(), 2);
+
+        let first = paragraph.children[0].borrow();
+        assert_eq!(
+            first.attributes.get_str("text").as_deref(),
+            Some("First line\n")
+        );
+
+        let second = paragraph.children[1].borrow();
+        assert_eq!(
+            second.attributes.get_str("text").as_deref(),
+            Some("second line\n")
+        );
+    }
+
+    /// GIVEN a paragraph with a base line and two continuation lines at the same hanging indent
+    /// WHEN parse_paragraph is invoked with the hanging indent width
+    /// THEN the hanging_indent attribute is preserved and the continuation text is captured
+    #[test]
+    fn parse_paragraph_with_two_hanging_indent_lines() {
+        let input = "First line\n   second line\n   third line\n";
+        let mut stream = tokenize(input);
+
+        let paragraph = parse_paragraph(&mut stream, true).expect("Paragraph parses successfully");
+        let paragraph = paragraph.borrow();
+
+        assert_eq!(
+            paragraph.attributes.get_str("hanging_indent").as_deref(),
+            Some("3")
+        );
+        assert_eq!(paragraph.children.len(), 2);
+
+        let second = paragraph.children[1].borrow();
+        assert_eq!(
+            second.attributes.get_str("text").as_deref(),
+            Some("second line\nthird line\n")
+        );
+    }
 }
