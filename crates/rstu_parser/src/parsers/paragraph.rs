@@ -10,10 +10,10 @@ use crate::token_stream::TokenStream;
 
 pub(crate) fn parse_paragraph(
     stream: &mut TokenStream,
-    has_hanging_indent: bool,
+    allow_hanging_indent: bool,
 ) -> Result<NodeRef, ParserError> {
     let index_next_line = stream.find_end_of_line() + 1;
-    let indent = match has_hanging_indent {
+    let indent = match allow_hanging_indent {
         true if stream.token_at(index_next_line).kind == TK::Indent => {
             stream.take_at(index_next_line).len()
         }
@@ -43,7 +43,7 @@ pub(crate) fn parse_paragraph(
         };
         paragraph.push_child(node);
     }
-    if has_hanging_indent {
+    if indent > 0 {
         paragraph.with_attr("hanging_indent", indent);
         let dedent = stream.token_at_cursor();
         if dedent.kind != TK::Dedent {
@@ -193,18 +193,11 @@ mod tests {
             paragraph.attributes.get_str("hanging_indent").as_deref(),
             Some("3")
         );
-        assert_eq!(paragraph.children.len(), 2);
 
         let first = paragraph.children[0].borrow();
         assert_eq!(
             first.attributes.get_str("text").as_deref(),
-            Some("First line\n")
-        );
-
-        let second = paragraph.children[1].borrow();
-        assert_eq!(
-            second.attributes.get_str("text").as_deref(),
-            Some("second line\n")
+            Some("First line\nsecond line\n")
         );
     }
 
@@ -223,12 +216,11 @@ mod tests {
             paragraph.attributes.get_str("hanging_indent").as_deref(),
             Some("3")
         );
-        assert_eq!(paragraph.children.len(), 2);
 
-        let second = paragraph.children[1].borrow();
+        let plain = paragraph.children[0].borrow();
         assert_eq!(
-            second.attributes.get_str("text").as_deref(),
-            Some("second line\nthird line\n")
+            plain.attributes.get_str("text").as_deref(),
+            Some("First line\nsecond line\nthird line\n")
         );
     }
 }
