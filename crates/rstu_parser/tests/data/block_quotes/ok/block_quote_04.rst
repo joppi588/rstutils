@@ -1,8 +1,10 @@
 Here is a paragraph.
 
+    ..
+
         Indent 8 spaces.
 
     Indent 4 spaces.
 
-Is this correct? Should it generate a warning?
-Yes, it is correct, no warning necessary.
+This will generate a nested block quote, with the first paragraph
+nested deeper than the second.
