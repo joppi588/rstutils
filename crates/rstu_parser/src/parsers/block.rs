@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-use crate::parse_body_elements;
+use crate::parse_body_element;
 use crate::parser_errors::ParserError;
 use crate::token::{Token, TokenKind as TK};
 use crate::token_stream::TokenStream;
@@ -17,7 +17,7 @@ pub(crate) fn parse_block(stream: &mut TokenStream) -> Result<NodeRef, ParserErr
         block.with_attr("indent", indent);
     }
     while stream.token_at_cursor().kind != TK::Dedent {
-        parse_body_elements(stream, &block)?;
+        parse_body_element(stream, &block)?;
     }
     let dedent = stream.consume().len();
     if dedent != indent {
