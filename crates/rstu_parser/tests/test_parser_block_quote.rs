@@ -22,8 +22,7 @@ use test_parser::rst_vs_yaml;
 #[case("block_quote_07")]
 #[case("block_quote_08")]
 #[case("block_quote_09")]
-// TODO: Attribution nodes are not implemented.
-// #[case("block_quote_10")]
+#[case("block_quote_10")]
 // TODO: Block quote and definition-list interaction is not implemented.
 // #[case("block_quote_11")]
 // TODO: Attribution nodes are not implemented.

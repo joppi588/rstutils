@@ -17,6 +17,7 @@ This document lists deviations from the rst specification / implementation.
   * The parser treats attributions like other body elements.
     Checks regarding multiple / outside block quote / not ending a block quote are left to the
     subsequent processing tools (linter, renderer)
+    Use empty comments (`..`) to explicitely split block quotes.
 
 # Interpretations
 Things that would be according to the spec book but not to the python parser implementation:
