@@ -1,0 +1,6 @@
+| This is a line block.
+| Line breaks are *preserved*.
+
+| This is a second line block.
+
+| This is a third.

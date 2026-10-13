@@ -29,6 +29,9 @@ static OPTION: &str = concat!(
     r")[ ,\n]"
 );
 
+pub(crate) static LINE_BLOCK_INDENT: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"\|( +)").unwrap());
+
 macro_rules! count_idents {
     ($($ident:ident),* $(,)?) => {
         <[()]>::len(&[$(count_idents!(@sub $ident)),*])
@@ -130,6 +133,7 @@ impl TokenCategory {
         TokenKind::Separator,
         TokenKind::Indent,
         TokenKind::Dedent,
+        TokenKind::LineBlock,
         TokenKind::LiteralBlock,
         TokenKind::LiteralBlockMinimized,
         TokenKind::LiteralBlockPartiallyMinimized,
@@ -188,6 +192,7 @@ pub enum TokenKind {
     InlineInternalTargetStart,
     InlineLiteralEnd,
     InlineLiteralStart,
+    LineBlock,
     LiteralBlock,
     LiteralBlockMinimized,
     LiteralBlockPartiallyMinimized,
@@ -223,6 +228,8 @@ impl TokenKind {
 
         // Comments
         (DoubleDot, r"[\n\s]\.\.[\n\s]"),
+
+        (LineBlock,r"\n\| +[^ .\n]"),
 
         // Literal block
         (LiteralBlockMinimized, r"[^\s\t]::(.|\n)"),
@@ -301,6 +308,11 @@ impl TokenKind {
 mod tests {
     use super::{Token, TokenCategory, TokenKind as TK};
     use rstest::rstest;
+
+    #[test]
+    fn line_block() {
+        assert_eq!(TK::LineBlock.find_lexeme("\n| T"), Some("| "));
+    }
 
     #[rstest]
     #[case("--")]

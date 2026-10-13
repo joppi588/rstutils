@@ -24,6 +24,8 @@ pub enum NodeClass {
     FieldList,
     FieldListItem,
     InlineMarkup,
+    Line,
+    LineBlock,
     LiteralBlock,
     Option,
     OptionGroup,

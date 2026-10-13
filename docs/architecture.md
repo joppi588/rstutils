@@ -64,9 +64,10 @@ Warnings represent interpretation, which is on a semantic level -> linter.
 There are exceptions, e.g. the parser needs to decide if alphabet I (continue enum list) or roman 1 (start new list).
 
 8. Blank lines and indentation:
-- Blank lines before a dedent are interpreted as dedented.
 - Blank lines before an indent are interpreted as indented.
   except after bullet list item, field list item, directives
+- Blank lines before a dedent are interpreted as dedented.
+So technically indented blocks can be surrounded by blank lines, and in/dedents treated upstream.
 
 9. Formatter
 Write back rst from AST.
