@@ -5,9 +5,8 @@
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use crate::parser_errors::ParserError;
-use crate::parsers::line_block;
 use crate::parsers::paragraph::parse_paragraph_hanging_indent;
-use crate::token::{TokenKind as TK, LINE_BLOCK_INDENT};
+use crate::token::TokenKind as TK;
 use crate::token_stream::TokenStream;
 use std::debug_assert_matches;
 
@@ -41,12 +40,4 @@ pub(crate) fn parse_line_block(
     }
 
     Ok(block)
-}
-
-fn extract_indent(line_block_lexeme: &str) -> usize {
-    let res = LINE_BLOCK_INDENT
-        .find(line_block_lexeme)
-        .expect("At least one space");
-    let g = res.as_str();
-    g.len() - 1
 }

@@ -29,9 +29,6 @@ static OPTION: &str = concat!(
     r")[ ,\n]"
 );
 
-pub(crate) static LINE_BLOCK_INDENT: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"\|( +)").unwrap());
-
 macro_rules! count_idents {
     ($($ident:ident),* $(,)?) => {
         <[()]>::len(&[$(count_idents!(@sub $ident)),*])
