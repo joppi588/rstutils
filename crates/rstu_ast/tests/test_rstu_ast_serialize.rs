@@ -2,75 +2,15 @@
 //
 // SPDX-License-Identifier: MIT
 
-use super::{AstNode, NodeClass, NodeRefExt};
+use rstu_ast::AstNode;
+use rstu_ast::{NodeClass, NodeRefExt};
 use serde_json::json;
-use std::rc::Rc;
-
-fn section_with_marker(section_marker: &str) -> super::NodeRef {
-    let section = AstNode::new_ref(NodeClass::Section);
-    section.with_attr("section_marker", section_marker);
-    section
-}
 
 #[test]
-/// GIVEN attributes containing string and integer values
-/// WHEN their values are accessed by name
-/// THEN as_str returns the string value only for the string attribute
-fn attributes_index_by_name_and_convert_strings() {
-    let node = AstNode::new_ref(NodeClass::Document);
-    node.with_attr("name", "rst").with_attr("count", 1usize);
-
-    let borrowed = node.borrow();
-    assert_eq!(
-        borrowed.attributes["name"].as_str(),
-        Some("rst".to_string())
-    );
-    assert_eq!(borrowed.attributes["count"].as_str(), Some("1".to_string()));
-}
-
-#[test]
-fn push_child_sets_parent_and_appends_child() {
-    let parent = AstNode::new_ref(NodeClass::Document);
-    let child = AstNode::new_ref(NodeClass::Paragraph);
-
-    parent.push_child(child.clone());
-
-    let borrowed = parent.borrow();
-    assert_eq!(borrowed.children.len(), 1);
-    assert!(Rc::ptr_eq(&borrowed.children[0], &child));
-    assert!(child.borrow().parent.is_some());
-}
-
-#[test]
-fn push_section_with_same_marker_pushes_to_parent_of_self() {
-    let tree = AstNode::new_ref(NodeClass::Document);
-    let current = section_with_marker("#");
-    tree.push_child(current.clone());
-
-    let section = section_with_marker("#");
-    current.push_section_ref(section);
-
-    let borrowed = tree.borrow();
-    assert_eq!(borrowed.children.len(), 2);
-    assert_eq!(borrowed.children[1].borrow().class, NodeClass::Section);
-}
-
-#[test]
-fn closest_ancestor_section_matches_requested_marker() {
-    let document = AstNode::new_ref(NodeClass::Document);
-    let outer = section_with_marker("#");
-    document.push_child(outer.clone());
-    let inner = section_with_marker("~");
-    outer.push_child(inner.clone());
-    let paragraph = AstNode::new_ref(NodeClass::Paragraph);
-    inner.push_child(paragraph.clone());
-
-    let closest = AstNode::closest_ancestor_section(&paragraph, Some("#")).unwrap();
-    assert!(Rc::ptr_eq(&closest, &outer));
-}
-
-#[test]
-fn to_json_serializes_node_tree_without_parent() {
+/// GIVEN a document tree with attributes, a section, and a title
+/// WHEN the tree is serialized to JSON
+/// THEN the JSON contains the node hierarchy and excludes parent references
+fn to_json_serializes_node_tree() {
     let root = AstNode::new_ref(NodeClass::Document);
     root.with_attr("lang", "rst");
 
@@ -115,7 +55,10 @@ fn to_json_serializes_node_tree_without_parent() {
 }
 
 #[test]
-fn to_yaml_serializes_node_tree_without_parent() {
+/// GIVEN a document tree with attributes, a section, and a title
+/// WHEN the tree is serialized to YAML
+/// THEN the parsed YAML contains the node hierarchy and excludes parent references
+fn to_yaml_serializes_node_tree() {
     let root = AstNode::new_ref(NodeClass::Document);
     root.with_attr("lang", "rst");
 
@@ -153,6 +96,9 @@ fn to_yaml_serializes_node_tree_without_parent() {
 }
 
 #[test]
+/// GIVEN nodes and attributes inserted in reverse lexical order
+/// WHEN the tree is serialized to JSON and YAML
+/// THEN node and attribute keys are serialized in lexical order
 fn serializers_preserve_node_and_attribute_key_order() {
     let root = AstNode::new_ref(NodeClass::Document);
     root.with_attr("zeta", "last").with_attr("alpha", "first");
