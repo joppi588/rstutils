@@ -1,0 +1,105 @@
+class: Document
+children:
+- class: LineBlock
+  children:
+  - class: Line
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: |
+            Initial indentation is also significant and preserved:
+  - class: Line
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: |2+
+
+  - class: LineBlock
+    attributes:
+      indent: 4
+    children:
+    - class: Line
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: |
+              Indented 4 spaces
+- class: LineBlock
+  children:
+  - class: Line
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: |
+            Not indented
+  - class: LineBlock
+    attributes:
+      indent: 2
+    children:
+    - class: Line
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: |
+              Indented 2 spaces
+    - class: LineBlock
+      attributes:
+        indent: 4
+      children:
+      - class: Line
+        children:
+        - class: Paragraph
+          children:
+          - class: PlainText
+            attributes:
+              text: |
+                Indented 4 spaces
+- class: LineBlock
+  children:
+  - class: LineBlock
+    attributes:
+      indent: 1
+    children:
+    - class: Line
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: |
+              Only one space
+- class: LineBlock
+  children:
+  - class: Line
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: |2+
+
+  - class: LineBlock
+    attributes:
+      indent: 4
+    children:
+    - class: Line
+      children:
+      - class: Paragraph
+        attributes:
+          hanging_indent: 2
+        children:
+        - class: PlainText
+          attributes:
+            text: |
+              Continuation lines may be indented less
+              than their base lines.
