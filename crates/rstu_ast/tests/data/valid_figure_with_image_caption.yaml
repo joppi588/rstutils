@@ -1,8 +1,0 @@
-kind: Document
-children:
-  - kind: Figure
-    children:
-      - kind: Image
-      - kind: Caption
-        attributes:
-          text: Figure caption
