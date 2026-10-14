@@ -24,7 +24,7 @@ pub(crate) fn parse_line_block(
 
     while stream.token_at_cursor().kind == TK::LineBlock {
         let line_block_lexeme: &str = &stream.token_at_cursor().lexeme;
-        let new_indent = line_block_lexeme.len() - 2;
+        let new_indent = line_block_lexeme.len().saturating_sub(2); // blank line: lexeme "|" -> len 1
         if new_indent > indent {
             block.push_child(parse_line_block(stream, new_indent)?);
             break;

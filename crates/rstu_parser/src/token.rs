@@ -226,7 +226,7 @@ impl TokenKind {
         // Comments
         (DoubleDot, r"[\n\s]\.\.[\n\s]"),
 
-        (LineBlock,r"\n\| +[^ .\n]"),
+        (LineBlock,r"\n\|(?: +[^ ]|\n)"),
 
         // Literal block
         (LiteralBlockMinimized, r"[^\s\t]::(.|\n)"),

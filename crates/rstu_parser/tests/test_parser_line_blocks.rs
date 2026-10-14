@@ -25,7 +25,6 @@ use test_parser::rst_vs_yaml;
 #[case("line_block_12")]
 #[case("line_block_15")]
 #[case("line_block_16")]
-
 fn parse_line_block(#[case] test_case: &str) {
     rst_vs_yaml!("line_blocks/ok", test_case);
 }
