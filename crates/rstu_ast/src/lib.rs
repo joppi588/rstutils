@@ -4,9 +4,8 @@
 
 mod attr;
 mod nodes;
-#[cfg(test)]
-mod tests;
-pub use attr::{AttributeType, Attributes};
+
+use attr::{AttributeType, Attributes};
 pub use nodes::NodeClass;
 use serde_json::{Map, Value};
 use std::cell::RefCell;

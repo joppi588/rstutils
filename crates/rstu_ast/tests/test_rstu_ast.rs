@@ -2,11 +2,12 @@
 //
 // SPDX-License-Identifier: MIT
 
-use super::{AstNode, NodeClass, NodeRefExt};
+use rstu_ast::AstNode;
+use rstu_ast::{NodeClass, NodeRefExt};
 use serde_json::json;
 use std::rc::Rc;
 
-fn section_with_marker(section_marker: &str) -> super::NodeRef {
+fn section_with_marker(section_marker: &str) -> rstu_ast::NodeRef {
     let section = AstNode::new_ref(NodeClass::Section);
     section.with_attr("section_marker", section_marker);
     section
