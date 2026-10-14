@@ -35,13 +35,14 @@ fn attributes_index_by_name_and_convert_strings() {
 fn push_child_sets_parent_and_appends_child() {
     let parent = AstNode::new_ref(NodeClass::Document);
     let child = AstNode::new_ref(NodeClass::Paragraph);
+    let child_ref_cloned = child.clone(); // cloning the ref, not the node!
 
-    parent.push_child(child.clone());
+    parent.push_child(child);
 
     let borrowed = parent.borrow();
     assert_eq!(borrowed.children.len(), 1);
-    assert!(Rc::ptr_eq(&borrowed.children[0], &child));
-    assert!(child.borrow().parent.is_some());
+    assert!(Rc::ptr_eq(&borrowed.children[0], &child_ref_cloned));
+    assert!(Rc::ptr_eq(&child_ref_cloned.get_parent().unwrap(), &parent));
 }
 
 #[test]

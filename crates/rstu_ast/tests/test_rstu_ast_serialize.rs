@@ -10,7 +10,7 @@ use serde_json::json;
 /// GIVEN a document tree with attributes, a section, and a title
 /// WHEN the tree is serialized to JSON
 /// THEN the JSON contains the node hierarchy and excludes parent references
-fn to_json_serializes_node_tree_without_parent() {
+fn to_json_serializes_node_tree() {
     let root = AstNode::new_ref(NodeClass::Document);
     root.with_attr("lang", "rst");
 
@@ -58,7 +58,7 @@ fn to_json_serializes_node_tree_without_parent() {
 /// GIVEN a document tree with attributes, a section, and a title
 /// WHEN the tree is serialized to YAML
 /// THEN the parsed YAML contains the node hierarchy and excludes parent references
-fn to_yaml_serializes_node_tree_without_parent() {
+fn to_yaml_serializes_node_tree() {
     let root = AstNode::new_ref(NodeClass::Document);
     root.with_attr("lang", "rst");
 
