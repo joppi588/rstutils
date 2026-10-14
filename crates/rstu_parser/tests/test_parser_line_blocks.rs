@@ -15,7 +15,6 @@ use test_parser::rst_vs_yaml;
 #[case("line_block_00")]
 #[case("line_block_01")]
 #[case("line_block_02")]
-#[case("line_block_03")]
 #[case("line_block_04")]
 #[case("line_block_06")]
 #[case("line_block_07")]
@@ -32,6 +31,7 @@ fn parse_line_block(#[case] test_case: &str) {
 }
 
 #[rstest]
+#[case("line_block_03")]
 #[case("line_block_05")]
 #[case("line_block_13")]
 #[case("line_block_14")]
