@@ -29,6 +29,9 @@ fn attributes_index_by_name_and_convert_strings() {
 }
 
 #[test]
+/// GIVEN a parent node and a child node
+/// WHEN the child is pushed to the parent
+/// THEN the child is appended and its parent is set
 fn push_child_sets_parent_and_appends_child() {
     let parent = AstNode::new_ref(NodeClass::Document);
     let child = AstNode::new_ref(NodeClass::Paragraph);
@@ -42,6 +45,9 @@ fn push_child_sets_parent_and_appends_child() {
 }
 
 #[test]
+/// GIVEN a section attached to a tree
+/// WHEN a section with the same marker is pushed from it
+/// THEN the new section is appended to the section's parent
 fn push_section_with_same_marker_pushes_to_parent_of_self() {
     let tree = AstNode::new_ref(NodeClass::Document);
     let current = section_with_marker("#");
@@ -56,6 +62,9 @@ fn push_section_with_same_marker_pushes_to_parent_of_self() {
 }
 
 #[test]
+/// GIVEN nested sections with different markers and a paragraph in the inner section
+/// WHEN searching for an ancestor section with the outer marker
+/// THEN the outer section is returned
 fn closest_ancestor_section_matches_requested_marker() {
     let document = AstNode::new_ref(NodeClass::Document);
     let outer = section_with_marker("#");

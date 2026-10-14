@@ -5,15 +5,11 @@
 use rstu_ast::AstNode;
 use rstu_ast::{NodeClass, NodeRefExt};
 use serde_json::json;
-use std::rc::Rc;
-
-fn section_with_marker(section_marker: &str) -> rstu_ast::NodeRef {
-    let section = AstNode::new_ref(NodeClass::Section);
-    section.with_attr("section_marker", section_marker);
-    section
-}
 
 #[test]
+/// GIVEN a document tree with attributes, a section, and a title
+/// WHEN the tree is serialized to JSON
+/// THEN the JSON contains the node hierarchy and excludes parent references
 fn to_json_serializes_node_tree_without_parent() {
     let root = AstNode::new_ref(NodeClass::Document);
     root.with_attr("lang", "rst");
@@ -59,6 +55,9 @@ fn to_json_serializes_node_tree_without_parent() {
 }
 
 #[test]
+/// GIVEN a document tree with attributes, a section, and a title
+/// WHEN the tree is serialized to YAML
+/// THEN the parsed YAML contains the node hierarchy and excludes parent references
 fn to_yaml_serializes_node_tree_without_parent() {
     let root = AstNode::new_ref(NodeClass::Document);
     root.with_attr("lang", "rst");
@@ -97,6 +96,9 @@ fn to_yaml_serializes_node_tree_without_parent() {
 }
 
 #[test]
+/// GIVEN nodes and attributes inserted in reverse lexical order
+/// WHEN the tree is serialized to JSON and YAML
+/// THEN node and attribute keys are serialized in lexical order
 fn serializers_preserve_node_and_attribute_key_order() {
     let root = AstNode::new_ref(NodeClass::Document);
     root.with_attr("zeta", "last").with_attr("alpha", "first");
