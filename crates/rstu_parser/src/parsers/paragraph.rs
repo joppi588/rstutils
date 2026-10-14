@@ -29,6 +29,14 @@ pub(crate) fn parse_paragraph_hanging_indent(
             });
         } else if dedent.len() > indent {
             stream.update_at_cursor(" ".repeat(dedent.len() - indent));
+        } else if dedent.len() < indent {
+            return Err(ParserError::DedentToSmall {
+                expected: dedent.len(),
+                found: indent,
+                position: stream.position_at_cursor(),
+            });
+        } else {
+            stream.consume();
         }
     }
     Ok(paragraph)
