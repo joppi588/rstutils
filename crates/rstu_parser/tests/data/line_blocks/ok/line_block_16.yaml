@@ -4,8 +4,7 @@ children:
   children:
   - class: PlainText
     attributes:
-      text: |
-        System messages are no longer inserted between <line>s:
+      text: "System messages are no longer inserted between <line>s:\n"
 - class: BlankLine
 - class: LineBlock
   children:
@@ -19,8 +18,7 @@ children:
           text: uff <test1>
       - class: PlainText
         attributes:
-          text: |2+
-
+          text: "\n"
   - class: Line
     children:
     - class: Paragraph
@@ -31,4 +29,4 @@ children:
           text: uff <test2>
       - class: PlainText
         attributes:
-          text: |2+
+          text: "\n"
