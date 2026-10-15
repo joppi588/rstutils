@@ -159,7 +159,13 @@ impl AstNode {
         Value::Object(obj)
     }
 
-    pub fn to_yaml(node_ref: &NodeRef) -> Result<String, serde_yaml::Error> {
-        serde_yaml::to_string(&Self::to_json(node_ref))
+    pub fn to_yaml(node_ref: &NodeRef) -> Result<String, serde_saphyr::SerializeError> {
+        serde_saphyr::to_string_with_options(
+            &Self::to_json(node_ref),
+            serde_saphyr::ser_options! {
+                no_lang_directive: true,
+                prefer_block_scalars: false,
+            },
+        )
     }
 }
