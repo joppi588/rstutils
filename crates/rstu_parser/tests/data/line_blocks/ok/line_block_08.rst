@@ -4,7 +4,7 @@
 | Not indented
 |   Indented 2 spaces
 |     Indented 4 spaces
-|  Only one space
+|   Indented 2 spaces
 |
 |     Continuation lines may be indented less
   than their base lines.

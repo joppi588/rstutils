@@ -11,7 +11,8 @@ use crate::token_stream::TokenStream;
 pub(crate) fn parse_paragraph_hanging_indent(
     stream: &mut TokenStream,
 ) -> Result<NodeRef, ParserError> {
-    let index_next_line = stream.find_end_of_line() + 1;
+    // TODO: Move this upstream?
+    let index_next_line: usize = stream.find_end_of_line() + 1;
     let indent = match stream.token_at(index_next_line).kind {
         TK::Indent => stream.take_at(index_next_line).len(),
         _ => 0,
@@ -19,7 +20,9 @@ pub(crate) fn parse_paragraph_hanging_indent(
     let paragraph = parse_paragraph(stream)?;
     if indent > 0 {
         paragraph.with_attr("hanging_indent", indent);
+
         let dedent = stream.token_at_cursor();
+        // TODO: Can we reuse this logic somewhere?
         if dedent.kind != TK::Dedent {
             return Err(ParserError::UnexpectedToken {
                 expected: "Dedent".to_string(),
@@ -134,12 +137,19 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
     };
 
     let text = stream
-        .consume_text_until(end_kind_candidates)
+        .consume_text_until(&[end_kind_candidates, TC::PARAGRAPH_END].concat())
         .map_err(|_| ParserError::InlineMissingClosing {
             markup: markup.to_owned(),
             start_at,
             position,
         })?;
+    if !stream.token_at_cursor().kind.is(end_kind_candidates) {
+        return Err(ParserError::InlineMissingClosing {
+            markup: markup.to_owned(),
+            start_at,
+            position,
+        });
+    }
 
     let effective_markup = match (kind, stream.consume().kind) {
         (TK::BackquoteStart, TK::HyperlinkReferenceEnd) => "hyperlink_reference",

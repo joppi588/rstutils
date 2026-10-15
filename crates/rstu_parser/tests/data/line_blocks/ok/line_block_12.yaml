@@ -1,19 +1,19 @@
 class: Document
 children:
 - class: LineBlock
-  attributes:
-    indent: 4
   children:
-  - class: Line
+  - class: LineBlock
+    attributes:
+      indent: 4
     children:
-    - class: Paragraph
+    - class: Line
       children:
-      - class: PlainText
-        attributes:
-          text: |
-            The first line is indented.
-- class: LineBlock
-  children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: |
+              The first line is indented.
   - class: LineBlock
     attributes:
       indent: 2

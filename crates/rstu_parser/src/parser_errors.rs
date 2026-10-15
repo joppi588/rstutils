@@ -45,7 +45,7 @@ pub enum ParserError {
     ListEndError {
         position: Position,
     },
-    ListMissingBlankLineError {},
+    MissingBlankLineError {},
     UnexpectedIndentError {
         position: Position,
     },
@@ -125,7 +125,7 @@ impl std::fmt::Display for ParserError {
                     "{position}: list item is not followed by an indented body"
                 )
             }
-            Self::ListMissingBlankLineError {} => {
+            Self::MissingBlankLineError {} => {
                 write!(formatter, "list is not followed by a blank line")
             }
             Self::UnexpectedIndentError { position } => {

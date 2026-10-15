@@ -21,6 +21,9 @@ This document lists deviations from the rst specification / implementation.
 - Indentation: The first indent defines the block indent, not the smallest.
   Workaround: use empty comments
   see test cases xxx. (TODO)
+- Line blocks:
+  * First indent defines the block indent.
+  * Representation
 
 
 # Interpretations
