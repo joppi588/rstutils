@@ -13,4 +13,5 @@ rstu_ast.workspace = true
 
 [dev-dependencies]
 rstest = "0.24"
-serde_yaml = "0.9"
+serde-saphyr = { version = "2", default-features = false, features = ["deserialize", "serialize"] }
+serde_json = { version = "1", features = ["preserve_order"] }

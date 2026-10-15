@@ -3,36 +3,37 @@
 // SPDX-License-Identifier: MIT
 
 #[allow(dead_code)]
-pub fn yaml_field_order(key: &serde_yaml::Value) -> usize {
+pub fn yaml_field_order(key: &str) -> usize {
     match key {
-        serde_yaml::Value::String(s) if s == "class" => 0,
-        serde_yaml::Value::String(s) if s == "attributes" => 1,
-        serde_yaml::Value::String(s) if s == "children" => 2,
+        "class" => 0,
+        "attributes" => 1,
+        "children" => 2,
         _ => 3,
     }
 }
 
 #[allow(dead_code)]
-pub fn canonicalize_yaml(value: &mut serde_yaml::Value) {
+pub fn canonicalize_yaml(value: &mut serde_json::Value) {
     match value {
-        serde_yaml::Value::Mapping(mapping) => {
-            let mut entries: Vec<(serde_yaml::Value, serde_yaml::Value)> = mapping
-                .iter()
-                .map(|(k, v)| (k.clone(), v.clone()))
-                .collect();
+        serde_json::Value::Object(mapping) => {
+            let mut entries: Vec<(String, serde_json::Value)> =
+                std::mem::take(mapping).into_iter().collect();
 
             for (_, v) in &mut entries {
                 canonicalize_yaml(v);
             }
 
-            entries.sort_by(|(ka, _), (kb, _)| yaml_field_order(ka).cmp(&yaml_field_order(kb)));
+            entries.sort_by(|(ka, _), (kb, _)| {
+                yaml_field_order(ka)
+                    .cmp(&yaml_field_order(kb))
+                    .then_with(|| ka.cmp(kb))
+            });
 
-            mapping.clear();
             for (k, v) in entries {
                 mapping.insert(k, v);
             }
         }
-        serde_yaml::Value::Sequence(seq) => {
+        serde_json::Value::Array(seq) => {
             for item in seq {
                 canonicalize_yaml(item);
             }
@@ -186,18 +187,24 @@ macro_rules! rst_vs_yaml {
         let expected_yaml = std::fs::read_to_string(&expected_path)
             .unwrap_or_else(|_| panic!("failed to read expected yaml fixture: {}", $test_case));
 
-        let mut actual_value: serde_yaml::Value =
-            serde_yaml::from_str(&actual_yaml).expect("failed to parse generated yaml");
-        let mut expected_value: serde_yaml::Value =
-            serde_yaml::from_str(&expected_yaml).expect("failed to parse expected yaml fixture");
+        let mut actual_value: serde_json::Value =
+            serde_saphyr::from_str(&actual_yaml).expect("failed to parse generated yaml");
+        let mut expected_value: serde_json::Value = serde_saphyr::from_str(&expected_yaml)
+            .expect("failed to parse expected yaml fixture");
 
         $crate::test_parser::canonicalize_yaml(&mut actual_value);
         $crate::test_parser::canonicalize_yaml(&mut expected_value);
 
         if actual_value != expected_value {
-            let actual_canonical = serde_yaml::to_string(&actual_value)
+            let actual_canonical = serde_saphyr::to_string_with_options(
+                &actual_value,
+                serde_saphyr::ser_options! { no_lang_directive: true },
+            )
                 .expect("failed to serialize canonical actual yaml");
-            let expected_canonical = serde_yaml::to_string(&expected_value)
+            let expected_canonical = serde_saphyr::to_string_with_options(
+                &expected_value,
+                serde_saphyr::ser_options! { no_lang_directive: true },
+            )
                 .expect("failed to serialize canonical expected yaml");
 
             let diff_line = $crate::test_parser::first_diff_line(&actual_canonical, &expected_canonical).unwrap_or(1);

@@ -73,9 +73,9 @@ fn to_yaml_serializes_node_tree() {
     root.push_child(section);
 
     let yaml_text = AstNode::to_yaml(&root).expect("failed to serialize yaml");
-    let actual: serde_yaml::Value =
-        serde_yaml::from_str(&yaml_text).expect("failed to parse generated yaml");
-    let expected = serde_yaml::to_value(json!({
+    let actual: serde_json::Value =
+        serde_saphyr::from_str(&yaml_text).expect("failed to parse generated yaml");
+    let expected = json!({
         "class": "Document",
         "attributes": { "lang": "rst" },
         "children": [{
@@ -89,8 +89,7 @@ fn to_yaml_serializes_node_tree() {
                 "attributes": { "text": "Heading 1\n" },
             }],
         }],
-    }))
-    .expect("failed to construct expected yaml");
+    });
 
     assert_eq!(actual, expected);
 }
