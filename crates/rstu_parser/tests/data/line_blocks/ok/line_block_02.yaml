@@ -1,0 +1,30 @@
+class: Document
+children:
+- class: LineBlock
+  children:
+  - class: Line
+    children:
+    - class: Paragraph
+      attributes:
+        hanging_indent: 2
+      children:
+      - class: PlainText
+        attributes:
+          text: |
+            Individual lines in line blocks
+      - class: InlineMarkup
+        attributes:
+          markup: emphasis
+          text: may
+      - class: PlainText
+        attributes:
+          text: |2
+             wrap, as indicated by the lack of a vertical bar prefix.
+  - class: Line
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: |
+            These are called "continuation lines".

@@ -1,0 +1,31 @@
+class: Document
+children:
+- class: LineBlock
+  children:
+  - class: Line
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: |
+            In line blocks,
+  - class: LineBlock
+    attributes:
+      indent: 4
+    children:
+    - class: Line
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: 'Initial indentation is '
+        - class: InlineMarkup
+          attributes:
+            markup: emphasis
+            text: also
+        - class: PlainText
+          attributes:
+            text: |2
+               preserved.

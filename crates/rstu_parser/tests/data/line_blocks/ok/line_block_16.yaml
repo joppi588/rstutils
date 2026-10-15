@@ -1,0 +1,32 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "System messages are no longer inserted between <line>s:\n"
+- class: BlankLine
+- class: LineBlock
+  children:
+  - class: Line
+    children:
+    - class: Paragraph
+      children:
+      - class: InlineMarkup
+        attributes:
+          markup: hyperlink_reference
+          text: uff <test1>
+      - class: PlainText
+        attributes:
+          text: "\n"
+  - class: Line
+    children:
+    - class: Paragraph
+      children:
+      - class: InlineMarkup
+        attributes:
+          markup: hyperlink_reference
+          text: uff <test2>
+      - class: PlainText
+        attributes:
+          text: "\n"

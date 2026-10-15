@@ -1,0 +1,9 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: |
+        \| This is not a line block.
+        The vertical bar is simply part of a paragraph.

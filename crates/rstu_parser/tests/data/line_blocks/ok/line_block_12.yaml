@@ -1,0 +1,28 @@
+class: Document
+children:
+- class: LineBlock
+  children:
+  - class: LineBlock
+    attributes:
+      indent: 4
+    children:
+    - class: Line
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: |
+              The first line is indented.
+  - class: LineBlock
+    attributes:
+      indent: 2
+    children:
+    - class: Line
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: |
+              The second line is less indented.

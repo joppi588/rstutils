@@ -1,0 +1,2 @@
+| In line blocks,
+|     Initial indentation is *also* preserved.

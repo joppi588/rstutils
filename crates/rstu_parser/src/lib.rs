@@ -17,6 +17,7 @@ use parsers::block_quote::parse_block_quote;
 use parsers::comments::parse_comment;
 use parsers::definition_list::{is_definition_list_item, parse_definition_list};
 use parsers::directives::parse_directive;
+use parsers::line_block::parse_line_block;
 use parsers::lists::{
     parse_bullet_list, parse_enumerated_list, parse_field_list, parse_option_list,
 };
@@ -120,6 +121,11 @@ fn parse_body_element(
         TK::LiteralBlock | TK::LiteralBlockMinimized | TK::LiteralBlockPartiallyMinimized => {
             let literal_block = parse_literal_block(stream)?;
             current_parent.push_child(literal_block);
+        }
+
+        TK::LineBlock => {
+            let line_block = parse_line_block(stream, 0)?;
+            current_parent.push_child(line_block);
         }
 
         TK::BlankLine if stream.token_at_nextline().kind == TK::Indent => {

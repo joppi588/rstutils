@@ -1,0 +1,49 @@
+class: Document
+children:
+- class: LineBlock
+  children:
+  - class: Line
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: |
+            This is a line block.
+  - class: Line
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: 'Line breaks are '
+      - class: InlineMarkup
+        attributes:
+          markup: emphasis
+          text: preserved
+      - class: PlainText
+        attributes:
+          text: |
+            .
+- class: BlankLine
+- class: LineBlock
+  children:
+  - class: Line
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: |
+            This is a second line block.
+- class: BlankLine
+- class: LineBlock
+  children:
+  - class: Line
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: |
+            This is a third.
