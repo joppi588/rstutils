@@ -38,8 +38,7 @@ Drawback Information leakage:
 The tokenizer and parser share information, e.g. the knowledge that a bullet list marker will be followed by a newline or space. This creates a dependency between the modules, if the lexer is updated, the parser needs to be checked as well. This dependency can sometimes be made explicit by parsing adjacent token pairs rather than single tokens.
 
 4. Token stream
-- In-Place modification introduces some kind of "state", but cursor
-  only moving forward, only unprocessed sections are modified.
+- In place modification introduces some kind of "state", which is usually an anti-pattern.  However, the cursor is only moving forward, and only unprocessed sections are modified. So data is used only once -> acceptable.
 
 5. Parser approach
 Top-down.
