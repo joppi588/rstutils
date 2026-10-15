@@ -8,16 +8,14 @@ children:
       children:
       - class: PlainText
         attributes:
-          text: |
-            Initial indentation is also significant and preserved:
+          text: "Initial indentation is also significant and preserved:\n"
   - class: Line
     children:
     - class: Paragraph
       children:
       - class: PlainText
         attributes:
-          text: |2+
-
+          text: "\n"
   - class: LineBlock
     attributes:
       indent: 4
@@ -28,16 +26,14 @@ children:
         children:
         - class: PlainText
           attributes:
-            text: |
-              Indented 4 spaces
+            text: "Indented 4 spaces\n"
   - class: Line
     children:
     - class: Paragraph
       children:
       - class: PlainText
         attributes:
-          text: |
-            Not indented
+          text: "Not indented\n"
   - class: LineBlock
     attributes:
       indent: 2
@@ -48,8 +44,7 @@ children:
         children:
         - class: PlainText
           attributes:
-            text: |
-              Indented 2 spaces
+            text: "Indented 2 spaces\n"
     - class: LineBlock
       attributes:
         indent: 4
@@ -60,24 +55,21 @@ children:
           children:
           - class: PlainText
             attributes:
-              text: |
-                Indented 4 spaces
+              text: "Indented 4 spaces\n"
     - class: Line
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: |
-              Indented 2 spaces
+            text: "Indented 2 spaces\n"
     - class: Line
       children:
       - class: Paragraph
         children:
         - class: PlainText
           attributes:
-            text: |2+
-
+            text: "\n"
     - class: LineBlock
       attributes:
         indent: 4
@@ -90,6 +82,4 @@ children:
           children:
           - class: PlainText
             attributes:
-              text: |
-                Continuation lines may be indented less
-                than their base lines.
+              text: "Continuation lines may be indented less\nthan their base lines.\n"

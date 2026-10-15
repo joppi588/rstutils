@@ -143,6 +143,7 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
             start_at,
             position,
         })?;
+    // TODO: Duplicate code, see ticket 394
     if !stream.token_at_cursor().kind.is(end_kind_candidates) {
         return Err(ParserError::InlineMissingClosing {
             markup: markup.to_owned(),

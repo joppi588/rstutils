@@ -8,8 +8,7 @@ children:
       children:
       - class: PlainText
         attributes:
-          text: |
-            The blank lines in this block
+          text: "The blank lines in this block\n"
   - class: LineBlock
     attributes:
       indent: 2
@@ -38,5 +37,4 @@ children:
       children:
       - class: PlainText
         attributes:
-          text: |
-            have bogus spaces.
+          text: "have bogus spaces.\n"
