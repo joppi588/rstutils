@@ -1,0 +1,40 @@
+class: Document
+children:
+- class: LineBlock
+  children:
+  - class: Line
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "The blank lines in this block\n"
+  - class: LineBlock
+    attributes:
+      indent: 2
+    children:
+    - class: Line
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: "\n"
+  - class: LineBlock
+    attributes:
+      indent: 1
+    children:
+    - class: Line
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: "\n"
+  - class: Line
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "have bogus spaces.\n"

@@ -1,0 +1,85 @@
+class: Document
+children:
+- class: LineBlock
+  children:
+  - class: Line
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "Initial indentation is also significant and preserved:\n"
+  - class: Line
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "\n"
+  - class: LineBlock
+    attributes:
+      indent: 4
+    children:
+    - class: Line
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: "Indented 4 spaces\n"
+  - class: Line
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "Not indented\n"
+  - class: LineBlock
+    attributes:
+      indent: 2
+    children:
+    - class: Line
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: "Indented 2 spaces\n"
+    - class: LineBlock
+      attributes:
+        indent: 4
+      children:
+      - class: Line
+        children:
+        - class: Paragraph
+          children:
+          - class: PlainText
+            attributes:
+              text: "Indented 4 spaces\n"
+    - class: Line
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: "Indented 2 spaces\n"
+    - class: Line
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: "\n"
+    - class: LineBlock
+      attributes:
+        indent: 4
+      children:
+      - class: Line
+        children:
+        - class: Paragraph
+          attributes:
+            hanging_indent: 2
+          children:
+          - class: PlainText
+            attributes:
+              text: "Continuation lines may be indented less\nthan their base lines.\n"

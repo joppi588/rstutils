@@ -32,7 +32,7 @@ pub(crate) fn parse_definition_list(stream: &mut TokenStream) -> Result<NodeRef,
     {
         return Ok(list);
     }
-    Err(ParserError::ListMissingBlankLineError {})
+    Err(ParserError::MissingBlankLineError {})
 }
 
 fn parse_definition_list_item(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {

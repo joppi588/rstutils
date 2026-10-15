@@ -45,7 +45,7 @@ pub enum ParserError {
     ListEndError {
         position: Position,
     },
-    ListMissingBlankLineError {},
+    MissingBlankLineError {},
     UnexpectedIndentError {
         position: Position,
     },
@@ -62,6 +62,11 @@ pub enum ParserError {
     },
     BlockQuoteMissingBlankLineError {
         position: Position,
+    },
+    DedentToSmall {
+        position: Position,
+        expected: usize,
+        found: usize,
     },
 }
 
@@ -120,7 +125,7 @@ impl std::fmt::Display for ParserError {
                     "{position}: list item is not followed by an indented body"
                 )
             }
-            Self::ListMissingBlankLineError {} => {
+            Self::MissingBlankLineError {} => {
                 write!(formatter, "list is not followed by a blank line")
             }
             Self::UnexpectedIndentError { position } => {
@@ -137,6 +142,16 @@ impl std::fmt::Display for ParserError {
                 write!(
                     formatter,
                     "{position}: block quote is not followed by a blank line"
+                )
+            }
+            Self::DedentToSmall {
+                position,
+                expected,
+                found,
+            } => {
+                write!(
+                    formatter,
+                    "{position}: Expected dedent of {expected}, found {found}"
                 )
             }
         }

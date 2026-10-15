@@ -1,0 +1,31 @@
+class: Document
+children:
+- class: LineBlock
+  children:
+  - class: Line
+    children:
+    - class: Paragraph
+      attributes:
+        hanging_indent: 2
+      children:
+      - class: PlainText
+        attributes:
+          text: 'Inline markup in line blocks may also wrap '
+      - class: InlineMarkup
+        attributes:
+          markup: emphasis
+          text: |-
+            to
+            continuation lines
+      - class: PlainText
+        attributes:
+          text: |
+            .
+  - class: Line
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: |
+            But not to following lines.

@@ -1,0 +1,18 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: |
+        This is not
+- class: LineBlock
+  children:
+  - class: Line
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: |
+            a line block.
