@@ -23,7 +23,7 @@ This document lists deviations from the rst specification / implementation.
   see test cases xxx. (TODO)
 - Line blocks:
   * First indent defines the block indent.
-  * Representation
+  * Representation: The first line is a direct child of the line block, even if nested line blocks follow.
 
 
 # Interpretations
