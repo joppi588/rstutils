@@ -33,11 +33,10 @@ pub(crate) fn parse_literal_block(stream: &mut TokenStream) -> Result<NodeRef, P
     };
     block.with_attr("type", format!("{literal_block_type:?}"));
     stream.consume_newline();
-    let blank_line_position = stream.position_at_cursor();
     if stream.consume().kind != TK::BlankLine {
         return Err(ParserError::LiteralBlockError {
             message: "literal block requires a blank line".to_owned(),
-            position: blank_line_position,
+            position: stream.position_at_cursor(),
         });
     }
     if stream.token_at_cursor().kind == TK::Indent {

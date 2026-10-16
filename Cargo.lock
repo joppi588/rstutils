@@ -402,7 +402,7 @@ dependencies = [
 
 [[package]]
 name = "rstu"
-version = "0.0.1"
+version = "0.0.2"
 dependencies = [
  "clap",
  "rstu_ast",
@@ -412,7 +412,7 @@ dependencies = [
 
 [[package]]
 name = "rstu_ast"
-version = "0.0.1"
+version = "0.0.2"
 dependencies = [
  "serde",
  "serde-saphyr",
@@ -421,7 +421,7 @@ dependencies = [
 
 [[package]]
 name = "rstu_doctree"
-version = "0.0.1"
+version = "0.0.2"
 dependencies = [
  "serde",
  "serde_json",
@@ -429,7 +429,7 @@ dependencies = [
 
 [[package]]
 name = "rstu_parser"
-version = "0.0.1"
+version = "0.0.2"
 dependencies = [
  "regex",
  "rstest",

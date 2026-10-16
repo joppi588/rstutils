@@ -1,0 +1,56 @@
+class: Document
+children:
+- class: FieldList
+  children:
+  - class: FieldListItem
+    attributes:
+      fieldname: url
+    children:
+    - class: Block
+      attributes:
+        indent: 6
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: "http://waste.paper.com/bin2/shreddered\n"
+  - class: FieldListItem
+    attributes:
+      fieldname: script
+    children:
+    - class: Block
+      attributes:
+        indent: 9
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: "tests/python_script.py\n"
+  - class: FieldListItem
+    attributes:
+      fieldname: code_reference
+    children:
+    - class: Block
+      attributes:
+        indent: 17
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: "test_python_script::Line1\n"
+  - class: FieldListItem
+    attributes:
+      fieldname: json
+    children:
+    - class: Block
+      attributes:
+        indent: 7
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: "{test: [name],test_data: [tests/data/file1.dat,tests/data_file2.dat]}\n"

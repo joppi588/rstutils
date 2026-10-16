@@ -174,7 +174,7 @@ macro_rules! rst_vs_yaml {
             .join($directory)
             .join(format!("{}.rst", $test_case));
         let rst_contents = std::fs::read_to_string(&rst_path)
-            .unwrap_or_else(|_| panic!("failed to read sections test file: {}", $test_case));
+            .unwrap_or_else(|_| panic!("failed to read test file: {}", $test_case));
 
         let parsed = rstu_parser::parse(&rst_contents).expect("expected parse to succeed");
         let actual_yaml =

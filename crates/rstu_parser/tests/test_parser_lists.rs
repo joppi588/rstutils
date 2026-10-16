@@ -114,6 +114,7 @@ fn rejects_docutils_enumerated_list_errors(#[case] rst_filename: &str) {
 #[case("nested_one_line")]
 #[case("field_list")]
 #[case("oneliners_no_blank")]
+#[case("complex_field_bodies")]
 // TODO: NOT IMPLEMENTED:
 // #[case("inline_markup_in_name")]
 // #[case("bad_inline_markup")]
