@@ -13,6 +13,7 @@ struct Cli {
 
 #[derive(Subcommand, Debug)]
 enum Commands {
+    Version,
     Check {
         file: String,
     },
@@ -38,6 +39,9 @@ fn main() {
     let cli = Cli::parse();
 
     match cli.command {
+        Commands::Version => {
+            println!("rstu {}", env!("CARGO_PKG_VERSION"));
+        }
         Commands::Check { file } => {
             println!("Subcommand check, option file={file}");
         }
