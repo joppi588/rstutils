@@ -11,27 +11,23 @@ pub enum ParserError {
         token_count: usize,
     },
     SectionTitleMissingClosingAfterOpening {
-        opening_index: usize,
         position: Position,
     },
     SectionTitleUnbalancedStyle {
-        opening_index: usize,
         opening_style: String,
         closing_style: String,
         position: Position,
     },
     InvalidPlainText {
-        start_at: usize,
+        position: Position,
     },
     UnexpectedToken {
         expected: String,
         found: String,
-        index: usize,
         position: Position,
     },
     InlineMissingClosing {
         markup: String,
-        start_at: usize,
         position: Position,
     },
     ListMarkerError {
@@ -95,8 +91,8 @@ impl std::fmt::Display for ParserError {
                 formatter,
                 "{position}: section underline {closing_style:?} does not match overline {opening_style:?}"
             ),
-            Self::InvalidPlainText { start_at } => {
-                write!(formatter, "invalid plain text at token {start_at}")
+            Self::InvalidPlainText { position } => {
+                write!(formatter, "invalid plain text at position {position}.")
             }
             Self::UnexpectedToken {
                 expected,
@@ -108,7 +104,7 @@ impl std::fmt::Display for ParserError {
                 markup, position, ..
             } => write!(
                 formatter,
-                "{position}: inline {markup} markup is not closed"
+                "{position}: inline {markup} markup is not closed."
             ),
             Self::ListMarkerError { marker } => write!(formatter, "invalid list marker {marker:?}"),
             Self::ListStyleError {
