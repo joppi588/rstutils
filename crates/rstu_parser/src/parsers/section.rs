@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Jochen Schmaehling <tostmann1@web.de>
 //
 // SPDX-License-Identifier: MIT
-use crate::parser_errors::{ParserError, EXPECT_NEWLINE};
+use crate::parser_errors::ParserError;
 use crate::token::TokenKind as TK;
 use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
@@ -19,12 +19,7 @@ pub fn parse_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserE
         stream.consume_newline();
     }
     let title = AstNode::new_ref(NodeClass::Title);
-    title.with_attr(
-        "text",
-        stream
-            .consume_text_until(&[TK::NewLine])
-            .expect(EXPECT_NEWLINE),
-    );
+    title.with_attr("text", stream.consume_text_until_newline());
     section.push_child(title);
     stream.consume_newline();
 

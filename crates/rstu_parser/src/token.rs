@@ -137,7 +137,7 @@ impl TokenCategory {
         TokenKind::EoF,
     ];
 
-    pub const NEWLINE: &'static [TokenKind] = &[
+    pub const EOL: &'static [TokenKind] = &[
         TokenKind::BlankLine,
         TokenKind::EoF,
         TokenKind::LiteralBlock,

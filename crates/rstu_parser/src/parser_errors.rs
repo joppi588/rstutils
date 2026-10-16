@@ -153,7 +153,3 @@ impl std::fmt::Display for ParserError {
         }
     }
 }
-
-impl std::error::Error for ParserError {}
-
-pub(crate) static EXPECT_NEWLINE: &str = "There is at least one newline at the end of tokens.";
