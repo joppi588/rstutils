@@ -27,7 +27,6 @@ pub(crate) fn parse_paragraph_hanging_indent(
             return Err(ParserError::UnexpectedToken {
                 expected: "Dedent".to_string(),
                 found: format!("{:?}", dedent.kind),
-                index: stream.cursor(),
                 position: stream.position_at_cursor(),
             });
         } else if dedent.len() > indent {
@@ -103,7 +102,6 @@ pub(crate) fn parse_inline_token(stream: &mut TokenStream) -> Result<NodeRef, Pa
             return Err(ParserError::UnexpectedToken {
                 expected: "Reference token".to_owned(),
                 found: format!("{:?}", kind),
-                index: stream.cursor(),
                 position,
             });
         }
@@ -114,7 +112,6 @@ pub(crate) fn parse_inline_token(stream: &mut TokenStream) -> Result<NodeRef, Pa
 pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert!(stream.token_at_cursor().kind.is(TC::INLINE_MARKER));
 
-    let start_at = stream.cursor();
     let position = stream.position_at_cursor();
     let kind = stream.consume().kind;
     let (markup, end_kind_candidates): (&str, &[TK]) = match kind {
@@ -130,7 +127,6 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
             return Err(ParserError::UnexpectedToken {
                 expected: "Inline start token".to_owned(),
                 found: format!("{:?}", kind),
-                index: start_at,
                 position,
             });
         }
@@ -140,14 +136,12 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
         .consume_text_until(&[end_kind_candidates, TC::PARAGRAPH_END].concat())
         .map_err(|_| ParserError::InlineMissingClosing {
             markup: markup.to_owned(),
-            start_at,
             position,
         })?;
     // TODO: Duplicate code, see ticket 394
     if !stream.token_at_cursor().kind.is(end_kind_candidates) {
         return Err(ParserError::InlineMissingClosing {
             markup: markup.to_owned(),
-            start_at,
             position,
         });
     }

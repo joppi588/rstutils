@@ -48,7 +48,6 @@ pub(crate) fn parse_line_block(
                 return Err(ParserError::UnexpectedToken {
                     expected: "Indent, Blankline, LineBlock".to_owned(),
                     found: format!("{:?}", kind),
-                    index: index_next_line,
                     position: stream.position_at(index_next_line),
                 });
             }
