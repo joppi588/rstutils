@@ -84,14 +84,18 @@ impl TokenStream {
         self.position_at(self.cursor)
     }
 
-    pub fn consume_text_until(&mut self, kinds: &[TokenKind]) -> Result<String, TokenSliceError> {
-        let found = self.find_next_kind(kinds)?;
+    pub fn consume_text_until(&mut self, kinds: &[TokenKind]) -> String {
+        let found = self.find_next_kind(kinds).unwrap_or(self.tokens.len());
         let mut text = String::new();
         for (token, _) in &self.tokens[self.cursor.min(found)..found] {
             text.push_str(&token.lexeme);
         }
         self.cursor = found;
-        Ok(text)
+        text
+    }
+
+    pub fn consume_text_until_newline(&mut self) -> String {
+        self.consume_text_until(&[TokenKind::NewLine])
     }
 
     // TODO: Remove
@@ -118,7 +122,7 @@ impl TokenStream {
     }
 
     pub fn find_end_of_line(&self) -> usize {
-        self.find_next_kind(TokenCategory::NEWLINE)
+        self.find_next_kind(TokenCategory::EOL)
             .unwrap_or(self.tokens.len())
     }
 

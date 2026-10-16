@@ -1,46 +1,46 @@
 class: Document
 children:
-- class: Paragraph
-  children:
-  - class: PlainText
-    attributes:
-      text: |
-        Here is a paragraph.
-- class: BlockQuote
-  children:
-  - class: BlankLine
-  - class: Block
-    attributes:
-      indent: 4
+  - class: Paragraph
     children:
-    - class: Comment
-      attributes:
-        text: ''
-    - class: BlockQuote
-      children:
+      - class: PlainText
+        attributes:
+          text: |
+            Here is a paragraph.
+  - class: BlockQuote
+    children:
       - class: BlankLine
       - class: Block
         attributes:
           indent: 4
         children:
-        - class: Paragraph
-          children:
-          - class: PlainText
+          - class: Comment
             attributes:
-              text: |
-                Indent 8 spaces.
-    - class: BlankLine
-    - class: Paragraph
-      children:
+              text: "\n"
+          - class: BlockQuote
+            children:
+              - class: BlankLine
+              - class: Block
+                attributes:
+                  indent: 4
+                children:
+                  - class: Paragraph
+                    children:
+                      - class: PlainText
+                        attributes:
+                          text: |
+                            Indent 8 spaces.
+          - class: BlankLine
+          - class: Paragraph
+            children:
+              - class: PlainText
+                attributes:
+                  text: |
+                    Indent 4 spaces.
+  - class: BlankLine
+  - class: Paragraph
+    children:
       - class: PlainText
         attributes:
           text: |
-            Indent 4 spaces.
-- class: BlankLine
-- class: Paragraph
-  children:
-  - class: PlainText
-    attributes:
-      text: |
-        This will generate a nested block quote, with the first paragraph
-        nested deeper than the second.
+            This will generate a nested block quote, with the first paragraph
+            nested deeper than the second.

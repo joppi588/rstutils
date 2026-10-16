@@ -132,13 +132,7 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
         }
     };
 
-    let text = stream
-        .consume_text_until(&[end_kind_candidates, TC::PARAGRAPH_END].concat())
-        .map_err(|_| ParserError::InlineMissingClosing {
-            markup: markup.to_owned(),
-            position,
-        })?;
-    // TODO: Duplicate code, see ticket 394
+    let text = stream.consume_text_until(&[end_kind_candidates, TC::PARAGRAPH_END].concat());
     if !stream.token_at_cursor().kind.is(end_kind_candidates) {
         return Err(ParserError::InlineMissingClosing {
             markup: markup.to_owned(),
