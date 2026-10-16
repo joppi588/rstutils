@@ -229,9 +229,9 @@ impl TokenKind {
         (LineBlock,r"\n\|(?: +[^ ]|\n)"),
 
         // Literal block
-        (LiteralBlockMinimized, r"[^\s\t]::(.|\n)"),
-        (LiteralBlockPartiallyMinimized, r".\s::(.|\n)"),
-        (LiteralBlock, r"(.|\n)::(.|\n)"),
+        (LiteralBlockMinimized, r"[^\s]::\n"),
+        (LiteralBlockPartiallyMinimized, r". ::\n"),
+        (LiteralBlock, r"\s::\n"),
 
         (TableHorizontal, r"\n=+(?:\s+=+)+\s*\n"),
 
@@ -517,12 +517,12 @@ mod tests {
 
     #[test]
     fn literal_block_matches() {
-        assert_eq!(TK::LiteralBlock.find_lexeme("e::\nt"), Some("::"));
+        assert_eq!(TK::LiteralBlockMinimized.find_lexeme("e::\nt"), Some("::"));
     }
 
     #[test]
     fn literal_block_rejects_non_matching_text() {
-        assert_eq!(TK::LiteralBlock.find_lexeme("e:\n"), None);
+        assert_eq!(TK::LiteralBlockMinimized.find_lexeme("e:\n"), None);
     }
 
     #[test]
