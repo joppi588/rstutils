@@ -224,7 +224,7 @@ impl TokenKind {
         (Directive, r"[\n\s]\.\.\s(?:\|[^|\n]+\|\s)?[\p{L}\p{N}]+(?:[-_+:.][\p{L}\p{N}]+)*::\s"),
 
         // Comments
-        (DoubleDot, r"[\n\s]\.\.[\n\s]"),
+        (DoubleDot, r"\s\.\. *\s"),
 
         (LineBlock,r"\n\|(?: +[^ ]|\n)"),
 
