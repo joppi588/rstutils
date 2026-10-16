@@ -4,27 +4,20 @@
 
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
-use crate::parser_errors::{ParserError, EXPECT_NEWLINE};
+use crate::parser_errors::ParserError;
 use crate::token::TokenKind as TK;
 use crate::token_stream::TokenStream;
 use std::debug_assert_matches;
 
 pub(crate) fn parse_comment(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert_matches!(stream.token_at_cursor().kind, TK::DoubleDot);
-
-    stream.consume(); // Comment marker
     let comment = AstNode::new_ref(NodeClass::Comment);
 
-    // TODO: move this into the loop, match token and next line token?
+    stream.consume(); // Comment marker
     if stream.token_at_cursor().kind == TK::Spaces {
         stream.consume();
     }
-    let mut text = stream
-        .consume_text_until(&[TK::NewLine])
-        .expect(EXPECT_NEWLINE);
-    if text != "" {
-        text.push_str(&stream.token_at_cursor().lexeme);
-    }
+    let mut text = stream.consume_text_until_newline() + "\n";
     stream.consume_newline();
 
     if stream.token_at_cursor().kind == TK::Indent {

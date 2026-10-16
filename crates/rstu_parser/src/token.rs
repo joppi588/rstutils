@@ -137,7 +137,7 @@ impl TokenCategory {
         TokenKind::EoF,
     ];
 
-    pub const NEWLINE: &'static [TokenKind] = &[
+    pub const EOL: &'static [TokenKind] = &[
         TokenKind::BlankLine,
         TokenKind::EoF,
         TokenKind::LiteralBlock,
@@ -224,7 +224,7 @@ impl TokenKind {
         (Directive, r"[\n\s]\.\.\s(?:\|[^|\n]+\|\s)?[\p{L}\p{N}]+(?:[-_+:.][\p{L}\p{N}]+)*::\s"),
 
         // Comments
-        (DoubleDot, r"[\n\s]\.\.[\n\s]"),
+        (DoubleDot, r"\s\.\. *\s"),
 
         (LineBlock,r"\n\|(?: +[^ ]|\n)"),
 
