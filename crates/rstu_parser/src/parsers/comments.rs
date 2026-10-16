@@ -20,6 +20,9 @@ pub(crate) fn parse_comment(stream: &mut TokenStream) -> Result<NodeRef, ParserE
         stream.consume();
     }
     let mut text = stream.consume_text_until_newline();
+    if text != "" {
+        text.push_str(&stream.token_at_cursor().lexeme);
+    }
     stream.consume_newline();
 
     if stream.token_at_cursor().kind == TK::Indent {
