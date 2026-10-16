@@ -95,11 +95,6 @@ impl TokenStream {
     }
 
     // TODO: Remove
-    pub fn cursor(&self) -> usize {
-        self.cursor
-    }
-
-    // TODO: Remove
     /// Panic-free lookahead by absolute index, treating out-of-bounds reads as a synthetic `EoF` token.
     pub fn token_at(&self, index: usize) -> Token {
         self.tokens
@@ -240,13 +235,13 @@ mod tests {
             TokenStream::from_pairs(&[(TokenKind::Word, "title"), (TokenKind::NewLine, "\n")]);
 
         assert_eq!(stream.consume(), Token::new(TokenKind::Word, "title"));
-        assert_eq!(stream.cursor(), 1);
+        assert_eq!(stream.cursor, 1);
         assert_eq!(stream.consume(), Token::new(TokenKind::NewLine, "\n"));
-        assert_eq!(stream.cursor(), 2);
+        assert_eq!(stream.cursor, 2);
 
         // Consuming past the end yields a synthetic EoF token.
         assert_eq!(stream.consume(), Token::new(TokenKind::EoF, ""));
-        assert_eq!(stream.cursor(), 3);
+        assert_eq!(stream.cursor, 3);
     }
 
     /// GIVEN text with newlines and multibyte characters
