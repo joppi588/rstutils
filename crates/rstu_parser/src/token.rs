@@ -225,7 +225,7 @@ impl TokenKind {
 
         (Directive, r"[\n\s]\.\.\s(?:\|[^|\n]+\|\s)?[\p{L}\p{N}]+(?:[-_+:.][\p{L}\p{N}]+)*::\s"),
 
-        (DoctestStart, r"[\n ]>>>[ \n]"),
+        (DoctestStart, r"\s>>>\s"),
 
         // Comments
         (DoubleDot, r"\s\.\. *\s"),
