@@ -1,0 +1,19 @@
+class: Document
+children:
+  - class: Paragraph
+    children:
+      - class: PlainText
+        attributes:
+          text: "Paragraph.\n"
+  - class: BlankLine
+  - class: DoctestBlock
+    attributes:
+      text: |
+        >>> print("Doctest block.")
+        Doctest block.
+  - class: BlankLine
+  - class: Paragraph
+    children:
+      - class: PlainText
+        attributes:
+          text: "Paragraph.\n"

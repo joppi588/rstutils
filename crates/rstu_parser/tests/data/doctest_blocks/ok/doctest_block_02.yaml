@@ -1,0 +1,19 @@
+class: Document
+children:
+  - class: Paragraph
+    children:
+      - class: PlainText
+        attributes:
+          text: "Paragraph.\n"
+  - class: BlockQuote
+    children:
+      - class: BlankLine
+      - class: Block
+        attributes:
+          indent: 4
+        children:
+          - class: DoctestBlock
+            attributes:
+              text: |
+                >>> print("    Indented block & output.")
+                    Indented block & output.

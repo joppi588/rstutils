@@ -6,6 +6,7 @@ pub(crate) mod block_quote;
 pub(crate) mod comments;
 pub(crate) mod definition_list;
 pub(crate) mod directives;
+pub(crate) mod doctest_block;
 pub(crate) mod line_block;
 pub(crate) mod lists;
 pub(crate) mod literal_block;

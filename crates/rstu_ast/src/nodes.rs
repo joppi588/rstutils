@@ -18,6 +18,7 @@ pub enum NodeClass {
     DefinitionList,
     DefinitionListItem,
     Directive,
+    DoctestBlock,
     Document,
     EnumeratedList,
     EnumeratedListItem,
