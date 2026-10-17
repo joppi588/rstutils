@@ -17,6 +17,7 @@ use parsers::block_quote::parse_block_quote;
 use parsers::comments::parse_comment;
 use parsers::definition_list::{is_definition_list_item, parse_definition_list};
 use parsers::directives::parse_directive;
+use parsers::doctest_block::parse_doctest_block;
 use parsers::line_block::parse_line_block;
 use parsers::lists::{
     parse_bullet_list, parse_enumerated_list, parse_field_list, parse_option_list,
@@ -86,6 +87,11 @@ fn parse_body_element(
         TK::Directive => {
             let directive = parse_directive(stream)?;
             current_parent.push_child(directive);
+        }
+
+        TK::DoctestStart => {
+            let doctest_block = parse_doctest_block(stream)?;
+            current_parent.push_child(doctest_block);
         }
 
         TK::DoubleDot => {

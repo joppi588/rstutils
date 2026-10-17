@@ -1,0 +1,13 @@
+class: Document
+children:
+  - class: Paragraph
+    children:
+      - class: PlainText
+        attributes:
+          text: "Paragraph.\n"
+  - class: BlankLine
+  - class: DoctestBlock
+    attributes:
+      text: |
+        >>> print("    Indented output.")
+            Indented output.
