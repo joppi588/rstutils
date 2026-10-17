@@ -58,12 +58,6 @@ macro_rules! token_kinds {
     };
 }
 
-macro_rules! is_token_category {
-    ($cat:expr) => {
-        |kind: &TokenKind| -> bool { $cat.iter().any(|inner_cat| inner_cat.contains(kind)) }
-    };
-}
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Token {
     pub kind: TokenKind,
@@ -102,42 +96,21 @@ impl Token {
 pub struct TokenCategory;
 
 impl TokenCategory {
-    pub const INLINE_MARKER: &'static [TokenKind] = &[
-        TokenKind::StrongStart,
-        TokenKind::EmphasisStart,
-        TokenKind::InlineLiteralStart,
+    pub const DEFINITION_LIST: &'static [TokenKind] = &[
         TokenKind::BackquoteStart,
-        TokenKind::InlineInternalTargetStart,
-    ];
-    pub const INLINE_TOKEN: &'static [TokenKind] = &[
-        TokenKind::SubstitutionReference,
-        TokenKind::FootnoteReference,
-        TokenKind::SimpleHyperlinkReference,
-        TokenKind::SimpleAnonymousHyperLinkReference,
-    ];
-    pub const STRUCTURAL: &'static [TokenKind] = &[TokenKind::Separator];
-    pub const PLAIN: &'static [TokenKind] = &[
-        TokenKind::Spaces,
-        TokenKind::Word,
+        TokenKind::EmphasisStart,
         TokenKind::EscapedChar,
-        TokenKind::Punctuation,
+        TokenKind::FootnoteReference,
+        TokenKind::InlineInternalTargetStart,
+        TokenKind::InlineLiteralStart,
         TokenKind::LiteralChar,
-        TokenKind::NewLine,
-        TokenKind::DoctestStart,
+        TokenKind::Punctuation,
+        TokenKind::SimpleAnonymousHyperLinkReference,
+        TokenKind::SimpleHyperlinkReference,
+        TokenKind::StrongStart,
+        TokenKind::SubstitutionReference,
+        TokenKind::Word,
     ];
-
-    pub const PARAGRAPH_END: &'static [TokenKind] = &[
-        TokenKind::BlankLine,
-        TokenKind::Separator,
-        TokenKind::Indent,
-        TokenKind::Dedent,
-        TokenKind::LineBlock,
-        TokenKind::LiteralBlock,
-        TokenKind::LiteralBlockMinimized,
-        TokenKind::LiteralBlockPartiallyMinimized,
-        TokenKind::EoF,
-    ];
-
     pub const EOL: &'static [TokenKind] = &[
         TokenKind::BlankLine,
         TokenKind::EoF,
@@ -147,6 +120,20 @@ impl TokenCategory {
         TokenKind::NewLine,
     ];
 
+    pub const INLINE_MARKER: &'static [TokenKind] = &[
+        TokenKind::BackquoteStart,
+        TokenKind::EmphasisStart,
+        TokenKind::InlineInternalTargetStart,
+        TokenKind::InlineLiteralStart,
+        TokenKind::StrongStart,
+    ];
+    pub const INLINE_TOKEN: &'static [TokenKind] = &[
+        TokenKind::FootnoteReference,
+        TokenKind::SimpleAnonymousHyperLinkReference,
+        TokenKind::SimpleHyperlinkReference,
+        TokenKind::SubstitutionReference,
+    ];
+
     pub const LIST_MARKER: &'static [TokenKind] = &[
         TokenKind::BulletListMarker,
         TokenKind::EnumeratedListMarker,
@@ -154,17 +141,32 @@ impl TokenCategory {
         TokenKind::Option,
     ];
 
+    pub const PARAGRAPH_END: &'static [TokenKind] = &[
+        TokenKind::BlankLine,
+        TokenKind::Dedent,
+        TokenKind::EoF,
+        TokenKind::Indent,
+        TokenKind::LineBlock,
+        TokenKind::LiteralBlock,
+        TokenKind::LiteralBlockMinimized,
+        TokenKind::LiteralBlockPartiallyMinimized,
+        TokenKind::Separator,
+    ];
+    pub const PLAIN: &'static [TokenKind] = &[
+        TokenKind::DoctestStart,
+        TokenKind::EscapedChar,
+        TokenKind::LiteralChar,
+        TokenKind::NewLine,
+        TokenKind::Punctuation,
+        TokenKind::Spaces,
+        TokenKind::Word,
+    ];
+
     pub const OPTION_MARKER: &'static [TokenKind] = &[TokenKind::Option];
 
+    pub const STRUCTURAL: &'static [TokenKind] = &[TokenKind::Separator];
+
     pub const TABLE: &'static [TokenKind] = &[TokenKind::TableHorizontal];
-
-    // nested categories
-
-    pub const PARAGRAPH: &'static [&[TokenKind]] = &[
-        TokenCategory::INLINE_MARKER,
-        TokenCategory::INLINE_TOKEN,
-        TokenCategory::PLAIN,
-    ];
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -283,10 +285,6 @@ impl TokenKind {
 
     pub fn is(self, kinds: &[TokenKind]) -> bool {
         kinds.contains(&self)
-    }
-
-    pub fn nested_is(self, categories: &[&'static [TokenKind]]) -> bool {
-        is_token_category!(categories)(&self)
     }
 
     pub fn match_token(input: &str) -> Option<(Self, &str)> {
