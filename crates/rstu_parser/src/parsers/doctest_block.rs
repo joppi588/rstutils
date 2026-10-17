@@ -26,6 +26,8 @@ pub(crate) fn parse_doctest_block(stream: &mut TokenStream) -> Result<NodeRef, P
             TK::Dedent => {
                 let dedent = stream.token_at_cursor().len();
                 if dedent > rel_indent {
+                    // Only reachable in block quote/definition list context
+                    // Will cause an upstream error.
                     stream.update_at_cursor(space!(dedent - rel_indent));
                     break;
                 }
