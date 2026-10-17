@@ -5,6 +5,20 @@
 use crate::token::{Token, TokenKind as TK};
 use crate::token_stream::{Position, TokenStream};
 
+fn push_dedent(
+    tokens: &mut Vec<(Token, Position)>,
+    width: usize,
+    position: Position,
+    last_token_kind: TK,
+) {
+    let dedent_token = (Token::dedent(width), position);
+    if last_token_kind == TK::BlankLine {
+        tokens.insert(tokens.len() - 1, dedent_token);
+    } else {
+        tokens.push(dedent_token);
+    }
+}
+
 pub fn tokenize(input: &str) -> TokenStream {
     let input = format!("\n{input}\n"); // leading blank line
     let mut tokens: Vec<(Token, Position)> = Vec::new();
@@ -27,24 +41,19 @@ pub fn tokenize(input: &str) -> TokenStream {
                     let indent_token = Token::indent(new_indent - current_indent);
                     tokens.push((indent_token, position));
                 } else if new_indent < current_indent {
-                    let dedent_token = (Token::dedent(current_indent - new_indent), position);
-                    if last_token_kind == TK::BlankLine {
-                        tokens.insert(tokens.len() - 1, dedent_token);
-                    } else {
-                        tokens.push(dedent_token);
-                    }
+                    push_dedent(
+                        &mut tokens,
+                        current_indent - new_indent,
+                        position,
+                        last_token_kind,
+                    );
                 }
                 current_indent = new_indent;
             }
             (_, TK::NewLine | TK::BlankLine) => {
                 // Not indented
                 if current_indent > 0 {
-                    let dedent_token = (Token::dedent(current_indent), position);
-                    if last_token_kind == TK::BlankLine {
-                        tokens.insert(tokens.len() - 1, dedent_token);
-                    } else {
-                        tokens.push(dedent_token);
-                    }
+                    push_dedent(&mut tokens, current_indent, position, last_token_kind);
                 }
                 current_indent = 0;
                 tokens.push(new_token);
