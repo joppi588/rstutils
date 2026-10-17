@@ -4,7 +4,7 @@ This document lists deviations from the rst specification / implementation.
 - Allowed section/transition markers: restrict to the "recommended" set.
 - Minimum length for section header marker: 4 chars (tbc)
 - character_level_inline_markup = False
-- Field names only allow A-Za-z0-9_
+- Field names only allow [A-Za-z0-9_ ]
   Rationale: Field names are like identifiers.
 - Bullet list:
   Indentation must align with the last paragraph

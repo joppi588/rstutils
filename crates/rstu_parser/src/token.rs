@@ -267,7 +267,7 @@ impl TokenKind {
         (ClassifierSeparator,r"(.|\n)\s+:\s+(.|\n)"),
 
         // Lists
-        (Field,r"[\n\s]:[\w\s]+:[\n\s]"),
+        (Field,r"\s:[[:word:] ]+:\s"),
         (EnumeratedListMarker, r"[\n\s](?:(?:#|[0-9]+|[A-Za-z]+|[IVXLCDMivxlcdm]+)(?:\.|\))[ \t]|\([A-Za-z0-9]+\)[ \t])"),
         (BulletListMarker, r"(\s|\n)[\-\+\*•‣⁃](\s|\n)"),
         (Option, OPTION),
