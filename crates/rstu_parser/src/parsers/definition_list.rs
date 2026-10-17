@@ -10,8 +10,7 @@ use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 pub(crate) fn is_definition_list_item(stream: &TokenStream) -> bool {
-    return stream.token_at_cursor().kind.nested_is(TC::PARAGRAPH)
-        && stream.token_at_cursor().kind != TK::NewLine
+    return stream.token_at_cursor().kind.is(TC::DEFINITION_LIST)
         && stream.token_at_nextline().kind == TK::Indent;
 }
 
