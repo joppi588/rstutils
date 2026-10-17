@@ -123,6 +123,7 @@ impl TokenCategory {
         TokenKind::Punctuation,
         TokenKind::LiteralChar,
         TokenKind::NewLine,
+        TokenKind::DoctestStart,
     ];
 
     pub const PARAGRAPH_END: &'static [TokenKind] = &[
@@ -176,6 +177,7 @@ pub enum TokenKind {
     ClassifierSeparator,
     Dedent,
     Directive,
+    DoctestStart,
     DoubleDot,
     EmphasisEnd,
     EmphasisStart,
@@ -222,6 +224,8 @@ impl TokenKind {
         (NewLine, r"[^\n]\n(.|\n)"),
 
         (Directive, r"[\n\s]\.\.\s(?:\|[^|\n]+\|\s)?[\p{L}\p{N}]+(?:[-_+:.][\p{L}\p{N}]+)*::\s"),
+
+        (DoctestStart, r"[\n ]>>>[ \n]"),
 
         // Comments
         (DoubleDot, r"\s\.\. *\s"),
@@ -305,6 +309,22 @@ impl TokenKind {
 mod tests {
     use super::{Token, TokenCategory, TokenKind as TK};
     use rstest::rstest;
+
+    #[rstest]
+    #[case("\n>>> x")]
+    #[case(" >>> x")]
+    #[case("\n>>>\n")]
+    fn doctest_start_matches(#[case] input: &str) {
+        assert_eq!(TK::DoctestStart.find_lexeme(input), Some(">>>"));
+    }
+
+    #[rstest]
+    #[case("\n>>>x")]
+    #[case("\n>> x")]
+    #[case("a>>> x")]
+    fn doctest_start_rejects_non_matching_text(#[case] input: &str) {
+        assert_eq!(TK::DoctestStart.find_lexeme(input), None);
+    }
 
     #[test]
     fn line_block() {
