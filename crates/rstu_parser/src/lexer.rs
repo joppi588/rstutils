@@ -5,17 +5,22 @@
 use crate::token::{Token, TokenKind as TK};
 use crate::token_stream::{Position, TokenStream};
 
-fn push_dedent(
+fn push_indentation_change(
     tokens: &mut Vec<(Token, Position)>,
-    width: usize,
+    new_indent: usize,
+    current_indent: usize,
     position: Position,
     last_token_kind: TK,
 ) {
-    let dedent_token = (Token::dedent(width), position);
-    if last_token_kind == TK::BlankLine {
-        tokens.insert(tokens.len() - 1, dedent_token);
-    } else {
-        tokens.push(dedent_token);
+    if new_indent > current_indent {
+        tokens.push((Token::indent(new_indent - current_indent), position));
+    } else if new_indent < current_indent {
+        let dedent_token = (Token::dedent(current_indent - new_indent), position);
+        if last_token_kind == TK::BlankLine {
+            tokens.insert(tokens.len() - 1, dedent_token);
+        } else {
+            tokens.push(dedent_token);
+        }
     }
 }
 
@@ -37,25 +42,26 @@ pub fn tokenize(input: &str) -> TokenStream {
             (TK::BlankLine, _) => tokens.push(new_token),
             (TK::Indent, _) => {
                 let new_indent = lexeme.len();
-                if new_indent > current_indent {
-                    let indent_token = Token::indent(new_indent - current_indent);
-                    tokens.push((indent_token, position));
-                } else if new_indent < current_indent {
-                    push_dedent(
-                        &mut tokens,
-                        current_indent - new_indent,
-                        position,
-                        last_token_kind,
-                    );
-                }
+                push_indentation_change(
+                    &mut tokens,
+                    new_indent,
+                    current_indent,
+                    position,
+                    last_token_kind,
+                );
                 current_indent = new_indent;
             }
             (_, TK::NewLine | TK::BlankLine) => {
                 // Not indented
-                if current_indent > 0 {
-                    push_dedent(&mut tokens, current_indent, position, last_token_kind);
-                }
-                current_indent = 0;
+                let new_indent: usize = 0;
+                push_indentation_change(
+                    &mut tokens,
+                    new_indent,
+                    current_indent,
+                    position,
+                    last_token_kind,
+                );
+                current_indent = new_indent;
                 tokens.push(new_token);
             }
 
