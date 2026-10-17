@@ -36,20 +36,15 @@ pub fn tokenize(input: &str) -> TokenStream {
                 }
                 current_indent = new_indent;
             }
-            (_, TK::NewLine) => {
+            (_, TK::NewLine | TK::BlankLine) => {
                 // Not indented
                 if current_indent > 0 {
-                    let dedent_token = Token::dedent(current_indent);
-                    tokens.push((dedent_token, position));
-                }
-                current_indent = 0;
-                tokens.push(new_token);
-            }
-            (_, TK::BlankLine) => {
-                // Not indented, insert dedent before blankline
-                if current_indent > 0 {
-                    let dedent_token = Token::dedent(current_indent);
-                    tokens.insert(tokens.len() - 1, (dedent_token, position));
+                    let dedent_token = (Token::dedent(current_indent), position);
+                    if last_token_kind == TK::BlankLine {
+                        tokens.insert(tokens.len() - 1, dedent_token);
+                    } else {
+                        tokens.push(dedent_token);
+                    }
                 }
                 current_indent = 0;
                 tokens.push(new_token);

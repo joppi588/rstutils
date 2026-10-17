@@ -66,7 +66,7 @@ There are exceptions, e.g. the parser needs to decide if alphabet I (continue en
 - Blank lines before an indent are interpreted as indented.
   except after bullet list item, field list item, directives
 - Blank lines before a dedent are interpreted as dedented.
-So technically indented blocks can be surrounded by blank lines, and in/dedents treated upstream.
+Rationale: Blank lines are not part of indented blocks.
 
 9. Formatter
 Write back rst from AST.
