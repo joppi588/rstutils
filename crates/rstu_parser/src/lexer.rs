@@ -27,11 +27,11 @@ pub fn tokenize(input: &str) -> TokenStream {
                     let indent_token = Token::indent(new_indent - current_indent);
                     tokens.push((indent_token, position));
                 } else if new_indent < current_indent {
-                    let dedent_token = (Token::dedent(current_indent - new_indent), position);
+                    let dedent_token = Token::dedent(current_indent - new_indent);
                     if last_token_kind == TK::BlankLine {
-                        tokens.insert(tokens.len() - 1, dedent_token);
+                        tokens.insert(tokens.len() - 1, (dedent_token, position));
                     } else {
-                        tokens.push(dedent_token);
+                        tokens.push((dedent_token, position));
                     }
                 }
                 current_indent = new_indent;
