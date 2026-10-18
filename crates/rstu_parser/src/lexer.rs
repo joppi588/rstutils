@@ -43,6 +43,7 @@ pub fn tokenize(input: &str) -> TokenStream {
             index += lexeme.len();
             continue;
         }
+
         let mut new_token = Token::new(token_kind, lexeme);
         if token_kind == TK::Indent {
             // indent changes
@@ -54,14 +55,6 @@ pub fn tokenize(input: &str) -> TokenStream {
             };
 
             current_indent = new_indent;
-
-            if last_token_kind == TK::BlankLine && new_token.kind == TK::Dedent {
-                last_token_kind = new_token.kind;
-                stream.insert_before_last(new_token);
-                stream.advance(lexeme);
-                index += lexeme.len();
-                continue;
-            }
         } else if current_indent > 0 && matches!(last_token_kind, TK::NewLine) {
             stream.push_synthetic(Token::dedent(current_indent));
             current_indent = 0;
