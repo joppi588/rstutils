@@ -51,11 +51,37 @@ impl std::fmt::Display for Position {
 pub struct TokenStream {
     tokens: Vec<(Token, Position)>,
     cursor: usize,
+    position: Position,
 }
 
 impl TokenStream {
     pub fn new(tokens: Vec<(Token, Position)>) -> Self {
-        Self { tokens, cursor: 0 }
+        Self {
+            tokens,
+            cursor: 0,
+            position: Position::default(),
+        }
+    }
+
+    pub fn advance(&mut self, source: &str) {
+        self.position = self.position.advance(source);
+    }
+
+    /// Appends `token` at the write position, then advances over the `source` text it came from.
+    pub fn push(&mut self, token: Token, source: &str) {
+        self.tokens.push((token, self.position));
+        self.advance(source);
+    }
+
+    /// Appends a token that has no source text, so the write position stays put.
+    pub fn push_synthetic(&mut self, token: Token) {
+        self.tokens.push((token, self.position));
+    }
+
+    /// Inserts a sourceless token before the last one, at the write position.
+    pub fn insert_before_last(&mut self, token: Token) {
+        let index = self.tokens.len().saturating_sub(1);
+        self.tokens.insert(index, (token, self.position));
     }
 
     pub fn from_pairs(tokens: &[(TokenKind, &str)]) -> Self {
