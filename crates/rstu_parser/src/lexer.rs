@@ -5,6 +5,14 @@
 use crate::token::{Token, TokenKind as TK};
 use crate::token_stream::{Position, TokenStream};
 
+fn indentation_token(current_indent: usize, new_indent: usize) -> Token {
+    if new_indent > current_indent {
+        Token::indent(new_indent - current_indent)
+    } else {
+        Token::dedent(current_indent - new_indent)
+    }
+}
+
 pub fn tokenize(input: &str) -> TokenStream {
     let input = format!("\n{input}\n"); // leading blank line
     let mut tokens: Vec<(Token, Position)> = Vec::new();
@@ -24,14 +32,15 @@ pub fn tokenize(input: &str) -> TokenStream {
             (TK::Indent, _) => {
                 let new_indent = lexeme.len();
                 if new_indent > current_indent {
-                    let indent_token = Token::indent(new_indent - current_indent);
-                    tokens.push((indent_token, position));
+                    tokens.push((indentation_token(current_indent, new_indent), position));
                 } else if new_indent < current_indent {
-                    let dedent_token = (Token::dedent(current_indent - new_indent), position);
                     if last_token_kind == TK::BlankLine {
-                        tokens.insert(tokens.len() - 1, dedent_token);
+                        tokens.insert(
+                            tokens.len() - 1,
+                            (indentation_token(current_indent, new_indent), position),
+                        );
                     } else {
-                        tokens.push(dedent_token);
+                        tokens.push((indentation_token(current_indent, new_indent), position));
                     }
                 }
                 current_indent = new_indent;
