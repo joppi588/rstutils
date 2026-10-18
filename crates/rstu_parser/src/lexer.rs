@@ -64,7 +64,7 @@ pub fn tokenize(input: &str) -> TokenStream {
     }
     if current_indent > 0 {
         tokens.push(Token::dedent(current_indent), position);
-    }
+    };
     tokens.push(Token::new(TK::EoF, ""), position);
     tokens
 }
