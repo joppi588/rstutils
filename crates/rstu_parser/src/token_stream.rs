@@ -58,6 +58,18 @@ impl TokenStream {
         Self { tokens, cursor: 0 }
     }
 
+    pub fn push(&mut self, token: Token, position: Position) {
+        self.tokens.push((token, position));
+    }
+
+    pub fn len(&self) -> usize {
+        self.tokens.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.tokens.is_empty()
+    }
+
     pub fn from_pairs(tokens: &[(TokenKind, &str)]) -> Self {
         Self::new(
             tokens
@@ -184,6 +196,17 @@ impl TokenStream {
 mod tests {
     use super::{Position, TokenStream};
     use crate::token::{Token, TokenKind};
+
+    #[test]
+    fn push_appends_token_with_position() {
+        let mut stream = TokenStream::new(Vec::new());
+        let position = Position { line: 2, column: 3 };
+
+        stream.push(Token::new(TokenKind::Word, "a"), position);
+
+        assert_eq!(stream.len(), 1);
+        assert_eq!(stream.position_at(0), position);
+    }
 
     #[test]
     fn kind_at_returns_eof_past_the_end() {

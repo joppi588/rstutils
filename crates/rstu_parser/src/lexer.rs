@@ -7,7 +7,7 @@ use crate::token_stream::{Position, TokenStream};
 
 pub fn tokenize(input: &str) -> TokenStream {
     let input = format!("\n{input}\n"); // leading blank line
-    let mut tokens: Vec<(Token, Position)> = Vec::new();
+    let mut tokens = TokenStream::new(Vec::new());
     let mut last_token_kind = TK::BlankLine;
     let mut current_indent = 0;
     let mut position = Position::default();
@@ -18,20 +18,20 @@ pub fn tokenize(input: &str) -> TokenStream {
         let (token_kind, lexeme) = TK::match_token(sub_str)
             .unwrap_or_else(|| panic!("No token matched input: {sub_str:?}"));
 
-        let new_token = (Token::new(token_kind, lexeme), position);
+        let new_token = Token::new(token_kind, lexeme);
         match (token_kind, last_token_kind) {
-            (TK::BlankLine, _) => tokens.push(new_token),
+            (TK::BlankLine, _) => tokens.push(new_token, position),
             (TK::Indent, _) => {
                 let new_indent = lexeme.len();
                 if new_indent > current_indent {
                     let indent_token = Token::indent(new_indent - current_indent);
-                    tokens.push((indent_token, position));
+                    tokens.push(indent_token, position);
                 } else if new_indent < current_indent {
-                    let dedent_token = (Token::dedent(current_indent - new_indent), position);
+                    let dedent_token = Token::dedent(current_indent - new_indent);
                     if last_token_kind == TK::BlankLine {
-                        tokens.insert(tokens.len() - 1, dedent_token);
+                        tokens.insert_at(tokens.len() - 1, dedent_token);
                     } else {
-                        tokens.push(dedent_token);
+                        tokens.push(dedent_token, position);
                     }
                 }
                 current_indent = new_indent;
@@ -40,22 +40,22 @@ pub fn tokenize(input: &str) -> TokenStream {
                 // Not indented
                 if current_indent > 0 {
                     let dedent_token = Token::dedent(current_indent);
-                    tokens.push((dedent_token, position));
+                    tokens.push(dedent_token, position);
                 }
                 current_indent = 0;
-                tokens.push(new_token);
+                tokens.push(new_token, position);
             }
             (_, TK::BlankLine) => {
                 // Not indented, insert dedent before blankline
                 if current_indent > 0 {
                     let dedent_token = Token::dedent(current_indent);
-                    tokens.insert(tokens.len() - 1, (dedent_token, position));
+                    tokens.insert_at(tokens.len() - 1, dedent_token);
                 }
                 current_indent = 0;
-                tokens.push(new_token);
+                tokens.push(new_token, position);
             }
 
-            _ => tokens.push(new_token),
+            _ => tokens.push(new_token, position),
         }
 
         last_token_kind = token_kind;
@@ -63,10 +63,10 @@ pub fn tokenize(input: &str) -> TokenStream {
         position = position.advance(lexeme);
     }
     if current_indent > 0 {
-        tokens.push((Token::dedent(current_indent), position))
+        tokens.push(Token::dedent(current_indent), position);
     };
-    tokens.push((Token::new(TK::EoF, ""), position));
-    TokenStream::new(tokens)
+    tokens.push(Token::new(TK::EoF, ""), position);
+    tokens
 }
 
 #[cfg(test)]
