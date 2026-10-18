@@ -31,18 +31,18 @@ pub fn tokenize(input: &str) -> TokenStream {
             (TK::BlankLine, _) => tokens.push(new_token),
             (TK::Indent, _) => {
                 let new_indent = lexeme.len();
-                if new_indent > current_indent {
+                if (new_indent > current_indent)
+                    || ((new_indent < current_indent) && (last_token_kind != TK::BlankLine))
+                {
                     tokens.push((indentation_token(current_indent, new_indent), position));
-                } else if new_indent < current_indent {
-                    if last_token_kind == TK::BlankLine {
-                        tokens.insert(
-                            tokens.len() - 1,
-                            (indentation_token(current_indent, new_indent), position),
-                        );
-                    } else {
-                        tokens.push((indentation_token(current_indent, new_indent), position));
-                    }
+                };
+                if new_indent < current_indent && last_token_kind == TK::BlankLine {
+                    tokens.insert(
+                        tokens.len() - 1,
+                        (indentation_token(current_indent, new_indent), position),
+                    );
                 }
+
                 current_indent = new_indent;
             }
             (_, TK::NewLine) => {
