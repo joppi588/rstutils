@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-use crate::token::{self, Token, TokenKind as TK};
+use crate::token::{Token, TokenKind as TK};
 use crate::token_stream::{Position, TokenStream};
 
 fn indentation_token(current_indent: usize, new_indent: usize) -> Token {
