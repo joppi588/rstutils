@@ -5,22 +5,13 @@
 use crate::token::{Token, TokenKind as TK};
 use crate::token_stream::{Position, TokenStream};
 
-fn push_indentation_change(
-    tokens: &mut Vec<(Token, Position)>,
-    new_indent: usize,
-    current_indent: usize,
-    position: Position,
-    last_token_kind: TK,
-) {
+fn indentation_change(new_indent: usize, current_indent: usize) -> Option<Token> {
     if new_indent > current_indent {
-        tokens.push((Token::indent(new_indent - current_indent), position));
+        Some(Token::indent(new_indent - current_indent))
     } else if new_indent < current_indent {
-        let dedent_token = (Token::dedent(current_indent - new_indent), position);
-        if last_token_kind == TK::BlankLine {
-            tokens.insert(tokens.len() - 1, dedent_token);
-        } else {
-            tokens.push(dedent_token);
-        }
+        Some(Token::dedent(current_indent - new_indent))
+    } else {
+        None
     }
 }
 
@@ -37,35 +28,35 @@ pub fn tokenize(input: &str) -> TokenStream {
         let (token_kind, lexeme) = TK::match_token(sub_str)
             .unwrap_or_else(|| panic!("No token matched input: {sub_str:?}"));
 
-        let new_token = (Token::new(token_kind, lexeme), position);
         match (token_kind, last_token_kind) {
-            (TK::BlankLine, _) => tokens.push(new_token),
+            (TK::BlankLine, _) => tokens.push((Token::new(token_kind, lexeme), position)),
             (TK::Indent, _) => {
                 let new_indent = lexeme.len();
-                push_indentation_change(
-                    &mut tokens,
-                    new_indent,
-                    current_indent,
-                    position,
-                    last_token_kind,
-                );
+                if let Some(token) = indentation_change(new_indent, current_indent) {
+                    tokens.push((token, position));
+                }
                 current_indent = new_indent;
             }
-            (_, TK::NewLine | TK::BlankLine) => {
-                // Not indented
-                let new_indent: usize = 0;
-                push_indentation_change(
-                    &mut tokens,
-                    new_indent,
-                    current_indent,
-                    position,
-                    last_token_kind,
-                );
-                current_indent = new_indent;
-                tokens.push(new_token);
+            (_, TK::BlankLine) => {
+                if let Some(token) = indentation_change(0, current_indent) {
+                    tokens.insert(tokens.len() - 1, (token, position));
+                }
+                current_indent = 0;
+                tokens.push((Token::new(token_kind, lexeme), position));
             }
-
-            _ => tokens.push(new_token),
+            (_, TK::NewLine) => {
+                if let Some(token) = indentation_change(0, current_indent) {
+                    tokens.push((token, position));
+                }
+                current_indent = 0;
+                tokens.push((Token::new(token_kind, lexeme), position));
+            }
+            (TK::NewLine, _) => {
+                tokens.push((Token::new(token_kind, lexeme), position));
+            }
+            (_, _) => {
+                tokens.push((Token::new(token_kind, lexeme), position));
+            }
         }
 
         last_token_kind = token_kind;
