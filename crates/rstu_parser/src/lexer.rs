@@ -27,6 +27,17 @@ pub fn tokenize(input: &str) -> TokenStream {
             .unwrap_or_else(|| panic!("No token matched input: {sub_str:?}"));
 
         let new_token = (Token::new(token_kind, lexeme), position);
+
+        if token_kind == TK::Indent {
+            let new_indent = lexeme.len();
+            if new_indent == current_indent {
+                last_token_kind = token_kind;
+                index += lexeme.len();
+                position = position.advance(lexeme);
+                continue;
+            }
+        }
+
         match (token_kind, last_token_kind) {
             (TK::BlankLine, _) => tokens.push(new_token),
             (TK::Indent, _) => {
@@ -46,7 +57,7 @@ pub fn tokenize(input: &str) -> TokenStream {
                 current_indent = new_indent;
             }
             (_, TK::NewLine | TK::BlankLine) => {
-                // Not indented
+                // Not indented. If after Blankline, insert indent before that.
                 if current_indent > 0 {
                     let dedent_token = Token::dedent(current_indent);
                     let index = if last_token_kind == TK::BlankLine {
