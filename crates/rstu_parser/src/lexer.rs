@@ -5,14 +5,6 @@
 use crate::token::{Token, TokenKind as TK};
 use crate::token_stream::TokenStream;
 
-fn indentation_token(current_indent: usize, new_indent: usize) -> Token {
-    if new_indent > current_indent {
-        Token::indent(new_indent - current_indent)
-    } else {
-        Token::dedent(current_indent - new_indent)
-    }
-}
-
 pub fn tokenize(input: &str) -> TokenStream {
     let input = format!("\n{input}\n"); // leading blank line
     let mut stream = TokenStream::new(Vec::new());
@@ -40,12 +32,24 @@ pub fn tokenize(input: &str) -> TokenStream {
         }
 
         let mut new_token = Token::new(token_kind, lexeme);
-
         if token_kind == TK::Indent {
             // indent changes
             let new_indent = lexeme.len();
-            new_token = indentation_token(current_indent, new_indent);
+            new_token = if new_indent > current_indent {
+                Token::indent(new_indent - current_indent)
+            } else {
+                Token::dedent(current_indent - new_indent)
+            };
+
             current_indent = new_indent;
+
+            if last_token_kind == TK::BlankLine && new_token.kind == TK::Dedent {
+                last_token_kind = new_token.kind;
+                stream.insert_before_last(new_token);
+                stream.advance(lexeme);
+                index += lexeme.len();
+                continue;
+            }
         } else if current_indent > 0 && matches!(last_token_kind, TK::NewLine) {
             stream.push_synthetic(Token::dedent(current_indent));
             current_indent = 0;
@@ -54,14 +58,8 @@ pub fn tokenize(input: &str) -> TokenStream {
             current_indent = 0;
         }
 
-        if last_token_kind == TK::BlankLine && new_token.kind == TK::Dedent {
-            last_token_kind = new_token.kind;
-            stream.insert_before_last(new_token);
-            stream.advance(lexeme);
-        } else {
-            last_token_kind = new_token.kind;
-            stream.push(new_token, lexeme);
-        }
+        last_token_kind = new_token.kind;
+        stream.push(new_token, lexeme);
         index += lexeme.len();
     }
     if current_indent > 0 {
