@@ -1,0 +1,18 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Test transition markers.\n"
+- class: BlankLine
+- class: Transition
+  attributes:
+    marker_len: 8
+    marker_type: '-'
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Paragraph\n"

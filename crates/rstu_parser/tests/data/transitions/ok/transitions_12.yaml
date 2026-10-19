@@ -1,0 +1,12 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "A paragraph.\n"
+- class: BlankLine
+- class: Transition
+  attributes:
+    marker_len: 10
+    marker_type: '-'

@@ -1,0 +1,12 @@
+class: Document
+children:
+- class: Transition
+  attributes:
+    marker_len: 10
+    marker_type: '-'
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Document beginning with a transition.\n"

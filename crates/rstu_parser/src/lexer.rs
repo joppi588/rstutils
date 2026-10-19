@@ -6,7 +6,7 @@ use crate::token::{Token, TokenKind as TK};
 use crate::token_stream::{Position, TokenStream};
 
 pub fn tokenize(input: &str) -> TokenStream {
-    let input = format!("\n{input}\n"); // leading blank line
+    let input = format!("\n\n{input}\n"); // leading blank line
     let mut tokens = TokenStream::new(Vec::new());
     let mut last_token_kind = TK::BlankLine;
     let mut current_indent = 0;
@@ -78,6 +78,7 @@ mod tests {
     fn tokenize_spaces_words() {
         let input = "Hello World\n";
         let expected = TokenStream::from_pairs(&[
+            (TK::BlankLine, "\n"),
             (TK::Word, "Hello"),
             (TK::Spaces, " "),
             (TK::Word, "World"),
@@ -95,6 +96,7 @@ mod tests {
         // THEN the Option token does not eat the newline
         let input = "--option\nempty item\n";
         let expected = TokenStream::from_pairs(&[
+            (TK::BlankLine, "\n"),
             (TK::Option, "--option"),
             (TK::NewLine, "\n"),
             (TK::Word, "empty"),
@@ -111,6 +113,7 @@ mod tests {
     fn tokenize_treats_unmatched_input_as_literal_string() {
         let input = "abc\x07def\n";
         let expected = TokenStream::from_pairs(&[
+            (TK::BlankLine, "\n"),
             (TK::Word, "abc"),
             (TK::LiteralChar, "\x07"),
             (TK::Word, "def"),
@@ -125,6 +128,7 @@ mod tests {
     fn tokenize_converts_indents_to_relative_indents_and_dedents() {
         let input = "line_1\n    nested\n  dedented\n";
         let expected = TokenStream::from_pairs(&[
+            (TK::BlankLine, "\n"),
             (TK::Word, "line_1"),
             (TK::NewLine, "\n"),
             (TK::Indent, "    "),
@@ -144,6 +148,7 @@ mod tests {
     fn tokenize_emits_dedent_when_indented_block_returns_to_zero_indent() {
         let input = "line_1\n    nested\nplain\n";
         let expected = TokenStream::from_pairs(&[
+            (TK::BlankLine, "\n"),
             (TK::Word, "line_1"),
             (TK::NewLine, "\n"),
             (TK::Indent, "    "),
@@ -179,6 +184,7 @@ mod tests {
         assert_eq!(
             located("A\t\u{e9}lan\n"),
             [
+                (TK::BlankLine, 0, 1),
                 (TK::Word, 1, 1),
                 (TK::Spaces, 1, 2),
                 (TK::Word, 1, 3),
@@ -193,7 +199,7 @@ mod tests {
     /// THEN EoF is at line 1, column 1
     #[test]
     fn tokenize_empty_input_positions_eof_at_start() {
-        assert_eq!(located(""), [(TK::EoF, 1, 1)]);
+        assert_eq!(located(""), [(TK::BlankLine, 0, 1), (TK::EoF, 1, 1)]);
     }
 
     /// GIVEN an indented line followed by an unindented one
@@ -204,6 +210,7 @@ mod tests {
         assert_eq!(
             located("one\n    two\nthree\n"),
             [
+                (TK::BlankLine, 0, 1),
                 (TK::Word, 1, 1),
                 (TK::NewLine, 1, 4),
                 (TK::Indent, 2, 1),

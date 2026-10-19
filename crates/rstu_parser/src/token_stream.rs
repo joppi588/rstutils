@@ -19,7 +19,7 @@ pub struct Position {
 
 impl Default for Position {
     fn default() -> Self {
-        Self { line: 1, column: 1 }
+        Self { line: 0, column: 1 } // 0 = leading synthetic blank line
     }
 }
 
@@ -278,7 +278,7 @@ mod tests {
     fn position_advance_counts_characters_and_lines() {
         let position = Position::default().advance("\u{e9}a\nb\t");
 
-        assert_eq!(position, Position { line: 2, column: 3 });
+        assert_eq!(position, Position { line: 1, column: 3 });
     }
 
     /// GIVEN a stream with a token inserted at the cursor
