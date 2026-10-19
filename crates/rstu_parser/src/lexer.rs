@@ -15,7 +15,7 @@ pub fn tokenize(input: &str) -> TokenStream {
     let mut index: usize = 1;
     while index < input.len() - 1 {
         let sub_str = &input[index - 1..];
-        let (token_kind, lexeme, next_offset) = TK::match_token_with_next_offset(sub_str)
+        let (token_kind, lexeme, next_offset) = TK::match_token(sub_str)
             .unwrap_or_else(|| panic!("No token matched input: {sub_str:?}"));
         let new_token = Token::new(token_kind, lexeme);
         match (token_kind, last_token_kind) {
