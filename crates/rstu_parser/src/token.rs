@@ -294,7 +294,7 @@ impl TokenKind {
         })
     }
 
-    fn find_lexeme_only(self, input: &str) -> Option<&str> {
+    fn _find_lexeme(self, input: &str) -> Option<&str> {
         self.find_lexeme(input).map(|(lexeme, _)| lexeme)
     }
 
@@ -321,7 +321,7 @@ mod tests {
     #[case(" >>> x")]
     #[case("\n>>>\n")]
     fn doctest_start_matches(#[case] input: &str) {
-        assert_eq!(TK::DoctestStart.find_lexeme_only(input), Some(">>>"));
+        assert_eq!(TK::DoctestStart._find_lexeme(input), Some(">>>"));
     }
 
     #[rstest]
@@ -329,12 +329,12 @@ mod tests {
     #[case("\n>> x")]
     #[case("a>>> x")]
     fn doctest_start_rejects_non_matching_text(#[case] input: &str) {
-        assert_eq!(TK::DoctestStart.find_lexeme_only(input), None);
+        assert_eq!(TK::DoctestStart._find_lexeme(input), None);
     }
 
     #[test]
     fn line_block() {
-        assert_eq!(TK::LineBlock.find_lexeme_only("\n| T"), Some("| "));
+        assert_eq!(TK::LineBlock._find_lexeme("\n| T"), Some("| "));
     }
 
     #[rstest]
@@ -343,51 +343,45 @@ mod tests {
     #[case("—")]
     fn attribution_matches_supported_markers(#[case] marker: &str) {
         assert_eq!(
-            TK::Attribution.find_lexeme_only(&format!(" {marker} Holmes")),
+            TK::Attribution._find_lexeme(&format!(" {marker} Holmes")),
             Some(format!("{marker} ")).as_deref()
         );
     }
 
     #[test]
     fn attribution_rejects_other_dash_sequences() {
-        assert_eq!(TK::Attribution.find_lexeme_only(" - Holmes"), None);
-        assert_eq!(TK::Attribution.find_lexeme_only(" ---- Holmes"), None);
-        assert_eq!(TK::Attribution.find_lexeme_only("word -- Holmes"), None);
+        assert_eq!(TK::Attribution._find_lexeme(" - Holmes"), None);
+        assert_eq!(TK::Attribution._find_lexeme(" ---- Holmes"), None);
+        assert_eq!(TK::Attribution._find_lexeme("word -- Holmes"), None);
     }
 
     #[test]
     fn backquote_start_rejects_double_backticks() {
-        assert_eq!(TK::BackquoteStart.find_lexeme_only("``"), None);
+        assert_eq!(TK::BackquoteStart._find_lexeme("``"), None);
     }
 
     #[test]
     fn blank_line_matches_empty() {
-        assert_eq!(TK::BlankLine.find_lexeme_only("\n\n\n"), Some("\n"));
+        assert_eq!(TK::BlankLine._find_lexeme("\n\n\n"), Some("\n"));
     }
 
     #[test]
     fn blank_line_matches_whitespace_only() {
-        assert_eq!(TK::BlankLine.find_lexeme_only("\n \t\n\n"), Some(" \t\n"));
+        assert_eq!(TK::BlankLine._find_lexeme("\n \t\n\n"), Some(" \t\n"));
     }
 
     #[test]
     fn blank_line_rejects_non_matching_text() {
-        assert_eq!(TK::BlankLine.find_lexeme_only("text"), None);
+        assert_eq!(TK::BlankLine._find_lexeme("text"), None);
     }
 
     #[test]
     fn bullet_list_marker_matches() {
-        assert_eq!(
-            TK::BulletListMarker.find_lexeme_only("\n- item\n"),
-            Some("-")
-        );
-        assert_eq!(
-            TK::BulletListMarker.find_lexeme_only("\n+ item\n"),
-            Some("+")
-        );
+        assert_eq!(TK::BulletListMarker._find_lexeme("\n- item\n"), Some("-"));
+        assert_eq!(TK::BulletListMarker._find_lexeme("\n+ item\n"), Some("+"));
         for marker in ["•", "‣", "⁃"] {
             assert_eq!(
-                TK::BulletListMarker.find_lexeme_only(&format!("\n{marker} item\n")),
+                TK::BulletListMarker._find_lexeme(&format!("\n{marker} item\n")),
                 Some(marker)
             );
         }
@@ -395,157 +389,136 @@ mod tests {
 
     #[test]
     fn bullet_list_marker_rejects_non_matching_text() {
-        assert_eq!(TK::BulletListMarker.find_lexeme_only("x-y"), None);
+        assert_eq!(TK::BulletListMarker._find_lexeme("x-y"), None);
     }
 
     #[test]
     fn directive_matches_supported_syntax() {
         assert_eq!(
-            TK::Directive.find_lexeme_only("\n.. image::\n"),
+            TK::Directive._find_lexeme("\n.. image::\n"),
             Some(".. image::")
         );
         assert_eq!(
-            TK::Directive.find_lexeme_only("\n.. |name| replace:: text\n"),
+            TK::Directive._find_lexeme("\n.. |name| replace:: text\n"),
             Some(".. |name| replace::")
         );
         assert_eq!(
-            TK::Directive.find_lexeme_only("\n.. |name surname| replace-text:: text\n"),
+            TK::Directive._find_lexeme("\n.. |name surname| replace-text:: text\n"),
             Some(".. |name surname| replace-text::")
         );
         assert_eq!(
-            TK::Directive.find_lexeme_only("\n.. custom_name+type.v2:: text\n"),
+            TK::Directive._find_lexeme("\n.. custom_name+type.v2:: text\n"),
             Some(".. custom_name+type.v2::")
         );
         assert_eq!(
-            TK::Directive.find_lexeme_only("\n.. domain:directive:: text\n"),
+            TK::Directive._find_lexeme("\n.. domain:directive:: text\n"),
             Some(".. domain:directive::")
         );
         assert_eq!(
-            TK::Directive.find_lexeme_only("\n.. ImAgE:: text\n"),
+            TK::Directive._find_lexeme("\n.. ImAgE:: text\n"),
             Some(".. ImAgE::")
         );
         assert_eq!(
-            TK::Directive.find_lexeme_only("\n.. | name| replace:: text\n"),
+            TK::Directive._find_lexeme("\n.. | name| replace:: text\n"),
             Some(".. | name| replace::")
         );
         assert_eq!(
-            TK::Directive.find_lexeme_only("\n.. |name | replace:: text\n"),
+            TK::Directive._find_lexeme("\n.. |name | replace:: text\n"),
             Some(".. |name | replace::")
         );
         assert_eq!(
-            TK::Directive.find_lexeme_only("\n.. | name | replace:: text\n"),
+            TK::Directive._find_lexeme("\n.. | name | replace:: text\n"),
             Some(".. | name | replace::")
         );
     }
 
     #[test]
     fn directive_rejects_unsupported_syntax() {
-        assert_eq!(TK::Directive.find_lexeme_only("\n.. image:\n"), None);
+        assert_eq!(TK::Directive._find_lexeme("\n.. image:\n"), None);
         assert_eq!(
-            TK::Directive.find_lexeme_only("\n.. |name replace:: text\n"),
+            TK::Directive._find_lexeme("\n.. |name replace:: text\n"),
             None
         );
         assert_eq!(
-            TK::Directive.find_lexeme_only("\n.. custom--type:: text\n"),
+            TK::Directive._find_lexeme("\n.. custom--type:: text\n"),
             None
         );
-        assert_eq!(
-            TK::Directive.find_lexeme_only("\n.. -custom:: text\n"),
-            None
-        );
-        assert_eq!(
-            TK::Directive.find_lexeme_only("\n.. custom_:: text\n"),
-            None
-        );
+        assert_eq!(TK::Directive._find_lexeme("\n.. -custom:: text\n"), None);
+        assert_eq!(TK::Directive._find_lexeme("\n.. custom_:: text\n"), None);
     }
 
     #[test]
     fn double_dot_matches_comment_start() {
         assert_eq!(
-            TK::DoubleDot.find_lexeme_only("\n.. this is a comment\n"),
+            TK::DoubleDot._find_lexeme("\n.. this is a comment\n"),
             Some("..")
         );
     }
 
     #[test]
     fn double_dot_rejects_non_comment_text() {
-        assert_eq!(TK::DoubleDot.find_lexeme_only("\nwarning...\n"), None);
+        assert_eq!(TK::DoubleDot._find_lexeme("\nwarning...\n"), None);
     }
 
     #[test]
     fn emphasis_start_and_related_markup_tokens_match_delimiters() {
-        assert_eq!(TK::EmphasisStart.find_lexeme_only(" *x"), Some("*"));
-        assert_eq!(TK::EmphasisEnd.find_lexeme_only("x* "), Some("*"));
-        assert_eq!(TK::BackquoteStart.find_lexeme_only(" `x"), Some("`"));
-        assert_eq!(TK::BackquoteEnd.find_lexeme_only("x` "), Some("`"));
-        assert_eq!(TK::InlineLiteralStart.find_lexeme_only(" ``x"), Some("``"));
-        assert_eq!(TK::InlineLiteralEnd.find_lexeme_only("x`` "), Some("``"));
+        assert_eq!(TK::EmphasisStart._find_lexeme(" *x"), Some("*"));
+        assert_eq!(TK::EmphasisEnd._find_lexeme("x* "), Some("*"));
+        assert_eq!(TK::BackquoteStart._find_lexeme(" `x"), Some("`"));
+        assert_eq!(TK::BackquoteEnd._find_lexeme("x` "), Some("`"));
+        assert_eq!(TK::InlineLiteralStart._find_lexeme(" ``x"), Some("``"));
+        assert_eq!(TK::InlineLiteralEnd._find_lexeme("x`` "), Some("``"));
     }
 
     // TODO: exclude escaped characters
 
     #[test]
     fn emphasis_start_rejects_strong_delimiters() {
-        assert_eq!(TK::EmphasisStart.find_lexeme_only("**"), None);
+        assert_eq!(TK::EmphasisStart._find_lexeme("**"), None);
     }
 
     #[test]
     fn enumerated_list_marker_matches() {
         assert_eq!(
-            TK::EnumeratedListMarker.find_lexeme_only("\n1. item\n"),
+            TK::EnumeratedListMarker._find_lexeme("\n1. item\n"),
             Some("1.")
         );
         assert_eq!(
-            TK::EnumeratedListMarker.find_lexeme_only("\n(A) item\n"),
+            TK::EnumeratedListMarker._find_lexeme("\n(A) item\n"),
             Some("(A)")
         );
         assert_eq!(
-            TK::EnumeratedListMarker.find_lexeme_only("\niv) item\n"),
+            TK::EnumeratedListMarker._find_lexeme("\niv) item\n"),
             Some("iv)")
         );
         assert_eq!(
-            TK::EnumeratedListMarker.find_lexeme_only("\n#. item\n"),
+            TK::EnumeratedListMarker._find_lexeme("\n#. item\n"),
             Some("#.")
         );
     }
 
     #[test]
     fn enumerated_list_marker_rejects_non_matching_text() {
-        assert_eq!(TK::EnumeratedListMarker.find_lexeme_only("x1. item"), None);
-        assert_eq!(
-            TK::EnumeratedListMarker.find_lexeme_only("\n1 item\n"),
-            None
-        );
+        assert_eq!(TK::EnumeratedListMarker._find_lexeme("x1. item"), None);
+        assert_eq!(TK::EnumeratedListMarker._find_lexeme("\n1 item\n"), None);
     }
 
     #[test]
     fn field_matches_valid_names() {
-        assert_eq!(TK::Field.find_lexeme_only("\n:field1:\n"), Some(":field1:"));
-        assert_eq!(
-            TK::Field.find_lexeme_only(" :F_2: Some value"),
-            Some(":F_2:")
-        );
-        assert_eq!(TK::Field.find_lexeme_only(" :F_2:Some value"), None);
-        assert_eq!(TK::Field.find_lexeme_only("\n:F$x: "), None);
+        assert_eq!(TK::Field._find_lexeme("\n:field1:\n"), Some(":field1:"));
+        assert_eq!(TK::Field._find_lexeme(" :F_2: Some value"), Some(":F_2:"));
+        assert_eq!(TK::Field._find_lexeme(" :F_2:Some value"), None);
+        assert_eq!(TK::Field._find_lexeme("\n:F$x: "), None);
     }
 
     #[test]
     fn footnote_reference_and_other_inline_references_match() {
+        assert_eq!(TK::SubstitutionReference._find_lexeme(" |x| "), Some("|x|"));
+        assert_eq!(TK::HyperlinkReferenceEnd._find_lexeme("x_ "), Some("_"));
+        assert_eq!(TK::HyperlinkReferenceEnd._find_lexeme("x`_ "), Some("`_"));
+        assert_eq!(TK::FootnoteReference._find_lexeme(" [x]_ "), Some("[x]_"));
         assert_eq!(
-            TK::SubstitutionReference.find_lexeme_only(" |x| "),
-            Some("|x|")
-        );
-        assert_eq!(TK::HyperlinkReferenceEnd.find_lexeme_only("x_ "), Some("_"));
-        assert_eq!(
-            TK::HyperlinkReferenceEnd.find_lexeme_only("x`_ "),
-            Some("`_")
-        );
-        assert_eq!(
-            TK::FootnoteReference.find_lexeme_only(" [x]_ "),
-            Some("[x]_")
-        );
-        assert_eq!(
-            TK::SimpleHyperlinkReference.find_lexeme_only(" simple_ref_ text"),
+            TK::SimpleHyperlinkReference._find_lexeme(" simple_ref_ text"),
             Some("simple_ref_")
         );
     }
@@ -558,12 +531,12 @@ mod tests {
 
     #[test]
     fn indent_matches() {
-        assert_eq!(TK::Indent.find_lexeme_only("\n \t  W"), Some(" \t  "));
+        assert_eq!(TK::Indent._find_lexeme("\n \t  W"), Some(" \t  "));
     }
 
     #[test]
     fn indent_rejects_non_indented_text() {
-        assert_eq!(TK::Indent.find_lexeme_only("abc"), None);
+        assert_eq!(TK::Indent._find_lexeme("abc"), None);
     }
 
     #[test]
@@ -576,15 +549,12 @@ mod tests {
 
     #[test]
     fn literal_block_matches() {
-        assert_eq!(
-            TK::LiteralBlockMinimized.find_lexeme_only("e::\nt"),
-            Some("::")
-        );
+        assert_eq!(TK::LiteralBlockMinimized._find_lexeme("e::\nt"), Some("::"));
     }
 
     #[test]
     fn literal_block_rejects_non_matching_text() {
-        assert_eq!(TK::LiteralBlockMinimized.find_lexeme_only("e:\n"), None);
+        assert_eq!(TK::LiteralBlockMinimized._find_lexeme("e:\n"), None);
     }
 
     #[test]
@@ -601,7 +571,7 @@ mod tests {
     #[test]
     fn option_does_not_consume_the_next_line() {
         assert_eq!(
-            TK::Option.find_lexeme_only("\n--option\nempty item\n"),
+            TK::Option._find_lexeme("\n--option\nempty item\n"),
             Some("--option")
         );
     }
@@ -612,67 +582,67 @@ mod tests {
     #[test]
     fn option_matches_long_alphanumeric_name_and_argument() {
         assert_eq!(
-            TK::Option.find_lexeme_only("\n--long1=arg1\n"),
+            TK::Option._find_lexeme("\n--long1=arg1\n"),
             Some("--long1=arg1")
         );
     }
 
     #[test]
     fn option_matches_old_gnu_style() {
-        assert_eq!(TK::Option.find_lexeme_only("\n+a  "), Some("+a"));
-        assert_eq!(TK::Option.find_lexeme_only("\n+b file  "), Some("+b file"));
-        assert_eq!(TK::Option.find_lexeme_only("\n+1 "), None);
+        assert_eq!(TK::Option._find_lexeme("\n+a  "), Some("+a"));
+        assert_eq!(TK::Option._find_lexeme("\n+b file  "), Some("+b file"));
+        assert_eq!(TK::Option._find_lexeme("\n+1 "), None);
     }
 
     #[test]
     fn punctuation_matches_ascii_non_alphanumeric() {
-        assert_eq!(TK::Punctuation.find_lexeme_only("x,x"), Some(","));
-        assert_eq!(TK::Punctuation.find_lexeme_only("x!x"), Some("!"));
-        assert_eq!(TK::Punctuation.find_lexeme_only("x_x"), Some("_"));
+        assert_eq!(TK::Punctuation._find_lexeme("x,x"), Some(","));
+        assert_eq!(TK::Punctuation._find_lexeme("x!x"), Some("!"));
+        assert_eq!(TK::Punctuation._find_lexeme("x_x"), Some("_"));
     }
 
     #[test]
     fn punctuation_rejects_alphanumeric() {
-        assert_eq!(TK::Punctuation.find_lexeme_only("xax"), None);
-        assert_eq!(TK::Punctuation.find_lexeme_only("x1x"), None);
+        assert_eq!(TK::Punctuation._find_lexeme("xax"), None);
+        assert_eq!(TK::Punctuation._find_lexeme("x1x"), None);
     }
 
     #[test]
     fn separator_matches() {
-        assert_eq!(TK::Separator.find_lexeme_only("\n====\n"), Some("===="));
-        assert_eq!(TK::Separator.find_lexeme_only("\n==a=\n"), None);
-        assert_eq!(TK::Separator.find_lexeme_only("\n===\n"), None);
+        assert_eq!(TK::Separator._find_lexeme("\n====\n"), Some("===="));
+        assert_eq!(TK::Separator._find_lexeme("\n==a=\n"), None);
+        assert_eq!(TK::Separator._find_lexeme("\n===\n"), None);
     }
 
     #[test]
     fn spaces_matches() {
-        assert_eq!(TK::Spaces.find_lexeme_only("x \t x"), Some(" \t "));
+        assert_eq!(TK::Spaces._find_lexeme("x \t x"), Some(" \t "));
     }
 
     #[test]
     fn spaces_rejects_non_matching_text() {
-        assert_eq!(TK::Spaces.find_lexeme_only("xabcx"), None);
+        assert_eq!(TK::Spaces._find_lexeme("xabcx"), None);
     }
 
     #[test]
     fn strong_start_and_end_match() {
-        assert_eq!(TK::StrongStart.find_lexeme_only(" **x"), Some("**"));
-        assert_eq!(TK::StrongEnd.find_lexeme_only("x** "), Some("**"));
-        assert_eq!(TK::StrongStart.find_lexeme_only("*"), None);
-        assert_eq!(TK::StrongEnd.find_lexeme_only("*"), None);
+        assert_eq!(TK::StrongStart._find_lexeme(" **x"), Some("**"));
+        assert_eq!(TK::StrongEnd._find_lexeme("x** "), Some("**"));
+        assert_eq!(TK::StrongStart._find_lexeme("*"), None);
+        assert_eq!(TK::StrongEnd._find_lexeme("*"), None);
     }
 
     #[test]
     fn table_horizontal_matches() {
         assert_eq!(
-            TK::TableHorizontal.find_lexeme_only("\n==== =====\n"),
+            TK::TableHorizontal._find_lexeme("\n==== =====\n"),
             Some("==== =====")
         );
     }
 
     #[test]
     fn table_horizontal_rejects_non_matching_text() {
-        assert_eq!(TK::TableHorizontal.find_lexeme_only("\n========\n"), None);
+        assert_eq!(TK::TableHorizontal._find_lexeme("\n========\n"), None);
     }
 
     /// GIVEN a token with a multibyte lexeme
@@ -687,19 +657,16 @@ mod tests {
 
     #[test]
     fn word_matches_alphanumeric_and_underscore() {
-        assert_eq!(TK::Word.find_lexeme_only(" alpha_123 "), Some("alpha_123"));
+        assert_eq!(TK::Word._find_lexeme(" alpha_123 "), Some("alpha_123"));
     }
 
     #[test]
     fn word_matches_with_newline_boundary() {
-        assert_eq!(
-            TK::Word.find_lexeme_only("\nalpha_123\n"),
-            Some("alpha_123")
-        );
+        assert_eq!(TK::Word._find_lexeme("\nalpha_123\n"), Some("alpha_123"));
     }
 
     #[test]
     fn word_rejects_non_word_chars() {
-        assert_eq!(TK::Word.find_lexeme_only("---\n***"), None);
+        assert_eq!(TK::Word._find_lexeme("---\n***"), None);
     }
 }
