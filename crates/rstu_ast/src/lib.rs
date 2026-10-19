@@ -42,9 +42,11 @@ impl NodeRefExt for NodeRef {
     }
 
     fn push_blank_lines(&self, count: usize) {
-        for _ in 0..count {
-            self.push_child(AstNode::new_ref(NodeClass::BlankLine));
-        }
+        let blank_line = AstNode::new_ref(NodeClass::BlankLine);
+        if count > 1 {
+            blank_line.with_attr("count", count);
+        };
+        self.push_child(blank_line);
     }
 
     fn push_spaces(&self, count: usize) {
