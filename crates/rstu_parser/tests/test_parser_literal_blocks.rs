@@ -23,7 +23,6 @@ use test_parser::rst_vs_yaml;
 #[case("quoted_00")]
 #[case("quoted_01")]
 #[case("quoted_02")]
-
 fn parse_literal_block(#[case] test_case: &str) {
     rst_vs_yaml!("literal_blocks/ok", test_case);
 }

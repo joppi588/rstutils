@@ -22,7 +22,8 @@ children:
       text: "Another literal block.\nWith two blank lines following.\n"
       type: FullyMinimized
   - class: BlankLine
-  - class: BlankLine
+    attributes:
+      count: 2
   - class: Paragraph
     children:
       - class: PlainText

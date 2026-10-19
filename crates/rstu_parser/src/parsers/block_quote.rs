@@ -13,9 +13,7 @@ use std::debug_assert_matches;
 pub(crate) fn parse_block_quote(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert_matches!(stream.token_at_cursor().kind, TK::BlankLine);
     let block = AstNode::new_ref(NodeClass::BlockQuote);
-    stream.consume(); //Blankline
-
-    block.push_child(AstNode::new_ref(NodeClass::BlankLine));
+    block.push_blank_lines(stream.consume().len());
     block.push_child(parse_block(stream)?);
     if !matches!(
         stream.token_at_cursor().kind,
