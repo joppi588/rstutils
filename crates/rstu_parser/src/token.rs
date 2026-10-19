@@ -293,12 +293,27 @@ impl TokenKind {
             .find_map(|&kind| kind.find_lexeme(input).map(|lexeme| (kind, lexeme)))
     }
 
+    pub(crate) fn match_token_with_next_offset(input: &str) -> Option<(Self, &str, usize)> {
+        Self::ALL.iter().find_map(|&kind| {
+            kind.find_lexeme_with_next_offset(input)
+                .map(|(lexeme, next_offset)| (kind, lexeme, next_offset))
+        })
+    }
+
     fn find_lexeme(self, input: &str) -> Option<&str> {
+        self.find_lexeme_with_next_offset(input)
+            .map(|(lexeme, _)| lexeme)
+    }
+
+    fn find_lexeme_with_next_offset(self, input: &str) -> Option<(&str, usize)> {
         self.regex().find(input).and_then(|matched| {
             let text = matched.as_str();
             let first_len = text.chars().next()?.len_utf8();
             let last_start = text.char_indices().next_back()?.0;
-            text.get(first_len..last_start)
+            let lexeme = text.get(first_len..last_start)?;
+            let last_char_len = lexeme.chars().next_back()?.len_utf8();
+            let next_offset = matched.start() + first_len + lexeme.len() - last_char_len;
+            Some((lexeme, next_offset))
         })
     }
 }
@@ -371,6 +386,12 @@ mod tests {
     fn bullet_list_marker_matches() {
         assert_eq!(TK::BulletListMarker.find_lexeme("\n- item\n"), Some("-"));
         assert_eq!(TK::BulletListMarker.find_lexeme("\n+ item\n"), Some("+"));
+        for marker in ["•", "‣", "⁃"] {
+            assert_eq!(
+                TK::BulletListMarker.find_lexeme(&format!("\n{marker} item\n")),
+                Some(marker)
+            );
+        }
     }
 
     #[test]

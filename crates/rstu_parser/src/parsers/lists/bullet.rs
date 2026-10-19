@@ -21,7 +21,7 @@ pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, Par
         let marker_token = stream.consume();
         item.with_attr("marker", marker_token.lexeme.clone());
         if let Some(existing_marker) = &marker {
-            if existing_marker != &marker_token.lexeme {
+            if !compatible_markers(existing_marker, &marker_token.lexeme) {
                 return Err(ParserError::ListStyleError {
                     marker: existing_marker.clone(),
                     conflicting_marker: marker_token.lexeme,
@@ -38,4 +38,8 @@ pub(crate) fn parse_bullet_list(stream: &mut TokenStream) -> Result<NodeRef, Par
     }
 
     Ok(list)
+}
+
+fn compatible_markers(existing: &str, next: &str) -> bool {
+    existing == next || matches!(existing, "•" | "‣" | "⁃") && matches!(next, "•" | "‣" | "⁃")
 }

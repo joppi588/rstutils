@@ -5,6 +5,7 @@ children:
       - class: PlainText
         attributes:
           text: "Unicode bullets:\n"
+  - class: BlankLine
   - class: BulletList
     children:
       - class: BulletListItem
@@ -20,7 +21,7 @@ children:
                   - class: PlainText
                     attributes:
                       text: "BULLET\n"
-              - class: BlankLine
+      - class: BlankLine
       - class: BulletListItem
         attributes:
           marker: "‣"
@@ -34,7 +35,7 @@ children:
                   - class: PlainText
                     attributes:
                       text: "TRIANGULAR BULLET\n"
-              - class: BlankLine
+      - class: BlankLine
       - class: BulletListItem
         attributes:
           marker: "⁃"
@@ -48,4 +49,3 @@ children:
                   - class: PlainText
                     attributes:
                       text: "HYPHEN BULLET\n"
-              - class: BlankLine
