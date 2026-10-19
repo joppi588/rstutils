@@ -17,11 +17,10 @@ use test_parser::rst_vs_yaml;
 #[case("bullet_03")]
 #[case("bullet_04")]
 #[case("bullet_07")]
+#[case("bullet_09")]
 #[case("bullet_list")]
 #[case("compact_bullet_list")]
 #[case("nested_bullet_list")]
-// TODO: Activate tests
-// #[case("bullet_09")] Unicode bullets
 fn parse_bullet_list(#[case] test_case: &str) {
     rst_vs_yaml!("lists/bullet_list/ok", test_case)
 }
