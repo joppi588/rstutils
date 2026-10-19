@@ -159,7 +159,7 @@ fn parse_body_element(
         }
         kind if kind.is(TC::PARAGRAPH_END) => {
             return Err(ParserError::UnexpectedToken {
-                expected: "Some paragraph content.".to_owned(),
+                expected: "Some content.".to_owned(),
                 found: format!("{:?}", kind),
                 position: stream.position_at_cursor(),
             });
