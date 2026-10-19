@@ -40,4 +40,5 @@ pub enum NodeClass {
     Strong,
     Term,
     Title,
+    Transition,
 }

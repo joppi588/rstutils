@@ -6,7 +6,6 @@ use rstest::rstest;
 use rstu_parser::parse;
 use std::fs;
 use std::path::Path;
-
 #[path = "common/mod.rs"]
 mod test_parser;
 use test_parser::rst_vs_yaml;
@@ -24,13 +23,14 @@ use test_parser::rst_vs_yaml;
 #[case("transitions_10")]
 #[case("transitions_11")]
 #[case("transitions_12")]
-#[ignore = "transition parsing and expected YAML fixtures are not implemented yet"]
 fn parse_transitions(#[case] test_case: &str) {
     rst_vs_yaml!("transitions/ok", test_case)
 }
 
+// TODO: Implement
 #[rstest]
 #[case("transitions_03")]
+#[ignore = "Docutils system-message diagnostics for indented separators are not implemented"]
 fn rejects_docutils_transition_diagnostics(#[case] test_case: &str) {
     let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tests/data/transitions/err")

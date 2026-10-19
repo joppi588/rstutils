@@ -193,6 +193,7 @@ mod tests {
     fn parse_paragraph_with_hanging_indent_two_lines() {
         let input = "First line\n   second line\n";
         let mut stream = tokenize(input);
+        stream.consume(); //synthetic blank line
 
         let paragraph =
             parse_paragraph_hanging_indent(&mut stream).expect("Paragraph parses successfully");
@@ -217,6 +218,7 @@ mod tests {
     fn parse_paragraph_with_two_hanging_indent_lines() {
         let input = "First line\n   second line\n   third line\n";
         let mut stream = tokenize(input);
+        stream.consume(); //synthetic blank line
 
         let paragraph =
             parse_paragraph_hanging_indent(&mut stream).expect("Paragraph parses successfully");

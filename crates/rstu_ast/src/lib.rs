@@ -24,6 +24,8 @@ pub struct AstNode {
 pub trait NodeRefExt {
     fn with_attr(&self, key: impl Into<String>, value: impl Into<AttributeType>) -> NodeRef;
     fn push_child(&self, child: NodeRef);
+    fn remove_child(&self, index: usize);
+    fn pop_child(&self);
     fn push_blank_lines(&self, count: usize);
     fn push_spaces(&self, count: usize);
     fn get_parent(&self) -> Option<NodeRef>;
@@ -66,6 +68,14 @@ impl NodeRefExt for NodeRef {
     fn push_child(&self, child: NodeRef) {
         child.borrow_mut().parent = Some(Rc::downgrade(self));
         self.borrow_mut().children.push(child);
+    }
+
+    fn remove_child(&self, index: usize) {
+        self.borrow_mut().children.remove(index);
+    }
+
+    fn pop_child(&self) {
+        self.borrow_mut().children.pop();
     }
 
     fn push_section_ref(&self, section: NodeRef) -> NodeRef {

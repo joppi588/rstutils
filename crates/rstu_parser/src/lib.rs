@@ -25,6 +25,7 @@ use parsers::lists::{
 use parsers::literal_block::parse_literal_block;
 use parsers::paragraph::parse_paragraph;
 use parsers::section::parse_section_header;
+use parsers::transition::parse_transition;
 
 pub mod parser_errors;
 pub mod token;
@@ -34,11 +35,9 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use crate::lexer::tokenize;
 use crate::parsers::paragraph::parse_paragraph_hanging_indent;
-use crate::token::TokenKind as TK;
+use crate::token::{TokenCategory as TC, TokenKind as TK};
 use parser_errors::ParserError;
 use token_stream::TokenStream;
-
-// static DEDENT_GRACE: usize = 1;
 
 /// Parser implementation:
 /// Lookahead one line -> Decide on element.
@@ -52,6 +51,15 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
             stream.token_at_cursor().kind,
             stream.token_at_nextline().kind,
         ) {
+            (TK::BlankLine, TK::Separator) => {
+                current_parent.push_blank_lines(stream.consume().len());
+
+                if matches!(stream.token_at_nextline().kind, TK::BlankLine | TK::EoF) {
+                    let transition = parse_transition(&mut stream)?;
+                    current_parent.push_child(transition);
+                }
+                // else fall through to section parsing.
+            }
             (TK::Separator, TK::Indent | TK::Word) | (TK::Word, TK::Separator) => {
                 let section = parse_section_header(&mut stream)?;
                 current_parent.push_section_ref(section.clone());
@@ -72,6 +80,7 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
         };
     }
 
+    doc.remove_child(0); // synthetic leading blank line
     Ok(doc)
 }
 
@@ -147,6 +156,13 @@ fn parse_body_element(
             let paragraph = parse_paragraph_hanging_indent(stream)?;
             attribution.push_child(paragraph);
             current_parent.push_child(attribution);
+        }
+        kind if kind.is(TC::PARAGRAPH_END) => {
+            return Err(ParserError::UnexpectedToken {
+                expected: "Some paragraph content.".to_owned(),
+                found: format!("{:?}", kind),
+                position: stream.position_at_cursor(),
+            });
         }
         _ => {
             let paragraph = parse_paragraph(stream)?;

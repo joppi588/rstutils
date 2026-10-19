@@ -1,0 +1,45 @@
+class: Document
+children:
+- class: Section
+  attributes:
+    marker_len: 9
+    section_marker: "="
+  children:
+  - class: Title
+    attributes:
+      text: Section 1
+  - class: BlankLine
+  - class: Section
+    attributes:
+      marker_len: 12
+      section_marker: '-'
+    children:
+    - class: Title
+      attributes:
+        text: Subsection 1
+    - class: BlankLine
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "Some text.\n"
+    - class: BlankLine
+    - class: Transition
+      attributes:
+        marker_len: 10
+        marker_type: '-'
+    - class: BlankLine
+- class: Section
+  attributes:
+    marker_len: 9
+    section_marker: "="
+  children:
+  - class: Title
+    attributes:
+      text: Section 2
+  - class: BlankLine
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: "Some text.\n"

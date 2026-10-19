@@ -1,0 +1,46 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Sections with transitions at beginning and end.\n"
+- class: BlankLine
+- class: Section
+  attributes:
+    marker_len: 9
+    section_marker: "="
+  children:
+  - class: Title
+    attributes:
+      text: Section 1
+  - class: BlankLine
+  - class: Transition
+    attributes:
+      marker_len: 10
+      marker_type: '-'
+  - class: BlankLine
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: "The next transition is legal:\n"
+  - class: BlankLine
+  - class: Transition
+    attributes:
+      marker_len: 10
+      marker_type: '-'
+  - class: BlankLine
+- class: Section
+  attributes:
+    marker_len: 9
+    section_marker: "="
+  children:
+  - class: Title
+    attributes:
+      text: Section 2
+  - class: BlankLine
+  - class: Transition
+    attributes:
+      marker_len: 10
+      marker_type: '-'

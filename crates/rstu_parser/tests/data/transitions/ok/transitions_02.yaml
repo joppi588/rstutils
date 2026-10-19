@@ -1,0 +1,50 @@
+class: Document
+children:
+- class: Transition
+  attributes:
+    marker_len: 8
+    marker_type: '-'
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "According to the DTD, a section or document may not begin with a transition.\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Note: There is currently no warning, but in future these\nDTD violations should be prevented or at least trigger a warning.\nAlternatively, the DTD may be relaxed to accomodate for more use cases.\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "The DTD specifies that two transitions may not\nbe adjacent:\n"
+- class: BlankLine
+- class: Transition
+  attributes:
+    marker_len: 8
+    marker_type: '-'
+- class: BlankLine
+- class: Transition
+  attributes:
+    marker_len: 8
+    marker_type: '-'
+- class: BlankLine
+- class: Transition
+  attributes:
+    marker_len: 8
+    marker_type: '-'
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "The DTD also specifies that a section or document\nmay not end with a transition.\n"
+- class: BlankLine
+- class: Transition
+  attributes:
+    marker_len: 8
+    marker_type: '-'

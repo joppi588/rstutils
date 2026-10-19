@@ -65,6 +65,7 @@ mod tests {
     #[test]
     fn parse_substitution_directive_marker() {
         let mut stream = tokenize(".. | name | replace:: target\n");
+        stream.consume(); //synthetic blank line
 
         let directive = parse_directive(&mut stream).unwrap();
         let directive = directive.borrow();

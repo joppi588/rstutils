@@ -1,0 +1,17 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "A paragraph and two transitions.\n"
+- class: BlankLine
+- class: Transition
+  attributes:
+    marker_len: 10
+    marker_type: '-'
+- class: BlankLine
+- class: Transition
+  attributes:
+    marker_len: 10
+    marker_type: '-'
