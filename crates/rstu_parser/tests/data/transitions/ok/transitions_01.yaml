@@ -1,0 +1,40 @@
+class: Document
+children:
+- class: Section
+  attributes:
+    marker_len: 9
+    section_marker: "="
+  children:
+  - class: Title
+    attributes:
+      text: Section 1
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: "First text division of section 1.\n"
+  - class: BlankLine
+  - class: Transition
+    attributes:
+      marker_len: 8
+      marker_type: '-'
+  - class: BlankLine
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: "Second text division of section 1.\n"
+  - class: BlankLine
+  - class: Section
+    attributes:
+      marker_len: 9
+      section_marker: '-'
+    children:
+    - class: Title
+      attributes:
+        text: Section 2
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "Paragraph 2 in section 2.\n"

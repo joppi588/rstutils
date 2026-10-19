@@ -15,6 +15,7 @@ fn tokenize_ok_mixed_lorem_ipsum_file() {
     let contents = fs::read_to_string(path).expect("failed to read mixed lorem ipsum test file");
 
     let expected = TokenStream::from_pairs(&[
+        (TK::BlankLine, "\n"),
         (TK::Word, "Lorem"),
         (TK::Spaces, " "),
         (TK::Word, "Ipsum"),
@@ -95,6 +96,7 @@ fn tokenize_ok_indentation() {
     let contents = fs::read_to_string(path).expect("failed to read test file");
 
     let expected = TokenStream::from_pairs(&[
+        (TK::BlankLine, "\n"),
         (TK::Word, "First"),
         (TK::Spaces, " "),
         (TK::Word, "line"),
@@ -131,6 +133,7 @@ fn tokenize_ok_indentation_2blanklines() {
     let contents = fs::read_to_string(path).expect("failed to read test file");
 
     let expected = TokenStream::from_pairs(&[
+        (TK::BlankLine, "\n"),
         (TK::Word, "First_line"),
         (TK::NewLine, "\n"),
         (TK::Indent, "  "),
@@ -155,7 +158,7 @@ fn tokenize_punctuation_bullet_list() {
     let contents = "\n:Authors: - Me\n";
 
     let expected = TokenStream::from_pairs(&[
-        (TK::BlankLine, "\n"),
+        (TK::BlankLine, "\n\n"),
         (TK::Field, ":Authors:"),
         (TK::Spaces, " "),
         (TK::BulletListMarker, "-"),
@@ -173,6 +176,7 @@ fn tokenize_block_quote_attribution_marker() {
     let contents = "Block quote.\n    -- Sherlock Holmes\n";
 
     let expected = TokenStream::from_pairs(&[
+        (TK::BlankLine, "\n"),
         (TK::Word, "Block"),
         (TK::Spaces, " "),
         (TK::Word, "quote"),

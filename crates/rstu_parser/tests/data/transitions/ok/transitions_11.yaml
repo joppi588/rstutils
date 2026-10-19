@@ -1,0 +1,16 @@
+class: Document
+children:
+- class: Transition
+  attributes:
+    marker_len: 10
+    marker_type: '-'
+- class: BlankLine
+- class: Transition
+  attributes:
+    marker_len: 10
+    marker_type: '-'
+- class: BlankLine
+- class: Transition
+  attributes:
+    marker_len: 10
+    marker_type: '-'

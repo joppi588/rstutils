@@ -1,0 +1,5 @@
+Short transition marker.
+
+---
+
+Paragraph

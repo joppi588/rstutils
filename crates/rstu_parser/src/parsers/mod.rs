@@ -12,3 +12,4 @@ pub(crate) mod lists;
 pub(crate) mod literal_block;
 pub(crate) mod paragraph;
 pub(crate) mod section;
+pub(crate) mod transition;

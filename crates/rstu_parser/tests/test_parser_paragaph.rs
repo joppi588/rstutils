@@ -8,6 +8,7 @@ mod test_parser;
 use test_parser::rst_vs_yaml;
 #[rstest]
 #[case("paragraph_w_bullet")]
+// TODO: Activate
 // #[case("bullet_09")]
 fn parse_paragraph(#[case] test_case: &str) {
     rst_vs_yaml!("paragraph/ok", test_case)
