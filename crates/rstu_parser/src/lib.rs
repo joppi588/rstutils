@@ -58,9 +58,9 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
                     let transition = parse_transition(&mut stream)?;
                     current_parent.push_child(transition);
                 }
-                // else fall through to section parsing.
+                // else: do section parsing in next iteration.
             }
-            (TK::Separator, TK::Indent | TK::Word) | (TK::Word, TK::Separator) => {
+            (TK::Separator, _) | (_, TK::Separator) => {
                 let section = parse_section_header(&mut stream)?;
                 current_parent.push_section_ref(section.clone());
                 current_parent = section;
