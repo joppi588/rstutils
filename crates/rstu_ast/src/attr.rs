@@ -50,6 +50,17 @@ impl Attributes {
         self.0.get(key)
     }
 
+    pub fn remove(&mut self, key: &str) -> Option<AttributeType> {
+        self.0.remove(key)
+    }
+
+    pub fn get_usize(&self, key: &str) -> Option<usize> {
+        match self.get(key)? {
+            AttributeType::Usize(value) => Some(*value),
+            _ => None,
+        }
+    }
+
     pub fn get_str(&self, key: &str) -> Option<String> {
         self.get(key).and_then(AttributeType::as_str)
     }

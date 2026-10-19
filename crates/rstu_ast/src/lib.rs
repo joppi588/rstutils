@@ -25,7 +25,7 @@ pub trait NodeRefExt {
     fn with_attr(&self, key: impl Into<String>, value: impl Into<AttributeType>) -> NodeRef;
     fn push_child(&self, child: NodeRef);
     fn remove_child(&self, index: usize);
-    fn pop_child(&self);
+    fn prune_leading_blankline(&self);
     fn push_blank_lines(&self, count: usize);
     fn push_spaces(&self, count: usize);
     fn get_parent(&self) -> Option<NodeRef>;
@@ -76,8 +76,29 @@ impl NodeRefExt for NodeRef {
         self.borrow_mut().children.remove(index);
     }
 
-    fn pop_child(&self) {
-        self.borrow_mut().children.pop();
+    fn prune_leading_blankline(&self) {
+        let Some(first_child) = self.borrow().children.first().cloned() else {
+            return;
+        };
+
+        let mut child = first_child.borrow_mut();
+        if child.class != NodeClass::BlankLine {
+            return;
+        }
+
+        let count = child.attributes.get_usize("count").unwrap_or(1);
+
+        match count {
+            0 | 1 => {
+                self.remove_child(0);
+            }
+            2 => {
+                child.attributes.remove("count");
+            }
+            _ => {
+                child.attributes.insert("count", count - 1);
+            }
+        }
     }
 
     fn push_section_ref(&self, section: NodeRef) -> NodeRef {

@@ -80,7 +80,7 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
         };
     }
 
-    doc.remove_child(0); // synthetic leading blank line
+    doc.prune_leading_blankline();
     Ok(doc)
 }
 
@@ -171,4 +171,62 @@ fn parse_body_element(
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use rstu_ast::{AstNode, NodeClass, NodeRefExt};
+
+    #[test]
+    fn prune_leading_blankline_removes_only_one_of_multiple_lines() {
+        // GIVEN a document whose first child represents three blank lines
+        let doc = AstNode::new_ref(NodeClass::Document);
+        doc.push_blank_lines(3);
+
+        // WHEN the synthetic leading blank line is pruned
+        doc.prune_leading_blankline();
+
+        // THEN the remaining two blank lines are preserved
+        let children = doc.borrow();
+        assert_eq!(children.children.len(), 1);
+        assert_eq!(
+            children.children[0]
+                .borrow()
+                .attributes
+                .get_str("count")
+                .as_deref(),
+            Some("2")
+        );
+    }
+
+    #[test]
+    fn prune_leading_blankline_removes_a_single_line_node() {
+        // GIVEN a document whose first child represents one blank line
+        let doc = AstNode::new_ref(NodeClass::Document);
+        doc.push_blank_lines(1);
+
+        // WHEN the synthetic leading blank line is pruned
+        doc.prune_leading_blankline();
+
+        // THEN the blank-line node is removed
+        assert!(doc.borrow().children.is_empty());
+    }
+
+    #[test]
+    fn prune_leading_blankline_omits_count_for_one_remaining_line() {
+        // GIVEN a document whose first child represents two blank lines
+        let doc = AstNode::new_ref(NodeClass::Document);
+        doc.push_blank_lines(2);
+
+        // WHEN the synthetic leading blank line is pruned
+        doc.prune_leading_blankline();
+
+        // THEN the remaining blank line has no count attribute
+        let children = doc.borrow();
+        assert_eq!(children.children.len(), 1);
+        assert_eq!(
+            children.children[0].borrow().attributes.get_str("count"),
+            None
+        );
+    }
 }
