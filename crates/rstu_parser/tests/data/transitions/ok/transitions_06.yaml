@@ -15,3 +15,4 @@ children:
   attributes:
     marker_len: 10
     marker_type: '-'
+- class: BlankLine
