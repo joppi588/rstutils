@@ -11,12 +11,18 @@ pub fn tokenize(input: &str) -> TokenStream {
     let mut last_token_kind = TK::BlankLine;
     let mut current_indent = 0;
     let mut position = Position::default();
+    let mut index: usize = 1; // point at second \n
+    let mut last_char_bytes: usize = 1; // \n
 
-    let mut index: usize = 1;
     while index < input.len() - 1 {
-        let sub_str = &input[index - 1..];
+        let sub_str = &input[index - last_char_bytes..];
         let (token_kind, lexeme) = TK::match_token(sub_str)
             .unwrap_or_else(|| panic!("No token matched input: {sub_str:?}"));
+        last_char_bytes = lexeme
+            .chars()
+            .next_back()
+            .expect("lexeme is not empty")
+            .len_utf8();
 
         let new_token = Token::new(token_kind, lexeme);
         match (token_kind, last_token_kind) {
