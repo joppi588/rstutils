@@ -158,7 +158,7 @@ fn parse_plain(stream: &mut TokenStream) -> NodeRef {
         stream.token_at_cursor().kind.is(TC::PLAIN)
             || matches!(
                 stream.token_at_cursor().kind,
-                TK::BulletListMarker | TK::Option
+                TK::BulletListMarker | TK::Option | TK::EnumeratedListMarker
             )
     );
 
@@ -169,7 +169,10 @@ fn parse_plain(stream: &mut TokenStream) -> NodeRef {
             kind if kind.is(&TC::PLAIN)
                 || matches!(
                     kind,
-                    TK::BulletListMarker | TK::ClassifierSeparator | TK::Option
+                    TK::BulletListMarker
+                        | TK::ClassifierSeparator
+                        | TK::Option
+                        | TK::EnumeratedListMarker
                 ) =>
             {
                 text.push_str(&stream.consume().lexeme);
