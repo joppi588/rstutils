@@ -2,6 +2,6 @@ Unicode bullets:
 
 • BULLET
 
-‣ TRIANGULAR BULLET
+    ‣ TRIANGULAR BULLET
 
-⁃ HYPHEN BULLET
+        ⁃ HYPHEN BULLET

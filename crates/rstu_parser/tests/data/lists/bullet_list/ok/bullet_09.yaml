@@ -5,11 +5,12 @@ children:
       - class: PlainText
         attributes:
           text: "Unicode bullets:\n"
+  - class: BlankLine
   - class: BulletList
     children:
       - class: BulletListItem
         attributes:
-          marker: "•"
+          marker: •
         children:
           - class: Block
             attributes:
@@ -20,32 +21,47 @@ children:
                   - class: PlainText
                     attributes:
                       text: "BULLET\n"
-              - class: BlankLine
-      - class: BulletListItem
-        attributes:
-          marker: "‣"
-        children:
-          - class: Block
-            attributes:
-              indent: 2
-            children:
-              - class: Paragraph
+              - class: BlockQuote
                 children:
-                  - class: PlainText
+                  - class: BlankLine
+                  - class: Block
                     attributes:
-                      text: "TRIANGULAR BULLET\n"
-              - class: BlankLine
-      - class: BulletListItem
-        attributes:
-          marker: "⁃"
-        children:
-          - class: Block
-            attributes:
-              indent: 2
-            children:
-              - class: Paragraph
-                children:
-                  - class: PlainText
-                    attributes:
-                      text: "HYPHEN BULLET\n"
-              - class: BlankLine
+                      indent: 2
+                    children:
+                      - class: BulletList
+                        children:
+                          - class: BulletListItem
+                            attributes:
+                              marker: ‣
+                            children:
+                              - class: Block
+                                attributes:
+                                  indent: 2
+                                children:
+                                  - class: Paragraph
+                                    children:
+                                      - class: PlainText
+                                        attributes:
+                                          text: "TRIANGULAR BULLET\n"
+                                  - class: BlockQuote
+                                    children:
+                                      - class: BlankLine
+                                      - class: Block
+                                        attributes:
+                                          indent: 2
+                                        children:
+                                          - class: BulletList
+                                            children:
+                                              - class: BulletListItem
+                                                attributes:
+                                                  marker: ⁃
+                                                children:
+                                                  - class: Block
+                                                    attributes:
+                                                      indent: 2
+                                                    children:
+                                                      - class: Paragraph
+                                                        children:
+                                                          - class: PlainText
+                                                            attributes:
+                                                              text: "HYPHEN BULLET\n"
