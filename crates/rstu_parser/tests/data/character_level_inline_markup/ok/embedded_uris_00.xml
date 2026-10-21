@@ -1,0 +1,13 @@
+<document source="test data">
+    <paragraph>
+        Escape chars in URIs:
+    <paragraph>
+        <reference refuri="reference:1">
+            reference:1
+        <target ids="reference-1" names="reference:1" refuri="reference:1">
+    <paragraph>
+        <reference refuri="anonymous\call">
+            anonymous\call
+    <paragraph>
+        <reference refuri="anonymous_call">
+            anonymous_call

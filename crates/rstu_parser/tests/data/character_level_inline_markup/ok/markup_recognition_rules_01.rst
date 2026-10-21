@@ -1,0 +1,4 @@
+
+Character-level m*a***r**``k``\ `u`:title:\p
+with backslash-escaped whitespace, including new\
+lines.

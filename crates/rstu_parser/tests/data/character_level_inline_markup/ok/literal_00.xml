@@ -1,0 +1,6 @@
+<document source="test data">
+    <paragraph>
+        With simple-inline-markup, this is
+        <literal>
+            `interpreted text
+        ` in backquotes!

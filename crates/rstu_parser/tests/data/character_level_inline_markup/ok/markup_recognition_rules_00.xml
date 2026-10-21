@@ -1,0 +1,6 @@
+<document source="test data">
+    <paragraph>
+        __
+        <reference anonymous="1">
+            This
+         is an anonymous reference with simple-inline-markup.
