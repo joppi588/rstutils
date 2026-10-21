@@ -1,0 +1,102 @@
+<document source="test data">
+    <paragraph>
+        Quotes around inline markup:
+    <paragraph>
+        '
+        <emphasis>
+            emphasis
+        ' "
+        <emphasis>
+            emphasis
+        " Straight,
+        ‘
+        <emphasis>
+            emphasis
+        ’ “
+        <emphasis>
+            emphasis
+        ” English, ...,
+        « 
+        <emphasis>
+            emphasis
+         » ‹ 
+        <emphasis>
+            emphasis
+         › « 
+        <emphasis>
+            emphasis
+         » ‹ 
+        <emphasis>
+            emphasis
+         ›
+        « 
+        <emphasis>
+            emphasis
+         » ‹ 
+        <emphasis>
+            emphasis
+         › French,
+        „
+        <emphasis>
+            emphasis
+        “ ‚
+        <emphasis>
+            emphasis
+        ‘ »
+        <emphasis>
+            emphasis
+        « ›
+        <emphasis>
+            emphasis
+        ‹ German, Czech, ...,
+        „
+        <emphasis>
+            emphasis
+        ” «
+        <emphasis>
+            emphasis
+        » Romanian,
+        “
+        <emphasis>
+            emphasis
+        „ ‘
+        <emphasis>
+            emphasis
+        ‚ Greek,
+        「
+        <emphasis>
+            emphasis
+        」 『
+        <emphasis>
+            emphasis
+        』traditional Chinese,
+        ”
+        <emphasis>
+            emphasis
+        ” ’
+        <emphasis>
+            emphasis
+        ’ »
+        <emphasis>
+            emphasis
+        » ›
+        <emphasis>
+            emphasis
+        › Swedish, Finnish,
+        „
+        <emphasis>
+            emphasis
+        ” ‚
+        <emphasis>
+            emphasis
+        ’ Polish,
+        „
+        <emphasis>
+            emphasis
+        ” »
+        <emphasis>
+            emphasis
+        « ’
+        <emphasis>
+            emphasis
+        ’ Hungarian,

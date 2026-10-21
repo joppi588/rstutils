@@ -1,0 +1,17 @@
+<document source="test data">
+    <paragraph>
+        <reference refname="'phrase reference'">
+            'phrase reference'
+         with quotes,
+        <reference refname=""phrase reference"">
+            "phrase reference"
+         with quotes,
+        <reference refname="‘phrase reference’">
+            ‘phrase reference’
+         with quotes,
+        <reference refname="“phrase reference”">
+            “phrase reference”
+         with quotes,
+        <reference refname="«phrase reference»">
+            «phrase reference»
+         with quotes

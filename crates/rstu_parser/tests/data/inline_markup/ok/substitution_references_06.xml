@@ -1,0 +1,10 @@
+<document source="test data">
+    <paragraph>
+        Substitution reference with
+        <substitution_reference refname="mix">
+            mix
+        .
+    <substitution_definition names="mix">
+        text and
+        <reference refname="hyperlink-reference">
+            hyperlink-reference

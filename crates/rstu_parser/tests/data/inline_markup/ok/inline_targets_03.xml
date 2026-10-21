@@ -1,0 +1,17 @@
+<document source="test data">
+    <paragraph>
+        <target names="'target1'">
+            'target1'
+         with quotes,
+        <target names=""target2"">
+            "target2"
+         with quotes,
+        <target names="‘target3’">
+            ‘target3’
+         with quotes,
+        <target names="“target4”">
+            “target4”
+         with quotes,
+        <target names="«target5»">
+            «target5»
+         with quotes

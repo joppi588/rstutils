@@ -1,0 +1,10 @@
+<document source="test data">
+    <paragraph>
+        Escape other char in URIs:
+    <paragraph>
+        <reference refuri="reference:1">
+            reference:1
+        <target names="reference:1" refuri="reference:1">
+    <paragraph>
+        <reference refuri="anonymouscall">
+            anonymouscall

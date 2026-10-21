@@ -1,0 +1,14 @@
+<document source="test data">
+    <paragraph>
+        <literal>
+            literal ``TeX quotes'' & \backslash
+         but not "``" or ``
+    <paragraph>
+        (however,
+        <problematic ids="problematic-1" refid="system-message-1">
+            ``
+        standalone TeX quotes'' will trigger a warning
+        and may be problematic)
+    <system_message backrefs="problematic-1" ids="system-message-1" level="2" line="4" source="test data" type="WARNING">
+        <paragraph>
+            Inline literal start-string without end-string.

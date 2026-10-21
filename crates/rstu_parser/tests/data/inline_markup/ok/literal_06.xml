@@ -1,0 +1,17 @@
+<document source="test data">
+    <paragraph>
+        <literal>
+            'literal'
+         with quotes,
+        <literal>
+            "literal"
+         with quotes,
+        <literal>
+            ‘literal’
+         with quotes,
+        <literal>
+            “literal”
+         with quotes,
+        <literal>
+            «literal»
+         with quotes

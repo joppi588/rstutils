@@ -1,0 +1,11 @@
+<document source="test data">
+    <paragraph>
+        <problematic ids="problematic-1" refid="system-message-1">
+            `
+        phrase
+        <reference refname="reference">
+            reference
+         without closing backquote
+    <system_message backrefs="problematic-1" ids="system-message-1" level="2" line="1" source="test data" type="WARNING">
+        <paragraph>
+            Inline interpreted text or phrase reference start-string without end-string.
