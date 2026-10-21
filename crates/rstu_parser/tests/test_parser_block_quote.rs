@@ -12,26 +12,16 @@ mod test_parser;
 use test_parser::rst_vs_yaml;
 
 #[rstest]
-#[case("block_quote_00")]
-#[case("block_quote_01")]
-#[case("block_quote_04")]
-#[case("block_quote_05")]
-#[case("block_quote_06")]
-#[case("block_quote_07")]
-#[case("block_quote_08")]
-#[case("block_quote_09")]
-#[case("block_quote_10")]
-#[case("block_quote_12")]
-fn parse_block_quote(#[case] test_case: &str) {
+#[case("outdenting_00")]
+#[case("outdenting_01")]
+#[case("outdenting_02")]
+fn ok_outdenting(#[case] test_case: &str) {
     rst_vs_yaml!("block_quotes/ok", test_case);
 }
 
 #[rstest]
-#[case("block_quote_02")]
-#[case("block_quote_03")]
-#[case("block_quote_11")] // TODO: This shall trigger an unexpected indent error
-#[case("block_quote_13")] // TODO: This shall trigger an unexpected indent error
-fn rejects_docutils_block_quote_diagnostics(#[case] test_case: &str) {
+#[case("outdenting_03")]
+fn err_outdenting(#[case] test_case: &str) {
     let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tests/data")
         .join("block_quotes/err")

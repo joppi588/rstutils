@@ -1,0 +1,67 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Starting a block quote\n"
+- class: BlockQuote
+  children:
+  - class: BlankLine
+  - class: Block
+    attributes:
+      indent: 4
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "With indent\n"
+    - class: BlockQuote
+      children:
+      - class: BlankLine
+      - class: Block
+        attributes:
+          indent: 4
+        children:
+        - class: Paragraph
+          children:
+          - class: PlainText
+            attributes:
+              text: "and more indent\n"
+- class: BlankLine
+  attributes:
+    count: 9
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Use\n"
+- class: BlockQuote
+  children:
+  - class: BlankLine
+  - class: Block
+    attributes:
+      indent: 4
+    children:
+    - class: Comment
+      attributes:
+        text: "\n"
+    - class: BlockQuote
+      children:
+      - class: BlankLine
+      - class: Block
+        attributes:
+          indent: 4
+        children:
+        - class: Paragraph
+          children:
+          - class: PlainText
+            attributes:
+              text: "a comment\n"
+    - class: BlankLine
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "to have a smaller indent\n"

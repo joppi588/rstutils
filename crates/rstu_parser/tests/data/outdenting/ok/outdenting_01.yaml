@@ -1,0 +1,63 @@
+class: Document
+children:
+  - class: BulletList
+    children:
+      - class: BulletListItem
+        attributes:
+          marker: +
+        children:
+          - class: Block
+            attributes:
+              indent: 2
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: "bullet\n"
+      - class: BlankLine
+  - class: Comment
+    attributes:
+      text: |
+        Comments swallow up all indented text following.
+        (Therefore this is not a) block quote.\n"
+  - class: BlankLine
+  - class: BulletList
+    children:
+      - class: BulletListItem
+        attributes:
+          marker: "-"
+        children:
+          - class: Block
+            attributes:
+              indent: 2
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: "bullet\n"
+              - class: BlankLine
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: |
+                        If we want a block quote after this bullet list item,
+                        we need to use an empty comment:
+      - class: BlankLine
+  - class: Comment
+    attributes:
+      text: "\n"
+  - class: BlockQuote
+    children:
+      - class: BlankLine
+      - class: Block
+        attributes:
+          indent: 2
+        children:
+          - class: Paragraph
+            children:
+              - class: PlainText
+                attributes:
+                  text: "Block quote.\n"
