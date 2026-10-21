@@ -1,0 +1,28 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: quoted '
+  - class: InlineMarkup
+    attributes:
+      markup: strong
+      text: strong
+  - class: PlainText
+    attributes:
+      text: "', quoted \""
+  - class: InlineMarkup
+    attributes:
+      markup: strong
+      text: strong
+  - class: PlainText
+    attributes:
+      text: "\",\nquoted «"
+  - class: InlineMarkup
+    attributes:
+      markup: strong
+      text: strong
+  - class: PlainText
+    attributes:
+      text: "»\n"
