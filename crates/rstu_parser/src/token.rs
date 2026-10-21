@@ -8,7 +8,7 @@ use std::sync::LazyLock;
 static RECOMMENDED_SECTION_CHARS: &str = "=\\-`:.'\"~\\^_\\*\\+#"; // escaped =-`:.'"~^_*+#
 static INLINE_PRE_CHARS: &str = r#"(?:[\n\s\-:/'"<(\[{]|\p{Ps}|\p{Pi}|\p{Pf}|\p{Pd}|\p{Po})"#;
 static INLINE_POST_CHARS: &str =
-    r#"(?:[\n\s\-\.,:;!?\\/'")\]}>]|\p{Pe}|\p{Pi}|\p{Pf}|\p{Pd}|\p{Po})"#;
+    r#"(?:[\n\s\-\.,:;!?\\/'")\]}>]|\p{Pe}|\p{Pi}|\p{Pf}|\p{Pd}|\p{Po}|\p{Ps})"#;
 
 // Match groups are used in the parser, but not the lexer (performance)
 // Content is the same, update together.
@@ -454,6 +454,15 @@ mod tests {
         assert_eq!(TK::BackquoteEnd.find_lexeme("x` "), Some("`"));
         assert_eq!(TK::InlineLiteralStart.find_lexeme(" ``x"), Some("``"));
         assert_eq!(TK::InlineLiteralEnd.find_lexeme("x`` "), Some("``"));
+    }
+
+    /// GIVEN emphasis closed by a low quotation mark used as closing punctuation
+    /// WHEN the emphasis end token is matched
+    /// THEN the delimiter is recognized before following text
+    #[test]
+    fn emphasis_end_accepts_ps_quote_delimiters() {
+        assert_eq!(TK::EmphasisEnd.find_lexeme("x*„ Greek"), Some("*"));
+        assert_eq!(TK::EmphasisEnd.find_lexeme("x*‚ Greek"), Some("*"));
     }
 
     // TODO: exclude escaped characters
