@@ -172,6 +172,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "env_filter"
+version = "2.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "900d271a03799a1ee8d1ca9b19893b48ca674a9284fefcfb85f05e74ed314217"
+dependencies = [
+ "log",
+ "regex",
+]
+
+[[package]]
+name = "env_logger"
+version = "0.11.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "de671bd27a75a797dc9ae289ba1e77276e75e2026408aab65185384e2d5cd3f6"
+dependencies = [
+ "env_filter",
+ "log",
+]
+
+[[package]]
 name = "equivalent"
 version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -268,6 +288,12 @@ name = "itoa"
 version = "1.0.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
+
+[[package]]
+name = "log"
+version = "0.4.34"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6"
 
 [[package]]
 name = "memchr"
@@ -402,9 +428,11 @@ dependencies = [
 
 [[package]]
 name = "rstu"
-version = "0.0.4"
+version = "0.0.5"
 dependencies = [
  "clap",
+ "env_logger",
+ "log",
  "rstu_ast",
  "rstu_parser",
  "serde_json",
@@ -412,7 +440,7 @@ dependencies = [
 
 [[package]]
 name = "rstu_ast"
-version = "0.0.4"
+version = "0.0.5"
 dependencies = [
  "serde",
  "serde-saphyr",
@@ -421,7 +449,7 @@ dependencies = [
 
 [[package]]
 name = "rstu_doctree"
-version = "0.0.4"
+version = "0.0.5"
 dependencies = [
  "serde",
  "serde_json",
@@ -429,8 +457,9 @@ dependencies = [
 
 [[package]]
 name = "rstu_parser"
-version = "0.0.4"
+version = "0.0.5"
 dependencies = [
+ "log",
  "regex",
  "rstest",
  "rstu_ast",
