@@ -1,0 +1,9 @@
+<document source="test data">
+    <paragraph>
+        l'
+        <reference refname="phrase reference">
+            phrase reference
+         and l’
+        <reference refname="phrase reference">
+            phrase reference
+         with apostrophe

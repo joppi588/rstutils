@@ -1,0 +1,9 @@
+<document source="test data">
+    <paragraph>
+        Invalid phrase reference:
+    <paragraph>
+        <problematic ids="problematic-1" refid="system-message-1">
+            `phrase reference`:role:_
+    <system_message backrefs="problematic-1" ids="system-message-1" level="2" line="3" source="test data" type="WARNING">
+        <paragraph>
+            Mismatch: both interpreted text role suffix and reference suffix.

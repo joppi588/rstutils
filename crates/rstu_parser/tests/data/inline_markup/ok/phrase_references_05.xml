@@ -1,0 +1,9 @@
+<document source="test data">
+    <paragraph>
+        l'
+        <reference anonymous="1">
+            anonymous reference
+         and l’
+        <reference anonymous="1">
+            anonymous reference
+         with apostrophe

@@ -1,0 +1,4 @@
+no inline markup because of non-ASCII whitespace following /preceding the markup
+** NO-BREAK SPACE ** `` NO-BREAK SPACE `` ` NO-BREAK SPACE `
+** EN QUAD ** `` EN QUAD `` ` EN QUAD `
+** NARROW NBSP ** `` NARROW NBSP `` ` NARROW NBSP `

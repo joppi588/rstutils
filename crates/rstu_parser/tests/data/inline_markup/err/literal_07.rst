@@ -1,0 +1,5 @@
+
+``literal ``TeX quotes'' & \backslash`` but not "``" or ``
+
+(however, ``standalone TeX quotes'' will trigger a warning
+and may be problematic)

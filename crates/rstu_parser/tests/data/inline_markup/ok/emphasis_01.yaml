@@ -1,0 +1,21 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: l'
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: " with the "
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: "' apostrophe.\n"

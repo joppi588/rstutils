@@ -43,14 +43,15 @@ def main() -> int:
             source, expected = case[0], case[1]
             kind = "err" if "<system_message" in expected else "ok"
             case_name = f"{name}_{index:02d}"
-            path = args.out / topic / kind / f"{case_name}.rst"
+            path = {suffix: args.out / topic / kind / f"{case_name}.{suffix}" for suffix in ["rst","xml"]}
             cases[kind].append(case_name)
-            if path.exists() and not args.force:
+            if path["rst"].exists() and not args.force:
                 skipped.append(path)
                 continue
             if not args.dry_run:
-                path.parent.mkdir(parents=True, exist_ok=True)
-                path.write_text(source, encoding="utf-8")
+                path["rst"].parent.mkdir(parents=True, exist_ok=True)
+                path["rst"].write_text(source, encoding="utf-8")
+                path["xml"].write_text(expected, encoding="utf-8")
             written += 1
 
     for kind, names in cases.items():

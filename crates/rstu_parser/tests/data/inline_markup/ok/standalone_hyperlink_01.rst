@@ -1,0 +1,6 @@
+
+Valid URLs with escaped markup characters:
+
+http://example.com/\*content\*/whatever
+
+http://example.com/\*content*/whatever

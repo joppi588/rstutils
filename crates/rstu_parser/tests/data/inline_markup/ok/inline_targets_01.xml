@@ -1,0 +1,9 @@
+<document source="test data">
+    <paragraph>
+        l'
+        <target names="target1">
+            target1
+         and l’
+        <target names="target2">
+            target2
+         with apostrophe

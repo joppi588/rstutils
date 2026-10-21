@@ -1,0 +1,7 @@
+<document source="test data">
+    <paragraph>
+        <reference refuri="http://example.com/a long/path and/some escaped whitespace">
+            embedded URI with escaped whitespace
+    <paragraph>
+        <reference refuri="omitted reference text with escaped whitespace">
+            omitted reference text with escaped whitespace

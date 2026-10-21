@@ -1,0 +1,4 @@
+<document source="test data">
+    <paragraph>
+        <reference refname="alias long phrase">
+            embedded alias with whitespace

@@ -1,0 +1,22 @@
+<document source="test data">
+    <paragraph>
+        quoted '
+        <reference anonymous="1">
+            ref
+        ', quoted "
+        <reference anonymous="1">
+            ref
+        ",
+        quoted ‘
+        <reference anonymous="1">
+            ref
+        ’, quoted “
+        <reference anonymous="1">
+            ref
+        ”,
+        quoted «
+        <reference anonymous="1">
+            ref
+        »,
+        but not 'ref ref'__, "ref ref"__, ‘ref ref’__,
+        “ref ref”__, or «ref ref»__

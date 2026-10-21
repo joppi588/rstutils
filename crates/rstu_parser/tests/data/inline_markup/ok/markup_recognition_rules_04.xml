@@ -1,0 +1,33 @@
+<document source="test data">
+    <paragraph>
+        inline markup separated by non-ASCII whitespace
+         
+        <strong>
+            NO-BREAK SPACE
+         ,  
+        <literal>
+            NO-BREAK SPACE
+         ,  
+        <title_reference>
+            NO-BREAK SPACE
+         ,
+         
+        <strong>
+            EN QUAD
+         ,  
+        <literal>
+            EN QUAD
+         ,  
+        <title_reference>
+            EN QUAD
+         ,
+         
+        <strong>
+            NARROW NBSP
+         ,  
+        <literal>
+            NARROW NBSP
+         ,  
+        <title_reference>
+            NARROW NBSP
+         ,

@@ -1,0 +1,5 @@
+<document source="test data">
+    <paragraph>
+        <reference refuri="http://example.com">
+            phrase reference
+        <target names="phrase\ reference" refuri="http://example.com">

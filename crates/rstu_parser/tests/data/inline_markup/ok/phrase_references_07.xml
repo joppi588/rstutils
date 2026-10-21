@@ -1,0 +1,17 @@
+<document source="test data">
+    <paragraph>
+        <reference anonymous="1">
+            'anonymous reference'
+         with quotes,
+        <reference anonymous="1">
+            "anonymous reference"
+         with quotes,
+        <reference anonymous="1">
+            ‘anonymous reference’
+         with quotes,
+        <reference anonymous="1">
+            “anonymous reference”
+         with quotes,
+        <reference anonymous="1">
+            «anonymous reference»
+         with quotes

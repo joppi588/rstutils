@@ -1,0 +1,20 @@
+<document source="test data">
+    <paragraph>
+        quoted '
+        <literal>
+            literal
+        ', quoted "
+        <literal>
+            literal
+        ",
+        quoted ‘
+        <literal>
+            literal
+        ’, quoted “
+        <literal>
+            literal
+        ”,
+        quoted «
+        <literal>
+            literal
+        »
