@@ -1,0 +1,11 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: InlineMarkup
+    attributes:
+      markup: hyperlink_reference
+      text: phrase reference <alias_>
+  - class: PlainText
+    attributes:
+      text: "\n"
