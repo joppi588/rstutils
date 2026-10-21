@@ -99,8 +99,8 @@ impl TokenStream {
     pub fn consume_text_until(&mut self, kinds: &[TokenKind]) -> String {
         let found = self.find_next_kind(kinds).unwrap_or(self.tokens.len());
         let mut text = String::new();
-        for (token, _) in &self.tokens[self.cursor.min(found)..found] {
-            text.push_str(&token.lexeme);
+        while self.cursor < found {
+            text.push_str(&self.consume().lexeme);
         }
         self.cursor = found;
         text
