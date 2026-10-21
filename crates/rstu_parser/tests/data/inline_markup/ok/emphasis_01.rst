@@ -1,2 +1,1 @@
 l'*emphasis* with the *emphasis*' apostrophe.
-l’*emphasis* with the *emphasis*’ apostrophe.
