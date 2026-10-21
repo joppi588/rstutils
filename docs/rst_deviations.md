@@ -24,7 +24,8 @@ This document lists deviations from the rst specification / implementation.
 - Line blocks:
   * First indent defines the block indent.
   * Representation: The first line is a direct child of the line block, even if nested line blocks follow.
-
+- Inline markup
+  * Asterisks next to emphasis markers need to be escaped (see emphasis_06.rst)
 
 # Interpretations
 Things that would be according to the spec book but not to the python parser implementation:
