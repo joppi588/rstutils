@@ -1,0 +1,32 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      text: citation
+      type: citation
+  - class: PlainText
+    attributes:
+      text: " and "
+  - class: Reference
+    attributes:
+      text: cit-ation
+      type: citation
+  - class: PlainText
+    attributes:
+      text: " and "
+  - class: Reference
+    attributes:
+      text: cit.ation
+      type: citation
+  - class: PlainText
+    attributes:
+      text: " and "
+  - class: Reference
+    attributes:
+      text: CIT1
+      type: citation
+  - class: PlainText
+    attributes:
+      text: " but not [CIT 1]_\n"

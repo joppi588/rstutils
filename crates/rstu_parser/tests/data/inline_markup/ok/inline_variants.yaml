@@ -80,7 +80,7 @@ children:
           - class: Reference
             attributes:
               text: "CIT"
-              type: footnote
+              type: citation
           - class: PlainText
             attributes:
               text: " "

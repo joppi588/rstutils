@@ -1,0 +1,14 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Adjacent citation refs are not possible: "
+  - class: Reference
+    attributes:
+      text: citation
+      type: citation
+  - class: PlainText
+    attributes:
+      text: "[CIT1]_\n"

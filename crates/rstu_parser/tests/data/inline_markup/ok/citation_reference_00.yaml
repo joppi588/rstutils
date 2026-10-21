@@ -1,0 +1,11 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      text: citation
+      type: citation
+  - class: PlainText
+    attributes:
+      text: "\n"
