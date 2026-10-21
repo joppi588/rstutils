@@ -1,0 +1,11 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: InlineMarkup
+    attributes:
+      markup: strong
+      text: strong
+  - class: PlainText
+    attributes:
+      text: "\n"
