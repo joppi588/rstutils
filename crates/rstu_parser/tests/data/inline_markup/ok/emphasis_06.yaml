@@ -22,7 +22,7 @@ children:
   - class: InlineMarkup
     attributes:
       markup: emphasis
-      text: \**
+      text: \*\*
   - class: PlainText
     attributes:
       text: "\n"

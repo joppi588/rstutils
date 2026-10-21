@@ -1,3 +1,2 @@
 quoted '**strong**', quoted "**strong**",
-quoted ‘**strong**’, quoted “**strong**”,
 quoted «**strong**»

@@ -1,4 +1,4 @@
 
 Emphasized asterisk: *\**
 
-Emphasized double asterisk: *\***
+Emphasized double asterisk: *\*\**

@@ -1,0 +1,27 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Strong asterisk: "
+  - class: InlineMarkup
+    attributes:
+      markup: strong
+      text: "*"
+  - class: PlainText
+    attributes:
+      text: "\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Strong double asterisk: "
+  - class: InlineMarkup
+    attributes:
+      markup: strong
+      text: "**"
+  - class: PlainText
+    attributes:
+      text: "\n"

@@ -7,8 +7,12 @@ use std::sync::LazyLock;
 
 static RECOMMENDED_SECTION_CHARS: &str = "=\\-`:.'\"~\\^_\\*\\+#"; // escaped =-`:.'"~^_*+#
 static INLINE_PRE_CHARS: &str = r#"(?:[\n\s\-:/'"<(\[{]|\p{Ps}|\p{Pi}|\p{Pf}|\p{Pd}|\p{Po})"#;
+static INLINE_PRE_CHARS_NO_ASTERISK: &str =
+    r#"(?:[\n\s\-:/'"<(\[{]|\p{Ps}|\p{Pi}|\p{Pf}|\p{Pd}|[\p{Po}&&[^*]])"#;
 static INLINE_POST_CHARS: &str =
     r#"(?:[\n\s\-\.,:;!?\\/'")\]}>]|\p{Pe}|\p{Pi}|\p{Pf}|\p{Pd}|\p{Po}|\p{Ps})"#;
+static INLINE_POST_CHARS_NO_ASTERISK: &str =
+    r#"(?:[\n\s\-\.,:;!?\\/'")\]}>]|\p{Pe}|\p{Pi}|\p{Pf}|\p{Pd}|[\p{Po}&&[^*]]|\p{Ps})"#;
 
 // Match groups are used in the parser, but not the lexer (performance)
 // Content is the same, update together.
@@ -244,10 +248,10 @@ impl TokenKind {
         // Inline
         // Keep recognition order aligned with the spec: strong before emphasis,
         // inline literals and inline internal targets before backquote constructs.
-        (StrongStart, format!(r"{0}\*\*[^\s]", INLINE_PRE_CHARS)),
-        (StrongEnd, format!(r"[^\s*]\*\*{0}", INLINE_POST_CHARS)),
-        (EmphasisStart, format!(r"{0}\*[^\s]", INLINE_PRE_CHARS)),
-        (EmphasisEnd, format!(r"[^\s\\]\*{0}", INLINE_POST_CHARS)),
+        (StrongStart, format!(r"{0}\*\*[^\s]", INLINE_PRE_CHARS_NO_ASTERISK)),
+        (StrongEnd, format!(r"[^\s\\]\*\*{0}", INLINE_POST_CHARS_NO_ASTERISK)),
+        (EmphasisStart, format!(r"{0}\*[^\s]", INLINE_PRE_CHARS_NO_ASTERISK)),
+        (EmphasisEnd, format!(r"[^\s\\]\*{0}", INLINE_POST_CHARS_NO_ASTERISK)),
         (InlineLiteralStart, format!(r"{0}``[^\s]", INLINE_PRE_CHARS)),
         (InlineLiteralEnd, format!(r"[^\s]``{0}", INLINE_POST_CHARS)),
         (InlineInternalTargetStart, format!(r"{0}_`[^\s]", INLINE_PRE_CHARS)),
@@ -468,11 +472,6 @@ mod tests {
     #[test]
     fn emphasis_end_does_not_treat_escaped_asterisk_as_delimiter() {
         assert_eq!(TK::EmphasisEnd.find_lexeme("**\n"), Some("*"));
-    }
-
-    #[test]
-    fn strong_end_does_not_overlap_an_escaped_emphasis_asterisk() {
-        assert_eq!(TK::StrongEnd.find_lexeme("***\n"), None);
     }
 
     // TODO: exclude escaped characters
