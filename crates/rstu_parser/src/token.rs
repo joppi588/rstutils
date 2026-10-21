@@ -102,6 +102,7 @@ pub struct TokenCategory;
 impl TokenCategory {
     pub const DEFINITION_LIST: &'static [TokenKind] = &[
         TokenKind::BackquoteStart,
+        TokenKind::CitationReference,
         TokenKind::EmphasisStart,
         TokenKind::EscapedChar,
         TokenKind::FootnoteReference,
@@ -132,6 +133,7 @@ impl TokenCategory {
         TokenKind::StrongStart,
     ];
     pub const INLINE_TOKEN: &'static [TokenKind] = &[
+        TokenKind::CitationReference,
         TokenKind::FootnoteReference,
         TokenKind::SimpleAnonymousHyperLinkReference,
         TokenKind::SimpleHyperlinkReference,
@@ -181,6 +183,7 @@ pub enum TokenKind {
     BlankLine,
     BulletListMarker,
     ClassifierSeparator,
+    CitationReference,
     Dedent,
     Directive,
     DoctestStart,
@@ -262,7 +265,8 @@ impl TokenKind {
         (SubstitutionReference, format!(r"{0}\|.+?\|{1}", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
         // TODO SubsRefHyperLink rst l.3033
         // TODO SubRefAnonymousHyperlink
-        (FootnoteReference, format!(r"{0}\[.+?\]_{1}", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
+        (FootnoteReference, format!(r"{0}\[(?:[0-9]+|#(?:[\p{{L}}\p{{N}}]+(?:[-_.][\p{{L}}\p{{N}}]+)*)?|\*)\]_{1}", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
+        (CitationReference, format!(r"{0}\[[\p{{L}}\p{{N}}]+(?:[-_.][\p{{L}}\p{{N}}]+)*\]_{1}", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
         (HyperlinkReferenceEnd, format!(r"(?:[^\s]`_|[^\s]_){}", INLINE_POST_CHARS)),
         (SimpleAnonymousHyperLinkReference,r"[\s\n]\w+__\s"),
         (SimpleHyperlinkReference,r"[\s\n]\w+_\s"),
@@ -520,7 +524,25 @@ mod tests {
         assert_eq!(TK::SubstitutionReference.find_lexeme(" |x| "), Some("|x|"));
         assert_eq!(TK::HyperlinkReferenceEnd.find_lexeme("x_ "), Some("_"));
         assert_eq!(TK::HyperlinkReferenceEnd.find_lexeme("x`_ "), Some("`_"));
-        assert_eq!(TK::FootnoteReference.find_lexeme(" [x]_ "), Some("[x]_"));
+        assert_eq!(TK::FootnoteReference.find_lexeme(" [12]_ "), Some("[12]_"));
+        assert_eq!(
+            TK::FootnoteReference.find_lexeme(" [#label]_ "),
+            Some("[#label]_")
+        );
+        assert_eq!(TK::FootnoteReference.find_lexeme(" [*]_ "), Some("[*]_"));
+        assert_eq!(TK::FootnoteReference.find_lexeme(" [citation]_ "), None);
+        assert_eq!(
+            TK::CitationReference.find_lexeme(" [citation]_ "),
+            Some("[citation]_")
+        );
+        assert_eq!(
+            TK::CitationReference.find_lexeme(" [cit-ation]_ "),
+            Some("[cit-ation]_")
+        );
+        assert_eq!(
+            TK::CitationReference.find_lexeme(" [cit.ation]_ "),
+            Some("[cit.ation]_")
+        );
         assert_eq!(
             TK::SimpleHyperlinkReference.find_lexeme(" simple_ref_ text"),
             Some("simple_ref_")
