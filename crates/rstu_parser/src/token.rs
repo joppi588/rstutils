@@ -245,9 +245,9 @@ impl TokenKind {
         // Keep recognition order aligned with the spec: strong before emphasis,
         // inline literals and inline internal targets before backquote constructs.
         (StrongStart, format!(r"{0}\*\*[^\s]", INLINE_PRE_CHARS)),
-        (StrongEnd, format!(r"[^\s]\*\*{0}", INLINE_POST_CHARS)),
+        (StrongEnd, format!(r"[^\s*]\*\*{0}", INLINE_POST_CHARS)),
         (EmphasisStart, format!(r"{0}\*[^\s]", INLINE_PRE_CHARS)),
-        (EmphasisEnd, format!(r"[^\s]\*{0}", INLINE_POST_CHARS)),
+        (EmphasisEnd, format!(r"[^\s\\]\*{0}", INLINE_POST_CHARS)),
         (InlineLiteralStart, format!(r"{0}``[^\s]", INLINE_PRE_CHARS)),
         (InlineLiteralEnd, format!(r"[^\s]``{0}", INLINE_POST_CHARS)),
         (InlineInternalTargetStart, format!(r"{0}_`[^\s]", INLINE_PRE_CHARS)),
@@ -463,6 +463,16 @@ mod tests {
     fn emphasis_end_accepts_ps_quote_delimiters() {
         assert_eq!(TK::EmphasisEnd.find_lexeme("x*„ Greek"), Some("*"));
         assert_eq!(TK::EmphasisEnd.find_lexeme("x*‚ Greek"), Some("*"));
+    }
+
+    #[test]
+    fn emphasis_end_does_not_treat_escaped_asterisk_as_delimiter() {
+        assert_eq!(TK::EmphasisEnd.find_lexeme("**\n"), Some("*"));
+    }
+
+    #[test]
+    fn strong_end_does_not_overlap_an_escaped_emphasis_asterisk() {
+        assert_eq!(TK::StrongEnd.find_lexeme("***\n"), None);
     }
 
     // TODO: exclude escaped characters
