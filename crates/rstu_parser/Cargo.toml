@@ -8,6 +8,7 @@ license.workspace = true
 repository.workspace = true
 
 [dependencies]
+log = "0.4"
 regex = "1"
 rstu_ast.workspace = true
 

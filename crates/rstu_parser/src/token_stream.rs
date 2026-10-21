@@ -150,6 +150,13 @@ impl TokenStream {
 
     pub fn consume(&mut self) -> Token {
         let token = self.token_at(self.cursor);
+        log::debug!(
+            "({}/{}) {:?} {}",
+            self.cursor + 1,
+            self.tokens.len(),
+            token.kind,
+            self.position_at_cursor()
+        );
         self.cursor = self.cursor.saturating_add(1);
         token
     }

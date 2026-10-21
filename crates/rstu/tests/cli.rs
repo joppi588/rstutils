@@ -100,3 +100,26 @@ fn convert_rejects_unsupported_output_formats() {
     assert!(!output.status.success());
     assert!(String::from_utf8_lossy(&output.stderr).contains("invalid value"));
 }
+
+/// GIVEN an rst file containing a single paragraph
+/// WHEN running `rstu convert <file>` with and without `--debug`
+/// THEN progress lines appear on stderr only when `--debug` is given
+#[test]
+fn debug_flag_logs_parse_progress_to_stderr() {
+    let file_path = write_rst_fixture("convert-debug", "Hello\n");
+    let path = file_path.to_str().expect("fixture path should be UTF-8");
+
+    let run = |args: &[&str]| {
+        Command::new(env!("CARGO_BIN_EXE_rstu"))
+            .args(args)
+            .output()
+            .expect("failed to run rstu binary")
+    };
+    let quiet = run(&["convert", path]);
+    let debug = run(&["--debug", "convert", path]);
+
+    let _ = std::fs::remove_file(&file_path);
+    assert!(quiet.stderr.is_empty());
+    assert!(String::from_utf8_lossy(&debug.stderr).contains("(1/"));
+    assert_eq!(quiet.stdout, debug.stdout);
+}

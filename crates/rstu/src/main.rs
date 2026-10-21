@@ -7,6 +7,10 @@ use clap::{Parser, Subcommand, ValueEnum};
 #[derive(Parser, Debug)]
 #[command(name = "rstu")]
 struct Cli {
+    /// Log parsing progress to stderr.
+    #[arg(long, global = true)]
+    debug: bool,
+
     #[command(subcommand)]
     command: Commands,
 }
@@ -37,6 +41,14 @@ enum OutputFormat {
 
 fn main() {
     let cli = Cli::parse();
+
+    if cli.debug {
+        env_logger::Builder::new()
+            .filter_module("rstu_parser", log::LevelFilter::Debug)
+            .format_timestamp(None)
+            .format_target(false)
+            .init();
+    }
 
     match cli.command {
         Commands::Version => {

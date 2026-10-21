@@ -23,5 +23,5 @@ temporary_output=$(mktemp "${output}.tmp.XXXXXX")
 trap 'rm -f -- "$temporary_output"' EXIT
 
 cargo run --quiet --manifest-path "$manifest_path" --bin rstu -- \
-    convert "$input" --output yaml > "$temporary_output"
+    convert --debug "$input" --output yaml > "$temporary_output"
 mv -- "$temporary_output" "$output"
