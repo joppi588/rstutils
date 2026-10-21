@@ -2,7 +2,7 @@
 
 .. Comments swallow up all indented text following.
 
-   (Therefore this is not a) block quote.
+  (Therefore this is not a) block quote.
 
 - bullet
 

@@ -30,8 +30,6 @@ children:
             attributes:
               text: "and more indent\n"
 - class: BlankLine
-  attributes:
-    count: 9
 - class: Paragraph
   children:
   - class: PlainText
