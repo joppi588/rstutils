@@ -1,0 +1,4 @@
+<document source="test data">
+    <paragraph>
+        <reference refname="embedded alias with whitespace">
+            embedded alias with whitespace

@@ -1,0 +1,7 @@
+<document source="test data">
+    <paragraph>
+        <reference refuri="mailto:jdoe@example.com">
+            embedded email address
+    <paragraph>
+        <reference refuri="mailto:jdoe@example.com">
+            embedded email address broken across lines

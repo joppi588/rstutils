@@ -1,0 +1,7 @@
+<document source="test data">
+    <paragraph>
+        <reference anonymous="1">
+            no embedded alias (whitespace inside bracket) < alias_ >
+    <paragraph>
+        <reference anonymous="1">
+            no embedded alias (no preceding whitespace)<alias_>

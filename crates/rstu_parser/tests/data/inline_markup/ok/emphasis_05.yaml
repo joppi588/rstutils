@@ -1,0 +1,216 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Quotes around inline markup:\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "'"
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: "' \""
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: "\" Straight,\n‘"
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: ’ “
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: "” English, ...,\n« "
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text:  » ‹ 
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text:  › « 
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text:  » ‹ 
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: " ›\n« "
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text:  » ‹ 
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: " › French,\n„"
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: “ ‚
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: ‘ »
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: « ›
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: "‹ German, Czech, ...,\n„"
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: ” «
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: "» Romanian,\n“"
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: „ ‘
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: "‚ Greek,\n「"
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: 」 『
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: "』traditional Chinese,\n”"
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: ” ’
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: ’ »
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: » ›
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: "› Swedish, Finnish,\n„"
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: ” ‚
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: "’ Polish,\n„"
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: ” »
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: « ’
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: "’ Hungarian,\n"

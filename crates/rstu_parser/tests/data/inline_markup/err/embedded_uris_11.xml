@@ -1,0 +1,23 @@
+<document source="test data">
+    <paragraph>
+        Report duplicate refname.
+    <paragraph>
+        Explicit targets:
+        <target names="file.txt">
+            file.txt
+        ,
+        <target names="file.html">
+            file.html
+        .
+    <system_message level="1" line="6" source="test data" type="INFO">
+        <paragraph>
+            Duplicate implicit target name: "file.txt".
+    <paragraph>
+        Embedded URI: named
+        <reference refuri="file.txt">
+            file.txt
+        <target dupnames="file.txt" refuri="file.txt">
+         and anonymous
+        <reference refuri="file.html">
+            file.html
+        .

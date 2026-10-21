@@ -1,0 +1,61 @@
+<document source="test data">
+    <paragraph>
+        some punctuation is allowed around inline markup, e.g.
+        /
+        <emphasis>
+            emphasis
+        /, -
+        <emphasis>
+            emphasis
+        -, and :
+        <emphasis>
+            emphasis
+        : (delimiters),
+        (
+        <emphasis>
+            emphasis
+        ), [
+        <emphasis>
+            emphasis
+        ], <
+        <emphasis>
+            emphasis
+        >, {
+        <emphasis>
+            emphasis
+        } (open/close pairs)
+        <emphasis>
+            emphasis
+        .,
+        <emphasis>
+            emphasis
+        ,,
+        <emphasis>
+            emphasis
+        !, and
+        <emphasis>
+            emphasis
+        (closing delimiters),
+    <paragraph>
+        but not
+        )*emphasis*(, ]*emphasis*[, >*emphasis*>, }*emphasis*{ (close/open pairs),
+        (*), [*], '*' or '"*"' ("quoted" start-string),
+        x*2* or 2*x* (alphanumeric char before),
+        *args or * (escaped, whitespace behind start-string),
+        or
+        <emphasis>
+            the* *stars* *inside
+         (escaped, whitespace before end-string).
+    <paragraph>
+        However, '
+        <problematic ids="problematic-1" refid="system-message-1">
+            *
+        args' will trigger a warning and may be problematic.
+    <system_message backrefs="problematic-1" ids="system-message-1" level="2" line="13" source="test data" type="WARNING">
+        <paragraph>
+            Inline emphasis start-string without end-string.
+    <paragraph>
+        what about
+        <emphasis>
+            this*
+        ?

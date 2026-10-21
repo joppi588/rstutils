@@ -151,11 +151,13 @@ impl TokenStream {
     pub fn consume(&mut self) -> Token {
         let token = self.token_at(self.cursor);
         log::debug!(
-            "({}/{}) {:?} {}",
+            "({}/{}) L{} C{} {:?} {:?}",
             self.cursor + 1,
             self.tokens.len(),
+            self.position_at_cursor().line,
+            self.position_at_cursor().column,
             token.kind,
-            self.position_at_cursor()
+            token.lexeme
         );
         self.cursor = self.cursor.saturating_add(1);
         token

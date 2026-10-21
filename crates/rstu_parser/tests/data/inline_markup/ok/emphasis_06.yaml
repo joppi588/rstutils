@@ -1,0 +1,28 @@
+class: Document
+children:
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Emphasized asterisk: "
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: \*
+  - class: PlainText
+    attributes:
+      text: "\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Emphasized double asterisk: "
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: \**
+  - class: PlainText
+    attributes:
+      text: "\n"

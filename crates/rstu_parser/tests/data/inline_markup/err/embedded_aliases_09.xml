@@ -1,0 +1,29 @@
+<document source="test data">
+    <paragraph>
+        Duplicate refnames in references with embedded alias.
+    <paragraph>
+        Explicit targets:
+        <target names="tg1">
+            tg1
+         and
+        <target names="tg2">
+            tg2
+        .
+    <system_message level="1" line="6" source="test data" type="INFO">
+        <paragraph>
+            Duplicate implicit target name: "link".
+    <paragraph>
+        References with embedded alias:
+        <reference refname="tg1">
+            link
+        <target dupnames="link" ids="link-1" refname="tg1">
+         and
+        <reference refname="tg2">
+            link
+        <target dupnames="link" refname="tg2">
+        .
+    <paragraph>
+        No clash with anonymous reference
+        <reference refname="tg1">
+            link
+        .

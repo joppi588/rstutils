@@ -1,0 +1,4 @@
+<document source="test data">
+    <paragraph>
+        <reference refuri="http://example.com/long/path/and/whitespace">
+            embedded URI with whitespace

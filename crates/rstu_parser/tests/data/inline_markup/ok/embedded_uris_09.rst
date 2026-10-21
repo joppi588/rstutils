@@ -1,0 +1,6 @@
+
+Escape trailing low-line char in URIs:
+
+`<reference\_>`_
+
+`<anonymous\_>`__
