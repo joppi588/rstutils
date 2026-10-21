@@ -8,6 +8,7 @@ mod test_parser;
 use test_parser::rst_vs_yaml;
 #[rstest]
 #[case("paragraph_w_bullet")]
+#[case("paragraphs_00")]
 #[case("paragraphs_01")]
 #[case("paragraphs_02")]
 #[case("paragraphs_03")]

@@ -154,30 +154,24 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
 }
 
 fn parse_plain(stream: &mut TokenStream) -> NodeRef {
+    let kind = stream.token_at_cursor().kind;
     debug_assert!(
-        stream.token_at_cursor().kind.is(TC::PLAIN)
-            || matches!(
-                stream.token_at_cursor().kind,
-                TK::BulletListMarker | TK::Option | TK::EnumeratedListMarker
-            )
+        !(kind.is(&TC::PARAGRAPH_END) || kind.is(&TC::INLINE_MARKER) || kind.is(&TC::INLINE_TOKEN))
     );
 
     let mut text = String::new();
 
     loop {
         match stream.token_at_cursor().kind {
-            kind if kind.is(&TC::PLAIN)
-                || matches!(
-                    kind,
-                    TK::BulletListMarker
-                        | TK::ClassifierSeparator
-                        | TK::Option
-                        | TK::EnumeratedListMarker
-                ) =>
+            kind if kind.is(&TC::PARAGRAPH_END)
+                || kind.is(&TC::INLINE_MARKER)
+                || kind.is(&TC::INLINE_TOKEN) =>
             {
+                break;
+            }
+            _ => {
                 text.push_str(&stream.consume().lexeme);
             }
-            _ => break,
         }
     }
     let sentence = AstNode::new_ref(NodeClass::PlainText);
