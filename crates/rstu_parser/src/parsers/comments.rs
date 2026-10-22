@@ -18,24 +18,26 @@ pub(crate) fn parse_comment(stream: &mut TokenStream) -> Result<NodeRef, ParserE
         stream.consume();
     }
     let mut text = stream.consume_text_incl_newline();
-    if text == "\n" && stream.token_at_cursor().kind == TK::BlankLine {
-        return Ok(comment);
-    } else if stream.token_at_cursor().kind == TK::BlankLine {
-        text.push_str(&stream.consume().lexeme);
+    if stream.token_at_cursor().kind == TK::BlankLine {
+        if text == "\n" {
+            return Ok(comment);
+        } else {
+            text.push_str(&stream.consume().lexeme);
+        };
     };
     if stream.token_at_cursor().kind == TK::Indent {
-        let base_indent = stream.take_at_cursor().len();
+        let base_indent = stream.consume().len();
         comment.with_attr("indent", base_indent);
 
         let mut absolute_indent = base_indent;
         loop {
             match stream.token_at_cursor().kind {
                 TK::Indent => {
-                    absolute_indent += stream.take_at_cursor().len();
+                    absolute_indent += stream.consume().len();
                     text.push_str(&space!(absolute_indent - base_indent));
                 }
                 TK::Dedent => {
-                    absolute_indent -= stream.take_at_cursor().len();
+                    absolute_indent -= stream.consume().len();
                     if absolute_indent == 0 {
                         break;
                     }
