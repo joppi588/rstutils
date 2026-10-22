@@ -23,7 +23,7 @@ use test_parser::rst_vs_yaml;
 #[case("quoted_00")]
 #[case("quoted_01")]
 #[case("quoted_02")]
-fn parse_literal_block(#[case] test_case: &str) {
+fn ok_literal_block(#[case] test_case: &str) {
     rst_vs_yaml!("literal_blocks/ok", test_case);
 }
 
@@ -37,7 +37,7 @@ fn parse_literal_block(#[case] test_case: &str) {
 #[case("quoted_05")]
 #[case("quoted_block_01")]
 #[case("quoted_block_02")]
-fn rejects_literal_block_errors(#[case] test_case: &str) {
+fn err_literal_block(#[case] test_case: &str) {
     let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tests/data/literal_blocks/err")
         .join(format!("{test_case}.rst"));
@@ -50,7 +50,7 @@ fn rejects_literal_block_errors(#[case] test_case: &str) {
 }
 
 #[test]
-fn accepts_consistent_quoted_literal_markers() {
+fn ok_consistent_quoted_literal_markers() {
     for marker in "!#$%&'()*+,-./:;<=>?@[\\]^_`{|}~".chars() {
         let source = format!("A paragraph::\n\n{marker}first\n{marker}second\n\n");
         assert!(

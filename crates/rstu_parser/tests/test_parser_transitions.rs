@@ -23,7 +23,7 @@ use test_parser::rst_vs_yaml;
 #[case("transitions_10")]
 #[case("transitions_11")]
 #[case("transitions_12")]
-fn parse_transitions(#[case] test_case: &str) {
+fn ok_transitions(#[case] test_case: &str) {
     rst_vs_yaml!("transitions/ok", test_case)
 }
 
@@ -31,7 +31,7 @@ fn parse_transitions(#[case] test_case: &str) {
 #[rstest]
 #[case("transitions_03")]
 #[ignore = "Docutils system-message diagnostics for indented separators are not implemented"]
-fn rejects_docutils_transition_diagnostics(#[case] test_case: &str) {
+fn err_transition_diagnostics(#[case] test_case: &str) {
     let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tests/data/transitions/err")
         .join(format!("{test_case}.rst"));
