@@ -44,8 +44,7 @@ pub(crate) fn parse_comment(stream: &mut TokenStream) -> Result<NodeRef, ParserE
                 _ => text.push_str(&stream.consume().lexeme),
             }
         }
-        comment.with_attr("text", text);
     }
-
+    comment.with_attr("text", text);
     Ok(comment)
 }
