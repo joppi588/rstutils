@@ -1,0 +1,21 @@
+inline markup surrounded by various whitespace characters:
+*newline*
+or *space* or one of
+ *NO-BREAK SPACE* ,
+ *OGHAM SPACE MARK* ,
+᠎*MONGOLIAN VOWEL SEPARATOR*᠎,
+ *EN QUAD* ,
+ *EM QUAD* ,
+ *EN SPACE* ,
+ *EM SPACE* ,
+ *THREE-PER-EM SPACE* ,
+ *FOUR-PER-EM SPACE* ,
+ *SIX-PER-EM SPACE* ,
+ *FIGURE SPACE* ,
+ *PUNCTUATION SPACE* ,
+ *THIN SPACE* ,
+ *HAIR SPACE* ,
+ *NARROW NO-BREAK SPACE* ,
+ *MEDIUM MATHEMATICAL SPACE* ,
+　*IDEOGRAPHIC SPACE*　,
+ *LINE SEPARATOR* 

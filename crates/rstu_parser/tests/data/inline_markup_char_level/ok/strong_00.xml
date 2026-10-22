@@ -1,0 +1,15 @@
+<document source="test data">
+    <paragraph>
+        (
+        <strong>
+            strong
+        ) but not (**) or '(** '
+    <paragraph>
+        However, '
+        <strong>
+            kwargs' and x
+        2 are recognized as strong markup
+        and *
+        <emphasis>
+            kwargs or *
+         as emphasized.

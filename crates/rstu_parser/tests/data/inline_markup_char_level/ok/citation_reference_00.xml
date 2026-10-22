@@ -1,0 +1,7 @@
+<document source="test data">
+    <paragraph>
+        Adjacent citation refs are possible with simple-inline-markup:
+        <citation_reference ids="citation-reference-1" refname="citation">
+            citation
+        <citation_reference ids="citation-reference-2" refname="cit1">
+            CIT1

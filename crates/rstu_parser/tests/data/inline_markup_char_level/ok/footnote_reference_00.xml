@@ -1,0 +1,19 @@
+<document source="test data">
+    <paragraph>
+        Adjacent footnote refs are possible with simple-inline-markup:
+        <footnote_reference auto="*" ids="footnote-reference-1">
+        <footnote_reference auto="1" ids="footnote-reference-2" refname="label">
+
+        <footnote_reference auto="1" ids="footnote-reference-3">
+        <footnote_reference ids="footnote-reference-4" refname="2">
+            2
+
+        <footnote_reference ids="footnote-reference-5" refname="1">
+            1
+        <footnote_reference auto="*" ids="footnote-reference-6">
+    <footnote auto="1" ids="footnote-1">
+        <paragraph>
+            test1
+    <footnote auto="*" ids="footnote-2">
+        <paragraph>
+            test2

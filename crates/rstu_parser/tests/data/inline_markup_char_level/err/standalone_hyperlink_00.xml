@@ -1,0 +1,22 @@
+<document source="test data">
+    <paragraph>
+        Valid URLs with escaped markup characters:
+    <paragraph>
+        <reference refuri="http://example.com/*content*/whatever">
+            http://example.com/*content*/whatever
+    <paragraph>
+        Invalid with the simple-inline-markup setting:
+    <paragraph>
+        <reference refuri="http://example.com/*content">
+            http://example.com/*content
+        <problematic ids="problematic-1" refid="system-message-1">
+            *
+        /whatever
+        <reference refuri="http://example.com/">
+            http://example.com/
+        <reference refname="rst_for">
+            rST_for
+        all.html
+    <system_message backrefs="problematic-1" ids="system-message-1" level="2" line="8" source="test data" type="WARNING">
+        <paragraph>
+            Inline emphasis start-string without end-string.
