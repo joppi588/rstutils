@@ -7,7 +7,7 @@ children:
     children:
       - class: Title
         attributes:
-          text: "Heading I"
+          text: "Heading I\n"
       - class: BlankLine
       - class: Paragraph
         children:
@@ -22,7 +22,7 @@ children:
         children:
           - class: Title
             attributes:
-              text: "Heading II"
+              text: "Heading II\n"
           - class: BlankLine
           - class: Paragraph
             children:
@@ -37,7 +37,7 @@ children:
     children:
       - class: Title
         attributes:
-          text: "Heading III"
+          text: "Heading III\n"
       - class: BlankLine
       - class: Paragraph
         children:

@@ -7,7 +7,7 @@ children:
   children:
   - class: Title
     attributes:
-      text: Section 1
+      text: "Section 1\n"
   - class: BlankLine
   - class: Section
     attributes:
@@ -16,7 +16,7 @@ children:
     children:
     - class: Title
       attributes:
-        text: Subsection 1
+        text: "Subsection 1\n"
     - class: BlankLine
     - class: Paragraph
       children:
@@ -36,7 +36,7 @@ children:
   children:
   - class: Title
     attributes:
-      text: Section 2
+      text: "Section 2\n"
   - class: BlankLine
   - class: Paragraph
     children:
