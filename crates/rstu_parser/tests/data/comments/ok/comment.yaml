@@ -3,7 +3,9 @@ children:
   - class: Comment
     attributes:
       indent: 3
-      text: "This is a simple comment.\nIt should be ignored by the parser as visible content.\n"
+      text: |
+        This is a simple comment.
+        It should be ignored by the parser as visible content.
   - class: BlankLine
   - class: Comment
     attributes:
@@ -11,11 +13,15 @@ children:
   - class: Comment
     attributes:
       indent: 3
-      text: "\n_so: is this!\n"
+      text: |
+
+        _so: is this!
   - class: Comment
     attributes:
       indent: 3
-      text: "\n[and] this!\n"
+      text: |
+
+        [and] this!
   - class: Comment
     attributes:
       indent: 3
@@ -30,7 +36,12 @@ children:
   - class: Comment
     attributes:
       indent: 3
-      text: "This comment\nspans\n\n  multiple\nlines\n"
+      text: |
+        This comment
+        spans
+
+          multiple
+        lines
   - class: BlankLine
   - class: Paragraph
     children:
