@@ -1,0 +1,26 @@
+<document source="test data">
+    <paragraph>
+        <reference refname="ref">
+            ref
+        ,
+        <reference refname="r">
+            r
+        ,
+        <reference refname="r_e-f">
+            r_e-f
+        , -
+        <reference refname="ref">
+            ref
+        , and
+        <reference anonymous="1">
+            anonymousref
+        ,
+        beware of _
+        <reference refname="ref">
+            ref
+         or __
+        <reference anonymous="1">
+            attr
+         or object.__
+        <reference anonymous="1">
+            attr
