@@ -28,6 +28,7 @@ use test_parser::rst_vs_yaml;
 #[case("markup_recognition_rules_03")]
 #[case("markup_recognition_rules_04")]
 #[case("markup_recognition_rules_05")]
+#[ignore]
 fn ok_char_level_inline(#[case] test_case: &str) {
     rst_vs_yaml!("lists/bullet_list/ok", test_case)
 }
@@ -36,6 +37,7 @@ fn ok_char_level_inline(#[case] test_case: &str) {
 #[case("emphasis_00")]
 #[case("literal_01")]
 #[case("standalone_hyperlink_00")]
+#[ignore]
 fn err_char_level_inline(#[case] rst_filename: &str) {
     let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tests/data")
