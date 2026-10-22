@@ -43,8 +43,6 @@ children:
       indent: 4
     children:
     - class: Comment
-      attributes:
-        text: "\n"
     - class: BlockQuote
       children:
       - class: BlankLine
