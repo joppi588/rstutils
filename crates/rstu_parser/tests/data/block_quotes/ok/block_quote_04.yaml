@@ -4,8 +4,7 @@ children:
     children:
       - class: PlainText
         attributes:
-          text: |
-            Here is a paragraph.
+          text: "Here is a paragraph.\n"
   - class: BlockQuote
     children:
       - class: BlankLine
@@ -14,8 +13,6 @@ children:
           indent: 4
         children:
           - class: Comment
-            attributes:
-              text: "\n"
           - class: BlockQuote
             children:
               - class: BlankLine
@@ -27,20 +24,16 @@ children:
                     children:
                       - class: PlainText
                         attributes:
-                          text: |
-                            Indent 8 spaces.
+                          text: "Indent 8 spaces.\n"
           - class: BlankLine
           - class: Paragraph
             children:
               - class: PlainText
                 attributes:
-                  text: |
-                    Indent 4 spaces.
+                  text: "Indent 4 spaces.\n"
   - class: BlankLine
   - class: Paragraph
     children:
       - class: PlainText
         attributes:
-          text: |
-            This will generate a nested block quote, with the first paragraph
-            nested deeper than the second.
+          text: "This will generate a nested block quote, with the first paragraph\nnested deeper than the second.\n"
