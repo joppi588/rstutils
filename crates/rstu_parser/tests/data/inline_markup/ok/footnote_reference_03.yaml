@@ -1,0 +1,11 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      text: "*"
+      type: footnote
+  - class: PlainText
+    attributes:
+      text: "\n"
