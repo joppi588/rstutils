@@ -97,7 +97,7 @@ use test_parser::rst_vs_yaml;
 #[case::strong("strong_01")]
 #[case::strong("strong_02")]
 #[case::strong("strong_04")]
-fn parse_inline_markup(#[case] test_case: &str) {
+fn ok_inline_markup(#[case] test_case: &str) {
     rst_vs_yaml!("inline_markup/ok", test_case)
 }
 

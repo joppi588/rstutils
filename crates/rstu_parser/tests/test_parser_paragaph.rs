@@ -15,6 +15,6 @@ use test_parser::rst_vs_yaml;
 // TODO: A. Einstein case, tbc. no error in docutils.
 // #[case("paragraphs_04")]
 #[case("paragraphs_05")]
-fn parse_paragraph(#[case] test_case: &str) {
+fn ok_paragraph(#[case] test_case: &str) {
     rst_vs_yaml!("paragraphs/ok", test_case)
 }

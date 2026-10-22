@@ -10,6 +10,6 @@ use test_parser::rst_vs_yaml;
 #[rstest]
 #[case("escaping")]
 
-fn parse_various(#[case] test_case: &str) {
+fn ok_various(#[case] test_case: &str) {
     rst_vs_yaml!("various/ok", test_case)
 }

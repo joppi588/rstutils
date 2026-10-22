@@ -21,13 +21,13 @@ use test_parser::rst_vs_yaml;
 #[case("bullet_list")]
 #[case("compact_bullet_list")]
 #[case("nested_bullet_list")]
-fn parse_bullet_list(#[case] test_case: &str) {
+fn ok_bullet_list(#[case] test_case: &str) {
     rst_vs_yaml!("lists/bullet_list/ok", test_case)
 }
 
 #[rstest]
 #[case("bullet_05.rst")]
-fn rejects_docutils_bullet_list_style(#[case] rst_filename: &str) {
+fn err_bullet_list_style(#[case] rst_filename: &str) {
     let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tests/data")
         .join("lists/bullet_list/err")
@@ -43,7 +43,7 @@ fn rejects_docutils_bullet_list_style(#[case] rst_filename: &str) {
 #[rstest]
 #[case("bullet_06.rst")]
 #[case("bullet_08.rst")]
-fn rejects_docutils_bullet_list_end(#[case] rst_filename: &str) {
+fn err_bullet_list_end(#[case] rst_filename: &str) {
     let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tests/data")
         .join("lists/bullet_list/err")
@@ -71,13 +71,13 @@ fn rejects_docutils_bullet_list_end(#[case] rst_filename: &str) {
 #[case("no_blank_lines_between_items")]
 #[case("non_marker_period")]
 #[case("potentially_ambiguous")]
-fn parse_enumerated_list(#[case] test_case: &str) {
+fn ok_enumerated_list(#[case] test_case: &str) {
     rst_vs_yaml!("lists/enumerated_list/ok", test_case)
 }
 
 #[rstest]
 #[case("unindented_enumerated_continuation.rst")]
-fn rejects_docutils_enumerated_list_errors(#[case] rst_filename: &str) {
+fn err_enumerated_list(#[case] rst_filename: &str) {
     let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tests/data")
         .join("lists/enumerated_list/err")
@@ -121,7 +121,7 @@ fn rejects_docutils_enumerated_list_errors(#[case] rst_filename: &str) {
 // #[case("embedded_colons_comment_split")]
 // #[case("embedded_colons_interpreted_text")]
 
-fn parse_field_list(#[case] test_case: &str) {
+fn ok_field_list(#[case] test_case: &str) {
     // GIVEN field-list examples
     // WHEN we parse and compare them against YAML snapshots
     // THEN this acts as a compatibility porting test surface (expected to fail for now)
@@ -142,7 +142,7 @@ fn parse_field_list(#[case] test_case: &str) {
 #[case("definition_14")]
 #[case("definition_15")]
 #[case("inline_markup")]
-fn parse_definition_list(#[case] test_case: &str) {
+fn ok_definition_list(#[case] test_case: &str) {
     rst_vs_yaml!("lists/definition_list/ok", test_case);
 }
 
@@ -152,7 +152,7 @@ fn parse_definition_list(#[case] test_case: &str) {
 #[case("definition_04")]
 #[case("definition_07")]
 #[case("definition_12")]
-fn rejects_definition_list_diagnostics(#[case] test_case: &str) {
+fn err_definition_list_diagnostics(#[case] test_case: &str) {
     let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tests/data")
         .join("lists/definition_list/err")
@@ -166,7 +166,7 @@ fn rejects_definition_list_diagnostics(#[case] test_case: &str) {
 #[rstest]
 #[case("empty_item_no_blank.rst")]
 #[case("list_end_no_blank.rst")]
-fn rejects_docutils_field_list_end(#[case] rst_filename: &str) {
+fn err_field_list_end(#[case] rst_filename: &str) {
     let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tests/data")
         .join("lists/field_list/err")
@@ -196,6 +196,6 @@ fn rejects_docutils_field_list_end(#[case] rst_filename: &str) {
 // #[case("14_complex_arguments")]
 // TODO: Lexer currently panics on the Unicode arrow in this paragraph.
 // #[case("15_incorrect_syntax")]
-fn parse_option_list(#[case] test_case: &str) {
+fn ok_option_list(#[case] test_case: &str) {
     rst_vs_yaml!("lists/option_list/ok", test_case)
 }

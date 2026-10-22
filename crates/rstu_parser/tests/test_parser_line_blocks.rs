@@ -26,7 +26,7 @@ use test_parser::rst_vs_yaml;
 #[case("line_block_12")]
 #[case("line_block_15")]
 #[case("line_block_16")]
-fn parse_line_block(#[case] test_case: &str) {
+fn ok_line_block(#[case] test_case: &str) {
     rst_vs_yaml!("line_blocks/ok", test_case);
 }
 
@@ -34,7 +34,7 @@ fn parse_line_block(#[case] test_case: &str) {
 #[case("line_block_05")]
 #[case("line_block_13")]
 #[case("line_block_14")]
-fn rejects_docutils_line_block_diagnostics(#[case] test_case: &str) {
+fn err_line_block_diagnostics(#[case] test_case: &str) {
     let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tests/data/line_blocks/err")
         .join(format!("{test_case}.rst"));
