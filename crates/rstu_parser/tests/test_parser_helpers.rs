@@ -6,7 +6,7 @@
 mod test_parser;
 
 #[test]
-fn ok_truncate_str() {
+fn test_truncate_str() {
     assert_eq!(test_parser::truncate_str("short", 10), "short");
     assert_eq!(test_parser::truncate_str("exactly ten", 11), "exactly ten");
     assert_eq!(
@@ -16,7 +16,7 @@ fn ok_truncate_str() {
 }
 
 #[test]
-fn ok_first_diff_line() {
+fn test_first_diff_line() {
     let a = "line1\nline2\nline3";
     let b = "line1\nline2_diff\nline3";
     assert_eq!(test_parser::first_diff_line(a, b), Some(2));
@@ -27,7 +27,7 @@ fn ok_first_diff_line() {
 }
 
 #[test]
-fn ok_format_side_by_side_window() {
+fn test_format_side_by_side_window() {
     let actual = (1..=20)
         .map(|index| {
             if index == 10 {
