@@ -18,9 +18,8 @@ children:
       - class: BlankLine
   - class: Comment
     attributes:
-      text: |
-        Comments swallow up all indented text following.
-        (Therefore this is not a) block quote.\n"
+      indent: 2
+      text: "Comments swallow up all indented text following.\n\n(Therefore this is not a) block quote.\n"
   - class: BlankLine
   - class: BulletList
     children:
@@ -42,13 +41,9 @@ children:
                 children:
                   - class: PlainText
                     attributes:
-                      text: |
-                        If we want a block quote after this bullet list item,
-                        we need to use an empty comment:
+                      text: "If we want a block quote after this bullet list item,\nwe need to use an empty comment:\n"
       - class: BlankLine
   - class: Comment
-    attributes:
-      text: "\n"
   - class: BlockQuote
     children:
       - class: BlankLine
