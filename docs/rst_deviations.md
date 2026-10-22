@@ -18,7 +18,7 @@ All of these are believed to be non-critical.
     Use empty comments (`..`) to explicitely split block quotes.
 - Indentation: The first indent defines the block indent, not the smallest.
   Workaround: use empty comments
-  see test cases xxx. (TODO)
+  see test cases outdenting_01 and outdenting_02.
 - Line blocks:
   * First indent defines the block indent.
   * Representation: The first line is a direct child of the line block, even if nested line blocks follow.

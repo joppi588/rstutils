@@ -1,0 +1,43 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: |
+        Anywhere a paragraph would have an effect on the current
+        indentation level, a comment or list item should also.
+- class: BlankLine
+- class: BulletList
+  children:
+  - class: BulletListItem
+    attributes:
+      marker: +
+    children:
+    - class: Block
+      attributes:
+        indent: 2
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: "bullet\n"
+  - class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "This paragraph ends the bullet list item before a block quote.\n"
+- class: BlockQuote
+  children:
+  - class: BlankLine
+  - class: Block
+    attributes:
+      indent: 2
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "Block quote.\n"

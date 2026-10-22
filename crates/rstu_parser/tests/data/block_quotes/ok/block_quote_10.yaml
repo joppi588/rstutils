@@ -39,8 +39,6 @@ children:
                     Block quote 2.
   - class: BlankLine
   - class: Comment
-    attributes:
-      text: "\n"
   - class: BlockQuote
     children:
       - class: BlankLine
