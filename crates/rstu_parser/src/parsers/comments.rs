@@ -17,8 +17,7 @@ pub(crate) fn parse_comment(stream: &mut TokenStream) -> Result<NodeRef, ParserE
     if stream.token_at_cursor().kind == TK::Spaces {
         stream.consume();
     }
-    let mut text = stream.consume_text_until_newline() + "\n";
-    stream.consume_newline();
+    let mut text = stream.consume_text_incl_newline();
 
     if stream.token_at_cursor().kind == TK::Indent {
         let base_indent = stream.take_at_cursor().len();

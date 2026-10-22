@@ -19,9 +19,8 @@ pub fn parse_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserE
         stream.consume_newline();
     }
     let title = AstNode::new_ref(NodeClass::Title);
-    title.with_attr("text", stream.consume_text_until_newline());
+    title.with_attr("text", stream.consume_text_incl_newline());
     section.push_child(title);
-    stream.consume_newline();
 
     if stream.token_at_cursor().kind != TK::Separator {
         return Err(ParserError::SectionTitleMissingClosingAfterOpening {

@@ -106,8 +106,8 @@ impl TokenStream {
         text
     }
 
-    pub fn consume_text_until_newline(&mut self) -> String {
-        self.consume_text_until(&[TokenKind::NewLine])
+    pub fn consume_text_incl_newline(&mut self) -> String {
+        self.consume_text_until(&[TokenKind::NewLine]) + &self.consume().lexeme
     }
 
     // TODO: Remove
