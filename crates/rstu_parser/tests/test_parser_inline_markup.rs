@@ -101,6 +101,19 @@ fn ok_inline_markup(#[case] test_case: &str) {
     rst_vs_yaml!("inline_markup/ok", test_case)
 }
 
+/// GIVEN an emphasis delimiter enclosed by matching brackets
+/// WHEN the paragraph is parsed
+/// THEN the enclosed delimiter remains plain text and ordinary emphasis still parses
+#[test]
+fn enclosed_emphasis_start_is_plain_text() {
+    let enclosed_yaml = rstu_ast::AstNode::to_yaml(&rstu_parser::parse("(*)").unwrap()).unwrap();
+    let emphasis_yaml = rstu_ast::AstNode::to_yaml(&rstu_parser::parse("(*x*)").unwrap()).unwrap();
+
+    assert!(!enclosed_yaml.contains("markup: emphasis"));
+    assert!(enclosed_yaml.contains("text: (*)"));
+    assert!(emphasis_yaml.contains("markup: emphasis"));
+}
+
 // TODO: Err cases
 // #[case::embedded_aliases("embedded_aliases_09")]
 // #[case::embedded_uris("embedded_uris_11")]

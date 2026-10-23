@@ -1,0 +1,25 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "\"Quoted\" markup start-string (matched openers & closers) -> no markup:\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "'*' \"*\" (*) <*> [*] {*}\n⁅*⁆\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Some international quoting styles:\n‘*’ “*” English, ...,\n„*“ ‚*‘ »*« ›*‹ German, Czech, ...,\n„*” «*» Romanian,\n“*„ ‘*‚ Greek,\n「*」 『*』traditional Chinese,\n”*” ’*’ »*» ›*› Swedish, Finnish,\n„*” ‚*’ Polish,\n„*” »*« ’*’ Hungarian,\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "But this is „*’ emphasized »*‹.\n"
