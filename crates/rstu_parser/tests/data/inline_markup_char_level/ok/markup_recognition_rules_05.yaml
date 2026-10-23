@@ -22,4 +22,10 @@ children:
   children:
   - class: PlainText
     attributes:
-      text: "But this is „*’ emphasized »*‹.\n"
+      text: But this is „
+  - class: InlineMarkup
+    markup: emphasis
+    text: "’ emphasized »"
+  - class: PlainText
+    attributes:
+      text: "‹.\n"

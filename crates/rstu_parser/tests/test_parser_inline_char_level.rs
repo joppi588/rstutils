@@ -26,7 +26,6 @@ use test_parser::rst_vs_yaml;
 // #[case("strong_01")]
 // #[case("substitution_references_00")]
 #[case("markup_recognition_rules_05")]
-#[ignore]
 fn ok_char_level_inline(#[case] test_case: &str) {
     rst_vs_yaml!("inline_markup_char_level/ok", test_case)
 }
