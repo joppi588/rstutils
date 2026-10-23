@@ -4,10 +4,9 @@
 
 use rstest::rstest;
 use rstu_parser::parse;
-use std::fs;
-use std::path::Path;
 #[path = "common/mod.rs"]
 mod test_parser;
+use test_parser::rst_err;
 use test_parser::rst_vs_yaml;
 
 #[rstest]
@@ -36,13 +35,5 @@ fn ok_doctest_block_at_eof_without_blank_line() {
 #[rstest]
 #[case("doctest_block_03")]
 fn err_doctest_block(#[case] test_case: &str) {
-    let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("tests/data/doctest_blocks/err")
-        .join(format!("{test_case}.rst"));
-    let rst_contents = fs::read_to_string(rst_path).unwrap();
-
-    assert!(
-        parse(&rst_contents).is_err(),
-        "expected {test_case} to fail"
-    );
+    rst_err!("doctest_blocks/err", test_case);
 }

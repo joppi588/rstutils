@@ -4,11 +4,10 @@
 
 use rstest::rstest;
 use rstu_parser::parse;
-use std::fs;
-use std::path::Path;
 
 #[path = "common/mod.rs"]
 mod test_parser;
+use test_parser::rst_err;
 use test_parser::rst_vs_yaml;
 
 #[rstest]
@@ -38,15 +37,7 @@ fn ok_literal_block(#[case] test_case: &str) {
 #[case("quoted_block_01")]
 #[case("quoted_block_02")]
 fn err_literal_block(#[case] test_case: &str) {
-    let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("tests/data/literal_blocks/err")
-        .join(format!("{test_case}.rst"));
-    let rst_contents = fs::read_to_string(rst_path).unwrap();
-
-    assert!(
-        parse(&rst_contents).is_err(),
-        "expected {test_case} to fail"
-    );
+    rst_err!("literal_blocks/err", test_case);
 }
 
 #[test]

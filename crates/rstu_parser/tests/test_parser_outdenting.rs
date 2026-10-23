@@ -3,12 +3,10 @@
 // SPDX-License-Identifier: MIT
 
 use rstest::rstest;
-use rstu_parser::parse;
-use std::fs;
-use std::path::Path;
 
 #[path = "common/mod.rs"]
 mod test_parser;
+use test_parser::rst_err;
 use test_parser::rst_vs_yaml;
 
 #[rstest]
@@ -22,12 +20,5 @@ fn ok_outdenting(#[case] test_case: &str) {
 #[rstest]
 #[case("outdenting_03")]
 fn err_outdenting(#[case] test_case: &str) {
-    let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("tests/data")
-        .join("outdenting/err")
-        .join(format!("{test_case}.rst"));
-    let rst_contents = fs::read_to_string(&rst_path)
-        .unwrap_or_else(|_| panic!("failed to read fixture file: {}", rst_path.display()));
-
-    parse(&rst_contents).expect_err("expected block-quote diagnostic to fail parsing");
+    rst_err!("outdenting/err", test_case);
 }

@@ -3,20 +3,11 @@
 // SPDX-License-Identifier: MIT
 
 use rstest::rstest;
-use rstu_parser::parse;
 use rstu_parser::parser_errors::ParserError;
-use std::fs;
-use std::path::Path;
 #[path = "common/mod.rs"]
 mod test_parser;
+use test_parser::rst_err;
 use test_parser::rst_vs_yaml;
-
-fn data_path(directory: &str, filename: &str) -> std::path::PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("tests/data")
-        .join(directory)
-        .join(filename)
-}
 
 #[rstest]
 #[case("sections_type1")]
@@ -27,32 +18,20 @@ fn ok_section(#[case] test_case: &str) {
 
 #[test]
 fn err_section_missing_closing() {
-    let path = data_path("sections/err", "sections_missing_closing.rst");
-    let contents =
-        fs::read_to_string(path).unwrap_or_else(|_| panic!("failed to read sections test file"));
-
-    let result = parse(&contents);
-
-    match result {
-        Err(ParserError::SectionTitleMissingClosingAfterOpening { .. }) => {}
+    match rst_err!("sections/err", "sections_missing_closing") {
+        ParserError::SectionTitleMissingClosingAfterOpening { .. } => {}
         other => panic!("expected SectionTitleMissingClosingAfterOpening error, got: {other:?}"),
     }
 }
 
 #[test]
 fn err_section_unbalanced_style() {
-    let path = data_path("sections/err", "sections_unbalanced_style.rst");
-    let contents =
-        fs::read_to_string(path).unwrap_or_else(|_| panic!("failed to read sections test file"));
-
-    let result = parse(&contents);
-
-    match result {
-        Err(ParserError::SectionTitleUnbalancedStyle {
+    match rst_err!("sections/err", "sections_unbalanced_style") {
+        ParserError::SectionTitleUnbalancedStyle {
             opening_style,
             closing_style,
             ..
-        }) => {
+        } => {
             assert_eq!(opening_style, "-");
             assert_eq!(closing_style, "=");
         }
