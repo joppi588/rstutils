@@ -6,9 +6,6 @@ use crate::token_stream::Position;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ParserError {
-    BlockQuoteMissingBlankLineError {
-        position: Position,
-    },
     DedentToSmall {
         position: Position,
         expected: usize,
@@ -35,6 +32,7 @@ pub enum ParserError {
         position: Position,
     },
     MissingBlankLineError {
+        entity: String,
         position: Position,
     },
     OptionError {
@@ -62,12 +60,6 @@ pub enum ParserError {
 impl std::fmt::Display for ParserError {
     fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::BlockQuoteMissingBlankLineError { position } => {
-                write!(
-                    formatter,
-                    "{position}: block quote is not followed by a blank line"
-                )
-            }
             Self::DedentToSmall {
                 position,
                 expected,
@@ -104,10 +96,10 @@ impl std::fmt::Display for ParserError {
             Self::LiteralBlockError { message, position } => {
                 write!(formatter, "{position}: {message}")
             }
-            Self::MissingBlankLineError { position } => {
+            Self::MissingBlankLineError { entity,position } => {
                 write!(
                     formatter,
-                    "{position}: list is not followed by a blank line"
+                    "{position}: {entity} is not followed by a blank line."
                 )
             }
             Self::OptionError { text, position } => {
@@ -116,7 +108,7 @@ impl std::fmt::Display for ParserError {
             Self::SectionTitleMissingClosingAfterOpening { position, .. } => {
                 write!(
                     formatter,
-                    "{position}: section title has no closing underline"
+                    "{position}: section title has no closing underline."
                 )
             }
             Self::SectionTitleUnbalancedStyle {
