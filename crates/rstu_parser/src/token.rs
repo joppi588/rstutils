@@ -9,6 +9,8 @@ static RECOMMENDED_SECTION_CHARS: &str = "=\\-`:.'\"~\\^_\\*\\+#"; // escaped =-
 static INLINE_PRE_CHARS: &str = r#"(?:[\n\s\-:/'"<(\[{]|\p{Ps}|\p{Pi}|\p{Pf}|\p{Pd}|\p{Po})"#;
 static INLINE_PRE_CHARS_NO_ASTERISK: &str =
     r#"(?:[\n\s\-:/'"<(\[{]|\p{Ps}|\p{Pi}|\p{Pf}|\p{Pd}|[\p{Po}&&[^*]])"#;
+static INLINE_PRE_CHARS_NO_FINAL_QUOTE: &str =
+    r#"(?:[\n\s\-:/'"<(\[{]|\p{Ps}|\p{Pi}|\p{Pd}|[\p{Po}&&[^*]])"#;
 static INLINE_POST_CHARS: &str =
     r#"(?:[\n\s\-\.,:;!?\\/'")\]}>]|\p{Pe}|\p{Pi}|\p{Pf}|\p{Pd}|\p{Po}|\p{Ps})"#;
 static INLINE_POST_CHARS_NO_ASTERISK: &str =
@@ -87,10 +89,32 @@ fn enclosed_inline_start_pattern() -> String {
     let bracket_patterns = bracket_pairs
         .iter()
         .map(|(open, close)| format!(r"\x{{{open:X}}}{starts}\x{{{close:X}}}"));
-    let quote_chars = r#"'"\x{00AB}\x{00BB}\x{2018}-\x{201F}\x{2039}\x{203A}\x{2E42}\x{300C}-\x{300F}\x{301D}-\x{301F}\x{FE41}-\x{FE44}\x{FF02}\x{FF07}\x{FF62}\x{FF63}"#;
-    let quote_pattern = format!(r"[{quote_chars}]{starts}[{quote_chars}]");
+    let quote_chars = [
+        '\'', '"', '\u{00AB}', '\u{00BB}', '\u{2039}', '\u{203A}', '\u{2E42}', '\u{FF02}',
+        '\u{FF07}',
+    ]
+    .into_iter()
+    .chain('\u{2018}'..='\u{201F}')
+    .chain('\u{300C}'..='\u{300F}')
+    .chain('\u{301D}'..='\u{301F}')
+    .chain('\u{FE41}'..='\u{FE44}')
+    .chain(['\u{FF62}', '\u{FF63}'])
+    .collect::<Vec<_>>();
+    let mut quote_patterns = Vec::new();
+    for open in quote_chars.iter().copied() {
+        for close in quote_chars.iter().copied() {
+            if (open, close) != ('\u{201E}', '\u{2019}')
+                && (open, close) != ('\u{00BB}', '\u{2039}')
+            {
+                quote_patterns.push(format!(
+                    r"\x{{{:X}}}{starts}\x{{{:X}}}",
+                    open as u32, close as u32
+                ));
+            }
+        }
+    }
     let enclosed_patterns = bracket_patterns
-        .chain(std::iter::once(quote_pattern))
+        .chain(quote_patterns)
         .collect::<Vec<_>>()
         .join("|");
 
@@ -338,7 +362,7 @@ impl TokenKind {
         // inline literals and inline internal targets before backquote constructs.
         (StrongStart, format!(r"{0}\*\*[^\s]", INLINE_PRE_CHARS_NO_ASTERISK)),
         (StrongEnd, format!(r"[^\s\\]\*\*{0}", INLINE_POST_CHARS_NO_ASTERISK)),
-        (EmphasisStart, format!(r"{0}\*[^\s]", INLINE_PRE_CHARS_NO_ASTERISK)),
+        (EmphasisStart, format!(r"(?:{0}\*[^\s]|\p{{Pf}}\*[^\s\p{{Pi}}])", INLINE_PRE_CHARS_NO_FINAL_QUOTE)),
         (EmphasisEnd, format!(r"[^\s\\]\*{0}", INLINE_POST_CHARS_NO_ASTERISK)),
         (InlineLiteralStart, format!(r"{0}``[^\s]", INLINE_PRE_CHARS)),
         (InlineLiteralEnd, format!(r"[^\s]``{0}", INLINE_POST_CHARS)),
@@ -568,13 +592,16 @@ mod tests {
     /// THEN it does not claim the text
     #[test]
     fn enclosed_inline_start_rejects_mismatches_and_nonadjacent_closers() {
-        for input in [" (*] ", " (*x*) ", " ( * ) "] {
+        for input in [" (*] ", " (*x*) ", " ( * ) ", " „*’ ", " »*‹ "] {
             assert_eq!(
                 TK::EnclosedInlineStart.find_lexeme(input),
                 None,
                 "{input:?}"
             );
         }
+        assert_eq!(TK::EmphasisStart.find_lexeme("„*’ "), Some("*"));
+        assert_eq!(TK::EmphasisEnd.find_lexeme("»*‹ "), Some("*"));
+        assert_eq!(TK::EmphasisStart.find_lexeme("»*‹ "), None);
     }
 
     /// GIVEN emphasis closed by a low quotation mark used as closing punctuation

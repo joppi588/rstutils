@@ -24,8 +24,9 @@ children:
     attributes:
       text: But this is „
   - class: InlineMarkup
-    markup: emphasis
-    text: "’ emphasized »"
+    attributes:
+      markup: emphasis
+      text: "’ emphasized »"
   - class: PlainText
     attributes:
       text: "‹.\n"
