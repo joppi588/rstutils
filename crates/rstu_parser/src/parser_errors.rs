@@ -23,6 +23,7 @@ pub enum ParserError {
     },
     ListMarkerError {
         marker: String,
+        position: Position,
     },
     ListStyleError {
         marker: String,
@@ -33,9 +34,12 @@ pub enum ParserError {
         message: String,
         position: Position,
     },
-    MissingBlankLineError {},
+    MissingBlankLineError {
+        position: Position,
+    },
     OptionError {
         text: String,
+        position: Position,
     },
     SectionTitleMissingClosingAfterOpening {
         position: Position,
@@ -86,7 +90,9 @@ impl std::fmt::Display for ParserError {
                     "{position}: list item is not followed by an indented body"
                 )
             }
-            Self::ListMarkerError { marker } => write!(formatter, "invalid list marker {marker:?}"),
+            Self::ListMarkerError { marker, position } => {
+                write!(formatter, "{position}: invalid list marker {marker:?}")
+            }
             Self::ListStyleError {
                 marker,
                 conflicting_marker,
@@ -98,10 +104,15 @@ impl std::fmt::Display for ParserError {
             Self::LiteralBlockError { message, position } => {
                 write!(formatter, "{position}: {message}")
             }
-            Self::MissingBlankLineError {} => {
-                write!(formatter, "list is not followed by a blank line")
+            Self::MissingBlankLineError { position } => {
+                write!(
+                    formatter,
+                    "{position}: list is not followed by a blank line"
+                )
             }
-            Self::OptionError { text } => write!(formatter, "invalid option {text:?}"),
+            Self::OptionError { text, position } => {
+                write!(formatter, "{position}: invalid option {text:?}")
+            }
             Self::SectionTitleMissingClosingAfterOpening { position, .. } => {
                 write!(
                     formatter,

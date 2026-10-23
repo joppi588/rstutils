@@ -25,9 +25,11 @@ enum EnumType {
 pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert_matches!(stream.token_at_cursor().kind, TK::EnumeratedListMarker);
 
+    let first_position = stream.position_at_cursor();
     let first_marker = stream.token_at_cursor().lexeme.to_owned();
     let (prefix, first_value, suffix) = enumerator_parts(&first_marker);
-    let enumtype = resolve_enumerator_type(enumerator_type(first_value)?, None, None);
+    let enumtype =
+        resolve_enumerator_type(enumerator_type_at(first_value, first_position)?, None, None);
     let list = AstNode::new_ref(NodeClass::EnumeratedList);
     list.with_attr("enumtype", format!("{enumtype:?}").to_lowercase())
         .with_attr("prefix", prefix)
@@ -36,13 +38,14 @@ pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef,
     let mut next_number = 1;
     let mut previous_value: Option<String> = None;
     while stream.token_at_cursor().kind == TK::EnumeratedListMarker {
+        let marker_position = stream.position_at_cursor();
         let marker = stream.token_at_cursor().lexeme.to_owned();
         let (item_prefix, value, item_suffix) = enumerator_parts(&marker);
         let item_type = if value == "#" {
             enumtype
         } else {
             resolve_enumerator_type(
-                enumerator_type(value)?,
+                enumerator_type_at(value, marker_position)?,
                 Some(enumtype),
                 previous_value.as_deref(),
             )
@@ -56,7 +59,7 @@ pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef,
         item.with_attr("raw_value", value);
         let number = match value {
             "#" => next_number,
-            _ => enumerator_value(value, enumtype)?,
+            _ => enumerator_value_at(value, enumtype, marker_position)?,
         };
         item.with_attr("number", number);
         next_number = number + 1;
@@ -120,7 +123,11 @@ fn enumerator_parts(marker: &str) -> (&str, &str, &str) {
     (prefix, value, suffix)
 }
 
-fn enumerator_value(value: &str, enumtype: EnumType) -> Result<usize, ParserError> {
+fn enumerator_value_at(
+    value: &str,
+    enumtype: EnumType,
+    position: crate::token_stream::Position,
+) -> Result<usize, ParserError> {
     let converted_value = match enumtype {
         EnumType::Arabic => value.parse().ok(),
         EnumType::Upperalpha | EnumType::Loweralpha => alphabetic_value(value),
@@ -132,10 +139,14 @@ fn enumerator_value(value: &str, enumtype: EnumType) -> Result<usize, ParserErro
     };
     converted_value.ok_or_else(|| ParserError::ListMarkerError {
         marker: value.to_string(),
+        position,
     })
 }
 
-fn enumerator_type(value: &str) -> Result<EnumType, ParserError> {
+fn enumerator_type_at(
+    value: &str,
+    position: crate::token_stream::Position,
+) -> Result<EnumType, ParserError> {
     match value {
         value if value.chars().all(|character| character.is_ascii_digit()) => Ok(EnumType::Arabic),
         "I" => Ok(EnumType::UpperAmbiguousI),
@@ -177,6 +188,7 @@ fn enumerator_type(value: &str) -> Result<EnumType, ParserError> {
         }
         value => Err(ParserError::ListMarkerError {
             marker: value.to_string(),
+            position,
         }),
     }
 }
@@ -218,11 +230,20 @@ fn resolve_enumerator_type(
 #[cfg(test)]
 mod tests {
     use super::{
-        alphabetic_value, enumerator_type, enumerator_value, resolve_enumerator_type, roman_value,
-        EnumType,
+        alphabetic_value, enumerator_type_at, enumerator_value_at, resolve_enumerator_type,
+        roman_value, EnumType,
     };
+    use crate::token_stream::Position;
     use crate::{parse, parser_errors::ParserError};
     use rstu_ast::NodeClass;
+
+    fn enumerator_type(value: &str) -> Result<EnumType, ParserError> {
+        enumerator_type_at(value, Position::default())
+    }
+
+    fn enumerator_value(value: &str, enumtype: EnumType) -> Result<usize, ParserError> {
+        enumerator_value_at(value, enumtype, Position::default())
+    }
 
     fn list_types(input: &str) -> Vec<String> {
         parse(input)
@@ -255,6 +276,7 @@ mod tests {
                 enumerator_type(marker),
                 Err(ParserError::ListMarkerError {
                     marker: marker.to_string(),
+                    position: Position::default(),
                 })
             );
         }
@@ -374,6 +396,7 @@ mod tests {
                 enumerator_value(value, enumtype),
                 Err(ParserError::ListMarkerError {
                     marker: value.to_string(),
+                    position: Position::default(),
                 })
             );
         }

@@ -8,7 +8,7 @@ use crate::token::{
     TokenCategory as TC, TokenKind as TK, DOS_OPTIONS_MATCH, LONG_OPTIONS_MATCH,
     SHORT_OPTIONS_MATCH,
 };
-use crate::token_stream::TokenStream;
+use crate::token_stream::{Position, TokenStream};
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 use std::debug_assert_matches;
 
@@ -18,6 +18,7 @@ pub(crate) fn parse_option_list(stream: &mut TokenStream) -> Result<NodeRef, Par
     let list = AstNode::new_ref(NodeClass::OptionList);
 
     while stream.token_at_cursor().kind.is(TC::OPTION_MARKER) {
+        let position = stream.position_at_cursor();
         let option_item = AstNode::new_ref(NodeClass::OptionListItem);
         let mut dedent_len: usize = 0;
         let mut text = String::new();
@@ -37,7 +38,7 @@ pub(crate) fn parse_option_list(stream: &mut TokenStream) -> Result<NodeRef, Par
             text.push_str(&token.lexeme);
             stream.consume();
         }
-        let option_group = parse_option_group(&text)?;
+        let option_group = parse_option_group(&text, position)?;
         option_item.push_child(option_group);
         option_item.push_child(parse_item_body(stream, dedent_len)?);
         list.push_child(option_item);
@@ -47,15 +48,16 @@ pub(crate) fn parse_option_list(stream: &mut TokenStream) -> Result<NodeRef, Par
     Ok(list)
 }
 
-fn parse_option_group(text: &str) -> Result<NodeRef, ParserError> {
+fn parse_option_group(text: &str, mut position: Position) -> Result<NodeRef, ParserError> {
     let option_group = AstNode::new_ref(NodeClass::OptionGroup);
-    for text in text.split(',') {
-        option_group.push_child(parse_option(text)?);
+    for option_text in text.split(',') {
+        option_group.push_child(parse_option(option_text, position)?);
+        position = position.advance(option_text).advance(",");
     }
     Ok(option_group)
 }
 
-fn parse_option(text: &str) -> Result<NodeRef, ParserError> {
+fn parse_option(text: &str, position: Position) -> Result<NodeRef, ParserError> {
     let option = AstNode::new_ref(NodeClass::Option);
     let captures = [
         &SHORT_OPTIONS_MATCH,
@@ -77,6 +79,7 @@ fn parse_option(text: &str) -> Result<NodeRef, ParserError> {
         }
         None => Err(ParserError::OptionError {
             text: text.to_string(),
+            position,
         }),
     }
 }
@@ -84,10 +87,11 @@ fn parse_option(text: &str) -> Result<NodeRef, ParserError> {
 #[cfg(test)]
 mod tests {
     use super::parse_option;
+    use crate::token_stream::Position;
 
     #[test]
     fn parse_short_option_argument() {
-        let result = parse_option("-a arg").expect("Can be parsed.");
+        let result = parse_option("-a arg", Position::default()).expect("Can be parsed.");
         let attrs = &result.borrow().attributes;
 
         assert_eq!(attrs.get_str("option_string"), Some("-a".to_string()));
@@ -97,7 +101,7 @@ mod tests {
 
     #[test]
     fn parse_old_gnu_option_argument() {
-        let result = parse_option("+b file").expect("Can be parsed.");
+        let result = parse_option("+b file", Position::default()).expect("Can be parsed.");
         let attrs = &result.borrow().attributes;
 
         assert_eq!(attrs.get_str("option_string"), Some("+b".to_string()));
@@ -110,7 +114,7 @@ mod tests {
     /// THEN its option string, delimiter, and argument are preserved
     #[test]
     fn parse_long_option_with_alphanumeric_name_and_argument() {
-        let result = parse_option("--long1=arg1").expect("Can be parsed.");
+        let result = parse_option("--long1=arg1", Position::default()).expect("Can be parsed.");
         let attrs = &result.borrow().attributes;
 
         assert_eq!(attrs.get_str("option_string"), Some("--long1".to_string()));
