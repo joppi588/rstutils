@@ -3,12 +3,11 @@
 // SPDX-License-Identifier: MIT
 
 use rstest::rstest;
-use rstu_parser::{parse, parser_errors::ParserError};
-use std::fs;
-use std::path::Path;
+use rstu_parser::parser_errors::ParserError;
 
 #[path = "common/mod.rs"]
 mod test_parser;
+use test_parser::rst_err;
 use test_parser::rst_vs_yaml;
 #[rstest]
 #[case("bullet_00")]
@@ -26,33 +25,17 @@ fn ok_bullet_list(#[case] test_case: &str) {
 }
 
 #[rstest]
-#[case("bullet_05.rst")]
-fn err_bullet_list_style(#[case] rst_filename: &str) {
-    let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("tests/data")
-        .join("lists/bullet_list/err")
-        .join(rst_filename);
-    let rst_contents = fs::read_to_string(&rst_path)
-        .unwrap_or_else(|_| panic!("failed to read fixture file: {}", rst_path.display()));
-
-    let err = parse(&rst_contents).unwrap_err();
-
+#[case("bullet_05")]
+fn err_bullet_list_style(#[case] test_case: &str) {
+    let err = rst_err!("lists/bullet_list/err", test_case);
     assert!(matches!(err, ParserError::ListStyleError { .. }));
 }
 
 #[rstest]
-#[case("bullet_06.rst")]
-#[case("bullet_08.rst")]
-fn err_bullet_list_end(#[case] rst_filename: &str) {
-    let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("tests/data")
-        .join("lists/bullet_list/err")
-        .join(rst_filename);
-    let rst_contents = fs::read_to_string(&rst_path)
-        .unwrap_or_else(|_| panic!("failed to read fixture file: {}", rst_path.display()));
-
-    let err = parse(&rst_contents).unwrap_err();
-
+#[case("bullet_06")]
+#[case("bullet_08")]
+fn err_bullet_list_end(#[case] test_case: &str) {
+    let err = rst_err!("lists/bullet_list/err", test_case);
     assert!(matches!(err, ParserError::ListEndError { .. }));
 }
 
@@ -76,17 +59,9 @@ fn ok_enumerated_list(#[case] test_case: &str) {
 }
 
 #[rstest]
-#[case("unindented_enumerated_continuation.rst")]
-fn err_enumerated_list(#[case] rst_filename: &str) {
-    let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("tests/data")
-        .join("lists/enumerated_list/err")
-        .join(rst_filename);
-    let rst_contents = fs::read_to_string(&rst_path)
-        .unwrap_or_else(|_| panic!("failed to read fixture file: {}", rst_path.display()));
-
-    let err = parse(&rst_contents).unwrap_err();
-
+#[case("unindented_enumerated_continuation")]
+fn err_enumerated_list(#[case] test_case: &str) {
+    let err = rst_err!("lists/enumerated_list/err", test_case);
     assert!(matches!(err, ParserError::ListEndError { .. }));
 }
 
@@ -153,29 +128,14 @@ fn ok_definition_list(#[case] test_case: &str) {
 #[case("definition_07")]
 #[case("definition_12")]
 fn err_definition_list_diagnostics(#[case] test_case: &str) {
-    let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("tests/data")
-        .join("lists/definition_list/err")
-        .join(format!("{}.rst", test_case));
-    let rst_contents = fs::read_to_string(&rst_path)
-        .unwrap_or_else(|_| panic!("failed to read fixture file: {}", rst_path.display()));
-
-    parse(&rst_contents).expect_err("expected definition-list diagnostic to fail parsing");
+    rst_err!("lists/definition_list/err", test_case);
 }
 
 #[rstest]
-#[case("empty_item_no_blank.rst")]
-#[case("list_end_no_blank.rst")]
-fn err_field_list_end(#[case] rst_filename: &str) {
-    let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("tests/data")
-        .join("lists/field_list/err")
-        .join(rst_filename);
-    let rst_contents = fs::read_to_string(&rst_path)
-        .unwrap_or_else(|_| panic!("failed to read fixture file: {}", rst_path.display()));
-
-    let err = parse(&rst_contents).unwrap_err();
-
+#[case("empty_item_no_blank")]
+#[case("list_end_no_blank")]
+fn err_field_list_end(#[case] test_case: &str) {
+    let err = rst_err!("lists/field_list/err", test_case);
     assert!(matches!(err, ParserError::ListEndError { .. }));
 }
 

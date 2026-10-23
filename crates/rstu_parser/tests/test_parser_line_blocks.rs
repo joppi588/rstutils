@@ -3,12 +3,10 @@
 // SPDX-License-Identifier: MIT
 
 use rstest::rstest;
-use rstu_parser::parse;
-use std::fs;
-use std::path::Path;
 
 #[path = "common/mod.rs"]
 mod test_parser;
+use test_parser::rst_err;
 use test_parser::rst_vs_yaml;
 
 #[rstest]
@@ -35,10 +33,5 @@ fn ok_line_block(#[case] test_case: &str) {
 #[case("line_block_13")]
 #[case("line_block_14")]
 fn err_line_block_diagnostics(#[case] test_case: &str) {
-    let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("tests/data/line_blocks/err")
-        .join(format!("{test_case}.rst"));
-    let rst_contents = fs::read_to_string(rst_path).unwrap();
-
-    parse(&rst_contents).expect_err("expected line-block diagnostic to fail parsing");
+    rst_err!("line_blocks/err", test_case);
 }

@@ -3,12 +3,10 @@
 // SPDX-License-Identifier: MIT
 
 use rstest::rstest;
-use rstu_parser::parse;
-use std::fs;
-use std::path::Path;
 
 #[path = "common/mod.rs"]
 mod test_parser;
+use test_parser::rst_err;
 use test_parser::rst_vs_yaml;
 
 #[rstest]
@@ -32,12 +30,5 @@ fn ok_block_quote(#[case] test_case: &str) {
 #[case("block_quote_11")] // TODO: This shall trigger an unexpected indent error
 #[case("block_quote_13")] // TODO: This shall trigger an unexpected indent error
 fn err_block_quote_diagnostics(#[case] test_case: &str) {
-    let rst_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("tests/data")
-        .join("block_quotes/err")
-        .join(format!("{test_case}.rst"));
-    let rst_contents = fs::read_to_string(&rst_path)
-        .unwrap_or_else(|_| panic!("failed to read fixture file: {}", rst_path.display()));
-
-    parse(&rst_contents).expect_err("expected block-quote diagnostic to fail parsing");
+    rst_err!("block_quotes/err", test_case);
 }
