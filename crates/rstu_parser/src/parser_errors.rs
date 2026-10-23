@@ -6,19 +6,12 @@ use crate::token_stream::Position;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ParserError {
-    StartAtOutOfBounds {
-        start_at: usize,
-        token_count: usize,
-    },
     SectionTitleMissingClosingAfterOpening {
         position: Position,
     },
     SectionTitleUnbalancedStyle {
         opening_style: String,
         closing_style: String,
-        position: Position,
-    },
-    InvalidPlainText {
         position: Position,
     },
     UnexpectedToken {
@@ -45,10 +38,6 @@ pub enum ParserError {
     UnexpectedIndentError {
         position: Position,
     },
-    InvalidDedent {
-        expected: usize,
-        is: usize,
-    },
     LiteralBlockError {
         message: String,
         position: Position,
@@ -69,13 +58,6 @@ pub enum ParserError {
 impl std::fmt::Display for ParserError {
     fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::StartAtOutOfBounds {
-                start_at,
-                token_count,
-            } => write!(
-                formatter,
-                "start index {start_at} is out of bounds for {token_count} tokens"
-            ),
             Self::SectionTitleMissingClosingAfterOpening { position, .. } => {
                 write!(
                     formatter,
@@ -91,9 +73,6 @@ impl std::fmt::Display for ParserError {
                 formatter,
                 "{position}: section underline {closing_style:?} does not match overline {opening_style:?}"
             ),
-            Self::InvalidPlainText { position } => {
-                write!(formatter, "invalid plain text at position {position}.")
-            }
             Self::UnexpectedToken {
                 expected,
                 found,
@@ -126,9 +105,6 @@ impl std::fmt::Display for ParserError {
             }
             Self::UnexpectedIndentError { position } => {
                 write!(formatter, "{position}: unexpected indentation")
-            }
-            Self::InvalidDedent { expected, is } => {
-                write!(formatter, "invalid dedent: expected {expected}, found {is}")
             }
             Self::LiteralBlockError { message, position } => {
                 write!(formatter, "{position}: {message}")
