@@ -2,9 +2,12 @@ class: Document
 children:
 - class: Paragraph
   children:
+  - class: PlainText
+    attributes:
+      text: __
   - class: Reference
     attributes:
-      text: __This
+      text: This
       type: simple_anonymous_ref
   - class: PlainText
     attributes:
