@@ -34,8 +34,7 @@ pub(crate) fn parse_literal_block(stream: &mut TokenStream) -> Result<NodeRef, P
     block.with_attr("type", format!("{literal_block_type:?}"));
     stream.consume_newline();
     if stream.consume().kind != TK::BlankLine {
-        return Err(ParserError::LiteralBlockError {
-            message: "literal block requires a blank line".to_owned(),
+        return Err(ParserError::LiteralBlockMissingBlankLine {
             position: stream.position_at_cursor(),
         });
     }
@@ -44,8 +43,7 @@ pub(crate) fn parse_literal_block(stream: &mut TokenStream) -> Result<NodeRef, P
     } else if stream.token_at_cursor().kind != TK::EoF {
         set_text_quoted_content(stream, &block)?;
     } else {
-        return Err(ParserError::LiteralBlockError {
-            message: "literal block expected after literal marker".to_owned(),
+        return Err(ParserError::LiteralBlockMissingContent {
             position: stream.position_at_cursor(),
         });
     }
@@ -86,8 +84,7 @@ fn set_text_indented_content(stream: &mut TokenStream, block: &NodeRef) -> Resul
     }
 
     if text.is_empty() {
-        return Err(ParserError::LiteralBlockError {
-            message: "Literal block expected after literal marker".to_owned(),
+        return Err(ParserError::LiteralBlockMissingContent {
             position: stream.position_at_cursor(),
         });
     }
@@ -127,8 +124,7 @@ fn set_text_quoted_content(stream: &mut TokenStream, block: &NodeRef) -> Result<
         }
     }
     if text.is_empty() {
-        return Err(ParserError::LiteralBlockError {
-            message: "literal block expected after literal marker".to_owned(),
+        return Err(ParserError::LiteralBlockMissingContent {
             position: stream.position_at_cursor(),
         });
     }
@@ -145,15 +141,16 @@ fn check_quoted_marker(
     const ALLOWED_MARKERS: &str = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
 
     if !ALLOWED_MARKERS.contains(candidate) {
-        return Err(ParserError::LiteralBlockError {
-            message: "Invalid quoted literal block marker".to_owned(),
+        return Err(ParserError::LiteralBlockInvalidQuoteMarker {
+            marker: candidate,
             position,
         });
     }
 
-    if marker.is_some_and(|marker| marker != candidate) {
-        return Err(ParserError::LiteralBlockError {
-            message: "Inconsistent quoted literal block".to_owned(),
+    if let Some(expected) = marker.filter(|marker| *marker != candidate) {
+        return Err(ParserError::LiteralBlockInconsistentQuoteMarker {
+            expected,
+            found: candidate,
             position,
         });
     }

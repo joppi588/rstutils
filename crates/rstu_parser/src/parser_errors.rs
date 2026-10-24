@@ -27,8 +27,19 @@ pub enum ParserError {
         conflicting_marker: String,
         position: Position,
     },
-    LiteralBlockError {
-        message: String,
+    LiteralBlockInconsistentQuoteMarker {
+        expected: char,
+        found: char,
+        position: Position,
+    },
+    LiteralBlockInvalidQuoteMarker {
+        marker: char,
+        position: Position,
+    },
+    LiteralBlockMissingBlankLine {
+        position: Position,
+    },
+    LiteralBlockMissingContent {
         position: Position,
     },
     MissingFinalBlankLineError {
@@ -93,9 +104,26 @@ impl std::fmt::Display for ParserError {
                 formatter,
                 "{position}: List marker {conflicting_marker:?} conflicts with {marker:?}."
             ),
-            Self::LiteralBlockError { message, position } => {
-                write!(formatter, "{position}: {message}")
-            }
+            Self::LiteralBlockInconsistentQuoteMarker {
+                expected,
+                found,
+                position,
+            } => write!(
+                formatter,
+                "{position}: Quoted literal block line starts with {found:?}, expected {expected:?}."
+            ),
+            Self::LiteralBlockInvalidQuoteMarker { marker, position } => write!(
+                formatter,
+                "{position}: {marker:?} is not a valid quoted literal block marker."
+            ),
+            Self::LiteralBlockMissingBlankLine { position } => write!(
+                formatter,
+                "{position}: Literal block marker is not followed by a blank line."
+            ),
+            Self::LiteralBlockMissingContent { position } => write!(
+                formatter,
+                "{position}: Literal block expected after literal marker."
+            ),
             Self::MissingFinalBlankLineError { entity,position } => {
                 write!(
                     formatter,
