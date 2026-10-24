@@ -1,0 +1,70 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: text-
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: separated
+  - class: PlainText
+    attributes:
+      text: ‐
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: by
+  - class: PlainText
+    attributes:
+      text: ‑
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: various
+  - class: PlainText
+    attributes:
+      text: ‒
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: dashes
+  - class: PlainText
+    attributes:
+      text: –
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: and
+  - class: PlainText
+    attributes:
+      text: —
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: hyphens
+  - class: PlainText
+    attributes:
+      text: ".\n¿"
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: punctuation
+  - class: PlainText
+    attributes:
+      text: "? ¡"
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: examples
+  - class: PlainText
+    attributes:
+      text: "! "
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: no-break-space
+  - class: PlainText
+    attributes:
+      text: " .\n"

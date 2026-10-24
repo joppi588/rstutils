@@ -1,5 +1,10 @@
-<document source="test data">
-    <paragraph>
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: |
         no inline markup due to whitespace inside and behind: *
         newline
         *
@@ -20,6 +25,4 @@
         * NARROW NO-BREAK SPACE *
         * MEDIUM MATHEMATICAL SPACE *
         *　IDEOGRAPHIC SPACE　*
-        *
-        LINE SEPARATOR
-        *
+        *\LLINE SEPARATOR\L*

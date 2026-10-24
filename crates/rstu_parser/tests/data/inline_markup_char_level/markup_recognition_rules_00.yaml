@@ -1,0 +1,11 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      text: __This
+      type: simple_anonymous_ref
+  - class: PlainText
+    attributes:
+      text: " is an anonymous reference with simple-inline-markup.\n"
