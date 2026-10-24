@@ -31,7 +31,11 @@ pub(crate) fn parse_definition_list(stream: &mut TokenStream) -> Result<NodeRef,
     {
         return Ok(list);
     }
-    Err(ParserError::MissingBlankLineError {})
+    Err(ParserError::MissingBlankLineError {
+        entity: "Definition list".to_owned(),
+
+        position: stream.position_at_cursor(),
+    })
 }
 
 fn parse_definition_list_item(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
