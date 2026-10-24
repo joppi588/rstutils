@@ -1,0 +1,140 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "inline markup surrounded by various whitespace characters:\n"
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: newline
+  - class: PlainText
+    attributes:
+      text: "\nor "
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: space
+  - class: PlainText
+    attributes:
+      text: " or one of\n "
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: NO-BREAK SPACE
+  - class: PlainText
+    attributes:
+      text: " ,\n "
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: OGHAM SPACE MARK
+  - class: PlainText
+    attributes:
+      text: " ,\n᠎*MONGOLIAN VOWEL SEPARATOR*᠎,\n "
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: EN QUAD
+  - class: PlainText
+    attributes:
+      text: " ,\n "
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: EM QUAD
+  - class: PlainText
+    attributes:
+      text: " ,\n "
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: EN SPACE
+  - class: PlainText
+    attributes:
+      text: " ,\n "
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: EM SPACE
+  - class: PlainText
+    attributes:
+      text: " ,\n "
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: THREE-PER-EM SPACE
+  - class: PlainText
+    attributes:
+      text: " ,\n "
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: FOUR-PER-EM SPACE
+  - class: PlainText
+    attributes:
+      text: " ,\n "
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: SIX-PER-EM SPACE
+  - class: PlainText
+    attributes:
+      text: " ,\n "
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: FIGURE SPACE
+  - class: PlainText
+    attributes:
+      text: " ,\n "
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: PUNCTUATION SPACE
+  - class: PlainText
+    attributes:
+      text: " ,\n "
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: THIN SPACE
+  - class: PlainText
+    attributes:
+      text: " ,\n "
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: HAIR SPACE
+  - class: PlainText
+    attributes:
+      text: " ,\n "
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: NARROW NO-BREAK SPACE
+  - class: PlainText
+    attributes:
+      text: " ,\n "
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: MEDIUM MATHEMATICAL SPACE
+  - class: PlainText
+    attributes:
+      text: " ,\n　"
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: IDEOGRAPHIC SPACE
+  - class: PlainText
+    attributes:
+      text: "　,\n\L"
+  - class: InlineMarkup
+    attributes:
+      markup: emphasis
+      text: LINE SEPARATOR
+  - class: PlainText
+    attributes:
+      text: "\L\n"
