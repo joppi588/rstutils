@@ -9,18 +9,18 @@ mod test_parser;
 use test_parser::rst_err;
 use test_parser::rst_vs_yaml;
 #[rstest]
-// #[case("citation_reference_00")]
-// #[case("embedded_uris_00")]
+#[case("citation_reference_00")] // FIX
+#[case("embedded_uris_00")]
 // #[case("emphasis_01")]
 // #[case("footnote_reference_00")]
 // #[case("inline_targets_00")]
 // #[case("literal_00")]
 // #[case("literal_02")]
-// #[case("markup_recognition_rules_00")]
-// #[case("markup_recognition_rules_01")]
-// #[case("markup_recognition_rules_02")]
-// #[case("markup_recognition_rules_03")]
-// #[case("markup_recognition_rules_04")]
+#[case("markup_recognition_rules_00")] // FIX
+#[case("markup_recognition_rules_01")] // FIX
+#[case("markup_recognition_rules_02")] // FIX
+#[case("markup_recognition_rules_03")]
+#[case("markup_recognition_rules_04")]
 // #[case("references_00")]
 // #[case("strong_00")]
 // #[case("strong_01")]

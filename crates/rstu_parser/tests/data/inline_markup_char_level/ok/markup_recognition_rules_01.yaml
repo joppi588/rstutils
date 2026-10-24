@@ -1,0 +1,22 @@
+class: Document
+children:
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: Character-level m*a***r**
+  - class: InlineMarkup
+    attributes:
+      markup: inline_literal
+      text: k
+  - class: PlainText
+    attributes:
+      text: "\\ "
+  - class: InlineMarkup
+    attributes:
+      markup: interpreted_text
+      text: u
+  - class: PlainText
+    attributes:
+      text: ":title:\\p\nwith backslash-escaped whitespace, including new\\\nlines.\n"

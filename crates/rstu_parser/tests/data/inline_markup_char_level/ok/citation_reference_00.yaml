@@ -1,0 +1,14 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Adjacent citation refs are possible with simple-inline-markup:\n"
+  - class: Reference
+    attributes:
+      text: citation
+      type: citation
+  - class: PlainText
+    attributes:
+      text: "[CIT1]_\n"
