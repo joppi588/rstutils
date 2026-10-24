@@ -5,7 +5,7 @@
 use super::{consume_trailing_blank_lines, parse_item_body};
 use crate::parser_errors::ParserError;
 use crate::token::TokenKind as TK;
-use crate::token_stream::{Position, TokenStream};
+use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 use std::debug_assert_matches;
 
@@ -22,29 +22,12 @@ enum EnumType {
     LowerAmbiguousC,
 }
 
-#[derive(Debug, PartialEq)]
-struct InvalidMarker(String);
-
-impl InvalidMarker {
-    fn at(self, position: Position) -> ParserError {
-        ParserError::ListMarkerError {
-            marker: self.0,
-            position,
-        }
-    }
-}
-
 pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert_matches!(stream.token_at_cursor().kind, TK::EnumeratedListMarker);
 
-    let first_position = stream.position_at_cursor();
     let first_marker = stream.token_at_cursor().lexeme.to_owned();
     let (prefix, first_value, suffix) = enumerator_parts(&first_marker);
-    let enumtype = resolve_enumerator_type(
-        enumerator_type(first_value).map_err(|e| e.at(first_position))?,
-        None,
-        None,
-    );
+    let enumtype = resolve_enumerator_type(enumerator_type(first_value)?, None, None);
     let list = AstNode::new_ref(NodeClass::EnumeratedList);
     list.with_attr("enumtype", format!("{enumtype:?}").to_lowercase())
         .with_attr("prefix", prefix)
@@ -53,14 +36,13 @@ pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef,
     let mut next_number = 1;
     let mut previous_value: Option<String> = None;
     while stream.token_at_cursor().kind == TK::EnumeratedListMarker {
-        let marker_position = stream.position_at_cursor();
         let marker = stream.token_at_cursor().lexeme.to_owned();
         let (item_prefix, value, item_suffix) = enumerator_parts(&marker);
         let item_type = if value == "#" {
             enumtype
         } else {
             resolve_enumerator_type(
-                enumerator_type(value).map_err(|e| e.at(marker_position))?,
+                enumerator_type(value)?,
                 Some(enumtype),
                 previous_value.as_deref(),
             )
@@ -74,7 +56,7 @@ pub(crate) fn parse_enumerated_list(stream: &mut TokenStream) -> Result<NodeRef,
         item.with_attr("raw_value", value);
         let number = match value {
             "#" => next_number,
-            _ => enumerator_value(value, enumtype).map_err(|e| e.at(marker_position))?,
+            _ => enumerator_value(value, enumtype)?,
         };
         item.with_attr("number", number);
         next_number = number + 1;
@@ -138,7 +120,7 @@ fn enumerator_parts(marker: &str) -> (&str, &str, &str) {
     (prefix, value, suffix)
 }
 
-fn enumerator_value(value: &str, enumtype: EnumType) -> Result<usize, InvalidMarker> {
+fn enumerator_value(value: &str, enumtype: EnumType) -> Result<usize, ParserError> {
     let converted_value = match enumtype {
         EnumType::Arabic => value.parse().ok(),
         EnumType::Upperalpha | EnumType::Loweralpha => alphabetic_value(value),
@@ -148,10 +130,12 @@ fn enumerator_value(value: &str, enumtype: EnumType) -> Result<usize, InvalidMar
         | EnumType::UpperAmbiguousC
         | EnumType::LowerAmbiguousC => None,
     };
-    converted_value.ok_or_else(|| InvalidMarker(value.to_string()))
+    converted_value.ok_or_else(|| ParserError::ListMarkerError {
+        marker: value.to_string(),
+    })
 }
 
-fn enumerator_type(value: &str) -> Result<EnumType, InvalidMarker> {
+fn enumerator_type(value: &str) -> Result<EnumType, ParserError> {
     match value {
         value if value.chars().all(|character| character.is_ascii_digit()) => Ok(EnumType::Arabic),
         "I" => Ok(EnumType::UpperAmbiguousI),
@@ -191,7 +175,9 @@ fn enumerator_type(value: &str) -> Result<EnumType, InvalidMarker> {
         {
             Ok(EnumType::Loweralpha)
         }
-        value => Err(InvalidMarker(value.to_string())),
+        value => Err(ParserError::ListMarkerError {
+            marker: value.to_string(),
+        }),
     }
 }
 
@@ -233,9 +219,9 @@ fn resolve_enumerator_type(
 mod tests {
     use super::{
         alphabetic_value, enumerator_type, enumerator_value, resolve_enumerator_type, roman_value,
-        EnumType, InvalidMarker,
+        EnumType,
     };
-    use crate::parse;
+    use crate::{parse, parser_errors::ParserError};
     use rstu_ast::NodeClass;
 
     fn list_types(input: &str) -> Vec<String> {
@@ -267,7 +253,9 @@ mod tests {
         for marker in ["a1", "A!", "aB", "Xl"] {
             assert_eq!(
                 enumerator_type(marker),
-                Err(InvalidMarker(marker.to_string()))
+                Err(ParserError::ListMarkerError {
+                    marker: marker.to_string(),
+                })
             );
         }
     }
@@ -384,7 +372,9 @@ mod tests {
         ] {
             assert_eq!(
                 enumerator_value(value, enumtype),
-                Err(InvalidMarker(value.to_string()))
+                Err(ParserError::ListMarkerError {
+                    marker: value.to_string(),
+                })
             );
         }
     }
