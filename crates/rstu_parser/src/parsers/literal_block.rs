@@ -92,8 +92,8 @@ fn set_text_indented_content(stream: &mut TokenStream, block: &NodeRef) -> Resul
         });
     }
     if !matches!(stream.token_at_cursor().kind, TK::BlankLine | TK::EoF) {
-        return Err(ParserError::LiteralBlockError {
-            message: "Blank line expected after literal block.".to_owned(),
+        return Err(ParserError::MissingFinalBlankLineError {
+            entity: "Literal block".to_owned(),
             position: stream.position_at_cursor(),
         });
     }

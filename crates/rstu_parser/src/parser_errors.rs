@@ -31,7 +31,7 @@ pub enum ParserError {
         message: String,
         position: Position,
     },
-    MissingBlankLineError {
+    MissingFinalBlankLineError {
         entity: String,
         position: Position,
     },
@@ -67,19 +67,19 @@ impl std::fmt::Display for ParserError {
             } => {
                 write!(
                     formatter,
-                    "{position}: Expected dedent of {expected}, found {found}"
+                    "{position}: Expected dedent of {expected}, found {found}."
                 )
             }
             Self::InlineMissingClosing {
                 markup, position, ..
             } => write!(
                 formatter,
-                "{position}: inline {markup} markup is not closed."
+                "{position}: Inline markup ({markup}) is not closed."
             ),
             Self::ListEndError { position } => {
                 write!(
                     formatter,
-                    "{position}: list item is not followed by an indented body"
+                    "{position}: List item is not followed by an indented body."
                 )
             }
             Self::ListMarkerError { marker, position } => {
@@ -91,24 +91,24 @@ impl std::fmt::Display for ParserError {
                 position,
             } => write!(
                 formatter,
-                "{position}: list marker {conflicting_marker:?} conflicts with {marker:?}"
+                "{position}: List marker {conflicting_marker:?} conflicts with {marker:?}."
             ),
             Self::LiteralBlockError { message, position } => {
                 write!(formatter, "{position}: {message}")
             }
-            Self::MissingBlankLineError { entity,position } => {
+            Self::MissingFinalBlankLineError { entity,position } => {
                 write!(
                     formatter,
                     "{position}: {entity} is not followed by a blank line."
                 )
             }
             Self::OptionError { text, position } => {
-                write!(formatter, "{position}: invalid option {text:?}")
+                write!(formatter, "{position}: Invalid option {text:?}.")
             }
             Self::SectionTitleMissingClosingAfterOpening { position, .. } => {
                 write!(
                     formatter,
-                    "{position}: section title has no closing underline."
+                    "{position}: Section title has no closing underline."
                 )
             }
             Self::SectionTitleUnbalancedStyle {
@@ -118,17 +118,17 @@ impl std::fmt::Display for ParserError {
                 ..
             } => write!(
                 formatter,
-                "{position}: section underline {closing_style:?} does not match overline {opening_style:?}"
+                "{position}: Section underline {closing_style:?} does not match overline {opening_style:?}"
             ),
             Self::UnexpectedIndentError { position } => {
-                write!(formatter, "{position}: unexpected indentation")
+                write!(formatter, "{position}: Unexpected indentation")
             }
             Self::UnexpectedToken {
                 expected,
                 found,
                 position,
                 ..
-            } => write!(formatter, "{position}: expected {expected}, found {found}"),
+            } => write!(formatter, "{position}: Expected {expected}, found {found}"),
         }
     }
 }
