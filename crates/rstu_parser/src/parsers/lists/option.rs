@@ -12,20 +12,12 @@ use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 use std::debug_assert_matches;
 
-#[derive(Debug, PartialEq)]
-struct InvalidOption {
-    text: String,
-    // Byte offset of `text` relative to the start of the parsed input.
-    offset: usize,
-}
-
 pub(crate) fn parse_option_list(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert_matches!(stream.token_at_cursor().kind, TK::Option);
 
     let list = AstNode::new_ref(NodeClass::OptionList);
 
     while stream.token_at_cursor().kind.is(TC::OPTION_MARKER) {
-        let position = stream.position_at_cursor();
         let option_item = AstNode::new_ref(NodeClass::OptionListItem);
         let mut dedent_len: usize = 0;
         let mut text = String::new();
@@ -45,10 +37,7 @@ pub(crate) fn parse_option_list(stream: &mut TokenStream) -> Result<NodeRef, Par
             text.push_str(&token.lexeme);
             stream.consume();
         }
-        let option_group = parse_option_group(&text).map_err(|error| ParserError::OptionError {
-            position: position.advance(&text[..error.offset]),
-            text: error.text,
-        })?;
+        let option_group = parse_option_group(&text)?;
         option_item.push_child(option_group);
         option_item.push_child(parse_item_body(stream, dedent_len)?);
         list.push_child(option_item);
@@ -58,21 +47,15 @@ pub(crate) fn parse_option_list(stream: &mut TokenStream) -> Result<NodeRef, Par
     Ok(list)
 }
 
-fn parse_option_group(text: &str) -> Result<NodeRef, InvalidOption> {
+fn parse_option_group(text: &str) -> Result<NodeRef, ParserError> {
     let option_group = AstNode::new_ref(NodeClass::OptionGroup);
-    let mut offset = 0;
-    for option_text in text.split(',') {
-        let option = parse_option(option_text).map_err(|error| InvalidOption {
-            offset: offset + error.offset,
-            ..error
-        })?;
-        option_group.push_child(option);
-        offset += option_text.len() + 1;
+    for text in text.split(',') {
+        option_group.push_child(parse_option(text)?);
     }
     Ok(option_group)
 }
 
-fn parse_option(text: &str) -> Result<NodeRef, InvalidOption> {
+fn parse_option(text: &str) -> Result<NodeRef, ParserError> {
     let option = AstNode::new_ref(NodeClass::Option);
     let captures = [
         &SHORT_OPTIONS_MATCH,
@@ -92,9 +75,8 @@ fn parse_option(text: &str) -> Result<NodeRef, InvalidOption> {
             option.with_attr("option_string", caps[1].to_string());
             Ok(option)
         }
-        None => Err(InvalidOption {
+        None => Err(ParserError::OptionError {
             text: text.to_string(),
-            offset: 0,
         }),
     }
 }
