@@ -17,7 +17,7 @@ static INLINE_POST_CHARS_NO_ASTERISK: &str =
     r#"(?:[\n\s\-\.,:;!?\\/'")\]}>]|\p{Pe}|\p{Pi}|\p{Pf}|\p{Pd}|[\p{Po}&&[^*]]|\p{Ps})"#;
 
 fn enclosed_inline_start_pattern() -> String {
-    let starts = [r"\*\*", r"\*", r"``", r"_`", r"`"].join("|") + r"|\|";
+    let starts = [r"\*\*", r"\*", r"``", r"_`", r"`", r"\|"].join("|");
     let starts = format!("(?:{starts})");
     let bracket_pairs = [
         (0x0028, 0x0029),
