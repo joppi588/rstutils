@@ -1,0 +1,9 @@
+<document source="test data">
+    <paragraph>
+        An empty footnote raises a warning:
+    <footnote ids="footnote-1" names="1">
+        <label>
+            1
+        <system_message level="2" line="4" source="test data" type="WARNING">
+            <paragraph>
+                Footnote content expected.

@@ -1,0 +1,4 @@
+<document source="test data">
+    <footnote auto="*" ids="footnote-1">
+        <paragraph>
+            This is an auto-symbol footnote.

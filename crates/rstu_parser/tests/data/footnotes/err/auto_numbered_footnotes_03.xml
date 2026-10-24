@@ -1,0 +1,51 @@
+<document source="test data">
+    <paragraph>
+        Mixed manually-numbered, anonymous auto-numbered,
+        and labelled auto-numbered footnotes:
+    <paragraph>
+        <footnote_reference auto="1" ids="footnote-reference-1" refname="four">
+         should be 4,
+        <footnote_reference auto="1" ids="footnote-reference-2">
+         should be 2,
+        <footnote_reference ids="footnote-reference-3" refname="1">
+            1
+         is 1,
+        <footnote_reference ids="footnote-reference-4" refname="3">
+            3
+         is 3,
+        <footnote_reference auto="1" ids="footnote-reference-5">
+         should be 6,
+        <footnote_reference auto="1" ids="footnote-reference-6">
+         is one too many,
+        <footnote_reference auto="1" ids="footnote-reference-7" refname="five">
+         should be 5, and
+        <footnote_reference auto="1" ids="footnote-reference-8" refname="six">
+         doesn't exist.
+    <footnote ids="footnote-1" names="1">
+        <label>
+            1
+        <paragraph>
+            Manually-numbered footnote 1.
+    <footnote auto="1" ids="footnote-2">
+        <paragraph>
+            Auto-numbered footnote 2.
+    <footnote auto="1" ids="four" names="four">
+        <paragraph>
+            Auto-numbered footnote 4.
+    <footnote ids="footnote-3" names="3">
+        <label>
+            3
+        <paragraph>
+            Manually-numbered footnote 3
+    <footnote auto="1" dupnames="five" ids="five">
+        <paragraph>
+            Auto-numbered footnote 5.
+    <footnote auto="1" dupnames="five" ids="five-1">
+        <system_message backrefs="five-1" level="2" line="14" source="test data" type="WARNING">
+            <paragraph>
+                Duplicate explicit target name: "five".
+        <paragraph>
+            Auto-numbered footnote 5 again (duplicate).
+    <footnote auto="1" ids="footnote-4">
+        <paragraph>
+            Auto-numbered footnote 6.
