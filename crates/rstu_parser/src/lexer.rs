@@ -13,6 +13,7 @@ pub fn tokenize(input: &str) -> TokenStream {
     let mut position = Position::default();
     let mut index: usize = 1; // point at second \n
     let mut last_char_bytes: usize = 1; // \n
+    let mut footnote_number = 0;
 
     while index < input.len() - 1 {
         let sub_str = &input[index - last_char_bytes..];
@@ -59,6 +60,15 @@ pub fn tokenize(input: &str) -> TokenStream {
                 }
                 current_indent = 0;
                 tokens.push(new_token, position);
+            }
+            (TK::FootnoteReference, _) => {
+                // replace the original lexeme
+                let value = &lexeme[1..lexeme.len() - 2];
+                //match value
+                // # 1. update lexeme ->#counter:counter 2. increase counter
+                // #abc 1. update lexeme to match:counter 2. increase counter
+                // number. update lexeme to match
+                // unreachable
             }
 
             _ => tokens.push(new_token, position),
