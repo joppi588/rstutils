@@ -121,15 +121,7 @@ fn enclosed_inline_start_pattern() -> String {
     format!(r"(.|\n)(?:{enclosed_patterns})(.|\n)")
 }
 
-// Match groups are used in the parser, but not the lexer (performance)
-// Content is the same, update together.
-pub(crate) static SHORT_OPTIONS_MATCH: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^\s?([\-\+][a-z]{1})([ \t=]?)(.*)$").unwrap());
-pub(crate) static LONG_OPTIONS_MATCH: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"^\s?(\-\-[a-z][a-z0-9]*(?:[\-_][a-z][a-z0-9]*)*)([ \t=]?)(.*)$").unwrap()
-});
-pub(crate) static DOS_OPTIONS_MATCH: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^\s?(/[A-Z]+)([ \t=]?)([a-z]*)$").unwrap());
+// Option parsing, Lexer:
 static OPTION: &str = concat!(
     r"\n(?:",
     r"[\-\+][a-z](?:[ \t][a-z]+)?", // short and old GNU (+)
@@ -139,6 +131,15 @@ static OPTION: &str = concat!(
     r"/[A-Z]+(?:[ \t=][a-z]+)?", // DOS
     r")[ ,\n]"
 );
+// Option parsing, Parser:
+// Regexes with match groups are only used in the parser, but not the lexer (performance)
+pub(crate) static SHORT_OPTIONS_MATCH: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"^\s?([\-\+][a-z]{1})([ \t=]?)(.*)$").unwrap());
+pub(crate) static LONG_OPTIONS_MATCH: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"^\s?(\-\-[a-z][a-z0-9]*(?:[\-_][a-z][a-z0-9]*)*)([ \t=]?)(.*)$").unwrap()
+});
+pub(crate) static DOS_OPTIONS_MATCH: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"^\s?(/[A-Z]+)([ \t=]?)([a-z]*)$").unwrap());
 
 macro_rules! count_idents {
     ($($ident:ident),* $(,)?) => {
