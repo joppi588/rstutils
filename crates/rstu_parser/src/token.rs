@@ -9,20 +9,119 @@ static RECOMMENDED_SECTION_CHARS: &str = "=\\-`:.'\"~\\^_\\*\\+#"; // escaped =-
 static INLINE_PRE_CHARS: &str = r#"(?:[\n\s\-:/'"<(\[{]|\p{Ps}|\p{Pi}|\p{Pf}|\p{Pd}|\p{Po})"#;
 static INLINE_PRE_CHARS_NO_ASTERISK: &str =
     r#"(?:[\n\s\-:/'"<(\[{]|\p{Ps}|\p{Pi}|\p{Pf}|\p{Pd}|[\p{Po}&&[^*]])"#;
+static INLINE_PRE_CHARS_NO_FINAL_QUOTE: &str =
+    r#"(?:[\n\s\-:/'"<(\[{]|\p{Ps}|\p{Pi}|\p{Pd}|[\p{Po}&&[^*]])"#;
 static INLINE_POST_CHARS: &str =
     r#"(?:[\n\s\-\.,:;!?\\/'")\]}>]|\p{Pe}|\p{Pi}|\p{Pf}|\p{Pd}|\p{Po}|\p{Ps})"#;
 static INLINE_POST_CHARS_NO_ASTERISK: &str =
     r#"(?:[\n\s\-\.,:;!?\\/'")\]}>]|\p{Pe}|\p{Pi}|\p{Pf}|\p{Pd}|[\p{Po}&&[^*]]|\p{Ps})"#;
 
-// Match groups are used in the parser, but not the lexer (performance)
-// Content is the same, update together.
-pub(crate) static SHORT_OPTIONS_MATCH: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^\s?([\-\+][a-z]{1})([ \t=]?)(.*)$").unwrap());
-pub(crate) static LONG_OPTIONS_MATCH: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"^\s?(\-\-[a-z][a-z0-9]*(?:[\-_][a-z][a-z0-9]*)*)([ \t=]?)(.*)$").unwrap()
-});
-pub(crate) static DOS_OPTIONS_MATCH: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^\s?(/[A-Z]+)([ \t=]?)([a-z]*)$").unwrap());
+fn enclosed_inline_start_pattern() -> String {
+    let starts = [r"\*\*", r"\*", r"``", r"_`", r"`", r"\|"].join("|");
+    let starts = format!("(?:{starts})");
+    let bracket_pairs = [
+        (0x0028, 0x0029),
+        (0x003C, 0x003E),
+        (0x005B, 0x005D),
+        (0x007B, 0x007D),
+        (0x0F3A, 0x0F3B),
+        (0x0F3C, 0x0F3D),
+        (0x169B, 0x169C),
+        (0x2045, 0x2046),
+        (0x207D, 0x207E),
+        (0x208D, 0x208E),
+        (0x2308, 0x2309),
+        (0x230A, 0x230B),
+        (0x2329, 0x232A),
+        (0x2768, 0x2769),
+        (0x276A, 0x276B),
+        (0x276C, 0x276D),
+        (0x276E, 0x276F),
+        (0x2770, 0x2771),
+        (0x2772, 0x2773),
+        (0x2774, 0x2775),
+        (0x27C5, 0x27C6),
+        (0x27E6, 0x27E7),
+        (0x27E8, 0x27E9),
+        (0x27EA, 0x27EB),
+        (0x27EC, 0x27ED),
+        (0x27EE, 0x27EF),
+        (0x2983, 0x2984),
+        (0x2985, 0x2986),
+        (0x2987, 0x2988),
+        (0x2989, 0x298A),
+        (0x298B, 0x298C),
+        (0x298D, 0x2990),
+        (0x298F, 0x298E),
+        (0x2991, 0x2992),
+        (0x2993, 0x2994),
+        (0x2995, 0x2996),
+        (0x2997, 0x2998),
+        (0x29D8, 0x29D9),
+        (0x29DA, 0x29DB),
+        (0x29FC, 0x29FD),
+        (0x2E22, 0x2E23),
+        (0x2E24, 0x2E25),
+        (0x2E26, 0x2E27),
+        (0x2E28, 0x2E29),
+        (0x2E55, 0x2E56),
+        (0x2E57, 0x2E58),
+        (0x2E59, 0x2E5A),
+        (0x2E5B, 0x2E5C),
+        (0x3008, 0x3009),
+        (0x300A, 0x300B),
+        (0x300C, 0x300D),
+        (0x300E, 0x300F),
+        (0x3010, 0x3011),
+        (0x3014, 0x3015),
+        (0x3016, 0x3017),
+        (0x3018, 0x3019),
+        (0x301A, 0x301B),
+        (0xFE59, 0xFE5A),
+        (0xFE5B, 0xFE5C),
+        (0xFE5D, 0xFE5E),
+        (0xFF08, 0xFF09),
+        (0xFF3B, 0xFF3D),
+        (0xFF5B, 0xFF5D),
+        (0xFF5F, 0xFF60),
+        (0xFF62, 0xFF63),
+    ];
+    let bracket_patterns = bracket_pairs
+        .iter()
+        .map(|(open, close)| format!(r"\x{{{open:X}}}{starts}\x{{{close:X}}}"));
+    let quote_chars = [
+        '\'', '"', '\u{00AB}', '\u{00BB}', '\u{2039}', '\u{203A}', '\u{2E42}', '\u{FF02}',
+        '\u{FF07}',
+    ]
+    .into_iter()
+    .chain('\u{2018}'..='\u{201F}')
+    .chain('\u{300C}'..='\u{300F}')
+    .chain('\u{301D}'..='\u{301F}')
+    .chain('\u{FE41}'..='\u{FE44}')
+    .chain(['\u{FF62}', '\u{FF63}'])
+    .collect::<Vec<_>>();
+    let mut quote_patterns = Vec::new();
+    for open in quote_chars.iter().copied() {
+        for close in quote_chars.iter().copied() {
+            if (open, close) != ('\u{201E}', '\u{2019}')
+                && (open, close) != ('\u{00BB}', '\u{2039}')
+            {
+                quote_patterns.push(format!(
+                    r"\x{{{:X}}}{starts}\x{{{:X}}}",
+                    open as u32, close as u32
+                ));
+            }
+        }
+    }
+    let enclosed_patterns = bracket_patterns
+        .chain(quote_patterns)
+        .collect::<Vec<_>>()
+        .join("|");
+
+    format!(r"(.|\n)(?:{enclosed_patterns})(.|\n)")
+}
+
+// Option parsing, Lexer:
 static OPTION: &str = concat!(
     r"\n(?:",
     r"[\-\+][a-z](?:[ \t][a-z]+)?", // short and old GNU (+)
@@ -32,6 +131,15 @@ static OPTION: &str = concat!(
     r"/[A-Z]+(?:[ \t=][a-z]+)?", // DOS
     r")[ ,\n]"
 );
+// Option parsing, Parser:
+// Regexes with match groups are only used in the parser, but not the lexer (performance)
+pub(crate) static SHORT_OPTIONS_MATCH: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"^\s?([\-\+][a-z]{1})([ \t=]?)(.*)$").unwrap());
+pub(crate) static LONG_OPTIONS_MATCH: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"^\s?(\-\-[a-z][a-z0-9]*(?:[\-_][a-z][a-z0-9]*)*)([ \t=]?)(.*)$").unwrap()
+});
+pub(crate) static DOS_OPTIONS_MATCH: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"^\s?(/[A-Z]+)([ \t=]?)([a-z]*)$").unwrap());
 
 macro_rules! count_idents {
     ($($ident:ident),* $(,)?) => {
@@ -160,6 +268,7 @@ impl TokenCategory {
     ];
     pub const PLAIN: &'static [TokenKind] = &[
         TokenKind::DoctestStart,
+        TokenKind::EnclosedInlineStart,
         TokenKind::EscapedChar,
         TokenKind::LiteralChar,
         TokenKind::NewLine,
@@ -190,6 +299,7 @@ pub enum TokenKind {
     DoubleDot,
     EmphasisEnd,
     EmphasisStart,
+    EnclosedInlineStart,
     EnumeratedListMarker,
     EoF,
     EscapedChar,
@@ -253,7 +363,7 @@ impl TokenKind {
         // inline literals and inline internal targets before backquote constructs.
         (StrongStart, format!(r"{0}\*\*[^\s]", INLINE_PRE_CHARS_NO_ASTERISK)),
         (StrongEnd, format!(r"[^\s\\]\*\*{0}", INLINE_POST_CHARS_NO_ASTERISK)),
-        (EmphasisStart, format!(r"{0}\*[^\s]", INLINE_PRE_CHARS_NO_ASTERISK)),
+        (EmphasisStart, format!(r"(?:{0}\*[^\s]|\p{{Pf}}\*[^\s\p{{Pi}}])", INLINE_PRE_CHARS_NO_FINAL_QUOTE)),
         (EmphasisEnd, format!(r"[^\s\\]\*{0}", INLINE_POST_CHARS_NO_ASTERISK)),
         (InlineLiteralStart, format!(r"{0}``[^\s]", INLINE_PRE_CHARS)),
         (InlineLiteralEnd, format!(r"[^\s]``{0}", INLINE_POST_CHARS)),
@@ -270,6 +380,7 @@ impl TokenKind {
         (HyperlinkReferenceEnd, format!(r"(?:[^\s]`_|[^\s]_){}", INLINE_POST_CHARS)),
         (SimpleAnonymousHyperLinkReference,r"[\s\n]\w+__\s"),
         (SimpleHyperlinkReference,r"[\s\n]\w+_\s"),
+        (EnclosedInlineStart, enclosed_inline_start_pattern()),
 
         // Classifiers for definition list (must precede Field: " : x :" would match Field)
         (ClassifierSeparator,r"(.|\n)\s+:\s+(.|\n)"),
@@ -462,6 +573,36 @@ mod tests {
         assert_eq!(TK::BackquoteEnd.find_lexeme("x` "), Some("`"));
         assert_eq!(TK::InlineLiteralStart.find_lexeme(" ``x"), Some("``"));
         assert_eq!(TK::InlineLiteralEnd.find_lexeme("x`` "), Some("``"));
+    }
+
+    /// GIVEN an inline start delimiter immediately enclosed by matching brackets or quotes
+    /// WHEN the enclosed-start token is matched
+    /// THEN the entire enclosed delimiter is classified as plain text
+    #[test]
+    fn enclosed_inline_start_matches_matching_pairs() {
+        for input in [" (*) ", " <**> ", " [``] ", " ⁅*⁆ ", " “*„ ", " '|' "] {
+            assert!(
+                TK::EnclosedInlineStart.find_lexeme(input).is_some(),
+                "expected an enclosed start in {input:?}"
+            );
+        }
+    }
+
+    /// GIVEN mismatched brackets or a start not immediately followed by a closer
+    /// WHEN the enclosed-start token is matched
+    /// THEN it does not claim the text
+    #[test]
+    fn enclosed_inline_start_rejects_mismatches_and_nonadjacent_closers() {
+        for input in [" (*] ", " (*x*) ", " ( * ) ", " „*’ ", " »*‹ "] {
+            assert_eq!(
+                TK::EnclosedInlineStart.find_lexeme(input),
+                None,
+                "{input:?}"
+            );
+        }
+        assert_eq!(TK::EmphasisStart.find_lexeme("„*’ "), Some("*"));
+        assert_eq!(TK::EmphasisEnd.find_lexeme("»*‹ "), Some("*"));
+        assert_eq!(TK::EmphasisStart.find_lexeme("»*‹ "), None);
     }
 
     /// GIVEN emphasis closed by a low quotation mark used as closing punctuation
