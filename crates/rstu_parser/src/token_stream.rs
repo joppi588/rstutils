@@ -43,7 +43,7 @@ impl Position {
 
 impl std::fmt::Display for Position {
     fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(formatter, "line {}, column {}", self.line, self.column)
+        write!(formatter, "L{} C{}", self.line, self.column)
     }
 }
 
@@ -151,11 +151,10 @@ impl TokenStream {
     pub fn consume(&mut self) -> Token {
         let token = self.token_at(self.cursor);
         log::debug!(
-            "({}/{}) L{} C{} {:?} {:?}",
+            "({}/{}) {} {:?} {:?}",
             self.cursor + 1,
             self.tokens.len(),
-            self.position_at_cursor().line,
-            self.position_at_cursor().column,
+            self.position_at_cursor(),
             token.kind,
             token.lexeme
         );
