@@ -16,11 +16,11 @@ use test_parser::rst_vs_yaml;
 // #[case("inline_targets_00")]
 // #[case("literal_00")]
 // #[case("literal_02")]
-// #[case("markup_recognition_rules_00")]
-// #[case("markup_recognition_rules_01")]
-// #[case("markup_recognition_rules_02")]
-// #[case("markup_recognition_rules_03")]
-// #[case("markup_recognition_rules_04")]
+#[case("markup_recognition_rules_00")] // TODO:
+#[case("markup_recognition_rules_01")] // TODO:
+#[case("markup_recognition_rules_02")] // TODO:
+#[case("markup_recognition_rules_03")]
+#[case("markup_recognition_rules_04")]
 // #[case("references_00")]
 // #[case("strong_00")]
 // #[case("strong_01")]
