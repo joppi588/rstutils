@@ -4,7 +4,7 @@ children:
   children:
   - class: Reference
     attributes:
-      text: "#third"
+      label: "#third"
       type: footnote
   - class: PlainText
     attributes:
@@ -46,7 +46,7 @@ children:
   children:
   - class: Reference
     attributes:
-      text: "#second"
+      label: "#second"
       type: footnote
   - class: PlainText
     attributes:
@@ -54,7 +54,7 @@ children:
          is a reference to the second auto-numbered footnote.
   - class: Reference
     attributes:
-      text: "#first"
+      label: "#first"
       type: footnote
   - class: PlainText
     attributes:
@@ -62,7 +62,7 @@ children:
          is a reference to the first auto-numbered footnote.
   - class: Reference
     attributes:
-      text: "#third"
+      label: "#third"
       type: footnote
   - class: PlainText
     attributes:

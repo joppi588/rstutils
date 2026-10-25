@@ -51,14 +51,14 @@ children:
         children:
           - class: Reference
             attributes:
-              text: simple_reference
+              label: simple_reference
               type: simple_ref
           - class: PlainText
             attributes:
               text: " "
           - class: Reference
             attributes:
-              text: anonymous_reference
+              label: anonymous_reference
               type: simple_anonymous_ref
           - class: PlainText
             attributes:
@@ -72,21 +72,21 @@ children:
               text: " "
           - class: Reference
             attributes:
-              text: "1"
+              label: "1"
               type: footnote
           - class: PlainText
             attributes:
               text: " "
           - class: Reference
             attributes:
-              text: "CIT"
+              label: "CIT"
               type: citation
           - class: PlainText
             attributes:
               text: " "
           - class: Reference
             attributes:
-              text: "sub"
+              label: "sub"
               type: sub
           - class: PlainText
             attributes:
