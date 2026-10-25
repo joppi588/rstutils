@@ -28,7 +28,14 @@ pub(crate) fn parse_footnote(stream: &mut TokenStream) -> Result<NodeRef, Parser
     let index_next_line: usize = stream.find_end_of_line() + 1;
     let paragraph = match stream.token_at(index_next_line).kind {
         TK::Indent => parse_paragraph_hanging_indent(stream)?,
-        _ => parse_paragraph(stream)?,
+        TK::BlankLine | TK::EoF | TK::FootNote => parse_paragraph(stream)?,
+        kind => {
+            return Err(ParserError::UnexpectedToken {
+                expected: "Indent, Footnote or Blankline".to_owned(),
+                found: format!("{:?}", kind),
+                position: stream.position_at(index_next_line),
+            });
+        }
     };
     footnote.push_child(paragraph);
     Ok(footnote)

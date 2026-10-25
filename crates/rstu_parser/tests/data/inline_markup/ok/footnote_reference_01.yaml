@@ -4,7 +4,7 @@ children:
   children:
   - class: Reference
     attributes:
-      text: '1'
+      text: '#'
       type: footnote
   - class: PlainText
     attributes:

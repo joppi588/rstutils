@@ -8,14 +8,16 @@ children:
       type: footnote
   - class: PlainText
     attributes:
-      text: " is the first auto-numbered footnote reference.\n"
+      text: |2
+         is the first auto-numbered footnote reference.
   - class: Reference
     attributes:
       text: '#'
       type: footnote
   - class: PlainText
     attributes:
-      text: " is the second auto-numbered footnote reference.\n"
+      text: |2
+         is the second auto-numbered footnote reference.
 - class: BlankLine
 - class: Footnote
   attributes:
@@ -25,7 +27,8 @@ children:
     children:
     - class: PlainText
       attributes:
-        text: "Auto-numbered footnote 1.\n"
+        text: |
+          Auto-numbered footnote 1.
 - class: Footnote
   attributes:
     label: '#'
@@ -34,7 +37,8 @@ children:
     children:
     - class: PlainText
       attributes:
-        text: "Auto-numbered footnote 2.\n"
+        text: |
+          Auto-numbered footnote 2.
 - class: Footnote
   attributes:
     label: '#'
@@ -43,7 +47,8 @@ children:
     children:
     - class: PlainText
       attributes:
-        text: "Auto-numbered footnote 3.\n"
+        text: |
+          Auto-numbered footnote 3.
 - class: BlankLine
 - class: Paragraph
   children:
@@ -53,4 +58,5 @@ children:
       type: footnote
   - class: PlainText
     attributes:
-      text: " is the third auto-numbered footnote reference.\n"
+      text: |2
+         is the third auto-numbered footnote reference.
