@@ -20,19 +20,7 @@ pub(crate) fn parse_footnote(stream: &mut TokenStream) -> Result<NodeRef, Parser
         .and_then(|marker| marker.strip_suffix(']'))
         .unwrap_or_default();
     let footnote = AstNode::new_ref(NodeClass::Footnote);
-
-    if label == "*" {
-        footnote.with_attr("auto", "*");
-    } else if let Some(reference_name) = label.strip_prefix('#') {
-        footnote.with_attr("auto", "1");
-        if !reference_name.is_empty() {
-            footnote.with_attr("refname", reference_name);
-        }
-    } else {
-        let label_node = AstNode::new_ref(NodeClass::Label);
-        label_node.with_attr("text", label);
-        footnote.push_child(label_node);
-    }
+    footnote.with_attr("label", label);
 
     while stream.token_at_cursor().kind == TK::Spaces
         && stream

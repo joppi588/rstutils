@@ -26,7 +26,6 @@ pub enum NodeClass {
     FieldListItem,
     Footnote,
     InlineMarkup,
-    Label,
     Line,
     LineBlock,
     LiteralBlock,

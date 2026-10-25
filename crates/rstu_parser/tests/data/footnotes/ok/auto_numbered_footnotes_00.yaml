@@ -17,15 +17,34 @@ children:
     attributes:
       text: " is the second auto-numbered footnote reference.\n"
 - class: BlankLine
-- class: Comment
+- class: Footnote
   attributes:
-    text: "[#] Auto-numbered footnote 1.\n"
-- class: Comment
+    label: '#'
+  children:
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: Auto-numbered footnote 1.
+- class: Footnote
   attributes:
-    text: "[#] Auto-numbered footnote 2.\n"
-- class: Comment
+    label: '#'
+  children:
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: Auto-numbered footnote 2.
+- class: Footnote
   attributes:
-    text: "[#] Auto-numbered footnote 3.\n\n"
+    label: '#'
+  children:
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: Auto-numbered footnote 3.
+- class: BlankLine
 - class: Paragraph
   children:
   - class: Reference
