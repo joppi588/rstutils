@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 use rstest::rstest;
+use rstu_parser::parser_errors::ParserErrorKind as PE;
 
 #[path = "common/mod.rs"]
 mod test_parser;
@@ -29,9 +30,9 @@ fn ok_line_block(#[case] test_case: &str) {
 }
 
 #[rstest]
-#[case("line_block_05")]
-#[case("line_block_13")]
-#[case("line_block_14")]
-fn err_line_block_diagnostics(#[case] test_case: &str) {
-    rst_err!("line_blocks/err", test_case);
+#[case("line_block_05", PE::UnexpectedToken)]
+#[case("line_block_13", PE::UnexpectedToken)]
+#[case("line_block_14", PE::InlineMissingClosing)]
+fn err_line_block_diagnostics(#[case] test_case: &str, #[case] expected_error: PE) {
+    rst_err!("line_blocks/err", test_case, expected_error);
 }

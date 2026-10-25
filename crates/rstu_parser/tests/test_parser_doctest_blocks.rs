@@ -4,6 +4,7 @@
 
 use rstest::rstest;
 use rstu_parser::parse;
+use rstu_parser::parser_errors::ParserErrorKind as PE;
 #[path = "common/mod.rs"]
 mod test_parser;
 use test_parser::rst_err;
@@ -33,7 +34,7 @@ fn ok_doctest_block_at_eof_without_blank_line() {
 }
 
 #[rstest]
-#[case("doctest_block_03")]
-fn err_doctest_block(#[case] test_case: &str) {
-    rst_err!("doctest_blocks/err", test_case);
+#[case("doctest_block_03", PE::MissingFinalBlankLineError)]
+fn err_doctest_block(#[case] test_case: &str, #[case] expected_error: PE) {
+    rst_err!("doctest_blocks/err", test_case, expected_error);
 }

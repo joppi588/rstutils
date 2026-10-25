@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 use rstest::rstest;
+use rstu_parser::parser_errors::ParserErrorKind as PE;
 
 #[path = "common/mod.rs"]
 mod test_parser;
@@ -25,7 +26,7 @@ fn ok_footnotes(#[case] test_case: &str) {
 }
 
 #[rstest]
-#[case("footnotes_05")]
-fn err_footnotes_diagnostics(#[case] test_case: &str) {
-    rst_err!("footnotes/err", test_case);
+#[case("footnotes_05", PE::UnexpectedToken)]
+fn err_footnotes_diagnostics(#[case] test_case: &str, #[case] expected_error: PE) {
+    rst_err!("footnotes/err", test_case, expected_error);
 }

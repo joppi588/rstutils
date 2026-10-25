@@ -4,6 +4,7 @@
 
 use rstest::rstest;
 use rstu_parser::parse;
+use rstu_parser::parser_errors::ParserErrorKind as PE;
 
 #[path = "common/mod.rs"]
 mod test_parser;
@@ -27,17 +28,17 @@ fn ok_literal_block(#[case] test_case: &str) {
 }
 
 #[rstest]
-#[case("indented_03")]
-#[case("indented_04")]
-#[case("indented_10")]
-#[case("indented_12")]
-#[case("quoted_03")]
-#[case("quoted_04")]
-#[case("quoted_05")]
-#[case("quoted_block_01")]
-#[case("quoted_block_02")]
-fn err_literal_block(#[case] test_case: &str) {
-    rst_err!("literal_blocks/err", test_case);
+#[case("indented_03", PE::LiteralBlockMissingBlankLine)]
+#[case("indented_04", PE::MissingFinalBlankLineError)]
+#[case("indented_10", PE::LiteralBlockInvalidQuoteMarker)]
+#[case("indented_12", PE::LiteralBlockMissingBlankLine)]
+#[case("quoted_03", PE::LiteralBlockInvalidQuoteMarker)]
+#[case("quoted_04", PE::LiteralBlockInvalidQuoteMarker)]
+#[case("quoted_05", PE::LiteralBlockInconsistentQuoteMarker)]
+#[case("quoted_block_01", PE::LiteralBlockInvalidQuoteMarker)]
+#[case("quoted_block_02", PE::LiteralBlockInconsistentQuoteMarker)]
+fn err_literal_block(#[case] test_case: &str, #[case] expected_error: PE) {
+    rst_err!("literal_blocks/err", test_case, expected_error);
 }
 
 #[test]
