@@ -3,7 +3,7 @@ All of these are believed to be non-critical.
 
 # Spec limitations
 - Allowed section/transition markers: restrict to the "recommended" set.
-- Minimum length for section header marker: 4 chars
+- Minimum length for section header marker: 3 chars
 - character_level_inline_markup = False
 - Field names only allow [A-Za-z0-9_ ]
   Rationale: Field names are like identifiers.
