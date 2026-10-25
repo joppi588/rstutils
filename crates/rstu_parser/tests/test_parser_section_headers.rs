@@ -35,7 +35,7 @@ fn ok_section_headers(#[case] test_case: &str) {
 #[rstest]
 #[case("section_headers_03", PE::UnexpectedToken)]
 #[case("section_headers_04", PE::UnexpectedToken)]
-#[case("section_headers_08", PE::UnexpectedToken)]
+#[case("section_headers_08", PE::SectionTitleMissingClosingAfterOpening)]
 #[case("section_headers_09", PE::UnexpectedToken)]
 #[case("section_headers_10", PE::UnexpectedToken)]
 #[case("section_headers_11", PE::UnexpectedToken)]
@@ -54,5 +54,5 @@ fn ok_section_headers(#[case] test_case: &str) {
 #[case("section_headers_32", PE::UnexpectedToken)]
 #[case("section_headers_33", PE::UnexpectedToken)]
 fn err_section_headers(#[case] test_case: &str, #[case] expected_error: PE) {
-    rst_err!("section_headers/ok", test_case, expected_error);
+    rst_err!("section_headers/err", test_case, expected_error);
 }
