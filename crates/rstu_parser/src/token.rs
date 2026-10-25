@@ -6,6 +6,7 @@ use regex::Regex;
 use std::sync::LazyLock;
 
 static RECOMMENDED_SECTION_CHARS: &str = "=\\-`:.'\"~\\^_\\*\\+#"; // escaped =-`:.'"~^_*+#
+static FOOTNOTE_LABEL: &str = r"(?:[0-9]+|#(?:[\p{L}\p{N}]+(?:[-_.][\p{L}\p{N}]+)*)?|\*)";
 static INLINE_PRE_CHARS: &str = r#"(?:[\n\s\-:/'"<(\[{]|\p{Ps}|\p{Pi}|\p{Pf}|\p{Pd}|\p{Po})"#;
 static INLINE_PRE_CHARS_NO_ASTERISK: &str =
     r#"(?:[\n\s\-:/'"<(\[{]|\p{Ps}|\p{Pi}|\p{Pf}|\p{Pd}|[\p{Po}&&[^*]])"#;
@@ -349,7 +350,7 @@ impl TokenKind {
 
         (DoctestStart, r"\s>>>\s"),
 
-        (FootNote, r"(.|\n)(?:\.\. \[(?:[0-9]+|#(?:[\p{L}\p{N}]+(?:[-_.][\p{L}\p{N}]+)*)?|\*)\])(.|\n)"),
+        (FootNote, format!(r"(.|\n)(?:\.\. \[{0}\])(.|\n)", FOOTNOTE_LABEL)),
 
         // Comments
         (DoubleDot, r"\s\.\. *\s"),
@@ -380,7 +381,7 @@ impl TokenKind {
         (SubstitutionReference, format!(r"{0}\|.+?\|{1}", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
         // TODO SubsRefHyperLink rst l.3033
         // TODO SubRefAnonymousHyperlink
-        (FootnoteReference, format!(r"{0}\[(?:[0-9]+|#(?:[\p{{L}}\p{{N}}]+(?:[-_.][\p{{L}}\p{{N}}]+)*)?|\*)\]_{1}", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
+        (FootnoteReference, format!(r"{0}\[{2}\]_{1}", INLINE_PRE_CHARS, INLINE_POST_CHARS, FOOTNOTE_LABEL)),
         (CitationReference, format!(r"{0}\[[\p{{L}}\p{{N}}]+(?:[-_.][\p{{L}}\p{{N}}]+)*\]_{1}", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
         (HyperlinkReferenceEnd, format!(r"(?:[^\s]`_|[^\s]_){}", INLINE_POST_CHARS)),
         (SimpleAnonymousHyperLinkReference,r"[\W_][\w&&[^_]]+(?:[-_.:+][\w&&[^_]]+)*__\s"),
