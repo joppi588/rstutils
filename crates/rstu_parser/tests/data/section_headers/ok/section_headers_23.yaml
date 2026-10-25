@@ -6,8 +6,12 @@ children:
     section_marker: "="
   children:
   - class: Title
-    attributes:
-      text: "ABC\n"
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "ABC\n"
   - class: BlankLine
   - class: Paragraph
     children:

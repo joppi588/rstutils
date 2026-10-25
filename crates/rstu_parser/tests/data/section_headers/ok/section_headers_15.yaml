@@ -9,8 +9,12 @@ children:
     section_marker: "="
   children:
   - class: Title
-    attributes:
-      text: "Title 1\n"
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "Title 1\n"
   - class: Paragraph
     children:
     - class: PlainText
@@ -23,8 +27,12 @@ children:
       section_marker: '-'
     children:
     - class: Title
-      attributes:
-        text: "Title 2\n"
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: "Title 2\n"
     - class: Paragraph
       children:
       - class: PlainText
@@ -37,8 +45,12 @@ children:
     section_marker: "="
   children:
   - class: Title
-    attributes:
-      text: "Title 3\n"
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "Title 3\n"
   - class: Paragraph
     children:
     - class: PlainText
@@ -51,8 +63,12 @@ children:
       section_marker: '-'
     children:
     - class: Title
-      attributes:
-        text: "Title 4\n"
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: "Title 4\n"
     - class: Paragraph
       children:
       - class: PlainText
