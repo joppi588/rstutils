@@ -13,7 +13,8 @@ Language Server
 Option 1: Build on top of rst_parser package
 Option 2: Start from Scratch
 Start from scratch while reading the existing packages.
-Rationale: One of my goals was to learn Rust; limitations of pest-parser approach (section stack, rst error detection)
+Rationale: One of my goals was to learn Rust; limitations of pest-parser approach (section stack, rst error detection);
+doctree-based approaches contain a lot of interpretation already, beyond the pure syntax analysis.
 
 2. AST and Doctree
 We use first an abstract syntax tree to parse the structure of the document (e.g. directives, indented blocks,...).
@@ -54,7 +55,7 @@ Option 1:
 Option 2:
 - One error type per parsing subfunction
 - Further specialization via error messages
-Decision: TODO (depends on error handling)
+Decision: Option 1, error messages are created using the Display trait. Smaller overhead.
 
 7. Warnings
 Warning messages are emitted by the linter, the parser rather emits only errors.
@@ -72,6 +73,12 @@ So technically indented blocks can be surrounded by blank lines, and in/dedents 
 Write back rst from AST.
 TODO: Some elements contain the trailing newline, some not.
 Make this consistent
+
+10. References / auto-numbering
+Cross-references are not part of the parser. They are processed in a later step.
+Rationale:
+Parser shall focus on the syntax, output just enough information for a rst round-trip.
+References (especially auto-numbering) is already at the interpretation level.
 
 # Architectural drivers
 Development speed, especially bug fixes -> Maintainability is key
