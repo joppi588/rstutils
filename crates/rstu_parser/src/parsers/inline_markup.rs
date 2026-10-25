@@ -17,23 +17,23 @@ pub(crate) fn parse_inline_token(stream: &mut TokenStream) -> Result<NodeRef, Pa
     let lexeme = &token.lexeme;
     match kind {
         TK::CitationReference => {
-            node.with_attr("text", &lexeme[1..lexeme.len() - 2])
+            node.with_attr("label", &lexeme[1..lexeme.len() - 2])
                 .with_attr("type", "citation");
         }
         TK::FootnoteReference => {
-            node.with_attr("text", &lexeme[1..lexeme.len() - 2])
+            node.with_attr("label", &lexeme[1..lexeme.len() - 2])
                 .with_attr("type", "footnote");
         }
         TK::SubstitutionReference => {
-            node.with_attr("text", &lexeme[1..lexeme.len() - 1])
+            node.with_attr("label", &lexeme[1..lexeme.len() - 1])
                 .with_attr("type", "sub");
         }
         TK::SimpleHyperlinkReference => {
-            node.with_attr("text", &lexeme[0..lexeme.len() - 1])
+            node.with_attr("label", &lexeme[0..lexeme.len() - 1])
                 .with_attr("type", "simple_ref");
         }
         TK::SimpleAnonymousHyperLinkReference => {
-            node.with_attr("text", &lexeme[0..lexeme.len() - 2])
+            node.with_attr("label", &lexeme[0..lexeme.len() - 2])
                 .with_attr("type", "simple_anonymous_ref");
         }
 

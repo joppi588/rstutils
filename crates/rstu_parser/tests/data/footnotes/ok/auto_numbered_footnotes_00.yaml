@@ -4,14 +4,14 @@ children:
   children:
   - class: Reference
     attributes:
-      text: '#'
+      label: '#'
       type: footnote
   - class: PlainText
     attributes:
       text: " is the first auto-numbered footnote reference.\n"
   - class: Reference
     attributes:
-      text: '#'
+      label: '#'
       type: footnote
   - class: PlainText
     attributes:
@@ -49,7 +49,7 @@ children:
   children:
   - class: Reference
     attributes:
-      text: '#'
+      label: '#'
       type: footnote
   - class: PlainText
     attributes:
