@@ -197,7 +197,7 @@ impl AstNode {
             &Self::to_json(node_ref),
             serde_saphyr::ser_options! {
                 no_lang_directive: true,
-                prefer_block_scalars: false,
+                prefer_block_scalars: true,
             },
         )
     }

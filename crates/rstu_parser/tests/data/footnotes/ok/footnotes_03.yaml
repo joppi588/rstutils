@@ -10,4 +10,7 @@ children:
     children:
     - class: PlainText
       attributes:
-        text: "\nThis is a footnote on multiple lines\nwhose block starts on line 2.\n"
+        text: |
+
+          This is a footnote on multiple lines
+          whose block starts on line 2.

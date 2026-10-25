@@ -10,7 +10,9 @@ children:
     children:
     - class: PlainText
       attributes:
-        text: "This is a footnote\non multiple lines with more space.\n"
+        text: |
+          This is a footnote
+          on multiple lines with more space.
 - class: BlankLine
 - class: Footnote
   attributes:
@@ -22,4 +24,6 @@ children:
     children:
     - class: PlainText
       attributes:
-        text: "This is a footnote\non multiple lines with less space.\n"
+        text: |
+          This is a footnote
+          on multiple lines with less space.
