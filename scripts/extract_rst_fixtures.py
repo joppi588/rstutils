@@ -6,12 +6,14 @@ from __future__ import annotations
 
 import argparse
 import importlib.util
+import re
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 DOCUTILS_ROOT = ROOT / "docutils"
 DEFAULT_OUT = ROOT / "crates" / "rstu_parser" / "tests" / "data"
+DEFAULT_TEST_OUT = ROOT / "crates" / "rstu_parser" / "tests"
 
 
 def load_totest(test_file: Path) -> dict:
@@ -20,6 +22,38 @@ def load_totest(test_file: Path) -> dict:
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module.totest
+
+
+def render_test(topic: str, cases: dict[str, list[str]]) -> str:
+    topic_id = re.sub(r"\W", "_", topic)
+    if not topic_id or topic_id[0].isdigit():
+        topic_id = f"topic_{topic_id}"
+
+    lines = [
+        "// SPDX-FileCopyrightText: 2026 Jochen Schmaehling <tostmann1@web.de>",
+        "//",
+        "// SPDX-License-Identifier: MIT",
+        "",
+        "use rstest::rstest;",
+        "",
+        '[path = "common/mod.rs"]',
+        "mod test_parser;",
+        "use test_parser::rst_err;",
+        "use test_parser::rst_vs_yaml;",
+    ]
+    for kind, macro in (("ok", "rst_vs_yaml"), ("err", "rst_err")):
+        names = cases[kind]
+        if not names:
+            continue
+        lines.extend(["", "#[rstest]"])
+        lines.extend(f'#[case("{name}")]' for name in names)
+        function = f"ok_{topic_id}" if kind == "ok" else f"err_{topic_id}_diagnostics"
+        lines.extend([
+            f"fn {function}(#[case] test_case: &str) {{",
+            f'    {macro}!("{topic}/{kind}", test_case);',
+            "}",
+        ])
+    return "\n".join(lines) + "\n"
 
 
 def main() -> int:
