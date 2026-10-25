@@ -234,7 +234,7 @@ macro_rules! rst_vs_yaml {
 
 #[allow(unused_macros)]
 macro_rules! rst_err {
-    ($directory:expr, $test_case:expr) => {{
+    ($directory:expr, $test_case:expr, $expected_error:expr) => {{
         let rst_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
             .join("tests/data")
             .join($directory)
@@ -242,10 +242,8 @@ macro_rules! rst_err {
         let rst_contents = std::fs::read_to_string(&rst_path)
             .unwrap_or_else(|_| panic!("failed to read fixture file: {}", rst_path.display()));
 
-        rstu_parser::parse(&rst_contents).expect_err("expected parser diagnostic to fail parsing")
-    }};
-    ($directory:expr, $test_case:expr, $expected_error:expr) => {{
-        let error = $crate::test_parser::rst_err!($directory, $test_case);
+        let error = rstu_parser::parse(&rst_contents)
+            .expect_err("expected parser diagnostic to fail parsing");
         assert!(
             rstu_parser::parser_errors::ParserErrorKind::from(error.clone()) == $expected_error,
             "expected error variant {:?}, got {:?}",

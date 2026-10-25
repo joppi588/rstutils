@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 use rstest::rstest;
+use rstu_parser::parser_errors::ParserErrorKind as PE;
 #[path = "common/mod.rs"]
 mod test_parser;
 use test_parser::rst_err;
@@ -27,8 +28,8 @@ fn ok_transitions(#[case] test_case: &str) {
 
 // TODO: Implement
 #[rstest]
-#[case("transitions_03")]
+#[case("transitions_03", PE::UnexpectedToken)]
 #[ignore = "Docutils system-message diagnostics for indented separators are not implemented"]
-fn err_transition_diagnostics(#[case] test_case: &str) {
-    rst_err!("transitions/err", test_case);
+fn err_transition_diagnostics(#[case] test_case: &str, #[case] expected_error: PE) {
+    rst_err!("transitions/err", test_case, expected_error);
 }
