@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 use super::block::parse_block;
-use super::paragraph::{parse_inline, parse_inline_token};
+use super::inline_markup::{parse_inline, parse_inline_token};
 use crate::parser_errors::ParserError;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
 use crate::token_stream::TokenStream;
