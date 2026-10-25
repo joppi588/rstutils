@@ -213,10 +213,7 @@ impl TokenCategory {
         TokenKind::CitationReference,
         TokenKind::EmphasisStart,
         TokenKind::EscapedChar,
-        TokenKind::FootnoteReferenceAutoNumbered,
-        TokenKind::FootnoteReferenceAutoNumberedLabel,
-        TokenKind::FootnoteReferenceAutoSymbol,
-        TokenKind::FootnoteReferenceNumbered,
+        TokenKind::FootnoteReference,
         TokenKind::InlineInternalTargetStart,
         TokenKind::InlineLiteralStart,
         TokenKind::LiteralChar,
@@ -245,20 +242,10 @@ impl TokenCategory {
     ];
     pub const INLINE_TOKEN: &'static [TokenKind] = &[
         TokenKind::CitationReference,
-        TokenKind::FootnoteReferenceAutoNumbered,
-        TokenKind::FootnoteReferenceAutoNumberedLabel,
-        TokenKind::FootnoteReferenceAutoSymbol,
-        TokenKind::FootnoteReferenceNumbered,
+        TokenKind::FootnoteReference,
         TokenKind::SimpleAnonymousHyperLinkReference,
         TokenKind::SimpleHyperlinkReference,
         TokenKind::SubstitutionReference,
-    ];
-
-    pub const FOOTNOTE: &'static [TokenKind] = &[
-        TokenKind::FootnoteReferenceAutoNumbered,
-        TokenKind::FootnoteReferenceAutoNumberedLabel,
-        TokenKind::FootnoteReferenceAutoSymbol,
-        TokenKind::FootnoteReferenceNumbered,
     ];
 
     pub const LIST_MARKER: &'static [TokenKind] = &[
@@ -317,10 +304,7 @@ pub enum TokenKind {
     EoF,
     EscapedChar,
     Field,
-    FootnoteReferenceAutoNumbered,
-    FootnoteReferenceAutoNumberedLabel,
-    FootnoteReferenceAutoSymbol,
-    FootnoteReferenceNumbered,
+    FootnoteReference,
     HyperlinkReferenceEnd,
     Indent,
     InlineInternalTargetStart,
@@ -391,10 +375,7 @@ impl TokenKind {
         (SubstitutionReference, format!(r"{0}\|.+?\|{1}", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
         // TODO SubsRefHyperLink rst l.3033
         // TODO SubRefAnonymousHyperlink
-        (FootnoteReferenceAutoNumberedLabel, format!(r"{0}\[#(?:[\p{{L}}\p{{N}}]+(?:[-_.][\p{{L}}\p{{N}}]+)*)\]_{1}", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
-        (FootnoteReferenceAutoNumbered, format!(r"{0}\[#\]_{1}", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
-        (FootnoteReferenceAutoSymbol, format!(r"{0}\[\*\]_{1}", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
-        (FootnoteReferenceNumbered, format!(r"{0}\[[0-9]+\]_{1}", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
+        (FootnoteReference, format!(r"{0}\[(?:[0-9]+|#(?:[\p{{L}}\p{{N}}]+(?:[-_.][\p{{L}}\p{{N}}]+)*)?|\*)\]_{1}", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
         (CitationReference, format!(r"{0}\[[\p{{L}}\p{{N}}]+(?:[-_.][\p{{L}}\p{{N}}]+)*\]_{1}", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
         (HyperlinkReferenceEnd, format!(r"(?:[^\s]`_|[^\s]_){}", INLINE_POST_CHARS)),
         (SimpleAnonymousHyperLinkReference,r"[\W_][\w&&[^_]]+(?:[-_.:+][\w&&[^_]]+)*__\s"),
@@ -682,20 +663,15 @@ mod tests {
     #[test]
     fn footnote_reference_subtypes_match_and_belong_to_their_categories() {
         for (input, expected_kind, expected_lexeme) in [
-            (" [1]_ ", TK::FootnoteReferenceNumbered, "[1]_"),
-            (" [#]_ ", TK::FootnoteReferenceAutoNumbered, "[#]_"),
-            (
-                " [#label]_ ",
-                TK::FootnoteReferenceAutoNumberedLabel,
-                "[#label]_",
-            ),
-            (" [*]_ ", TK::FootnoteReferenceAutoSymbol, "[*]_"),
+            (" [1]_ ", TK::FootnoteReference, "[1]_"),
+            (" [#]_ ", TK::FootnoteReference, "[#]_"),
+            (" [#label]_ ", TK::FootnoteReference, "[#label]_"),
+            (" [*]_ ", TK::FootnoteReference, "[*]_"),
         ] {
             let (kind, lexeme) = TK::match_token(input).unwrap();
 
             assert_eq!(kind, expected_kind);
             assert_eq!(lexeme, expected_lexeme);
-            assert!(kind.is(TokenCategory::FOOTNOTE));
             assert!(kind.is(TokenCategory::INLINE_TOKEN));
             assert!(kind.is(TokenCategory::DEFINITION_LIST));
         }
@@ -706,10 +682,7 @@ mod tests {
         assert_eq!(TK::SubstitutionReference.find_lexeme(" |x| "), Some("|x|"));
         assert_eq!(TK::HyperlinkReferenceEnd.find_lexeme("x_ "), Some("_"));
         assert_eq!(TK::HyperlinkReferenceEnd.find_lexeme("x`_ "), Some("`_"));
-        assert_eq!(
-            TK::FootnoteReferenceNumbered.find_lexeme(" [citation]_ "),
-            None
-        );
+        assert_eq!(TK::FootnoteReference.find_lexeme(" [citation]_ "), None);
         assert_eq!(
             TK::CitationReference.find_lexeme(" [citation]_ "),
             Some("[citation]_")
