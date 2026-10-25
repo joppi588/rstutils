@@ -1,0 +1,25 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Paragraph\n"
+- class: BlockQuote
+  children:
+  - class: BlankLine
+  - class: Block
+    attributes:
+      indent: 4
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "ABC\n==\n"
+    - class: BlankLine
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "Underline too short.\n"

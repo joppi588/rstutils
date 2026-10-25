@@ -1,0 +1,33 @@
+class: Document
+children:
+- class: Section
+  attributes:
+    marker_len: 3
+    marker_len_opening: 3
+    section_marker: "="
+  children:
+  - class: Title
+    attributes:
+      text: "One\n"
+  - class: BlankLine
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: "The attribution token conflicts with short titles\n(<= 3 char-long over- & underlines).\n"
+  - class: BlankLine
+  - class: Section
+    attributes:
+      marker_len: 3
+      marker_len_opening: 3
+      section_marker: '-'
+    children:
+    - class: Title
+      attributes:
+        text: "Two\n"
+    - class: BlankLine
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "This is a subsection.\n"
