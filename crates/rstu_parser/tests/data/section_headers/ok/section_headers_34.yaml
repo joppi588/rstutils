@@ -1,0 +1,10 @@
+class: Document
+children:
+- class: Section
+  attributes:
+    marker_len: 13
+    section_marker: "="
+  children:
+  - class: Title
+    attributes:
+      text: "Empty Section\n"
