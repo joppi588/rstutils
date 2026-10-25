@@ -11,6 +11,7 @@ repository.workspace = true
 log = "0.4"
 regex = "1"
 rstu_ast.workspace = true
+strum = { version = "0.27", features = ["derive"] }
 
 [dev-dependencies]
 rstest = "0.24"

@@ -3,8 +3,10 @@
 // SPDX-License-Identifier: MIT
 
 use crate::token_stream::Position;
+use strum::EnumDiscriminants;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, EnumDiscriminants)]
+#[strum_discriminants(name(ParserErrorKind))]
 pub enum ParserError {
     DedentToSmall {
         position: Position,
