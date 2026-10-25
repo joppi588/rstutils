@@ -1,0 +1,10 @@
+<document source="test data">
+    <system_message level="3" line="1" source="test data" type="ERROR">
+        <paragraph>
+            Title overline & underline mismatch.
+        <literal_block xml:space="preserve">
+            =======
+             Title
+            -------
+    <paragraph>
+        Paragraph.
