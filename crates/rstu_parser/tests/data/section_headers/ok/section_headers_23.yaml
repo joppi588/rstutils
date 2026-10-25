@@ -1,0 +1,16 @@
+class: Document
+children:
+- class: Section
+  attributes:
+    marker_len: 3
+    section_marker: "="
+  children:
+  - class: Title
+    attributes:
+      text: "ABC\n"
+  - class: BlankLine
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: "Short title.\n"

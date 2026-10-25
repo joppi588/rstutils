@@ -1,0 +1,60 @@
+class: Document
+children:
+- class: Comment
+  attributes:
+    text: "Test return to existing, highest-level section (Title 3).\n\n"
+- class: Section
+  attributes:
+    marker_len: 7
+    section_marker: "="
+  children:
+  - class: Title
+    attributes:
+      text: "Title 1\n"
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: "Paragraph 1.\n"
+  - class: BlankLine
+  - class: Section
+    attributes:
+      marker_len: 7
+      section_marker: '-'
+    children:
+    - class: Title
+      attributes:
+        text: "Title 2\n"
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "Paragraph 2.\n"
+    - class: BlankLine
+- class: Section
+  attributes:
+    marker_len: 7
+    section_marker: "="
+  children:
+  - class: Title
+    attributes:
+      text: "Title 3\n"
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: "Paragraph 3.\n"
+  - class: BlankLine
+  - class: Section
+    attributes:
+      marker_len: 7
+      section_marker: '-'
+    children:
+    - class: Title
+      attributes:
+        text: "Title 4\n"
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "Paragraph 4.\n"
