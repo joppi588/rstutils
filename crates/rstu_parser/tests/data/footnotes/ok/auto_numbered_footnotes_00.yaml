@@ -25,7 +25,7 @@ children:
     children:
     - class: PlainText
       attributes:
-        text: Auto-numbered footnote 1.
+        text: "Auto-numbered footnote 1.\n"
 - class: Footnote
   attributes:
     label: '#'
@@ -34,7 +34,7 @@ children:
     children:
     - class: PlainText
       attributes:
-        text: Auto-numbered footnote 2.
+        text: "Auto-numbered footnote 2.\n"
 - class: Footnote
   attributes:
     label: '#'
@@ -43,7 +43,7 @@ children:
     children:
     - class: PlainText
       attributes:
-        text: Auto-numbered footnote 3.
+        text: "Auto-numbered footnote 3.\n"
 - class: BlankLine
 - class: Paragraph
   children:

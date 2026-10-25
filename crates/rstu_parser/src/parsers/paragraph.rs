@@ -47,22 +47,15 @@ pub(crate) fn parse_paragraph_hanging_indent(
 }
 
 pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
-    parse_paragraph_until(stream, &[])
-}
-
-pub(crate) fn parse_paragraph_until(
-    stream: &mut TokenStream,
-    stop_kinds: &[TK],
-) -> Result<NodeRef, ParserError> {
     let paragraph = AstNode::new_ref(NodeClass::Paragraph);
     loop {
         let kind = stream.token_at_cursor().kind;
         let node = match kind {
             kind if kind.is(TC::INLINE_MARKER) => parse_inline(stream)?,
             kind if kind.is(TC::INLINE_TOKEN) => parse_inline_token(stream)?,
-            kind if kind.is(TC::PARAGRAPH_END) || kind.is(stop_kinds) => break,
+            kind if kind.is(TC::PARAGRAPH_END) => break,
             _ => {
-                let plain_text = parse_plain_until(stream, stop_kinds);
+                let plain_text = parse_plain(stream);
                 if stream.token_at_cursor().kind == TK::LiteralBlockMinimized {
                     // TODO: Adds a colon, simplify this
                     let text = plain_text
@@ -81,7 +74,7 @@ pub(crate) fn parse_paragraph_until(
     Ok(paragraph)
 }
 
-fn parse_plain_until(stream: &mut TokenStream, stop_kinds: &[TK]) -> NodeRef {
+fn parse_plain(stream: &mut TokenStream) -> NodeRef {
     let kind = stream.token_at_cursor().kind;
     debug_assert!(
         !(kind.is(&TC::PARAGRAPH_END) || kind.is(&TC::INLINE_MARKER) || kind.is(&TC::INLINE_TOKEN))
@@ -92,7 +85,6 @@ fn parse_plain_until(stream: &mut TokenStream, stop_kinds: &[TK]) -> NodeRef {
     loop {
         match stream.token_at_cursor().kind {
             kind if kind.is(&TC::PARAGRAPH_END)
-                || kind.is(stop_kinds)
                 || kind.is(&TC::INLINE_MARKER)
                 || kind.is(&TC::INLINE_TOKEN) =>
             {

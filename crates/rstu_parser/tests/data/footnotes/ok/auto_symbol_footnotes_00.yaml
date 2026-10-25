@@ -8,4 +8,4 @@ children:
     children:
     - class: PlainText
       attributes:
-        text: This is an auto-symbol footnote.
+        text: "This is an auto-symbol footnote.\n"

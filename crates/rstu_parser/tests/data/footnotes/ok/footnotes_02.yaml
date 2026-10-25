@@ -5,27 +5,21 @@ children:
     label: "1"
   children:
   - class: Paragraph
+    attributes:
+      hanging_indent: 5
     children:
     - class: PlainText
       attributes:
-        text: This is a footnote
-  - class: Paragraph
-    children:
-    - class: PlainText
-      attributes:
-        text: "on multiple lines with more space.\n"
+        text: "This is a footnote\non multiple lines with more space.\n"
 - class: BlankLine
 - class: Footnote
   attributes:
     label: "2"
   children:
   - class: Paragraph
+    attributes:
+      hanging_indent: 2
     children:
     - class: PlainText
       attributes:
-        text: This is a footnote
-  - class: Paragraph
-    children:
-    - class: PlainText
-      attributes:
-        text: "on multiple lines with less space.\n"
+        text: "This is a footnote\non multiple lines with less space.\n"

@@ -8,4 +8,4 @@ children:
     children:
     - class: PlainText
       attributes:
-        text: This is a footnote.
+        text: "This is a footnote.\n"

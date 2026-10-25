@@ -18,7 +18,7 @@ children:
     children:
     - class: PlainText
       attributes:
-        text: First auto-numbered footnote.
+        text: "First auto-numbered footnote.\n"
 - class: Footnote
   attributes:
     label: "#second"
@@ -27,7 +27,7 @@ children:
     children:
     - class: PlainText
       attributes:
-        text: Second auto-numbered footnote.
+        text: "Second auto-numbered footnote.\n"
 - class: Footnote
   attributes:
     label: "#third"
@@ -36,7 +36,7 @@ children:
     children:
     - class: PlainText
       attributes:
-        text: Third auto-numbered footnote.
+        text: "Third auto-numbered footnote.\n"
 - class: BlankLine
 - class: Paragraph
   children:
