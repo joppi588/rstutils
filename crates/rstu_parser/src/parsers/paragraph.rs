@@ -85,7 +85,7 @@ pub(crate) fn parse_inline_token(stream: &mut TokenStream) -> Result<NodeRef, Pa
             node.with_attr("text", &lexeme[1..lexeme.len() - 2])
                 .with_attr("type", "citation");
         }
-        TK::FootnoteReference => {
+        kind if kind.is(TC::FOOTNOTE) => {
             node.with_attr("text", &lexeme[1..lexeme.len() - 2])
                 .with_attr("type", "footnote");
         }
