@@ -227,6 +227,7 @@ impl TokenCategory {
     pub const EOL: &'static [TokenKind] = &[
         TokenKind::BlankLine,
         TokenKind::EoF,
+        TokenKind::FootNote,
         TokenKind::LiteralBlock,
         TokenKind::LiteralBlockMinimized,
         TokenKind::LiteralBlockPartiallyMinimized,
@@ -259,6 +260,7 @@ impl TokenCategory {
         TokenKind::BlankLine,
         TokenKind::Dedent,
         TokenKind::EoF,
+        TokenKind::FootNote,
         TokenKind::Indent,
         TokenKind::LineBlock,
         TokenKind::LiteralBlock,
@@ -304,6 +306,7 @@ pub enum TokenKind {
     EoF,
     EscapedChar,
     Field,
+    FootNote,
     FootnoteReference,
     HyperlinkReferenceEnd,
     Indent,
@@ -345,6 +348,8 @@ impl TokenKind {
         (Directive, r"[\n\s]\.\.\s(?:\|[^|\n]+\|\s)?[\p{L}\p{N}]+(?:[-_+:.][\p{L}\p{N}]+)*::\s"),
 
         (DoctestStart, r"\s>>>\s"),
+
+        (FootNote, r"(.|\n)(?:\.\. \[(?:[0-9]+|#(?:[\p{L}\p{N}]+(?:[-_.][\p{L}\p{N}]+)*)?|\*)\])(.|\n)"),
 
         // Comments
         (DoubleDot, r"\s\.\. *\s"),

@@ -1,0 +1,37 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      text: '#'
+      type: footnote
+  - class: PlainText
+    attributes:
+      text: " is the first auto-numbered footnote reference.\n"
+  - class: Reference
+    attributes:
+      text: '#'
+      type: footnote
+  - class: PlainText
+    attributes:
+      text: " is the second auto-numbered footnote reference.\n"
+- class: BlankLine
+- class: Comment
+  attributes:
+    text: "[#] Auto-numbered footnote 1.\n"
+- class: Comment
+  attributes:
+    text: "[#] Auto-numbered footnote 2.\n"
+- class: Comment
+  attributes:
+    text: "[#] Auto-numbered footnote 3.\n\n"
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      text: '#'
+      type: footnote
+  - class: PlainText
+    attributes:
+      text: " is the third auto-numbered footnote reference.\n"
