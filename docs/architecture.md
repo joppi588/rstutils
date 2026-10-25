@@ -13,8 +13,9 @@ Language Server
 Option 1: Build on top of rst_parser package
 Option 2: Start from Scratch
 Start from scratch while reading the existing packages.
-Rationale: One of my goals was to learn Rust; limitations of pest-parser approach (section stack, rst error detection);
-doctree-based approaches contain a lot of interpretation already, beyond the pure syntax analysis.
+Rationale:
+- Limitations of pest-parser approach (section stack, rst error detection);
+- Doctree-based approaches contain a lot of interpretation already, beyond the pure syntax analysis.
 
 2. AST and Doctree
 We use first an abstract syntax tree to parse the structure of the document (e.g. directives, indented blocks,...).
@@ -23,8 +24,9 @@ This step is beneficial since:
   e.g. a bullet list with mixed markers shall be allowed and eventually re-formatted automatically.
   The doctree requires a uniform marker already
 - The AST shall allow round-trip (with minor limitations)
-- AST focusses on pure syntax representation. Validation can be separated.
+- AST focusses on pure syntax representation. Cross-Referencing, reference auto-numbering and validation is separated.
 The transformation of AST into to a doctree is done by a later transformation step.
+
 
 Implementation:
 Option 1: Spezialized nodes for element types (inheritance-like)
@@ -74,11 +76,6 @@ Write back rst from AST.
 TODO: Some elements contain the trailing newline, some not.
 Make this consistent
 
-10. References / auto-numbering
-Cross-references are not part of the parser. They are processed in a later step.
-Rationale:
-Parser shall focus on the syntax, output just enough information for a rst round-trip.
-References (especially auto-numbering) is already at the interpretation level.
 
 # Architectural drivers
 Development speed, especially bug fixes -> Maintainability is key
