@@ -4,6 +4,7 @@
 
 use regex::Regex;
 use std::sync::LazyLock;
+use strum::EnumCount;
 
 static RECOMMENDED_SECTION_CHARS: &str = "=\\-`:.'\"~\\^_\\*\\+#"; // escaped =-`:.'"~^_*+#
 static FOOTNOTE_LABEL: &str = r"(?:[0-9]+|#(?:[\p{L}\p{N}]+(?:[-_.][\p{L}\p{N}]+)*)?|\*)";
@@ -142,14 +143,6 @@ pub(crate) static LONG_OPTIONS_MATCH: LazyLock<Regex> = LazyLock::new(|| {
 pub(crate) static DOS_OPTIONS_MATCH: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"^\s?(/[A-Z]+)([ \t=]?)([a-z]*)$").unwrap());
 
-macro_rules! count_idents {
-    ($($ident:ident),* $(,)?) => {
-        <[()]>::len(&[$(count_idents!(@sub $ident)),*])
-    };
-    (@sub $ident:ident) => {
-        ()
-    };
-}
 macro_rules! compiled_regex {
     ($pattern:expr) => {{
         static RE: LazyLock<Regex> =
@@ -159,7 +152,7 @@ macro_rules! compiled_regex {
 }
 macro_rules! token_kinds {
     ($(($kind:ident, $pattern:expr)),+ $(,)?) => {
-        pub const ALL: [TokenKind; count_idents!($($kind),+)] = [
+        pub const ALL: [TokenKind; <TokenKind as strum::EnumCount>::COUNT] = [
             $(TokenKind::$kind),+
         ];
 
@@ -287,7 +280,7 @@ impl TokenCategory {
     pub const TABLE: &'static [TokenKind] = &[TokenKind::TableHorizontal];
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, EnumCount)]
 pub enum TokenKind {
     Attribution,
     BackquoteEnd,

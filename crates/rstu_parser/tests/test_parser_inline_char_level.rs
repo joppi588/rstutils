@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 use rstest::rstest;
+use rstu_parser::parser_errors::ParserErrorKind as PE;
 
 #[path = "common/mod.rs"]
 mod test_parser;
@@ -31,10 +32,8 @@ fn ok_char_level_inline(#[case] test_case: &str) {
 }
 
 #[rstest]
-#[case("emphasis_00")]
-#[case("literal_01")]
-#[case("standalone_hyperlink_00")]
-#[ignore]
-fn err_char_level_inline(#[case] test_case: &str) {
-    rst_err!("inline_markup_char_level/err", test_case);
+#[case("emphasis_00", PE::InlineMissingClosing)]
+#[case("literal_01", PE::InlineMissingClosing)]
+fn err_char_level_inline(#[case] test_case: &str, #[case] expected_error: PE) {
+    rst_err!("inline_markup_char_level/err", test_case, expected_error);
 }

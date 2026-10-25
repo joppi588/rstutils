@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 use rstest::rstest;
-use rstu_parser::parser_errors::ParserError;
+use rstu_parser::parser_errors::ParserErrorKind as PE;
 
 #[path = "common/mod.rs"]
 mod test_parser;
@@ -25,18 +25,16 @@ fn ok_bullet_list(#[case] test_case: &str) {
 }
 
 #[rstest]
-#[case("bullet_05")]
-fn err_bullet_list_style(#[case] test_case: &str) {
-    let err = rst_err!("lists/bullet_list/err", test_case);
-    assert!(matches!(err, ParserError::ListStyleError { .. }));
+#[case("bullet_05", PE::ListStyleError)]
+fn err_bullet_list_style(#[case] test_case: &str, #[case] expected_error: PE) {
+    rst_err!("lists/bullet_list/err", test_case, expected_error);
 }
 
 #[rstest]
-#[case("bullet_06")]
-#[case("bullet_08")]
-fn err_bullet_list_end(#[case] test_case: &str) {
-    let err = rst_err!("lists/bullet_list/err", test_case);
-    assert!(matches!(err, ParserError::ListEndError { .. }));
+#[case("bullet_06", PE::ListEndError)]
+#[case("bullet_08", PE::ListEndError)]
+fn err_bullet_list_end(#[case] test_case: &str, #[case] expected_error: PE) {
+    rst_err!("lists/bullet_list/err", test_case, expected_error);
 }
 
 #[rstest]
@@ -59,10 +57,9 @@ fn ok_enumerated_list(#[case] test_case: &str) {
 }
 
 #[rstest]
-#[case("unindented_enumerated_continuation")]
-fn err_enumerated_list(#[case] test_case: &str) {
-    let err = rst_err!("lists/enumerated_list/err", test_case);
-    assert!(matches!(err, ParserError::ListEndError { .. }));
+#[case("unindented_enumerated_continuation", PE::ListEndError)]
+fn err_enumerated_list(#[case] test_case: &str, #[case] expected_error: PE) {
+    rst_err!("lists/enumerated_list/err", test_case, expected_error);
 }
 
 // TODO
@@ -122,21 +119,20 @@ fn ok_definition_list(#[case] test_case: &str) {
 }
 
 #[rstest]
-#[case("definition_02")]
-#[case("definition_03")]
-#[case("definition_04")]
-#[case("definition_07")]
-#[case("definition_12")]
-fn err_definition_list_diagnostics(#[case] test_case: &str) {
-    rst_err!("lists/definition_list/err", test_case);
+#[case("definition_02", PE::MissingFinalBlankLineError)]
+#[case("definition_03", PE::LiteralBlockMissingBlankLine)]
+#[case("definition_04", PE::UnexpectedIndentError)]
+#[case("definition_07", PE::MissingFinalBlankLineError)]
+#[case("definition_12", PE::InlineMissingClosing)]
+fn err_definition_list_diagnostics(#[case] test_case: &str, #[case] expected_error: PE) {
+    rst_err!("lists/definition_list/err", test_case, expected_error);
 }
 
 #[rstest]
-#[case("empty_item_no_blank")]
-#[case("list_end_no_blank")]
-fn err_field_list_end(#[case] test_case: &str) {
-    let err = rst_err!("lists/field_list/err", test_case);
-    assert!(matches!(err, ParserError::ListEndError { .. }));
+#[case("empty_item_no_blank", PE::ListEndError)]
+#[case("list_end_no_blank", PE::ListEndError)]
+fn err_field_list_end(#[case] test_case: &str, #[case] expected_error: PE) {
+    rst_err!("lists/field_list/err", test_case, expected_error);
 }
 
 #[rstest]

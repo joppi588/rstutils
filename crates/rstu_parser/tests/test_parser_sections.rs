@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 use rstest::rstest;
-use rstu_parser::parser_errors::ParserError;
+use rstu_parser::parser_errors::{ParserError, ParserErrorKind as PE};
 #[path = "common/mod.rs"]
 mod test_parser;
 use test_parser::rst_err;
@@ -18,7 +18,11 @@ fn ok_section(#[case] test_case: &str) {
 
 #[test]
 fn err_section_missing_closing() {
-    match rst_err!("sections/err", "sections_missing_closing") {
+    match rst_err!(
+        "sections/err",
+        "sections_missing_closing",
+        PE::SectionTitleMissingClosingAfterOpening
+    ) {
         ParserError::SectionTitleMissingClosingAfterOpening { .. } => {}
         other => panic!("expected SectionTitleMissingClosingAfterOpening error, got: {other:?}"),
     }
@@ -26,7 +30,11 @@ fn err_section_missing_closing() {
 
 #[test]
 fn err_section_unbalanced_style() {
-    match rst_err!("sections/err", "sections_unbalanced_style") {
+    match rst_err!(
+        "sections/err",
+        "sections_unbalanced_style",
+        PE::SectionTitleUnbalancedStyle
+    ) {
         ParserError::SectionTitleUnbalancedStyle {
             opening_style,
             closing_style,

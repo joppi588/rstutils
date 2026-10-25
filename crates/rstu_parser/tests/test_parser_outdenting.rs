@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 use rstest::rstest;
+use rstu_parser::parser_errors::ParserErrorKind as PE;
 
 #[path = "common/mod.rs"]
 mod test_parser;
@@ -18,7 +19,7 @@ fn ok_outdenting(#[case] test_case: &str) {
 }
 
 #[rstest]
-#[case("outdenting_03")]
-fn err_outdenting(#[case] test_case: &str) {
-    rst_err!("outdenting/err", test_case);
+#[case("outdenting_03", PE::MissingFinalBlankLineError)]
+fn err_outdenting(#[case] test_case: &str, #[case] expected_error: PE) {
+    rst_err!("outdenting/err", test_case, expected_error);
 }
