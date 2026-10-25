@@ -397,8 +397,8 @@ impl TokenKind {
         (FootnoteReferenceNumbered, format!(r"{0}\[[0-9]+\]_{1}", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
         (CitationReference, format!(r"{0}\[[\p{{L}}\p{{N}}]+(?:[-_.][\p{{L}}\p{{N}}]+)*\]_{1}", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
         (HyperlinkReferenceEnd, format!(r"(?:[^\s]`_|[^\s]_){}", INLINE_POST_CHARS)),
-        (SimpleAnonymousHyperLinkReference,r"[\s\n]\w+__\s"),
-        (SimpleHyperlinkReference,r"[\s\n]\w+_\s"),
+        (SimpleAnonymousHyperLinkReference,r"[\W_][\w&&[^_]]+(?:[-_.:+][\w&&[^_]]+)*__\s"),
+        (SimpleHyperlinkReference,r"[\W_][\w&&[^_]]+(?:[-_.:+][\w&&[^_]]+)*_\s"),
         (EnclosedInlineStart, enclosed_inline_start_pattern()),
 
         // Classifiers for definition list (must precede Field: " : x :" would match Field)
@@ -412,7 +412,7 @@ impl TokenKind {
 
         // Plain text
         (Spaces, r"[^ \t\n][ \t]+[^ \t]"),
-        (Word, r"[^\w]\w+[^\w]"),
+        (Word, r"[^\w][\w&&[^_]]\w*[^\w]"),
         (EscapedChar,r"(.|\n)\\.(.|\n)"),
         (Punctuation, r"(.|\n)[[:punct:]](.|\n)"),
 
@@ -726,6 +726,10 @@ mod tests {
             TK::SimpleHyperlinkReference.find_lexeme(" simple_ref_ text"),
             Some("simple_ref_")
         );
+        assert_eq!(
+            TK::SimpleAnonymousHyperLinkReference.find_lexeme("_This__ "),
+            Some("This__")
+        );
     }
 
     #[test]
@@ -873,5 +877,6 @@ mod tests {
     #[test]
     fn word_rejects_non_word_chars() {
         assert_eq!(TK::Word.find_lexeme("---\n***"), None);
+        assert_eq!(TK::Word.find_lexeme(" _alpha "), None);
     }
 }
