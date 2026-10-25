@@ -1,0 +1,15 @@
+class: Document
+children:
+- class: Footnote
+  attributes:
+    label: "1"
+  children:
+  - class: Paragraph
+    attributes:
+      hanging_indent: 3
+    children:
+    - class: PlainText
+      attributes:
+        text: |
+          This is a footnote
+          on multiple lines.

@@ -86,7 +86,7 @@ fn convert_prints_ast_as_yaml_when_requested() {
     let _ = std::fs::remove_file(&file_path);
     assert_eq!(
         stdout,
-        "class: Document\nchildren:\n- class: Paragraph\n  children:\n  - class: PlainText\n    attributes:\n      text: \"Hello\\n\""
+        "class: Document\nchildren:\n- class: Paragraph\n  children:\n  - class: PlainText\n    attributes:\n      text: |\n        Hello"
     );
 }
 
