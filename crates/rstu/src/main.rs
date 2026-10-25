@@ -30,6 +30,8 @@ enum Commands {
         file: String,
         #[arg(short, long, value_enum, default_value = "json")]
         output: OutputFormat,
+        #[arg(long, value_name = "BOOL", action = clap::ArgAction::Set)]
+        prefer_block_scalars: Option<bool>,
     },
 }
 
@@ -64,7 +66,16 @@ fn main() {
 
             println!("Subcommand format, option file={file}, output={option_value}");
         }
-        Commands::Convert { file, output } => {
+        Commands::Convert {
+            file,
+            output,
+            prefer_block_scalars,
+        } => {
+            if prefer_block_scalars.is_some() && !matches!(output, OutputFormat::YAML) {
+                eprintln!("error: --prefer-block-scalars requires --output yaml");
+                std::process::exit(2);
+            }
+
             let input = std::fs::read_to_string(&file).unwrap_or_else(|error| {
                 eprintln!("error: cannot read {file}: {error}");
                 std::process::exit(1);
@@ -77,12 +88,14 @@ fn main() {
                             serde_json::to_string(&rstu_ast::AstNode::to_json(&document))
                                 .expect("AST serialization should not fail")
                         }
-                        OutputFormat::YAML => {
-                            rstu_ast::AstNode::to_yaml(&document).unwrap_or_else(|error| {
-                                eprintln!("error: failed to serialize {file}: {error}");
-                                std::process::exit(1);
-                            })
-                        }
+                        OutputFormat::YAML => rstu_ast::AstNode::to_yaml_with_options(
+                            &document,
+                            prefer_block_scalars.unwrap_or(true),
+                        )
+                        .unwrap_or_else(|error| {
+                            eprintln!("error: failed to serialize {file}: {error}");
+                            std::process::exit(1);
+                        }),
                     };
                     print!("{serialized}");
                     if !serialized.ends_with('\n') {

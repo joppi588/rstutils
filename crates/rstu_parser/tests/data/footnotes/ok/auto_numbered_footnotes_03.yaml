@@ -1,0 +1,143 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: |
+        Mixed manually-numbered, anonymous auto-numbered,
+        and labelled auto-numbered footnotes:
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      text: "#four"
+      type: footnote
+  - class: PlainText
+    attributes:
+      text: " should be 4, "
+  - class: Reference
+    attributes:
+      text: '#'
+      type: footnote
+  - class: PlainText
+    attributes:
+      text: |2
+         should be 2,
+  - class: Reference
+    attributes:
+      text: "1"
+      type: footnote
+  - class: PlainText
+    attributes:
+      text: " is 1, "
+  - class: Reference
+    attributes:
+      text: "3"
+      type: footnote
+  - class: PlainText
+    attributes:
+      text: |2
+         is 3,
+  - class: Reference
+    attributes:
+      text: '#'
+      type: footnote
+  - class: PlainText
+    attributes:
+      text: " should be 6, "
+  - class: Reference
+    attributes:
+      text: '#'
+      type: footnote
+  - class: PlainText
+    attributes:
+      text: |2
+         is one too many,
+  - class: Reference
+    attributes:
+      text: "#five"
+      type: footnote
+  - class: PlainText
+    attributes:
+      text: " should be 5, and "
+  - class: Reference
+    attributes:
+      text: "#six"
+      type: footnote
+  - class: PlainText
+    attributes:
+      text: |2
+         doesn't exist.
+- class: BlankLine
+- class: Footnote
+  attributes:
+    label: "1"
+  children:
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: |
+          Manually-numbered footnote 1.
+- class: Footnote
+  attributes:
+    label: '#'
+  children:
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: |
+          Auto-numbered footnote 2.
+- class: Footnote
+  attributes:
+    label: "#four"
+  children:
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: |
+          Auto-numbered footnote 4.
+- class: Footnote
+  attributes:
+    label: "3"
+  children:
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: |
+          Manually-numbered footnote 3
+- class: Footnote
+  attributes:
+    label: "#five"
+  children:
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: |
+          Auto-numbered footnote 5.
+- class: Footnote
+  attributes:
+    label: "#five"
+  children:
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: |
+          Auto-numbered footnote 5 again (duplicate).
+- class: Footnote
+  attributes:
+    label: '#'
+  children:
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: |
+          Auto-numbered footnote 6.

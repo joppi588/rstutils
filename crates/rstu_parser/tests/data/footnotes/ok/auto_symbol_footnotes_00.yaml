@@ -1,0 +1,11 @@
+class: Document
+children:
+- class: Footnote
+  attributes:
+    label: "*"
+  children:
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: "This is an auto-symbol footnote.\n"
