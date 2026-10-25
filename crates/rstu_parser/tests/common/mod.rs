@@ -244,6 +244,18 @@ macro_rules! rst_err {
 
         rstu_parser::parse(&rst_contents).expect_err("expected parser diagnostic to fail parsing")
     }};
+    ($directory:expr, $test_case:expr, $expected_error:expr) => {{
+        let error = $crate::test_parser::rst_err!($directory, $test_case);
+        let actual_error = format!("{:?}", error);
+        let actual_variant = actual_error.split([' ', '{']).next().unwrap_or("");
+        assert!(
+            actual_variant == $expected_error,
+            "expected error variant {}, got {:?}",
+            $expected_error,
+            error
+        );
+        error
+    }};
 }
 
 #[allow(unused_imports)]
