@@ -4,7 +4,7 @@ children:
   children:
   - class: PlainText
     attributes:
-      text: "An empty footnote raises a warning:\n"
+      text: "The parser doesn't raise a warning for empty footnotes:\n"
 - class: BlankLine
 - class: Footnote
   attributes:
