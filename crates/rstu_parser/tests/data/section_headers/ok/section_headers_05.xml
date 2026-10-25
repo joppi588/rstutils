@@ -1,6 +1,0 @@
-<document source="test data">
-    <section names="à\ with\ combining\ varia">
-        <title>
-            à with combining varia
-        <paragraph>
-            Do not count combining chars in title column width.

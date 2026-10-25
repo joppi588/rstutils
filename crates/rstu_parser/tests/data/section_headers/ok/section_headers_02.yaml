@@ -1,0 +1,22 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Paragraph.\n"
+- class: BlankLine
+- class: Section
+  attributes:
+    marker_len: 5
+    section_marker: "="
+  children:
+  - class: Title
+    attributes:
+      text: "Title\n"
+  - class: BlankLine
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: "Paragraph.\n"
