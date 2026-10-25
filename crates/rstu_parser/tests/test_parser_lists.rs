@@ -124,7 +124,7 @@ fn ok_definition_list(#[case] test_case: &str) {
 #[case("definition_04", PE::UnexpectedIndentError)]
 #[case("definition_07", PE::MissingFinalBlankLineError)]
 #[case("definition_12", PE::InlineMissingClosing)]
-fn err_definition_list_diagnostics(#[case] test_case: &str, #[case] expected_error: PE) {
+fn err_definition_list(#[case] test_case: &str, #[case] expected_error: PE) {
     rst_err!("lists/definition_list/err", test_case, expected_error);
 }
 

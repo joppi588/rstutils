@@ -30,6 +30,6 @@ fn ok_block_quote(#[case] test_case: &str) {
 #[case("block_quote_03", PE::MissingFinalBlankLineError)]
 #[case("block_quote_11", PE::UnexpectedToken)] // TODO: This shall trigger an unexpected indent error
 #[case("block_quote_13", PE::MissingFinalBlankLineError)] // TODO: This shall trigger an unexpected indent error
-fn err_block_quote_diagnostics(#[case] test_case: &str, #[case] expected_error: PE) {
+fn err_block_quote(#[case] test_case: &str, #[case] expected_error: PE) {
     rst_err!("block_quotes/err", test_case, expected_error);
 }

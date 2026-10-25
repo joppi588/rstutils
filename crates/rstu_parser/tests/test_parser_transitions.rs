@@ -30,6 +30,6 @@ fn ok_transitions(#[case] test_case: &str) {
 #[rstest]
 #[case("transitions_03", PE::UnexpectedToken)]
 #[ignore = "Docutils system-message diagnostics for indented separators are not implemented"]
-fn err_transition_diagnostics(#[case] test_case: &str, #[case] expected_error: PE) {
+fn err_transition(#[case] test_case: &str, #[case] expected_error: PE) {
     rst_err!("transitions/err", test_case, expected_error);
 }

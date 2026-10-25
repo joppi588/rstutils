@@ -33,6 +33,6 @@ fn ok_line_block(#[case] test_case: &str) {
 #[case("line_block_05", PE::UnexpectedToken)]
 #[case("line_block_13", PE::UnexpectedToken)]
 #[case("line_block_14", PE::InlineMissingClosing)]
-fn err_line_block_diagnostics(#[case] test_case: &str, #[case] expected_error: PE) {
+fn err_line_block(#[case] test_case: &str, #[case] expected_error: PE) {
     rst_err!("line_blocks/err", test_case, expected_error);
 }
