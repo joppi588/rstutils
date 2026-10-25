@@ -6,5 +6,9 @@ children:
     section_marker: "="
   children:
   - class: Title
-    attributes:
-      text: "Empty Section\n"
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "Empty Section\n"

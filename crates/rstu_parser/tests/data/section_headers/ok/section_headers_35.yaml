@@ -7,8 +7,12 @@ children:
     section_marker: "="
   children:
   - class: Title
-    attributes:
-      text: "One\n"
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "One\n"
   - class: BlankLine
   - class: Paragraph
     children:
@@ -23,8 +27,12 @@ children:
       section_marker: '-'
     children:
     - class: Title
-      attributes:
-        text: "Two\n"
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: "Two\n"
     - class: BlankLine
     - class: Paragraph
       children:
