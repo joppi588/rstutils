@@ -4,28 +4,28 @@ children:
   children:
   - class: Reference
     attributes:
-      text: citation
+      label: citation
       type: citation
   - class: PlainText
     attributes:
       text: " and "
   - class: Reference
     attributes:
-      text: cit-ation
+      label: cit-ation
       type: citation
   - class: PlainText
     attributes:
       text: " and "
   - class: Reference
     attributes:
-      text: cit.ation
+      label: cit.ation
       type: citation
   - class: PlainText
     attributes:
       text: " and "
   - class: Reference
     attributes:
-      text: CIT1
+      label: CIT1
       type: citation
   - class: PlainText
     attributes:

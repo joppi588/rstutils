@@ -4,7 +4,7 @@ children:
   children:
   - class: Reference
     attributes:
-      text: "#label"
+      label: "#label"
       type: footnote
   - class: PlainText
     attributes:

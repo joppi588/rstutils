@@ -7,7 +7,7 @@ children:
       text: "Adjacent citation refs are not possible: "
   - class: Reference
     attributes:
-      text: citation
+      label: citation
       type: citation
   - class: PlainText
     attributes:
