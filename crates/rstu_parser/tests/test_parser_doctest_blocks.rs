@@ -11,9 +11,9 @@ use test_parser::rst_err;
 use test_parser::rst_vs_yaml;
 
 #[rstest]
-#[case("doctest_block_00")]
-#[case("doctest_block_01")]
-#[case("doctest_block_02")]
+#[case::d00("doctest_block_00")]
+#[case::d01("doctest_block_01")]
+#[case::d02("doctest_block_02")]
 
 fn ok_doctest_blocks(#[case] test_case: &str) {
     rst_vs_yaml!("doctest_blocks/ok", test_case);
@@ -34,7 +34,7 @@ fn ok_doctest_block_at_eof_without_blank_line() {
 }
 
 #[rstest]
-#[case("doctest_block_03", PE::MissingFinalBlankLineError)]
+#[case::d03("doctest_block_03", PE::MissingFinalBlankLineError)]
 fn err_doctest_block(#[case] test_case: &str, #[case] expected_error: PE) {
     rst_err!("doctest_blocks/err", test_case, expected_error);
 }

@@ -10,25 +10,25 @@ use test_parser::rst_err;
 use test_parser::rst_vs_yaml;
 
 #[rstest]
-#[case("transitions_00")]
-#[case("transitions_01")]
-#[case("transitions_02")]
-#[case("transitions_04")]
-#[case("transitions_05")]
-#[case("transitions_06")]
-#[case("transitions_07")]
-#[case("transitions_08")]
-#[case("transitions_09")]
-#[case("transitions_10")]
-#[case("transitions_11")]
-#[case("transitions_12")]
+#[case::t00("transitions_00")]
+#[case::t01("transitions_01")]
+#[case::t02("transitions_02")]
+#[case::t04("transitions_04")]
+#[case::t05("transitions_05")]
+#[case::t06("transitions_06")]
+#[case::t07("transitions_07")]
+#[case::t08("transitions_08")]
+#[case::t09("transitions_09")]
+#[case::t10("transitions_10")]
+#[case::t11("transitions_11")]
+#[case::t12("transitions_12")]
 fn ok_transitions(#[case] test_case: &str) {
     rst_vs_yaml!("transitions/ok", test_case)
 }
 
 // TODO: Implement
 #[rstest]
-#[case("transitions_03", PE::UnexpectedToken)]
+#[case::t03("transitions_03", PE::UnexpectedToken)]
 #[ignore = "Docutils system-message diagnostics for indented separators are not implemented"]
 fn err_transition_diagnostics(#[case] test_case: &str, #[case] expected_error: PE) {
     rst_err!("transitions/err", test_case, expected_error);
