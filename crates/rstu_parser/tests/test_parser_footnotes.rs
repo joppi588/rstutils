@@ -27,6 +27,6 @@ fn ok_footnotes(#[case] test_case: &str) {
 
 #[rstest]
 #[case::f05("footnotes_05", PE::UnexpectedToken)]
-fn err_footnotes_diagnostics(#[case] test_case: &str, #[case] expected_error: PE) {
+fn err_footnotes(#[case] test_case: &str, #[case] expected_error: PE) {
     rst_err!("footnotes/err", test_case, expected_error);
 }
