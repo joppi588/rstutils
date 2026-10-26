@@ -16,5 +16,5 @@ use test_parser::rst_vs_yaml;
 #[case("note_simple")]
 #[case("note_then_paragraph")]
 fn ok_directive(#[case] test_case: &str) {
-    rst_vs_yaml!("directives/ok", test_case)
+    rst_vs_yaml!("directives", test_case)
 }

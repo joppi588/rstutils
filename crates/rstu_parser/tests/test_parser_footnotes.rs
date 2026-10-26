@@ -11,22 +11,22 @@ use test_parser::rst_err;
 use test_parser::rst_vs_yaml;
 
 #[rstest]
-#[case("auto_numbered_footnotes_00")]
-#[case("auto_numbered_footnotes_01")]
-#[case("auto_numbered_footnotes_02")]
-#[case("auto_numbered_footnotes_03")]
-#[case("auto_symbol_footnotes_00")]
-#[case("footnotes_00")]
-#[case("footnotes_01")]
-#[case("footnotes_02")]
-#[case("footnotes_03")]
-#[case("footnotes_04")]
+#[case::a00("auto_numbered_footnotes_00")]
+#[case::a01("auto_numbered_footnotes_01")]
+#[case::a02("auto_numbered_footnotes_02")]
+#[case::a03("auto_numbered_footnotes_03")]
+#[case::a00("auto_symbol_footnotes_00")]
+#[case::f00("footnotes_00")]
+#[case::f01("footnotes_01")]
+#[case::f02("footnotes_02")]
+#[case::f03("footnotes_03")]
+#[case::f04("footnotes_04")]
 fn ok_footnotes(#[case] test_case: &str) {
-    rst_vs_yaml!("footnotes/ok", test_case);
+    rst_vs_yaml!("footnotes", test_case);
 }
 
 #[rstest]
-#[case("footnotes_05", PE::UnexpectedToken)]
-fn err_footnotes_diagnostics(#[case] test_case: &str, #[case] expected_error: PE) {
-    rst_err!("footnotes/err", test_case, expected_error);
+#[case::f05("footnotes_05", PE::UnexpectedToken)]
+fn err_footnotes(#[case] test_case: &str, #[case] expected_error: PE) {
+    rst_err!("footnotes", test_case, expected_error);
 }

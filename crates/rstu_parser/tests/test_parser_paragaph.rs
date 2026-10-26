@@ -8,13 +8,13 @@ mod test_parser;
 use test_parser::rst_vs_yaml;
 #[rstest]
 #[case("paragraph_w_bullet")]
-#[case("paragraphs_00")]
-#[case("paragraphs_01")]
-#[case("paragraphs_02")]
-#[case("paragraphs_03")]
+#[case::p00("paragraphs_00")]
+#[case::p01("paragraphs_01")]
+#[case::p02("paragraphs_02")]
+#[case::p03("paragraphs_03")]
 // TODO: A. Einstein case, tbc. no error in docutils.
-// #[case("paragraphs_04")]
-#[case("paragraphs_05")]
+// #[case::p04("paragraphs_04")]
+#[case::p05("paragraphs_05")]
 fn ok_paragraph(#[case] test_case: &str) {
-    rst_vs_yaml!("paragraphs/ok", test_case)
+    rst_vs_yaml!("paragraphs", test_case)
 }

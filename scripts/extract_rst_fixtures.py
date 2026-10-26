@@ -34,22 +34,31 @@ def render_test(topic: str, cases: dict[str, list[str]]) -> str:
         "// SPDX-License-Identifier: MIT",
         "",
         "use rstest::rstest;",
+        "use rstu_parser::parser_errors::ParserErrorKind as PE;",
         "",
-        '[path = "common/mod.rs"]',
+        '#[path = "common/mod.rs"]',
         "mod test_parser;",
         "use test_parser::rst_err;",
         "use test_parser::rst_vs_yaml;",
+        "",
     ]
-    for kind, macro in (("ok", "rst_vs_yaml"), ("err", "rst_err")):
-        names = cases[kind]
-        if not names:
-            continue
+
+    names = cases["ok"]
+    if names:
         lines.extend(["", "#[rstest]"])
         lines.extend(f'#[case("{name}")]' for name in names)
-        function = f"ok_{topic_id}" if kind == "ok" else f"err_{topic_id}_diagnostics"
         lines.extend([
-            f"fn {function}(#[case] test_case: &str) {{",
-            f'    {macro}!("{topic}/{kind}", test_case);',
+            f"fn ok_{topic_id}(#[case] test_case: &str) {{",
+            f'    rst_vs_yaml!("{topic}", test_case);',
+            "}",
+        ])
+    names = cases["err"]
+    if names:
+        lines.extend(["", "#[rstest]"])
+        lines.extend(f'#[case("{name}", PE::UnexpectedToken)]' for name in names)
+        lines.extend([
+            f"fn err_{topic_id}(#[case] test_case: &str, #[case] expected_error: PE) {{",
+            f'    rst_err!("{topic}", test_case, expected_error);',
             "}",
         ])
     return "\n".join(lines) + "\n"
@@ -69,7 +78,7 @@ def main() -> int:
             source, expected = case[0], case[1]
             kind = "err" if "<system_message" in expected else "ok"
             case_name = f"{name}_{index:02d}"
-            path = {suffix: TESTS_DIR / "data" / topic / kind / f"{case_name}.{suffix}" for suffix in ["rst","xml"]}
+            path = {suffix: TESTS_DIR / "data" / topic / f"{case_name}.{suffix}" for suffix in ["rst","xml"]}
             cases[kind].append(case_name)
             path["rst"].parent.mkdir(parents=True, exist_ok=True)
             path["rst"].write_text(source, encoding="utf-8")
