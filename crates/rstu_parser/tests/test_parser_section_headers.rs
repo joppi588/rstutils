@@ -20,9 +20,12 @@ use test_parser::rst_vs_yaml;
 #[case::sh07("section_headers_07")]
 #[case::sh11("section_headers_11")]
 #[case::sh13("section_headers_13")]
+#[case::sh14("section_headers_14")]
 #[case::sh15("section_headers_15")]
 #[case::sh16("section_headers_16")]
 #[case::sh17("section_headers_17")]
+#[case::sh18("section_headers_18")]
+#[case::sh19("section_headers_19")]
 #[case::sh20("section_headers_20")]
 #[case::sh21("section_headers_21")]
 #[case::sh23("section_headers_23")]
@@ -38,15 +41,13 @@ use test_parser::rst_vs_yaml;
 #[case::sh35("section_headers_35")]
 #[case::sh36("section_headers_36")]
 fn ok_section_headers(#[case] test_case: &str) {
-    rst_vs_yaml!("section_headers/ok", test_case);
+    rst_vs_yaml!("section_headers", test_case);
 }
 
 #[rstest]
-#[case::sh14("section_headers_14")]
-#[case::sh18("section_headers_18")]
-#[case::sh19("section_headers_19")]
+
 fn warn_section_headers(#[case] test_case: &str) {
-    rst_vs_yaml!("section_headers/warn", test_case);
+    rst_vs_yaml!("section_headers", test_case);
 }
 
 #[rstest]
@@ -60,5 +61,5 @@ fn warn_section_headers(#[case] test_case: &str) {
 #[case::sh32("section_headers_32", PE::SectionTitleUnbalancedStyle)]
 #[case::sh33("section_headers_33", PE::UnexpectedToken)] // TODO: Correct interpretetation as comment??
 fn err_section_headers(#[case] test_case: &str, #[case] expected_error: PE) {
-    rst_err!("section_headers/err", test_case, expected_error);
+    rst_err!("section_headers", test_case, expected_error);
 }

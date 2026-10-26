@@ -38,4 +38,3 @@ children:
           - class: PlainText
             attributes:
               text: "Another definition list item.\n"
-        - class: BlankLine
