@@ -11,7 +11,7 @@ use std::path::Path;
 #[test]
 fn tokenize_ok_mixed_lorem_ipsum_file() {
     let path =
-        Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/data/various/ok/mixed_lorem_ipsum.rst");
+        Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/data/various/mixed_lorem_ipsum.rst");
     let contents = fs::read_to_string(path).expect("failed to read mixed lorem ipsum test file");
 
     let expected = TokenStream::from_pairs(&[
@@ -91,8 +91,8 @@ fn tokenize_ok_mixed_lorem_ipsum_file() {
 
 #[test]
 fn tokenize_ok_indentation() {
-    let path = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("tests/data/indentation/ok/indent_blankline.rst");
+    let path =
+        Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/data/indentation/indent_blankline.rst");
     let contents = fs::read_to_string(path).expect("failed to read test file");
 
     let expected = TokenStream::from_pairs(&[
@@ -128,8 +128,8 @@ fn tokenize_ok_indentation() {
 
 #[test]
 fn tokenize_ok_indentation_2blanklines() {
-    let path = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("tests/data/indentation/ok/indent_2blankline.rst");
+    let path =
+        Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/data/indentation/indent_2blankline.rst");
     let contents = fs::read_to_string(path).expect("failed to read test file");
 
     let expected = TokenStream::from_pairs(&[

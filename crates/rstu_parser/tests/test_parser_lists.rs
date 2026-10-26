@@ -10,31 +10,31 @@ mod test_parser;
 use test_parser::rst_err;
 use test_parser::rst_vs_yaml;
 #[rstest]
-#[case("bullet_00")]
-#[case("bullet_01")]
-#[case("bullet_02")]
-#[case("bullet_03")]
-#[case("bullet_04")]
-#[case("bullet_07")]
-#[case("bullet_09")]
+#[case::b00("bullet_00")]
+#[case::b01("bullet_01")]
+#[case::b02("bullet_02")]
+#[case::b03("bullet_03")]
+#[case::b04("bullet_04")]
+#[case::b07("bullet_07")]
+#[case::b09("bullet_09")]
 #[case("bullet_list")]
 #[case("compact_bullet_list")]
 #[case("nested_bullet_list")]
 fn ok_bullet_list(#[case] test_case: &str) {
-    rst_vs_yaml!("lists/bullet_list/ok", test_case)
+    rst_vs_yaml!("lists/bullet_list", test_case)
 }
 
 #[rstest]
-#[case("bullet_05", PE::ListStyleError)]
+#[case::b05("bullet_05", PE::ListStyleError)]
 fn err_bullet_list_style(#[case] test_case: &str, #[case] expected_error: PE) {
-    rst_err!("lists/bullet_list/err", test_case, expected_error);
+    rst_err!("lists/bullet_list", test_case, expected_error);
 }
 
 #[rstest]
-#[case("bullet_06", PE::ListEndError)]
-#[case("bullet_08", PE::ListEndError)]
+#[case::b06("bullet_06", PE::ListEndError)]
+#[case::b08("bullet_08", PE::ListEndError)]
 fn err_bullet_list_end(#[case] test_case: &str, #[case] expected_error: PE) {
-    rst_err!("lists/bullet_list/err", test_case, expected_error);
+    rst_err!("lists/bullet_list", test_case, expected_error);
 }
 
 #[rstest]
@@ -53,13 +53,13 @@ fn err_bullet_list_end(#[case] test_case: &str, #[case] expected_error: PE) {
 #[case("non_marker_period")]
 #[case("potentially_ambiguous")]
 fn ok_enumerated_list(#[case] test_case: &str) {
-    rst_vs_yaml!("lists/enumerated_list/ok", test_case)
+    rst_vs_yaml!("lists/enumerated_list", test_case)
 }
 
 #[rstest]
 #[case("unindented_enumerated_continuation", PE::ListEndError)]
 fn err_enumerated_list(#[case] test_case: &str, #[case] expected_error: PE) {
-    rst_err!("lists/enumerated_list/err", test_case, expected_error);
+    rst_err!("lists/enumerated_list", test_case, expected_error);
 }
 
 // TODO
@@ -98,41 +98,41 @@ fn ok_field_list(#[case] test_case: &str) {
     // WHEN we parse and compare them against YAML snapshots
     // THEN this acts as a compatibility porting test surface (expected to fail for now)
 
-    rst_vs_yaml!("lists/field_list/ok", test_case);
+    rst_vs_yaml!("lists/field_list", test_case);
 }
 
 #[rstest]
-#[case("definition_00")]
-#[case("definition_01")]
-#[case("definition_05")]
-#[case("definition_06")]
-#[case("definition_08")]
-#[case("definition_09")]
-#[case("definition_10")]
-#[case("definition_11")]
-#[case("definition_13")]
-#[case("definition_14")]
-#[case("definition_15")]
+#[case::d00("definition_00")]
+#[case::d01("definition_01")]
+#[case::d05("definition_05")]
+#[case::d06("definition_06")]
+#[case::d08("definition_08")]
+#[case::d09("definition_09")]
+#[case::d10("definition_10")]
+#[case::d11("definition_11")]
+#[case::d13("definition_13")]
+#[case::d14("definition_14")]
+#[case::d15("definition_15")]
 #[case("inline_markup")]
 fn ok_definition_list(#[case] test_case: &str) {
-    rst_vs_yaml!("lists/definition_list/ok", test_case);
+    rst_vs_yaml!("lists/definition_list", test_case);
 }
 
 #[rstest]
-#[case("definition_02", PE::MissingFinalBlankLineError)]
-#[case("definition_03", PE::LiteralBlockMissingBlankLine)]
-#[case("definition_04", PE::UnexpectedIndentError)]
-#[case("definition_07", PE::MissingFinalBlankLineError)]
-#[case("definition_12", PE::InlineMissingClosing)]
-fn err_definition_list_diagnostics(#[case] test_case: &str, #[case] expected_error: PE) {
-    rst_err!("lists/definition_list/err", test_case, expected_error);
+#[case::d02("definition_02", PE::MissingFinalBlankLineError)]
+#[case::d03("definition_03", PE::LiteralBlockMissingBlankLine)]
+#[case::d04("definition_04", PE::UnexpectedIndentError)]
+#[case::d07("definition_07", PE::MissingFinalBlankLineError)]
+#[case::d12("definition_12", PE::InlineMissingClosing)]
+fn err_definition_list(#[case] test_case: &str, #[case] expected_error: PE) {
+    rst_err!("lists/definition_list", test_case, expected_error);
 }
 
 #[rstest]
 #[case("empty_item_no_blank", PE::ListEndError)]
 #[case("list_end_no_blank", PE::ListEndError)]
 fn err_field_list_end(#[case] test_case: &str, #[case] expected_error: PE) {
-    rst_err!("lists/field_list/err", test_case, expected_error);
+    rst_err!("lists/field_list", test_case, expected_error);
 }
 
 #[rstest]
@@ -153,5 +153,5 @@ fn err_field_list_end(#[case] test_case: &str, #[case] expected_error: PE) {
 // TODO: Lexer currently panics on the Unicode arrow in this paragraph.
 // #[case("15_incorrect_syntax")]
 fn ok_option_list(#[case] test_case: &str) {
-    rst_vs_yaml!("lists/option_list/ok", test_case)
+    rst_vs_yaml!("lists/option_list", test_case)
 }
