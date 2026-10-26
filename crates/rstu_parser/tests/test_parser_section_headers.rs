@@ -45,12 +45,6 @@ fn ok_section_headers(#[case] test_case: &str) {
 }
 
 #[rstest]
-
-fn warn_section_headers(#[case] test_case: &str) {
-    rst_vs_yaml!("section_headers", test_case);
-}
-
-#[rstest]
 #[case::sh03("section_headers_03", PE::UnexpectedToken)]
 #[case::sh08("section_headers_08", PE::SectionTitleMissingClosingAfterOpening)]
 #[case::sh09("section_headers_09", PE::SectionTitleMissingClosingAfterOpening)]
