@@ -16,5 +16,5 @@ use test_parser::rst_vs_yaml;
 // #[case::p04("paragraphs_04")]
 #[case::p05("paragraphs_05")]
 fn ok_paragraph(#[case] test_case: &str) {
-    rst_vs_yaml!("paragraphs/ok", test_case)
+    rst_vs_yaml!("paragraphs", test_case)
 }

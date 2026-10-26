@@ -23,7 +23,7 @@ use test_parser::rst_vs_yaml;
 #[case::t11("transitions_11")]
 #[case::t12("transitions_12")]
 fn ok_transitions(#[case] test_case: &str) {
-    rst_vs_yaml!("transitions/ok", test_case)
+    rst_vs_yaml!("transitions", test_case)
 }
 
 // TODO: Implement
@@ -31,5 +31,5 @@ fn ok_transitions(#[case] test_case: &str) {
 #[case::t03("transitions_03", PE::UnexpectedToken)]
 #[ignore = "Docutils system-message diagnostics for indented separators are not implemented"]
 fn err_transition(#[case] test_case: &str, #[case] expected_error: PE) {
-    rst_err!("transitions/err", test_case, expected_error);
+    rst_err!("transitions", test_case, expected_error);
 }

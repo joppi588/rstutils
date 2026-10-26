@@ -26,7 +26,7 @@ use test_parser::rst_vs_yaml;
 #[case::l15("line_block_15")]
 #[case::l16("line_block_16")]
 fn ok_line_block(#[case] test_case: &str) {
-    rst_vs_yaml!("line_blocks/ok", test_case);
+    rst_vs_yaml!("line_blocks", test_case);
 }
 
 #[rstest]
@@ -34,5 +34,5 @@ fn ok_line_block(#[case] test_case: &str) {
 #[case::l13("line_block_13", PE::UnexpectedToken)]
 #[case::l14("line_block_14", PE::InlineMissingClosing)]
 fn err_line_block(#[case] test_case: &str, #[case] expected_error: PE) {
-    rst_err!("line_blocks/err", test_case, expected_error);
+    rst_err!("line_blocks", test_case, expected_error);
 }

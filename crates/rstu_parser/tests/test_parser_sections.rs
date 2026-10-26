@@ -13,13 +13,13 @@ use test_parser::rst_vs_yaml;
 #[case("sections_type1")]
 #[case("sections_type2")]
 fn ok_section(#[case] test_case: &str) {
-    rst_vs_yaml!("sections/ok", test_case)
+    rst_vs_yaml!("sections", test_case)
 }
 
 #[test]
 fn err_section_missing_closing() {
     match rst_err!(
-        "sections/err",
+        "sections",
         "sections_missing_closing",
         PE::SectionTitleMissingClosingAfterOpening
     ) {
@@ -31,7 +31,7 @@ fn err_section_missing_closing() {
 #[test]
 fn err_section_unbalanced_style() {
     match rst_err!(
-        "sections/err",
+        "sections",
         "sections_unbalanced_style",
         PE::SectionTitleUnbalancedStyle
     ) {

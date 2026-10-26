@@ -28,12 +28,12 @@ use test_parser::rst_vs_yaml;
 // #[case::s00("substitution_references_00")]
 #[case::m05("markup_recognition_rules_05")]
 fn ok_char_level_inline(#[case] test_case: &str) {
-    rst_vs_yaml!("inline_markup_char_level/ok", test_case)
+    rst_vs_yaml!("inline_markup_char_level", test_case)
 }
 
 #[rstest]
 #[case::e00("emphasis_00", PE::InlineMissingClosing)]
 #[case::l01("literal_01", PE::InlineMissingClosing)]
 fn err_char_level_inline(#[case] test_case: &str, #[case] expected_error: PE) {
-    rst_err!("inline_markup_char_level/err", test_case, expected_error);
+    rst_err!("inline_markup_char_level", test_case, expected_error);
 }

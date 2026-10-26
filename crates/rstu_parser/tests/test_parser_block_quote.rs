@@ -22,7 +22,7 @@ use test_parser::rst_vs_yaml;
 #[case::b10("block_quote_10")]
 #[case::b12("block_quote_12")]
 fn ok_block_quote(#[case] test_case: &str) {
-    rst_vs_yaml!("block_quotes/ok", test_case);
+    rst_vs_yaml!("block_quotes", test_case);
 }
 
 #[rstest]
@@ -31,5 +31,5 @@ fn ok_block_quote(#[case] test_case: &str) {
 #[case::b11("block_quote_11", PE::UnexpectedToken)] // TODO: This shall trigger an unexpected indent error
 #[case::b13("block_quote_13", PE::MissingFinalBlankLineError)] // TODO: This shall trigger an unexpected indent error
 fn err_block_quote(#[case] test_case: &str, #[case] expected_error: PE) {
-    rst_err!("block_quotes/err", test_case, expected_error);
+    rst_err!("block_quotes", test_case, expected_error);
 }

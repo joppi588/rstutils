@@ -24,7 +24,7 @@ use test_parser::rst_vs_yaml;
 #[case::q01("quoted_01")]
 #[case::q02("quoted_02")]
 fn ok_literal_block(#[case] test_case: &str) {
-    rst_vs_yaml!("literal_blocks/ok", test_case);
+    rst_vs_yaml!("literal_blocks", test_case);
 }
 
 #[rstest]
@@ -38,7 +38,7 @@ fn ok_literal_block(#[case] test_case: &str) {
 #[case::q01("quoted_block_01", PE::LiteralBlockInvalidQuoteMarker)]
 #[case::q02("quoted_block_02", PE::LiteralBlockInconsistentQuoteMarker)]
 fn err_literal_block(#[case] test_case: &str, #[case] expected_error: PE) {
-    rst_err!("literal_blocks/err", test_case, expected_error);
+    rst_err!("literal_blocks", test_case, expected_error);
 }
 
 #[test]

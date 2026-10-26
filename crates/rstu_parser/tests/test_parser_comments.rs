@@ -10,5 +10,5 @@ use test_parser::rst_vs_yaml;
 #[rstest]
 #[case("comment")]
 fn ok_comment(#[case] test_case: &str) {
-    rst_vs_yaml!("comments/ok", test_case)
+    rst_vs_yaml!("comments", test_case)
 }

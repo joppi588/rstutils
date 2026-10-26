@@ -22,11 +22,11 @@ use test_parser::rst_vs_yaml;
 #[case::f03("footnotes_03")]
 #[case::f04("footnotes_04")]
 fn ok_footnotes(#[case] test_case: &str) {
-    rst_vs_yaml!("footnotes/ok", test_case);
+    rst_vs_yaml!("footnotes", test_case);
 }
 
 #[rstest]
 #[case::f05("footnotes_05", PE::UnexpectedToken)]
 fn err_footnotes(#[case] test_case: &str, #[case] expected_error: PE) {
-    rst_err!("footnotes/err", test_case, expected_error);
+    rst_err!("footnotes", test_case, expected_error);
 }
