@@ -2,7 +2,8 @@ class: Document
 children:
 - class: Comment
   attributes:
-    text: "Test return to existing, highest-level section (Title 3).\n\n"
+    text: "Test return to existing, highest-level section (Title 3).\n"
+- class: BlankLine
 - class: Section
   attributes:
     marker_len: 7
