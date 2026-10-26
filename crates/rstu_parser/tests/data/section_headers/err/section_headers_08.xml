@@ -1,7 +1,0 @@
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
-        <paragraph>
-            Incomplete section title.
-        <literal_block xml:space="preserve">
-            ========================
-             Test Missing Underline

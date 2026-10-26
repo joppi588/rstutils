@@ -92,7 +92,7 @@ impl std::fmt::Display for ParserError {
             Self::ListEndError { position } => {
                 write!(
                     formatter,
-                    "{position}: List item is not followed by an indented body."
+                    "{position}: List item is not followed by an indented body or blank line."
                 )
             }
             Self::ListMarkerError { marker, position } => {

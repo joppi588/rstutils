@@ -1,10 +1,10 @@
 # Architecture
 
-## Logical
+## Functional/Logical
 
 Parser - Syntactic analysis
-Linter&Link checker - Semantic analysis
-Formatter - Auto-correct
+Format checker - Semantic analysis and auto-correct
+Reference checker
 Transformation - Output
 Language Server
 
@@ -47,8 +47,7 @@ The tokenizer and parser share information, e.g. the knowledge that a bullet lis
 5. Parser approach
 Top-down.
 - Level 1: Document structure (sections), lookahead one line.
-- Level 2: Main blocks (directives, comments)
-- Level 3: (recursive): Body elements
+- Level 2: (recursive): Body elements
 This represents the language structure.
 
 6. Error handling while parsing
@@ -60,11 +59,14 @@ Option 2:
 - Further specialization via error messages
 Decision: Option 1, error messages are created using the Display trait. Smaller overhead.
 
-7. Warnings
-Warning messages are emitted by the linter, the parser rather emits only errors.
-Rationale: Syntax is ideally unambiguous.
-Warnings represent interpretation, which is on a semantic level -> linter.
-There are exceptions, e.g. the parser needs to decide if alphabet I (continue enum list) or roman 1 (start new list).
+7. Warnings/Errors
+Parser: Only emit errors, since syntax is ideally unambiguous
+  Exception: Enumerated lists, the parser needs to decide if alphabet I (continue enum list) or roman 1 (start new list).
+Format checker: Mainly warnings, with auto-correction proposals where feasible.
+Reference checker: Errors for nonexisting targets, Warnings for likely mistyped targets.
+
+Generally speaking, warnings represent interpretation + decisions, which are on a semantic level. Interpretation shall follow the principle of least surprise.
+
 
 8. Blank lines and indentation:
 - Blank lines before an indent are interpreted as indented.
@@ -72,8 +74,8 @@ There are exceptions, e.g. the parser needs to decide if alphabet I (continue en
 - Blank lines before a dedent are interpreted as dedented.
 So technically indented blocks can be surrounded by blank lines, and in/dedents treated upstream.
 
-9. Formatter
-Write back rst from AST.
+9. Format checker
+Technically: Write back .rst from eventually modified AST.
 TODO: Some elements contain the trailing newline, some not.
 Make this consistent
 

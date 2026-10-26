@@ -1,0 +1,28 @@
+class: Document
+children:
+- class: Section
+  attributes:
+    marker_len: 24
+    marker_len_opening: 24
+    section_marker: "="
+  children:
+  - class: Title
+    children:
+    - class: Paragraph
+  - class: BlankLine
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: |
+          Test missing titles; nothing in-between.
+  - class: BlankLine
+- class: Section
+  attributes:
+    marker_len: 24
+    marker_len_opening: 24
+    section_marker: "="
+  children:
+  - class: Title
+    children:
+    - class: Paragraph
