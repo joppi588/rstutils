@@ -30,6 +30,10 @@ All of these are believed to be non-critical.
 - Enumerated list:
     * Auto in between explicit markers is accepted.
       (test case docutils_mixed_auto_and_explicit, docutils does not accept that.)
+- Transitions are 3+ characters, not 4+ as in the original spec.
+  Rationale:
+    * <BlankLine>===<BlankLine> would be interpreted by the parser as a section header with
+      empty title and missing closing -> error
 
 # Interpretations
 Things that would be according to the spec book but not to the python parser implementation:

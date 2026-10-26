@@ -6,11 +6,10 @@ children:
     attributes:
       text: "Short transition marker.\n"
 - class: BlankLine
-- class: Paragraph
-  children:
-  - class: PlainText
-    attributes:
-      text: "---\n"
+- class: Transition
+  attributes:
+    marker_len: 3
+    marker_type: '-'
 - class: BlankLine
 - class: Paragraph
   children:

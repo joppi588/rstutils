@@ -1,0 +1,25 @@
+class: Document
+children:
+- class: Section
+  attributes:
+    marker_len: 7
+    marker_len_opening: 7
+    section_marker: "="
+  children:
+  - class: Title
+    attributes:
+      indent: 1
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: |
+            Long    Title
+  - class: BlankLine
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: |
+          Test long title and space normalization.
