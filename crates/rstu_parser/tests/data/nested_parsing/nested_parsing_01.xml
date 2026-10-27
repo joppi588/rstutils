@@ -1,0 +1,12 @@
+<document source="test data">
+    <section names="nested1">
+        <title>
+            nested1
+    <section names="nested2">
+        <title>
+            nested2
+        <section names="nested2.1">
+            <title>
+                nested2.1
+            <paragraph>
+                This paragraph belongs to the last nested section.

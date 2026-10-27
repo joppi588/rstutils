@@ -1,0 +1,44 @@
+<document source="test data">
+    <section names="sec1">
+        <title>
+            sec1
+        <section names="sec1.1">
+            <title>
+                sec1.1
+            <section names="fresh1.1.1">
+                <title>
+                    fresh1.1.1
+                <section names="fresh1.1.1.1">
+                    <title>
+                        fresh1.1.1.1
+    <section names="sec2">
+        <title>
+            sec2
+        <section names="fresh2.1">
+            <title>
+                fresh2.1
+            <paragraph>
+                New title styles with every directive.
+            <section names="fresh2.1.1">
+                <title>
+                    fresh2.1.1
+            <section names="fresh2.1.2">
+                <title>
+                    fresh2.1.2
+                <section names="fresh2.1.2.1">
+                    <title>
+                        fresh2.1.2.1
+        <paragraph>
+            This text belongs into the last nested section (sic!).
+        <section names="sec2.2">
+            <title>
+                sec2.2
+            <paragraph>
+                Document-wide title styles unchanged
+            <section names="sec2.2.1">
+                <title>
+                    sec2.2.1
+    <system_message level="2" line="27" source="test data" type="WARNING">
+        <paragraph>
+            Element <section names="sec2"> invalid:
+              Child element <paragraph> not allowed at this position.

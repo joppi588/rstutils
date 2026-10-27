@@ -1,0 +1,25 @@
+<document source="test data">
+    <block_quote>
+        <paragraph>
+            A section in a block-quote is invalid.
+        <system_message level="3" line="6" source="test data" type="ERROR">
+            <paragraph>
+                Unexpected section title.
+            <literal_block xml:space="preserve">
+                invalid section
+                ---------------
+        <system_message level="3" line="11" source="test data" type="ERROR">
+            <paragraph>
+                Unexpected section title.
+            <literal_block xml:space="preserve">
+                invalid, too
+                ============
+        <paragraph>
+            The <section> base node is discarded.
+        <section names="invalid\ section\ (sic!)">
+            <title>
+                invalid section (sic!)
+    <system_message level="2" line="1" source="test data" type="WARNING">
+        <paragraph>
+            Element <block_quote> invalid:
+              Child element <section names="invalid\ section\ (sic!)"> not allowed at this position.
