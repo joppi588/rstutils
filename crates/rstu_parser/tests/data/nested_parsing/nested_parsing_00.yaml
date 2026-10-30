@@ -1,0 +1,77 @@
+class: Document
+children:
+- class: Section
+  attributes:
+    marker_len: 4
+    section_marker: "="
+  children:
+  - class: Title
+    attributes:
+      text: |
+        sec1
+  - class: Section
+    attributes:
+      marker_len: 6
+      section_marker: '-'
+    children:
+    - class: Title
+      attributes:
+        text: |
+          sec1.1
+    - class: Directive
+      attributes:
+        directive_type: nested
+      children:
+      - class: BlankLine
+      - class: Section
+        attributes:
+          marker_len: 13
+          section_marker: "~"
+        children:
+        - class: Title
+          attributes:
+            text: |
+              nested1.1.1.1
+    - class: BlankLine
+- class: Section
+  attributes:
+    marker_len: 4
+    section_marker: "="
+  children:
+  - class: Title
+    attributes:
+      text: |
+        sec2
+  - class: Directive
+    attributes:
+      directive_type: nested
+    children:
+    - class: BlankLine
+    - class: Section
+      attributes:
+        marker_len: 13
+        section_marker: "="
+      children:
+      - class: Title
+        attributes:
+          text: |
+            inaccessible2
+  - class: BlankLine
+  - class: Section
+    attributes:
+      marker_len: 6
+      section_marker: '-'
+    children:
+    - class: Title
+      attributes:
+        text: |
+          sec2.2
+    - class: Section
+      attributes:
+        marker_len: 13
+        section_marker: "~"
+      children:
+      - class: Title
+        attributes:
+          text: |
+            skipping2.2.1

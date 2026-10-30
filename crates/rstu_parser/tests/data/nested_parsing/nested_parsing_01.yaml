@@ -1,0 +1,23 @@
+class: Document
+children:
+- class: Directive
+  attributes:
+    directive_type: nested
+  children:
+  - class: BlankLine
+  - class: Section
+    attributes:
+      marker_len: 9
+      section_marker: '-'
+    children:
+    - class: Title
+      attributes:
+        text: |
+          nested2.1
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: |
+        This paragraph belongs to the last nested section.

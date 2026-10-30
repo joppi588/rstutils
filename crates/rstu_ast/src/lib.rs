@@ -9,6 +9,7 @@ use attr::{AttributeType, Attributes};
 pub use nodes::NodeClass;
 use serde_json::{Map, Value};
 use std::cell::RefCell;
+use std::debug_assert_matches;
 use std::rc::{Rc, Weak};
 
 pub type NodeRef = Rc<RefCell<AstNode>>;
@@ -102,11 +103,7 @@ impl NodeRefExt for NodeRef {
     }
 
     fn push_section_ref(&self, section: NodeRef) -> NodeRef {
-        assert_eq!(
-            section.borrow().class,
-            NodeClass::Section,
-            "push_section_ref requires a section node"
-        );
+        debug_assert_matches!(section.borrow().class, NodeClass::Section);
 
         let section_marker = section.borrow().attributes.get_str("section_marker");
         let self_marker = self.borrow().attributes.get_str("section_marker");
@@ -150,6 +147,8 @@ impl AstNode {
         section_marker: Option<&str>,
     ) -> Option<NodeRef> {
         let mut current = Some(node.clone());
+
+        // TODO: stop at block boarder
         while let Some(current_node) = current.clone() {
             let matches = {
                 let borrowed = current_node.borrow();

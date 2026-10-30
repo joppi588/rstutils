@@ -160,6 +160,9 @@ fn parse_body_element(
                 attribution.push_child(paragraph);
                 current_parent.push_child(attribution);
             }
+            (TK::Dedent, _) => {
+                break;
+            }
             (kind, _) if kind.is(TC::PARAGRAPH_END) => {
                 return Err(ParserError::UnexpectedToken {
                     expected: "Some content.".to_owned(),

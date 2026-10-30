@@ -33,6 +33,9 @@ All of these are believed to be non-critical.
 
 # Interpretations
 Things that would be according to the spec book but not to the python parser implementation:
-- (empty)
+- Directives: rstu_parser does not support extensions via directives.
+  Directive bodies are parsed as sub-documents.
+  Consequences:
+  * New section hierarchy is started.
 
 # Proposals

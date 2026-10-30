@@ -10,6 +10,9 @@ mod test_parser;
 use test_parser::rst_err;
 use test_parser::rst_vs_yaml;
 
+// Nested parsing in the docutils parsers defines a directive supporting nested secion parsing.
+// In rstu, these tests demonstrate the standard parser behavior.
+
 #[rstest]
 #[case("nested_parsing_01")]
 #[case("nested_parsing_02")]
