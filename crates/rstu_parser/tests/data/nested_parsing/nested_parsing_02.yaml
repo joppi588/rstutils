@@ -43,4 +43,5 @@ children:
   children:
   - class: PlainText
     attributes:
-      text: This not.
+      text: |
+        This not.

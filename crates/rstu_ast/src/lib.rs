@@ -90,7 +90,7 @@ impl NodeRefExt for NodeRef {
 
         match count {
             0 | 1 => {
-                // TODO: drop(child)
+                drop(child);
                 self.remove_child(0);
             }
             2 => {

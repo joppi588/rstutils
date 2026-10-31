@@ -20,9 +20,8 @@ children:
           children:
           - class: PlainText
             attributes:
-              text: |-
-                docutils: A section in a block-quote is invalid.
-                rstu_parser: A section in a block-quote is
+              text:
+                "docutils: A section in a block-quote is invalid.\nrstu_parser: A section in a block-quote is "
           - class: InlineMarkup
             attributes:
               markup: emphasis
@@ -84,5 +83,4 @@ children:
           children:
           - class: Title
             attributes:
-              text: |
-                valid section (sic!)
+              text: "valid section (sic!)\n"
