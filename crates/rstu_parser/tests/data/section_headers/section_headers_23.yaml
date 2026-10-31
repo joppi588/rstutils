@@ -1,20 +1,17 @@
 class: Document
 children:
-- class: Section
-  attributes:
-    marker_len: 3
-    section_marker: "="
+- class: Paragraph
   children:
-  - class: Title
-    children:
-    - class: Paragraph
-      children:
-      - class: PlainText
-        attributes:
-          text: "ABC\n"
-  - class: BlankLine
-  - class: Paragraph
-    children:
-    - class: PlainText
-      attributes:
-        text: "Short title.\n"
+  - class: PlainText
+    attributes:
+      text: |
+        ABC
+        ===
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: |
+        Short title.
+        rstu_parser does not recognize <4 chars as section marker.
