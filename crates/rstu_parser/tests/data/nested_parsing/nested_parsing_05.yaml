@@ -6,18 +6,24 @@ children:
     section_marker: "="
   children:
   - class: Title
-    attributes:
-      text: |
-        sec1
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "sec1\n"
   - class: Section
     attributes:
       marker_len: 6
       section_marker: '-'
     children:
     - class: Title
-      attributes:
-        text: |
-          sec1.1
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: "sec1.1\n"
     - class: Directive
       attributes:
         directive_type: nested-section
@@ -33,16 +39,18 @@ children:
             section_marker: "*"
           children:
           - class: Title
-            attributes:
-              text: |
-                nested-section1.1.1
+            children:
+            - class: Paragraph
+              children:
+              - class: PlainText
+                attributes:
+                  text: "nested-section1.1.1\n"
     - class: BlankLine
     - class: Paragraph
       children:
       - class: PlainText
         attributes:
-          text: |
-            This paragraph belongs to sec 1.1.
+          text: "This paragraph belongs to sec 1.1.\n"
     - class: BlankLine
 - class: Section
   attributes:
@@ -50,6 +58,9 @@ children:
     section_marker: "="
   children:
   - class: Title
-    attributes:
-      text: |
-        sec2
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "sec2\n"

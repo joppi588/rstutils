@@ -12,8 +12,12 @@ children:
     section_marker: "="
   children:
   - class: Title
-    attributes:
-      text: "Section 1\n"
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "Section 1\n"
   - class: BlankLine
   - class: Transition
     attributes:
@@ -37,8 +41,12 @@ children:
     section_marker: "="
   children:
   - class: Title
-    attributes:
-      text: "Section 2\n"
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "Section 2\n"
   - class: BlankLine
   - class: Transition
     attributes:

@@ -2,12 +2,16 @@ class: Document
 children:
   - class: Section
     attributes:
-      section_marker: "="
       marker_len: 9
+      section_marker: "="
     children:
       - class: Title
-        attributes:
-          text: "Heading I\n"
+        children:
+          - class: Paragraph
+            children:
+              - class: PlainText
+                attributes:
+                  text: "Heading I\n"
       - class: BlankLine
       - class: Paragraph
         children:
@@ -17,12 +21,16 @@ children:
       - class: BlankLine
       - class: Section
         attributes:
-          section_marker: "-"
           marker_len: 10
+          section_marker: "-"
         children:
           - class: Title
-            attributes:
-              text: "Heading II\n"
+            children:
+              - class: Paragraph
+                children:
+                  - class: PlainText
+                    attributes:
+                      text: "Heading II\n"
           - class: BlankLine
           - class: Paragraph
             children:
@@ -32,12 +40,16 @@ children:
           - class: BlankLine
   - class: Section
     attributes:
-      section_marker: "="
       marker_len: 11
+      section_marker: "="
     children:
       - class: Title
-        attributes:
-          text: "Heading III\n"
+        children:
+          - class: Paragraph
+            children:
+              - class: PlainText
+                attributes:
+                  text: "Heading III\n"
       - class: BlankLine
       - class: Paragraph
         children:

@@ -6,9 +6,12 @@ children:
     section_marker: "="
   children:
   - class: Title
-    attributes:
-      text: |
-        sec1
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "sec1\n"
   - class: Directive
     attributes:
       directive_type: nested-section
@@ -24,9 +27,12 @@ children:
           section_marker: "="
         children:
         - class: Title
-          attributes:
-            text: |
-              nested-section1
+          children:
+          - class: Paragraph
+            children:
+            - class: PlainText
+              attributes:
+                text: "nested-section1\n"
         - class: Paragraph
           children:
           - class: PlainText

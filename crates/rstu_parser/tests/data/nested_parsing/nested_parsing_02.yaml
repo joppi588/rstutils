@@ -19,29 +19,33 @@ children:
         section_marker: "*"
       children:
       - class: Title
-        attributes:
-          text: |
-            nested1
+        children:
+        - class: Paragraph
+          children:
+          - class: PlainText
+            attributes:
+              text: "nested1\n"
       - class: Section
         attributes:
           marker_len: 9
           section_marker: '-'
         children:
         - class: Title
-          attributes:
-            text: |
-              nested1.1
+          children:
+          - class: Paragraph
+            children:
+            - class: PlainText
+              attributes:
+                text: "nested1.1\n"
         - class: BlankLine
         - class: Paragraph
           children:
           - class: PlainText
             attributes:
-              text: |
-                This paragraph belongs to the last nested section.
+              text: "This paragraph belongs to the last nested section.\n"
 - class: BlankLine
 - class: Paragraph
   children:
   - class: PlainText
     attributes:
-      text: |
-        This not.
+      text: "This not.\n"

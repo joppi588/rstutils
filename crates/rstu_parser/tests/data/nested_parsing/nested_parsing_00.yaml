@@ -6,16 +6,24 @@ children:
     section_marker: "="
   children:
   - class: Title
-    attributes:
-      text: "sec1\n"
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "sec1\n"
   - class: Section
     attributes:
       marker_len: 6
       section_marker: '-'
     children:
     - class: Title
-      attributes:
-        text: "sec1.1\n"
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: "sec1.1\n"
     - class: Directive
       attributes:
         directive_type: nested
@@ -31,16 +39,24 @@ children:
             section_marker: "*"
           children:
           - class: Title
-            attributes:
-              text: "nested1.1.1\n"
+            children:
+            - class: Paragraph
+              children:
+              - class: PlainText
+                attributes:
+                  text: "nested1.1.1\n"
           - class: Section
             attributes:
               marker_len: 13
               section_marker: "~"
             children:
             - class: Title
-              attributes:
-                text: "nested1.1.1.1\n"
+              children:
+              - class: Paragraph
+                children:
+                - class: PlainText
+                  attributes:
+                    text: "nested1.1.1.1\n"
     - class: BlankLine
 - class: Section
   attributes:
@@ -48,8 +64,12 @@ children:
     section_marker: "="
   children:
   - class: Title
-    attributes:
-      text: "sec2\n"
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "sec2\n"
   - class: Directive
     attributes:
       directive_type: nested
@@ -65,32 +85,48 @@ children:
           section_marker: "*"
         children:
         - class: Title
-          attributes:
-            text: "skipping2.1\n"
+          children:
+          - class: Paragraph
+            children:
+            - class: PlainText
+              attributes:
+                text: "skipping2.1\n"
         - class: Section
           attributes:
             marker_len: 9
             section_marker: '-'
           children:
           - class: Title
-            attributes:
-              text: "nested2.1\n"
+            children:
+            - class: Paragraph
+              children:
+              - class: PlainText
+                attributes:
+                  text: "nested2.1\n"
         - class: Section
           attributes:
             marker_len: 9
             section_marker: '-'
           children:
           - class: Title
-            attributes:
-              text: "nested2.2\n"
+            children:
+            - class: Paragraph
+              children:
+              - class: PlainText
+                attributes:
+                  text: "nested2.2\n"
           - class: Section
             attributes:
               marker_len: 13
               section_marker: "="
             children:
             - class: Title
-              attributes:
-                text: "inaccessible2\n"
+              children:
+              - class: Paragraph
+                children:
+                - class: PlainText
+                  attributes:
+                    text: "inaccessible2\n"
   - class: BlankLine
   - class: Section
     attributes:
@@ -98,13 +134,21 @@ children:
       section_marker: '-'
     children:
     - class: Title
-      attributes:
-        text: "sec2.2\n"
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: "sec2.2\n"
     - class: Section
       attributes:
         marker_len: 13
         section_marker: "~"
       children:
       - class: Title
-        attributes:
-          text: "skipping2.2.1\n"
+        children:
+        - class: Paragraph
+          children:
+          - class: PlainText
+            attributes:
+              text: "skipping2.2.1\n"
