@@ -9,7 +9,6 @@ use attr::{AttributeType, Attributes};
 pub use nodes::NodeClass;
 use serde_json::{Map, Value};
 use std::cell::RefCell;
-use std::debug_assert_matches;
 use std::rc::{Rc, Weak};
 
 pub type NodeRef = Rc<RefCell<AstNode>>;
@@ -91,6 +90,7 @@ impl NodeRefExt for NodeRef {
 
         match count {
             0 | 1 => {
+                // TODO: drop(child)
                 self.remove_child(0);
             }
             2 => {
@@ -103,11 +103,24 @@ impl NodeRefExt for NodeRef {
     }
 
     fn push_section_ref(&self, section: NodeRef) -> NodeRef {
-        debug_assert_matches!(section.borrow().class, NodeClass::Section);
+        assert_eq!(
+            section.borrow().class,
+            NodeClass::Section,
+            "push_section_ref requires a section node"
+        );
 
         let section_marker = section.borrow().attributes.get_str("section_marker");
         let self_marker = self.borrow().attributes.get_str("section_marker");
-
+        // ...existing code...
+        eprintln!(
+            "class={:?} marker={:?} has_weak={} strong={} parent={:?}",
+            self.borrow().class,
+            self_marker,
+            self.borrow().parent.is_some(),
+            Rc::strong_count(self),
+            self.get_parent().map(|p| p.borrow().class.clone()),
+        );
+        // ...existing code...
         let target_parent = match self.get_parent() {
             None => self.clone(),
             Some(parent) if self_marker == section_marker => parent,
@@ -147,17 +160,17 @@ impl AstNode {
         section_marker: Option<&str>,
     ) -> Option<NodeRef> {
         let mut current = Some(node.clone());
-
-        // TODO: stop at block boarder
         while let Some(current_node) = current.clone() {
-            let matches = {
-                let borrowed = current_node.borrow();
-                borrowed.class == NodeClass::Section
-                    && section_marker.is_none_or(|marker| {
-                        borrowed.attributes.get_str("section_marker").as_deref() == Some(marker)
-                    })
-            };
-            if matches {
+            if current_node.borrow().class == NodeClass::Section
+                && section_marker.is_none_or(|marker| {
+                    current_node
+                        .borrow()
+                        .attributes
+                        .get_str("section_marker")
+                        .as_deref()
+                        == Some(marker)
+                })
+            {
                 return Some(current_node);
             }
             current = current_node.get_parent();

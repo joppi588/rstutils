@@ -7,8 +7,7 @@ children:
   children:
   - class: Title
     attributes:
-      text: |
-        sec1
+      text: "sec1\n"
   - class: Section
     attributes:
       marker_len: 6
@@ -16,22 +15,32 @@ children:
     children:
     - class: Title
       attributes:
-        text: |
-          sec1.1
+        text: "sec1.1\n"
     - class: Directive
       attributes:
         directive_type: nested
       children:
       - class: BlankLine
-      - class: Section
+      - class: Block
         attributes:
-          marker_len: 13
-          section_marker: "~"
+          indent: 2
         children:
-        - class: Title
+        - class: Section
           attributes:
-            text: |
-              nested1.1.1.1
+            marker_len: 11
+            section_marker: "*"
+          children:
+          - class: Title
+            attributes:
+              text: "nested1.1.1\n"
+          - class: Section
+            attributes:
+              marker_len: 13
+              section_marker: "~"
+            children:
+            - class: Title
+              attributes:
+                text: "nested1.1.1.1\n"
     - class: BlankLine
 - class: Section
   attributes:
@@ -40,22 +49,48 @@ children:
   children:
   - class: Title
     attributes:
-      text: |
-        sec2
+      text: "sec2\n"
   - class: Directive
     attributes:
       directive_type: nested
     children:
     - class: BlankLine
-    - class: Section
+    - class: Block
       attributes:
-        marker_len: 13
-        section_marker: "="
+        indent: 2
       children:
-      - class: Title
+      - class: Section
         attributes:
-          text: |
-            inaccessible2
+          marker_len: 11
+          section_marker: "*"
+        children:
+        - class: Title
+          attributes:
+            text: "skipping2.1\n"
+        - class: Section
+          attributes:
+            marker_len: 9
+            section_marker: '-'
+          children:
+          - class: Title
+            attributes:
+              text: "nested2.1\n"
+        - class: Section
+          attributes:
+            marker_len: 9
+            section_marker: '-'
+          children:
+          - class: Title
+            attributes:
+              text: "nested2.2\n"
+          - class: Section
+            attributes:
+              marker_len: 13
+              section_marker: "="
+            children:
+            - class: Title
+              attributes:
+                text: "inaccessible2\n"
   - class: BlankLine
   - class: Section
     attributes:
@@ -64,8 +99,7 @@ children:
     children:
     - class: Title
       attributes:
-        text: |
-          sec2.2
+        text: "sec2.2\n"
     - class: Section
       attributes:
         marker_len: 13
@@ -73,5 +107,4 @@ children:
       children:
       - class: Title
         attributes:
-          text: |
-            skipping2.2.1
+          text: "skipping2.2.1\n"

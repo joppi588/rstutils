@@ -1,0 +1,50 @@
+class: Document
+children:
+- class: Section
+  attributes:
+    marker_len: 4
+    section_marker: "="
+  children:
+  - class: Title
+    attributes:
+      text: "sec1\n"
+  - class: Section
+    attributes:
+      marker_len: 6
+      section_marker: '-'
+    children:
+    - class: Title
+      attributes:
+        text: "sec1.1\n"
+    - class: Directive
+      attributes:
+        directive_type: nested-section
+      children:
+      - class: BlankLine
+      - class: Block
+        attributes:
+          indent: 2
+        children:
+        - class: Section
+          attributes:
+            marker_len: 19
+            section_marker: "*"
+          children:
+          - class: Title
+            attributes:
+              text: "nested-section1.1.1\n"
+    - class: BlankLine
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "This paragraph belongs to the last nested section (sic!).\n"
+    - class: BlankLine
+- class: Section
+  attributes:
+    marker_len: 4
+    section_marker: "="
+  children:
+  - class: Title
+    attributes:
+      text: "sec2\n"

@@ -45,9 +45,8 @@ use token_stream::TokenStream;
 pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
     let mut stream = tokenize(input);
     let doc = AstNode::new_ref(NodeClass::Document);
-    let mut current_parent = doc.clone();
 
-    parse_body_element(&mut stream, &mut current_parent)?;
+    parse_body_element(&mut stream, &doc.clone())?;
 
     doc.prune_leading_blankline();
     Ok(doc)
@@ -55,8 +54,9 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
 
 fn parse_body_element(
     stream: &mut TokenStream,
-    current_parent: &mut Rc<RefCell<AstNode>>,
+    current_parent: &Rc<RefCell<AstNode>>,
 ) -> Result<(), ParserError> {
+    let mut current_parent = current_parent.clone();
     loop {
         match (
             stream.token_at_cursor().kind,
@@ -74,7 +74,7 @@ fn parse_body_element(
             (TK::Separator, _) | (_, TK::Separator) => {
                 let section = parse_section_header(stream)?;
                 current_parent.push_section_ref(section.clone());
-                *current_parent = section;
+                current_parent = section;
             }
             (TK::Indent, _) => {
                 return Err(ParserError::UnexpectedIndentError {

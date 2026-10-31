@@ -1,0 +1,128 @@
+class: Document
+children:
+- class: Section
+  attributes:
+    marker_len: 4
+    section_marker: "="
+  children:
+  - class: Title
+    attributes:
+      text: "sec1\n"
+  - class: Section
+    attributes:
+      marker_len: 6
+      section_marker: '-'
+    children:
+    - class: Title
+      attributes:
+        text: "sec1.1\n"
+    - class: Directive
+      attributes:
+        directive_type: fresh
+      children:
+      - class: BlankLine
+      - class: Block
+        attributes:
+          indent: 2
+        children:
+        - class: Section
+          attributes:
+            marker_len: 10
+            section_marker: "="
+          children:
+          - class: Title
+            attributes:
+              text: "fresh1.1.1\n"
+          - class: Section
+            attributes:
+              marker_len: 13
+              section_marker: "~"
+            children:
+            - class: Title
+              attributes:
+                text: "fresh1.1.1.1\n"
+    - class: BlankLine
+- class: Section
+  attributes:
+    marker_len: 4
+    section_marker: "="
+  children:
+  - class: Title
+    attributes:
+      text: "sec2\n"
+  - class: Directive
+    attributes:
+      directive_type: fresh
+    children:
+    - class: BlankLine
+    - class: Block
+      attributes:
+        indent: 2
+      children:
+      - class: Section
+        attributes:
+          marker_len: 11
+          section_marker: "*"
+        children:
+        - class: Title
+          attributes:
+            text: "fresh2.1\n"
+        - class: Paragraph
+          children:
+          - class: PlainText
+            attributes:
+              text: "New title styles with every directive.\n"
+        - class: BlankLine
+        - class: Section
+          attributes:
+            marker_len: 11
+            section_marker: '-'
+          children:
+          - class: Title
+            attributes:
+              text: "fresh2.1.1\n"
+        - class: Section
+          attributes:
+            marker_len: 11
+            section_marker: '-'
+          children:
+          - class: Title
+            attributes:
+              text: "fresh2.1.2\n"
+          - class: Section
+            attributes:
+              marker_len: 13
+              section_marker: "="
+            children:
+            - class: Title
+              attributes:
+                text: "fresh2.1.2.1\n"
+  - class: BlankLine
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: "This text belongs into the last nested section (sic!).\n"
+  - class: BlankLine
+  - class: Section
+    attributes:
+      marker_len: 6
+      section_marker: '-'
+    children:
+    - class: Title
+      attributes:
+        text: "sec2.2\n"
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "Document-wide title styles unchanged\n"
+    - class: BlankLine
+    - class: Section
+      attributes:
+        marker_len: 8
+        section_marker: "*"
+      children:
+      - class: Title
+        attributes:
+          text: "sec2.2.1\n"

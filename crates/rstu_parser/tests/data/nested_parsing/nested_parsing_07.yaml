@@ -1,0 +1,74 @@
+class: Document
+children:
+- class: BlockQuote
+  children:
+  - class: BlankLine
+  - class: Block
+    attributes:
+      indent: 2
+    children:
+    - class: Directive
+      attributes:
+        directive_type: nested
+      children:
+      - class: BlankLine
+      - class: Block
+        attributes:
+          indent: 2
+        children:
+        - class: Paragraph
+          children:
+          - class: PlainText
+            attributes:
+              text: "A section in a block-quote is invalid.\n"
+        - class: BlankLine
+        - class: Section
+          attributes:
+            marker_len: 15
+            section_marker: '-'
+          children:
+          - class: Title
+            attributes:
+              text: "invalid section\n"
+    - class: BlankLine
+    - class: Directive
+      attributes:
+        directive_type: nested-current
+      children:
+      - class: BlankLine
+      - class: Block
+        attributes:
+          indent: 2
+        children:
+        - class: Section
+          attributes:
+            marker_len: 12
+            section_marker: "="
+          children:
+          - class: Title
+            attributes:
+              text: "invalid, too\n"
+    - class: BlankLine
+    - class: Directive
+      attributes:
+        directive_type: nested-section
+      children:
+      - class: BlankLine
+      - class: Block
+        attributes:
+          indent: 2
+        children:
+        - class: Paragraph
+          children:
+          - class: PlainText
+            attributes:
+              text: "The <section> base node is discarded.\n"
+        - class: BlankLine
+        - class: Section
+          attributes:
+            marker_len: 22
+            section_marker: '-'
+          children:
+          - class: Title
+            attributes:
+              text: "invalid section (sic!)\n"

@@ -5,19 +5,37 @@ children:
     directive_type: nested
   children:
   - class: BlankLine
-  - class: Section
+  - class: Block
     attributes:
-      marker_len: 9
-      section_marker: '-'
+      indent: 2
     children:
-    - class: Title
+    - class: Section
       attributes:
-        text: |
-          nested2.1
+        marker_len: 7
+        section_marker: "*"
+      children:
+      - class: Title
+        attributes:
+          text: "nested1\n"
+    - class: Section
+      attributes:
+        marker_len: 7
+        section_marker: "*"
+      children:
+      - class: Title
+        attributes:
+          text: "nested2\n"
+      - class: Section
+        attributes:
+          marker_len: 9
+          section_marker: '-'
+        children:
+        - class: Title
+          attributes:
+            text: "nested2.1\n"
 - class: BlankLine
 - class: Paragraph
   children:
   - class: PlainText
     attributes:
-      text: |
-        This paragraph belongs to the last nested section.
+      text: "This paragraph belongs to the last nested section.\n"

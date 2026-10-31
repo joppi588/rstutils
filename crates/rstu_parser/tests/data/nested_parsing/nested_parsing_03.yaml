@@ -1,0 +1,22 @@
+class: Document
+children:
+- class: Directive
+  attributes:
+    directive_type: nested
+  children:
+  - class: BlankLine
+  - class: Block
+    attributes:
+      indent: 2
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "Keep the \"current node\", if the nested parse does not\ncontain a section.\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "This paragraph belongs to the document.\n"
