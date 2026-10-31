@@ -6,18 +6,24 @@ children:
     section_marker: "="
   children:
   - class: Title
-    attributes:
-      text: |
-        sec1
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "sec1\n"
   - class: Section
     attributes:
       marker_len: 6
       section_marker: '-'
     children:
     - class: Title
-      attributes:
-        text: |
-          sec1.1
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: "sec1.1\n"
     - class: Directive
       attributes:
         directive_type: fresh
@@ -33,18 +39,24 @@ children:
             section_marker: "="
           children:
           - class: Title
-            attributes:
-              text: |
-                fresh1.1.1
+            children:
+            - class: Paragraph
+              children:
+              - class: PlainText
+                attributes:
+                  text: "fresh1.1.1\n"
           - class: Section
             attributes:
               marker_len: 13
               section_marker: "~"
             children:
             - class: Title
-              attributes:
-                text: |
-                  fresh1.1.1.1
+              children:
+              - class: Paragraph
+                children:
+                - class: PlainText
+                  attributes:
+                    text: "fresh1.1.1.1\n"
     - class: BlankLine
 - class: Section
   attributes:
@@ -52,9 +64,12 @@ children:
     section_marker: "="
   children:
   - class: Title
-    attributes:
-      text: |
-        sec2
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "sec2\n"
   - class: Directive
     attributes:
       directive_type: fresh
@@ -70,15 +85,17 @@ children:
           section_marker: "*"
         children:
         - class: Title
-          attributes:
-            text: |
-              fresh2.1
+          children:
+          - class: Paragraph
+            children:
+            - class: PlainText
+              attributes:
+                text: "fresh2.1\n"
         - class: Paragraph
           children:
           - class: PlainText
             attributes:
-              text: |
-                New title styles with every directive.
+              text: "New title styles with every directive.\n"
         - class: BlankLine
         - class: Section
           attributes:
@@ -86,34 +103,42 @@ children:
             section_marker: '-'
           children:
           - class: Title
-            attributes:
-              text: |
-                fresh2.1.1
+            children:
+            - class: Paragraph
+              children:
+              - class: PlainText
+                attributes:
+                  text: "fresh2.1.1\n"
         - class: Section
           attributes:
             marker_len: 11
             section_marker: '-'
           children:
           - class: Title
-            attributes:
-              text: |
-                fresh2.1.2
+            children:
+            - class: Paragraph
+              children:
+              - class: PlainText
+                attributes:
+                  text: "fresh2.1.2\n"
           - class: Section
             attributes:
               marker_len: 13
               section_marker: "="
             children:
             - class: Title
-              attributes:
-                text: |
-                  fresh2.1.2.1
+              children:
+              - class: Paragraph
+                children:
+                - class: PlainText
+                  attributes:
+                    text: "fresh2.1.2.1\n"
   - class: BlankLine
   - class: Paragraph
     children:
     - class: PlainText
       attributes:
-        text: |
-          This text belongs into sec2.
+        text: "This text belongs into sec2.\n"
   - class: BlankLine
   - class: Section
     attributes:
@@ -121,15 +146,17 @@ children:
       section_marker: '-'
     children:
     - class: Title
-      attributes:
-        text: |
-          sec2.2
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: "sec2.2\n"
     - class: Paragraph
       children:
       - class: PlainText
         attributes:
-          text: |
-            Document-wide title styles unchanged
+          text: "Document-wide title styles unchanged\n"
     - class: BlankLine
     - class: Section
       attributes:
@@ -137,6 +164,9 @@ children:
         section_marker: "*"
       children:
       - class: Title
-        attributes:
-          text: |
-            sec2.2.1
+        children:
+        - class: Paragraph
+          children:
+          - class: PlainText
+            attributes:
+              text: "sec2.2.1\n"

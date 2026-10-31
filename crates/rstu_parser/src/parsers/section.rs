@@ -1,9 +1,9 @@
 // SPDX-FileCopyrightText: 2026 Jochen Schmaehling <tostmann1@web.de>
 //
 // SPDX-License-Identifier: MIT
-use crate::parser_errors::ParserError;
 use crate::token::TokenKind as TK;
 use crate::token_stream::TokenStream;
+use crate::{parser_errors::ParserError, parsers::paragraph::parse_paragraph};
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 pub fn parse_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
@@ -19,7 +19,15 @@ pub fn parse_section_header(stream: &mut TokenStream) -> Result<NodeRef, ParserE
         stream.consume_newline();
     }
     let title = AstNode::new_ref(NodeClass::Title);
-    title.with_attr("text", stream.consume_text_incl_newline());
+    let content;
+    if stream.token_at_cursor().kind == TK::Indent {
+        title.with_attr("indent", stream.consume().len());
+        content = parse_paragraph(stream)?;
+        stream.consume(); // Dedent
+    } else {
+        content = parse_paragraph(stream)?;
+    }
+    title.push_child(content);
     section.push_child(title);
 
     if stream.token_at_cursor().kind != TK::Separator {
