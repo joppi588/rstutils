@@ -68,6 +68,9 @@ pub enum ParserError {
         found: String,
         position: Position,
     },
+    UnexpectedSeparation {
+        position: Position,
+    },
 }
 
 impl std::fmt::Display for ParserError {
@@ -92,7 +95,7 @@ impl std::fmt::Display for ParserError {
             Self::ListEndError { position } => {
                 write!(
                     formatter,
-                    "{position}: List item is not followed by an indented body."
+                    "{position}: List item is not followed by an indented body or blank line."
                 )
             }
             Self::ListMarkerError { marker, position } => {
@@ -126,7 +129,7 @@ impl std::fmt::Display for ParserError {
                 formatter,
                 "{position}: Literal block expected after literal marker."
             ),
-            Self::MissingFinalBlankLineError { entity,position } => {
+            Self::MissingFinalBlankLineError { entity, position } => {
                 write!(
                     formatter,
                     "{position}: {entity} is not followed by a blank line."
@@ -152,6 +155,12 @@ impl std::fmt::Display for ParserError {
             ),
             Self::UnexpectedIndentError { position } => {
                 write!(formatter, "{position}: Unexpected indentation")
+            }
+            Self::UnexpectedSeparation { position } => {
+                write!(
+                    formatter,
+                    "{position}: Unexpected section marker or transition."
+                )
             }
             Self::UnexpectedToken {
                 expected,

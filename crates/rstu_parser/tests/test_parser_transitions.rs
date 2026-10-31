@@ -26,10 +26,8 @@ fn ok_transitions(#[case] test_case: &str) {
     rst_vs_yaml!("transitions", test_case)
 }
 
-// TODO: Implement
 #[rstest]
 #[case::t03("transitions_03", PE::UnexpectedToken)]
-#[ignore = "Docutils system-message diagnostics for indented separators are not implemented"]
 fn err_transition(#[case] test_case: &str, #[case] expected_error: PE) {
     rst_err!("transitions", test_case, expected_error);
 }
