@@ -41,4 +41,6 @@ children:
   children:
   - class: PlainText
     attributes:
-      text: "This will generate a nested block quote, with the first paragraph \nnested deeper than the second."
+      text: |
+        This will generate a nested block quote, with the first paragraph
+        nested deeper than the second.
