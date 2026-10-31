@@ -103,11 +103,7 @@ impl NodeRefExt for NodeRef {
     }
 
     fn push_section_ref(&self, section: NodeRef) -> NodeRef {
-        assert_eq!(
-            section.borrow().class,
-            NodeClass::Section,
-            "push_section_ref requires a section node"
-        );
+        debug_assert_eq!(section.borrow().class, NodeClass::Section,);
 
         let section_marker = section.borrow().attributes.get_str("section_marker");
         let self_marker = self.borrow().attributes.get_str("section_marker");
