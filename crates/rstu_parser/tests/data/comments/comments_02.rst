@@ -1,0 +1,4 @@
+..
+   A comment consisting of multiple lines
+   starting on the line after the
+   explicit markup start.

@@ -1,0 +1,5 @@
+<document source="test data">
+    <comment xml:space="preserve">
+        A comment consisting of multiple lines
+        starting on the line after the
+        explicit markup start.

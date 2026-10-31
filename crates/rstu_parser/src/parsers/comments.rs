@@ -39,7 +39,9 @@ pub(crate) fn parse_comment(stream: &mut TokenStream) -> Result<NodeRef, ParserE
             });
         }
     }
-
+    if stream.token_at_cursor().kind == TK::BlankLine {
+        text += &stream.consume().lexeme;
+    }
     if stream.token_at_cursor().kind == TK::Indent {
         let base_indent = stream.consume().len();
         comment.with_attr("indent", base_indent);

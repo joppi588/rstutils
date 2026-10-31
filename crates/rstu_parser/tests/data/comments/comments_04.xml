@@ -1,0 +1,10 @@
+<document source="test data">
+    <comment xml:space="preserve">
+        A comment
+    <system_message level="2" line="2" source="test data" type="WARNING">
+        <paragraph>
+            Explicit markup ends without a blank line; unexpected unindent.
+    <paragraph>
+        no blank line
+    <paragraph>
+        Paragraph.

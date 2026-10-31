@@ -1,0 +1,9 @@
+<document source="test data">
+    <bullet_list bullet="+">
+        <list_item>
+            <paragraph>
+                bullet paragraph 1
+            <comment xml:space="preserve">
+                comment between bullet paragraphs 1 (leader) and 2
+            <paragraph>
+                bullet paragraph 2
