@@ -9,7 +9,7 @@ use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 pub(crate) fn parse_block(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
-    let block = AstNode::new_ref(NodeClass::Block);
+    let mut block = AstNode::new_ref(NodeClass::Block);
     let mut indent: usize = 0;
     if stream.token_at_cursor().kind == TK::Indent {
         let token = stream.consume();
@@ -17,7 +17,7 @@ pub(crate) fn parse_block(stream: &mut TokenStream) -> Result<NodeRef, ParserErr
         block.with_attr("indent", indent);
     }
     while stream.token_at_cursor().kind != TK::Dedent {
-        parse_body_element(stream, &block)?;
+        parse_body_element(stream, &mut block)?;
     }
     let dedent = stream.consume().len();
     if dedent != indent {

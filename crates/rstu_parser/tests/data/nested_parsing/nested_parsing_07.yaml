@@ -1,0 +1,86 @@
+class: Document
+children:
+- class: BlockQuote
+  children:
+  - class: BlankLine
+  - class: Block
+    attributes:
+      indent: 2
+    children:
+    - class: Directive
+      attributes:
+        directive_type: nested
+      children:
+      - class: BlankLine
+      - class: Block
+        attributes:
+          indent: 2
+        children:
+        - class: Paragraph
+          children:
+          - class: PlainText
+            attributes:
+              text:
+                "docutils: A section in a block-quote is invalid.\nrstu_parser: A section in a block-quote is "
+          - class: InlineMarkup
+            attributes:
+              markup: emphasis
+              text: valid
+          - class: PlainText
+            attributes:
+              text: |
+                .
+        - class: BlankLine
+        - class: Section
+          attributes:
+            marker_len: 15
+            section_marker: '-'
+          children:
+          - class: Title
+            attributes:
+              text: |
+                invalid section
+    - class: BlankLine
+    - class: Directive
+      attributes:
+        directive_type: nested-current
+      children:
+      - class: BlankLine
+      - class: Block
+        attributes:
+          indent: 2
+        children:
+        - class: Section
+          attributes:
+            marker_len: 12
+            section_marker: "="
+          children:
+          - class: Title
+            attributes:
+              text: |
+                valid, too
+    - class: BlankLine
+    - class: Directive
+      attributes:
+        directive_type: nested-section
+      children:
+      - class: BlankLine
+      - class: Block
+        attributes:
+          indent: 2
+        children:
+        - class: Paragraph
+          children:
+          - class: PlainText
+            attributes:
+              text: |
+                The <section> base node is discarded.
+        - class: BlankLine
+        - class: Section
+          attributes:
+            marker_len: 22
+            section_marker: '-'
+          children:
+          - class: Title
+            attributes:
+              text: "valid section (sic!)\n"

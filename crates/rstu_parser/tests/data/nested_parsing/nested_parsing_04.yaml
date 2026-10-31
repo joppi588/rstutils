@@ -1,0 +1,78 @@
+class: Document
+children:
+- class: Section
+  attributes:
+    marker_len: 4
+    section_marker: "="
+  children:
+  - class: Title
+    attributes:
+      text: |
+        sec1
+  - class: Section
+    attributes:
+      marker_len: 6
+      section_marker: '-'
+    children:
+    - class: Title
+      attributes:
+        text: |
+          sec1.1
+    - class: Directive
+      attributes:
+        directive_arguments: The next directive is parsed with the standard parser.
+        directive_type: note
+    - class: Directive
+      attributes:
+        directive_type: nested-current
+      children:
+      - class: BlankLine
+      - class: Block
+        attributes:
+          indent: 2
+        children:
+        - class: Section
+          attributes:
+            marker_len: 7
+            section_marker: "*"
+          children:
+          - class: Title
+            attributes:
+              text: |
+                nc1.1.1
+          - class: Section
+            attributes:
+              marker_len: 5
+              section_marker: '-'
+            children:
+            - class: Title
+              attributes:
+                text: |
+                  nc1.2
+            - class: Section
+              attributes:
+                marker_len: 7
+                section_marker: "="
+              children:
+              - class: Title
+                attributes:
+                  text: |
+                    nc1.2.1
+              - class: BlankLine
+              - class: Paragraph
+                children:
+                - class: PlainText
+                  attributes:
+                    text: |
+                      Docutils: Top-level (as sec1).
+                      rstu_parser: Subsection of nc1.2.
+    - class: BlankLine
+  - class: Section
+    attributes:
+      marker_len: 6
+      section_marker: '-'
+    children:
+    - class: Title
+      attributes:
+        text: |
+          sec2.2

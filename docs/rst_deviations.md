@@ -23,7 +23,8 @@ All of these are believed to be non-critical.
   * First indent defines the block indent.
   * Representation: The first line is a direct child of the line block, even if nested line blocks follow.
 - Inline markup
-  * Asterisks next to emphasis markers need to be escaped (see emphasis_06.rst)
+  * Asterisks-only surrounded emphasis markers need to be escaped (see emphasis_06.rst) to avoid confusion with
+    section marker.
 
 # Spec extensions
 - Enumerated list:
@@ -32,6 +33,9 @@ All of these are believed to be non-critical.
 
 # Interpretations
 Things that would be according to the spec book but not to the python parser implementation:
-- (empty)
+- Directives: rstu_parser does not support behavior extension via directives.
+  Directive bodies are parsed as sub-documents.
+  Consequences:
+  * New section hierarchy is started.
 
 # Proposals

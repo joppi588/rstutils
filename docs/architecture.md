@@ -10,12 +10,13 @@ Language Server
 
 # Design considerations
 1. "Make or buy"
-Option 1: Build on top of rst_parser package
+Option 1: Build on top of existing package.
 Option 2: Start from Scratch
 Start from scratch while reading the existing packages.
-Rationale:
-- Limitations of pest-parser approach (section stack, rst error detection);
-- Doctree-based approaches contain a lot of interpretation already, beyond the pure syntax analysis.
+Rationale (afaik):
+- rst_parser: Limitations of pest-parser approach (section stack, rst error detection);
+- https://github.com/salioglu/sphinx-ultra: Monolithic, coupling with sphinx
+- all: Doctree-based approaches contain a lot of interpretation already, beyond the pure syntax analysis. Not round-trip capable.
 
 2. AST and Doctree
 We use first an abstract syntax tree to parse the structure of the document (e.g. directives, indented blocks,...).
