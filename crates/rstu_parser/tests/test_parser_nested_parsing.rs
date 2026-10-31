@@ -3,11 +3,9 @@
 // SPDX-License-Identifier: MIT
 
 use rstest::rstest;
-use rstu_parser::parser_errors::ParserErrorKind as PE;
 
 #[path = "common/mod.rs"]
 mod test_parser;
-use test_parser::rst_err;
 use test_parser::rst_vs_yaml;
 
 // Nested parsing in the docutils parsers defines a directive supporting nested secion parsing.
