@@ -20,16 +20,14 @@ children:
           children:
           - class: PlainText
             attributes:
-              text:
-                "docutils: A section in a block-quote is invalid.\nrstu_parser: A section in a block-quote is "
+              text: "docutils: A section in a block-quote is invalid.\nrstu_parser: A section in a block-quote is "
           - class: InlineMarkup
             attributes:
               markup: emphasis
               text: valid
           - class: PlainText
             attributes:
-              text: |
-                .
+              text: ".\n"
         - class: BlankLine
         - class: Section
           attributes:
@@ -37,9 +35,12 @@ children:
             section_marker: '-'
           children:
           - class: Title
-            attributes:
-              text: |
-                invalid section
+            children:
+            - class: Paragraph
+              children:
+              - class: PlainText
+                attributes:
+                  text: "invalid section\n"
     - class: BlankLine
     - class: Directive
       attributes:
@@ -56,9 +57,12 @@ children:
             section_marker: "="
           children:
           - class: Title
-            attributes:
-              text: |
-                valid, too
+            children:
+            - class: Paragraph
+              children:
+              - class: PlainText
+                attributes:
+                  text: "valid, too\n"
     - class: BlankLine
     - class: Directive
       attributes:
@@ -73,8 +77,7 @@ children:
           children:
           - class: PlainText
             attributes:
-              text: |
-                The <section> base node is discarded.
+              text: "The <section> base node is discarded.\n"
         - class: BlankLine
         - class: Section
           attributes:
@@ -82,5 +85,9 @@ children:
             section_marker: '-'
           children:
           - class: Title
-            attributes:
-              text: "valid section (sic!)\n"
+            children:
+            - class: Paragraph
+              children:
+              - class: PlainText
+                attributes:
+                  text: "valid section (sic!)\n"

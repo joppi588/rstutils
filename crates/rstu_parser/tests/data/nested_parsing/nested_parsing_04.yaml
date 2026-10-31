@@ -6,18 +6,24 @@ children:
     section_marker: "="
   children:
   - class: Title
-    attributes:
-      text: |
-        sec1
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "sec1\n"
   - class: Section
     attributes:
       marker_len: 6
       section_marker: '-'
     children:
     - class: Title
-      attributes:
-        text: |
-          sec1.1
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: "sec1.1\n"
     - class: Directive
       attributes:
         directive_arguments: The next directive is parsed with the standard parser.
@@ -37,27 +43,36 @@ children:
             section_marker: "*"
           children:
           - class: Title
-            attributes:
-              text: |
-                nc1.1.1
+            children:
+            - class: Paragraph
+              children:
+              - class: PlainText
+                attributes:
+                  text: "nc1.1.1\n"
           - class: Section
             attributes:
               marker_len: 5
               section_marker: '-'
             children:
             - class: Title
-              attributes:
-                text: |
-                  nc1.2
+              children:
+              - class: Paragraph
+                children:
+                - class: PlainText
+                  attributes:
+                    text: "nc1.2\n"
             - class: Section
               attributes:
                 marker_len: 7
                 section_marker: "="
               children:
               - class: Title
-                attributes:
-                  text: |
-                    nc1.2.1
+                children:
+                - class: Paragraph
+                  children:
+                  - class: PlainText
+                    attributes:
+                      text: "nc1.2.1\n"
               - class: BlankLine
               - class: Paragraph
                 children:
@@ -73,6 +88,9 @@ children:
       section_marker: '-'
     children:
     - class: Title
-      attributes:
-        text: |
-          sec2.2
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: "sec2.2\n"
