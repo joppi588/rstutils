@@ -1,18 +1,19 @@
   .. nested::
 
-    A section in a block-quote is invalid.
+    docutils: A section in a block-quote is invalid.
+    rstu_parser: A section in a block-quote is *valid*.
 
     invalid section
     ---------------
 
   .. nested-current::
 
-    invalid, too
+    valid, too
     ============
 
   .. nested-section::
 
     The <section> base node is discarded.
 
-    invalid section (sic!)
+    valid section (sic!)
     ----------------------

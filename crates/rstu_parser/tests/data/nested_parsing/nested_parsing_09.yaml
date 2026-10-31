@@ -7,7 +7,8 @@ children:
   children:
   - class: Title
     attributes:
-      text: "sec1\n"
+      text: |
+        sec1
   - class: Section
     attributes:
       marker_len: 6
@@ -15,7 +16,8 @@ children:
     children:
     - class: Title
       attributes:
-        text: "sec1.1\n"
+        text: |
+          sec1.1
     - class: Directive
       attributes:
         directive_type: fresh-current
@@ -32,7 +34,8 @@ children:
           children:
           - class: Title
             attributes:
-              text: "fc1.1.1\n"
+              text: |
+                fc1.1.1
         - class: Section
           attributes:
             marker_len: 7
@@ -40,7 +43,8 @@ children:
           children:
           - class: Title
             attributes:
-              text: "fc1.1.2\n"
+              text: |
+                fc1.1.2
           - class: Section
             attributes:
               marker_len: 9
@@ -48,13 +52,16 @@ children:
             children:
             - class: Title
               attributes:
-                text: "fc1.1.2.1\n"
+                text: |
+                  fc1.1.2.1
     - class: BlankLine
     - class: Paragraph
       children:
       - class: PlainText
         attributes:
-          text: "This text belongs into the last nested section.\n"
+          text: |
+            docutils: This text belongs into the last nested section.
+            rstu_parser: belongs into sec1.1
     - class: BlankLine
   - class: Section
     attributes:
@@ -63,4 +70,5 @@ children:
     children:
     - class: Title
       attributes:
-        text: "sec1.2\n"
+        text: |
+          sec1.2

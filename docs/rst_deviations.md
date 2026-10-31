@@ -33,7 +33,7 @@ All of these are believed to be non-critical.
 
 # Interpretations
 Things that would be according to the spec book but not to the python parser implementation:
-- Directives: rstu_parser does not support extensions via directives.
+- Directives: rstu_parser does not support behavior extension via directives.
   Directive bodies are parsed as sub-documents.
   Consequences:
   * New section hierarchy is started.

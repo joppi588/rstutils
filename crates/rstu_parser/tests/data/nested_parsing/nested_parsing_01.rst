@@ -7,4 +7,6 @@
   nested2.1
   ---------
 
-This paragraph belongs to the last nested section.
+  This paragraph belongs to the last nested section.
+
+This not.

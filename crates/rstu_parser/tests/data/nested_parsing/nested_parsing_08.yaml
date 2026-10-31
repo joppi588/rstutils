@@ -7,7 +7,8 @@ children:
   children:
   - class: Title
     attributes:
-      text: "sec1\n"
+      text: |
+        sec1
   - class: Section
     attributes:
       marker_len: 6
@@ -15,7 +16,8 @@ children:
     children:
     - class: Title
       attributes:
-        text: "sec1.1\n"
+        text: |
+          sec1.1
     - class: Directive
       attributes:
         directive_type: fresh
@@ -32,7 +34,8 @@ children:
           children:
           - class: Title
             attributes:
-              text: "fresh1.1.1\n"
+              text: |
+                fresh1.1.1
           - class: Section
             attributes:
               marker_len: 13
@@ -40,7 +43,8 @@ children:
             children:
             - class: Title
               attributes:
-                text: "fresh1.1.1.1\n"
+                text: |
+                  fresh1.1.1.1
     - class: BlankLine
 - class: Section
   attributes:
@@ -49,7 +53,8 @@ children:
   children:
   - class: Title
     attributes:
-      text: "sec2\n"
+      text: |
+        sec2
   - class: Directive
     attributes:
       directive_type: fresh
@@ -66,12 +71,14 @@ children:
         children:
         - class: Title
           attributes:
-            text: "fresh2.1\n"
+            text: |
+              fresh2.1
         - class: Paragraph
           children:
           - class: PlainText
             attributes:
-              text: "New title styles with every directive.\n"
+              text: |
+                New title styles with every directive.
         - class: BlankLine
         - class: Section
           attributes:
@@ -80,7 +87,8 @@ children:
           children:
           - class: Title
             attributes:
-              text: "fresh2.1.1\n"
+              text: |
+                fresh2.1.1
         - class: Section
           attributes:
             marker_len: 11
@@ -88,7 +96,8 @@ children:
           children:
           - class: Title
             attributes:
-              text: "fresh2.1.2\n"
+              text: |
+                fresh2.1.2
           - class: Section
             attributes:
               marker_len: 13
@@ -96,13 +105,15 @@ children:
             children:
             - class: Title
               attributes:
-                text: "fresh2.1.2.1\n"
+                text: |
+                  fresh2.1.2.1
   - class: BlankLine
   - class: Paragraph
     children:
     - class: PlainText
       attributes:
-        text: "This text belongs into the last nested section (sic!).\n"
+        text: |
+          This text belongs into sec2.
   - class: BlankLine
   - class: Section
     attributes:
@@ -111,12 +122,14 @@ children:
     children:
     - class: Title
       attributes:
-        text: "sec2.2\n"
+        text: |
+          sec2.2
     - class: Paragraph
       children:
       - class: PlainText
         attributes:
-          text: "Document-wide title styles unchanged\n"
+          text: |
+            Document-wide title styles unchanged
     - class: BlankLine
     - class: Section
       attributes:
@@ -125,4 +138,5 @@ children:
       children:
       - class: Title
         attributes:
-          text: "sec2.2.1\n"
+          text: |
+            sec2.2.1

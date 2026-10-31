@@ -7,7 +7,8 @@ children:
   children:
   - class: Title
     attributes:
-      text: "sec1\n"
+      text: |
+        sec1
   - class: Section
     attributes:
       marker_len: 6
@@ -15,10 +16,11 @@ children:
     children:
     - class: Title
       attributes:
-        text: "sec1.1\n"
+        text: |
+          sec1.1
     - class: Directive
       attributes:
-        directive_arguments: The next directive is parsed with "nested_list_parse()".
+        directive_arguments: The next directive is parsed with the standard parser.
         directive_type: note
     - class: Directive
       attributes:
@@ -36,7 +38,8 @@ children:
           children:
           - class: Title
             attributes:
-              text: "nc1.1.1\n"
+              text: |
+                nc1.1.1
           - class: Section
             attributes:
               marker_len: 5
@@ -44,12 +47,25 @@ children:
             children:
             - class: Title
               attributes:
-                text: "nc1.2\n"
-            - class: Paragraph
+                text: |
+                  nc1.2
+            - class: Section
+              attributes:
+                marker_len: 7
+                section_marker: "="
               children:
-              - class: PlainText
+              - class: Title
                 attributes:
-                  text: "nc2\n===\n"
+                  text: |
+                    nc1.2.1
+              - class: BlankLine
+              - class: Paragraph
+                children:
+                - class: PlainText
+                  attributes:
+                    text: |
+                      Docutils: Top-level (as sec1).
+                      rstu_parser: Subsection of nc1.2.
     - class: BlankLine
   - class: Section
     attributes:
@@ -58,4 +74,5 @@ children:
     children:
     - class: Title
       attributes:
-        text: "sec2.2\n"
+        text: |
+          sec2.2

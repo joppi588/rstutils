@@ -16,7 +16,8 @@ children:
       children:
       - class: Title
         attributes:
-          text: "nested1\n"
+          text: |
+            nested1
     - class: Section
       attributes:
         marker_len: 7
@@ -24,7 +25,8 @@ children:
       children:
       - class: Title
         attributes:
-          text: "nested2\n"
+          text: |
+            nested2
       - class: Section
         attributes:
           marker_len: 9
@@ -32,10 +34,19 @@ children:
         children:
         - class: Title
           attributes:
-            text: "nested2.1\n"
+            text: |
+              nested2.1
+        - class: BlankLine
+        - class: Paragraph
+          children:
+          - class: PlainText
+            attributes:
+              text: |
+                This paragraph belongs to the last nested section.
 - class: BlankLine
 - class: Paragraph
   children:
   - class: PlainText
     attributes:
-      text: "This paragraph belongs to the last nested section.\n"
+      text: |
+        This not.

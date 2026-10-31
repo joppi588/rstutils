@@ -111,16 +111,7 @@ impl NodeRefExt for NodeRef {
 
         let section_marker = section.borrow().attributes.get_str("section_marker");
         let self_marker = self.borrow().attributes.get_str("section_marker");
-        // ...existing code...
-        eprintln!(
-            "class={:?} marker={:?} has_weak={} strong={} parent={:?}",
-            self.borrow().class,
-            self_marker,
-            self.borrow().parent.is_some(),
-            Rc::strong_count(self),
-            self.get_parent().map(|p| p.borrow().class.clone()),
-        );
-        // ...existing code...
+
         let target_parent = match self.get_parent() {
             None => self.clone(),
             Some(parent) if self_marker == section_marker => parent,

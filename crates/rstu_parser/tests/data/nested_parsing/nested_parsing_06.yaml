@@ -7,7 +7,8 @@ children:
   children:
   - class: Title
     attributes:
-      text: "sec1\n"
+      text: |
+        sec1
   - class: Directive
     attributes:
       directive_type: nested-section
@@ -24,9 +25,12 @@ children:
         children:
         - class: Title
           attributes:
-            text: "nested-section1\n"
+            text: |
+              nested-section1
         - class: Paragraph
           children:
           - class: PlainText
             attributes:
-              text: "with content\n"
+              text: |
+                Docutils: Level of sec1
+                rstu_parser: Top level below nested-section.

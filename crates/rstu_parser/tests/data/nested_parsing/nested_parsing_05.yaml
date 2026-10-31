@@ -7,7 +7,8 @@ children:
   children:
   - class: Title
     attributes:
-      text: "sec1\n"
+      text: |
+        sec1
   - class: Section
     attributes:
       marker_len: 6
@@ -15,7 +16,8 @@ children:
     children:
     - class: Title
       attributes:
-        text: "sec1.1\n"
+        text: |
+          sec1.1
     - class: Directive
       attributes:
         directive_type: nested-section
@@ -32,13 +34,16 @@ children:
           children:
           - class: Title
             attributes:
-              text: "nested-section1.1.1\n"
+              text: |
+                nested-section1.1.1
     - class: BlankLine
     - class: Paragraph
       children:
       - class: PlainText
         attributes:
-          text: "This paragraph belongs to the last nested section (sic!).\n"
+          text: |
+            Docutils: This paragraph belongs to the last nested section (sic!).
+            rstu_parser: to sec1.1
     - class: BlankLine
 - class: Section
   attributes:
@@ -47,4 +52,5 @@ children:
   children:
   - class: Title
     attributes:
-      text: "sec2\n"
+      text: |
+        sec2

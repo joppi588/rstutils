@@ -24,7 +24,7 @@ sec2
   fresh2.1.2.1
   =============
 
-This text belongs into the last nested section (sic!).
+This text belongs into sec2.
 
 sec2.2
 ------

@@ -20,7 +20,17 @@ children:
           children:
           - class: PlainText
             attributes:
-              text: "A section in a block-quote is invalid.\n"
+              text: |-
+                docutils: A section in a block-quote is invalid.
+                rstu_parser: A section in a block-quote is
+          - class: InlineMarkup
+            attributes:
+              markup: emphasis
+              text: valid
+          - class: PlainText
+            attributes:
+              text: |
+                .
         - class: BlankLine
         - class: Section
           attributes:
@@ -29,7 +39,8 @@ children:
           children:
           - class: Title
             attributes:
-              text: "invalid section\n"
+              text: |
+                invalid section
     - class: BlankLine
     - class: Directive
       attributes:
@@ -47,7 +58,8 @@ children:
           children:
           - class: Title
             attributes:
-              text: "invalid, too\n"
+              text: |
+                valid, too
     - class: BlankLine
     - class: Directive
       attributes:
@@ -62,7 +74,8 @@ children:
           children:
           - class: PlainText
             attributes:
-              text: "The <section> base node is discarded.\n"
+              text: |
+                The <section> base node is discarded.
         - class: BlankLine
         - class: Section
           attributes:
@@ -71,4 +84,5 @@ children:
           children:
           - class: Title
             attributes:
-              text: "invalid section (sic!)\n"
+              text: |
+                valid section (sic!)

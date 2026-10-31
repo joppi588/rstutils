@@ -11,7 +11,8 @@ sec1.1
   fc1.1.2.1
   =========
 
-This text belongs into the last nested section.
+docutils: This text belongs into the last nested section.
+rstu_parser: belongs into sec1.1
 
 sec1.2
 ------
