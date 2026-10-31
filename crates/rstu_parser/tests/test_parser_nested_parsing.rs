@@ -1,0 +1,27 @@
+// SPDX-FileCopyrightText: 2026 Jochen Schmaehling <tostmann1@web.de>
+//
+// SPDX-License-Identifier: MIT
+
+use rstest::rstest;
+
+#[path = "common/mod.rs"]
+mod test_parser;
+use test_parser::rst_vs_yaml;
+
+// Nested parsing in the docutils parsers defines a directive supporting nested secion parsing.
+// In rstu, these tests demonstrate the standard parser behavior.
+
+#[rstest]
+#[case("nested_parsing_00")]
+#[case("nested_parsing_01")]
+#[case("nested_parsing_02")]
+#[case("nested_parsing_03")]
+#[case("nested_parsing_04")]
+#[case("nested_parsing_05")]
+#[case("nested_parsing_06")]
+#[case("nested_parsing_07")]
+#[case("nested_parsing_08")]
+#[case("nested_parsing_09")]
+fn ok_nested_parsing(#[case] test_case: &str) {
+    rst_vs_yaml!("nested_parsing", test_case);
+}

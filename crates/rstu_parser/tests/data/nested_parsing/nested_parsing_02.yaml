@@ -1,0 +1,47 @@
+class: Document
+children:
+- class: Directive
+  attributes:
+    directive_arguments: Directives will not trigger custom parsing.
+    directive_type: note
+- class: Directive
+  attributes:
+    directive_type: nested
+  children:
+  - class: BlankLine
+  - class: Block
+    attributes:
+      indent: 2
+    children:
+    - class: Section
+      attributes:
+        marker_len: 9
+        section_marker: "*"
+      children:
+      - class: Title
+        attributes:
+          text: |
+            nested1
+      - class: Section
+        attributes:
+          marker_len: 9
+          section_marker: '-'
+        children:
+        - class: Title
+          attributes:
+            text: |
+              nested1.1
+        - class: BlankLine
+        - class: Paragraph
+          children:
+          - class: PlainText
+            attributes:
+              text: |
+                This paragraph belongs to the last nested section.
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: |
+        This not.

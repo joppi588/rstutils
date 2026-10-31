@@ -45,8 +45,18 @@ use token_stream::TokenStream;
 pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
     let mut stream = tokenize(input);
     let doc = AstNode::new_ref(NodeClass::Document);
-    let mut current_parent = doc.clone();
 
+    parse_body_element(&mut stream, &doc.clone())?;
+
+    doc.prune_leading_blankline();
+    Ok(doc)
+}
+
+fn parse_body_element(
+    stream: &mut TokenStream,
+    current_parent: &Rc<RefCell<AstNode>>,
+) -> Result<(), ParserError> {
+    let mut current_parent = current_parent.clone();
     loop {
         match (
             stream.token_at_cursor().kind,
@@ -56,13 +66,13 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
                 current_parent.push_blank_lines(stream.consume().len());
 
                 if matches!(stream.token_at_nextline().kind, TK::BlankLine | TK::EoF) {
-                    let transition = parse_transition(&mut stream)?;
+                    let transition = parse_transition(stream)?;
                     current_parent.push_child(transition);
                 }
                 // else: do section parsing in next iteration.
             }
             (TK::Separator, _) | (_, TK::Separator) => {
-                let section = parse_section_header(&mut stream)?;
+                let section = parse_section_header(stream)?;
                 current_parent.push_section_ref(section.clone());
                 current_parent = section;
             }
@@ -74,107 +84,97 @@ pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
             (TK::EoF, _) => {
                 break;
             }
-
-            _ => {
-                parse_body_element(&mut stream, &current_parent)?;
+            (TK::BulletListMarker, _) => {
+                let bullet_list = parse_bullet_list(stream)?;
+                current_parent.push_child(bullet_list);
             }
-        };
-    }
+            (TK::Directive, _) => {
+                let directive = parse_directive(stream)?;
+                current_parent.push_child(directive);
+            }
 
-    doc.prune_leading_blankline();
-    Ok(doc)
-}
+            (TK::DoctestStart, _) => {
+                let doctest_block = parse_doctest_block(stream)?;
+                current_parent.push_child(doctest_block);
+            }
 
-fn parse_body_element(
-    stream: &mut TokenStream,
-    current_parent: &Rc<RefCell<AstNode>>,
-) -> Result<(), ParserError> {
-    match stream.token_at_cursor().kind {
-        TK::BulletListMarker => {
-            let bullet_list = parse_bullet_list(stream)?;
-            current_parent.push_child(bullet_list);
-        }
-        TK::Directive => {
-            let directive = parse_directive(stream)?;
-            current_parent.push_child(directive);
-        }
+            (TK::FootNote, _) => {
+                let footnote = parse_footnote(stream)?;
+                current_parent.push_child(footnote);
+            }
 
-        TK::DoctestStart => {
-            let doctest_block = parse_doctest_block(stream)?;
-            current_parent.push_child(doctest_block);
-        }
+            (TK::DoubleDot, _) => {
+                let comment = parse_comment(stream)?;
+                current_parent.push_child(comment);
+            }
 
-        TK::FootNote => {
-            let footnote = parse_footnote(stream)?;
-            current_parent.push_child(footnote);
-        }
+            (TK::Field, _) => {
+                let field_list = parse_field_list(stream)?;
+                current_parent.push_child(field_list);
+            }
 
-        TK::DoubleDot => {
-            let comment = parse_comment(stream)?;
-            current_parent.push_child(comment);
-        }
+            (TK::EnumeratedListMarker, _) => {
+                let enumerated_list = parse_enumerated_list(stream)?;
+                current_parent.push_child(enumerated_list);
+            }
 
-        TK::Field => {
-            let field_list = parse_field_list(stream)?;
-            current_parent.push_child(field_list);
-        }
+            _ if is_definition_list_item(stream) => {
+                let definition_list = parse_definition_list(stream)?;
+                current_parent.push_child(definition_list);
+            }
 
-        TK::EnumeratedListMarker => {
-            let enumerated_list = parse_enumerated_list(stream)?;
-            current_parent.push_child(enumerated_list);
-        }
+            (TK::Option, _)
+                if matches!(
+                    stream.token_at_nextline().kind,
+                    TK::BlankLine | TK::Option | TK::Indent | TK::EoF
+                ) =>
+            {
+                let option_list = parse_option_list(stream)?;
+                current_parent.push_child(option_list);
+            }
 
-        _ if is_definition_list_item(stream) => {
-            let definition_list = parse_definition_list(stream)?;
-            current_parent.push_child(definition_list);
-        }
+            (
+                TK::LiteralBlock | TK::LiteralBlockMinimized | TK::LiteralBlockPartiallyMinimized,
+                _,
+            ) => {
+                let literal_block = parse_literal_block(stream)?;
+                current_parent.push_child(literal_block);
+            }
 
-        TK::Option
-            if matches!(
-                stream.token_at_nextline().kind,
-                TK::BlankLine | TK::Option | TK::Indent | TK::EoF
-            ) =>
-        {
-            let option_list = parse_option_list(stream)?;
-            current_parent.push_child(option_list);
-        }
+            (TK::LineBlock, _) => {
+                let line_block = parse_line_block(stream, 0)?;
+                current_parent.push_child(line_block);
+            }
 
-        TK::LiteralBlock | TK::LiteralBlockMinimized | TK::LiteralBlockPartiallyMinimized => {
-            let literal_block = parse_literal_block(stream)?;
-            current_parent.push_child(literal_block);
-        }
-
-        TK::LineBlock => {
-            let line_block = parse_line_block(stream, 0)?;
-            current_parent.push_child(line_block);
-        }
-
-        TK::BlankLine if stream.token_at_nextline().kind == TK::Indent => {
-            let block_quote = parse_block_quote(stream)?;
-            current_parent.push_child(block_quote);
-        }
-        TK::BlankLine => {
-            current_parent.push_blank_lines(stream.consume().len());
-        }
-        TK::Attribution => {
-            let attribution = AstNode::new_ref(NodeClass::Attribution);
-            attribution.with_attr("marker", stream.consume().lexeme);
-            let paragraph = parse_paragraph_hanging_indent(stream)?;
-            attribution.push_child(paragraph);
-            current_parent.push_child(attribution);
-        }
-        kind if kind.is(TC::PARAGRAPH_END) => {
-            return Err(ParserError::UnexpectedToken {
-                expected: "Some content.".to_owned(),
-                found: format!("{:?}", kind),
-                position: stream.position_at_cursor(),
-            });
-        }
-        _ => {
-            let paragraph = parse_paragraph(stream)?;
-            current_parent.push_child(paragraph);
+            (TK::BlankLine, _) if stream.token_at_nextline().kind == TK::Indent => {
+                let block_quote = parse_block_quote(stream)?;
+                current_parent.push_child(block_quote);
+            }
+            (TK::BlankLine, _) => {
+                current_parent.push_blank_lines(stream.consume().len());
+            }
+            (TK::Attribution, _) => {
+                let attribution = AstNode::new_ref(NodeClass::Attribution);
+                attribution.with_attr("marker", stream.consume().lexeme);
+                let paragraph = parse_paragraph_hanging_indent(stream)?;
+                attribution.push_child(paragraph);
+                current_parent.push_child(attribution);
+            }
+            (TK::Dedent, _) => {
+                break;
+            }
+            (kind, _) if kind.is(TC::PARAGRAPH_END) => {
+                return Err(ParserError::UnexpectedToken {
+                    expected: "Some content.".to_owned(),
+                    found: format!("{:?}", kind),
+                    position: stream.position_at_cursor(),
+                });
+            }
+            _ => {
+                let paragraph = parse_paragraph(stream)?;
+                current_parent.push_child(paragraph);
+            }
         }
     }
-
     Ok(())
 }
