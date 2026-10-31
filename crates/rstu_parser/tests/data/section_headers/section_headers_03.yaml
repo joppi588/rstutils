@@ -4,7 +4,9 @@ children:
   children:
   - class: PlainText
     attributes:
-      text: "Test unexpected section titles.\n"
+      text: |
+        Test nested section titles.
+        Accepted by the parser, may be rejected by later steps.
 - class: BlockQuote
   children:
   - class: BlankLine
@@ -12,14 +14,43 @@ children:
     attributes:
       indent: 4
     children:
-    - class: Paragraph
+    - class: Section
+      attributes:
+        marker_len: 5
+        section_marker: "="
       children:
-      - class: PlainText
+      - class: Title
+        children:
+        - class: Paragraph
+          children:
+          - class: PlainText
+            attributes:
+              text: |
+                Title
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: |
+              Paragraph.
+      - class: BlankLine
+      - class: Section
         attributes:
-          text: "Title\n=====\nParagraph.\n"
-    - class: BlankLine
-    - class: Paragraph
-      children:
-      - class: PlainText
-        attributes:
-          text: "-----\nTitle\n-----\nParagraph.\n"
+          marker_len: 5
+          marker_len_opening: 5
+          section_marker: '-'
+        children:
+        - class: Title
+          children:
+          - class: Paragraph
+            children:
+            - class: PlainText
+              attributes:
+                text: |
+                  Title
+        - class: Paragraph
+          children:
+          - class: PlainText
+            attributes:
+              text: |
+                Paragraph.

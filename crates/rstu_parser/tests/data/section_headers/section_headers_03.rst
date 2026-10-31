@@ -1,4 +1,5 @@
-Test unexpected section titles.
+Test nested section titles.
+Accepted by the parser, may be rejected by later steps.
 
     Title
     =====

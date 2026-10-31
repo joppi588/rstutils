@@ -14,6 +14,7 @@ use test_parser::rst_vs_yaml;
 #[case::sh00("section_headers_00")]
 #[case::sh01("section_headers_01")]
 #[case::sh02("section_headers_02")]
+#[case::sh03("section_headers_03")]
 #[case::sh04("section_headers_04")]
 #[case::sh05("section_headers_05")]
 #[case::sh06("section_headers_06")]
@@ -45,7 +46,6 @@ fn ok_section_headers(#[case] test_case: &str) {
 }
 
 #[rstest]
-#[case::sh03("section_headers_03", PE::UnexpectedToken)]
 #[case::sh08("section_headers_08", PE::SectionTitleMissingClosingAfterOpening)]
 #[case::sh09("section_headers_09", PE::SectionTitleMissingClosingAfterOpening)]
 #[case::sh10("section_headers_10", PE::SectionTitleMissingClosingAfterOpening)]
