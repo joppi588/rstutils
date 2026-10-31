@@ -62,6 +62,14 @@ fn parse_body_element(
             stream.token_at_cursor().kind,
             stream.token_at_nextline().kind,
         ) {
+            (TK::EoF | TK::Dedent, _) => {
+                break;
+            }
+            (TK::Indent, _) => {
+                return Err(ParserError::UnexpectedIndentError {
+                    position: stream.position_at_cursor(),
+                });
+            }
             (TK::BlankLine, TK::Separator) => {
                 current_parent.push_blank_lines(stream.consume().len());
 
@@ -70,19 +78,6 @@ fn parse_body_element(
                     current_parent.push_child(transition);
                 }
                 // else: do section parsing in next iteration.
-            }
-            (TK::Separator, _) | (_, TK::Separator) => {
-                let section = parse_section_header(stream)?;
-                current_parent.push_section_ref(section.clone());
-                current_parent = section;
-            }
-            (TK::Indent, _) => {
-                return Err(ParserError::UnexpectedIndentError {
-                    position: stream.position_at_cursor(),
-                });
-            }
-            (TK::EoF, _) => {
-                break;
             }
             (TK::BulletListMarker, _) => {
                 let bullet_list = parse_bullet_list(stream)?;
@@ -160,15 +155,17 @@ fn parse_body_element(
                 attribution.push_child(paragraph);
                 current_parent.push_child(attribution);
             }
-            (TK::Dedent, _) => {
-                break;
-            }
             (kind, _) if kind.is(TC::PARAGRAPH_END) => {
                 return Err(ParserError::UnexpectedToken {
                     expected: "Some content.".to_owned(),
                     found: format!("{:?}", kind),
                     position: stream.position_at_cursor(),
                 });
+            }
+            (TK::Separator, _) | (_, TK::Separator) => {
+                let section = parse_section_header(stream)?;
+                current_parent.push_section_ref(section.clone());
+                current_parent = section;
             }
             _ => {
                 let paragraph = parse_paragraph(stream)?;

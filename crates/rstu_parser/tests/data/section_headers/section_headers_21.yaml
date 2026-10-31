@@ -11,10 +11,12 @@ children:
       children:
       - class: PlainText
         attributes:
-          text: "1. Numbered Title\n"
+          text: |
+            1. Numbered Title
   - class: BlankLine
   - class: Paragraph
     children:
     - class: PlainText
       attributes:
-        text: "Paragraph.\n"
+        text: |
+          Paragraph.
