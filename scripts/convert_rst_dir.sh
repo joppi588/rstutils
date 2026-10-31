@@ -15,8 +15,8 @@ if [ ! -d "$DIRECTORY" ]; then
     exit 1
 fi
 
-# Iterate through all .rst files in the directory and its subdirectories
-while IFS= read -r -d '' file; do
+# Iterate through all .rst files in the directory
+for file in "$DIRECTORY"/*.rst; do
     # Check if there are no .rst files
     if [ ! -e "$file" ]; then
         echo "No .rst files found in $DIRECTORY."
@@ -29,4 +29,4 @@ while IFS= read -r -d '' file; do
     else
         echo "Error converting: $file"
     fi
-done < <(find "$DIRECTORY" -type f -name '*.rst' -print0)
+done
