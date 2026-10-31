@@ -13,6 +13,7 @@ use test_parser::rst_vs_yaml;
 #[case::t00("transitions_00")]
 #[case::t01("transitions_01")]
 #[case::t02("transitions_02")]
+#[case::t03("transitions_03")]
 #[case::t04("transitions_04")]
 #[case::t05("transitions_05")]
 #[case::t06("transitions_06")]
@@ -27,7 +28,6 @@ fn ok_transitions(#[case] test_case: &str) {
 }
 
 #[rstest]
-#[case::t03("transitions_03", PE::UnexpectedToken)]
 fn err_transition(#[case] test_case: &str, #[case] expected_error: PE) {
     rst_err!("transitions", test_case, expected_error);
 }

@@ -4,7 +4,8 @@ children:
   children:
   - class: PlainText
     attributes:
-      text: "Test unexpected transition markers.\n"
+      text: |
+        Test unexpected transition markers.
 - class: BlockQuote
   children:
   - class: BlankLine
@@ -16,16 +17,17 @@ children:
       children:
       - class: PlainText
         attributes:
-          text: "Block quote.\n"
+          text: |
+            Block quote.
+    - class: BlankLine
+    - class: Transition
+      attributes:
+        marker_len: 8
+        marker_type: '-'
     - class: BlankLine
     - class: Paragraph
       children:
       - class: PlainText
         attributes:
-          text: "--------\n"
-    - class: BlankLine
-    - class: Paragraph
-      children:
-      - class: PlainText
-        attributes:
-          text: "Paragraph.\n"
+          text: |
+            Paragraph.
