@@ -1,0 +1,20 @@
+class: Document
+children:
+- class: Citation
+  attributes:
+    label: citation
+  children:
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: "This is a citation.\n"
+- class: Citation
+  attributes:
+    label: citation2
+  children:
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: "followed by another.\n"

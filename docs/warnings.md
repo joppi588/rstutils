@@ -13,6 +13,7 @@ Min possible (see above)
 ---
 Empty section title
 section_headers_14.rst
+n/a
 ---
 Inconsistent section marker order or missing section level
 section_headers_18.rst
@@ -22,3 +23,6 @@ Explicit markup ends without a blank line; unexpected unindent.
 comments_04,
 Insert blank line
 ---
+Empty citation
+citations_05
+n/a

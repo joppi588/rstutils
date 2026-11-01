@@ -44,7 +44,7 @@ fn parse_note(
         TK::BlankLine | TK::EoF | TK::FootNote | TK::Citation => parse_paragraph(stream)?,
         kind => {
             return Err(ParserError::UnexpectedToken {
-                expected: "Indent, Footnote or Blankline".to_owned(),
+                expected: "Indent, Citation, Footnote or Blankline".to_owned(),
                 found: format!("{:?}", kind),
                 position: stream.position_at(index_next_line),
             });
