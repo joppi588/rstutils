@@ -1,0 +1,21 @@
+class: Document
+children:
+- class: Section
+  attributes:
+    marker_len: 5
+    marker_len_opening: 5
+    section_marker: "="
+  children:
+  - class: Title
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "Title\n"
+  - class: BlankLine
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: "Test overline title.\n"

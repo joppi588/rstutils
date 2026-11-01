@@ -1,0 +1,56 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: |
+        Test nested section titles.
+        Accepted by the parser, may be rejected by later steps.
+- class: BlockQuote
+  children:
+  - class: BlankLine
+  - class: Block
+    attributes:
+      indent: 4
+    children:
+    - class: Section
+      attributes:
+        marker_len: 5
+        section_marker: "="
+      children:
+      - class: Title
+        children:
+        - class: Paragraph
+          children:
+          - class: PlainText
+            attributes:
+              text: |
+                Title
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: |
+              Paragraph.
+      - class: BlankLine
+      - class: Section
+        attributes:
+          marker_len: 5
+          marker_len_opening: 5
+          section_marker: '-'
+        children:
+        - class: Title
+          children:
+          - class: Paragraph
+            children:
+            - class: PlainText
+              attributes:
+                text: |
+                  Title
+        - class: Paragraph
+          children:
+          - class: PlainText
+            attributes:
+              text: |
+                Paragraph.
