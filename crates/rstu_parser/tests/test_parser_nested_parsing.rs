@@ -12,16 +12,16 @@ use test_parser::rst_vs_yaml;
 // In rstu, these tests demonstrate the standard parser behavior.
 
 #[rstest]
-#[case("nested_parsing_00")]
-#[case("nested_parsing_01")]
-#[case("nested_parsing_02")]
-#[case("nested_parsing_03")]
-#[case("nested_parsing_04")]
-#[case("nested_parsing_05")]
-#[case("nested_parsing_06")]
-#[case("nested_parsing_07")]
-#[case("nested_parsing_08")]
-#[case("nested_parsing_09")]
+#[case::n00("nested_parsing_00")]
+#[case::n01("nested_parsing_01")]
+#[case::n02("nested_parsing_02")]
+#[case::n03("nested_parsing_03")]
+#[case::n04("nested_parsing_04")]
+#[case::n05("nested_parsing_05")]
+#[case::n06("nested_parsing_06")]
+#[case::n07("nested_parsing_07")]
+#[case::n08("nested_parsing_08")]
+#[case::n09("nested_parsing_09")]
 fn ok_nested_parsing(#[case] test_case: &str) {
     rst_vs_yaml!("nested_parsing", test_case);
 }
