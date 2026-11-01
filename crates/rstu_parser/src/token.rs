@@ -791,8 +791,9 @@ mod tests {
     #[test]
     fn separator_matches() {
         assert_eq!(TK::Separator.find_lexeme("\n====\n"), Some("===="));
-        assert_eq!(TK::Separator.find_lexeme("\n==a=\n"), None);
         assert_eq!(TK::Separator.find_lexeme("\n===\n"), Some("==="));
+        assert_eq!(TK::Separator.find_lexeme("\n==a=\n"), None);
+        assert_eq!(TK::Separator.find_lexeme("\n==n"), None);
     }
 
     #[test]

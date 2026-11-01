@@ -3,10 +3,8 @@
 // SPDX-License-Identifier: MIT
 
 use rstest::rstest;
-use rstu_parser::parser_errors::ParserErrorKind as PE;
 #[path = "common/mod.rs"]
 mod test_parser;
-use test_parser::rst_err;
 use test_parser::rst_vs_yaml;
 
 #[rstest]
@@ -25,9 +23,4 @@ use test_parser::rst_vs_yaml;
 #[case::t12("transitions_12")]
 fn ok_transitions(#[case] test_case: &str) {
     rst_vs_yaml!("transitions", test_case)
-}
-
-#[rstest]
-fn err_transition(#[case] test_case: &str, #[case] expected_error: PE) {
-    rst_err!("transitions", test_case, expected_error);
 }
