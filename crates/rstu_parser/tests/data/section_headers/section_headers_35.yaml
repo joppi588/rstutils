@@ -18,7 +18,7 @@ children:
     children:
     - class: PlainText
       attributes:
-        text: "The attribution token conflicts with short titles\n(<= 3 char-long over- & underlines).\n"
+        text: "The attribution token would conflict short titles\n<= 2 char-long over- & underlines.\n"
   - class: BlankLine
   - class: Section
     attributes:

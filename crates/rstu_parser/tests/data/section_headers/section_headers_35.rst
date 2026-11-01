@@ -2,8 +2,8 @@
 One
 ===
 
-The attribution token conflicts with short titles
-(<= 3 char-long over- & underlines).
+The attribution token would conflict short titles
+<= 2 char-long over- & underlines.
 
 ---
 Two
