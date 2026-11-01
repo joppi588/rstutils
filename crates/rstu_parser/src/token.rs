@@ -793,8 +793,8 @@ mod tests {
         assert_eq!(TK::Separator.find_lexeme("\n====\n"), Some("===="));
         assert_eq!(TK::Separator.find_lexeme("\n===\n"), Some("==="));
         assert_eq!(TK::Separator.find_lexeme("\n==a=\n"), None);
-        assert_eq!(TK::Separator.find_lexeme("\n==n"), None);
-        assert_eq!(TK::Separator.find_lexeme("\n``.-_``."), None);
+        assert_eq!(TK::Separator.find_lexeme("\n==\n"), None);
+        assert_eq!(TK::Separator.find_lexeme("\n=*=*=*=\n"), None);
     }
 
     #[test]
