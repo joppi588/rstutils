@@ -55,7 +55,7 @@ def render_test(topic: str, cases: dict[str, list[str]]) -> str:
     names = cases["err"]
     if names:
         lines.extend(["", "#[rstest]"])
-        lines.extend(f'#[case("{name}", PE::UnexpectedToken)]' for name in names)
+        lines.extend(f'#[case::{name[0]}{name[-2:]}("{name}", PE::UnexpectedToken)]' for name in names)
         lines.extend([
             f"fn err_{topic_id}(#[case] test_case: &str, #[case] expected_error: PE) {{",
             f'    rst_err!("{topic}", test_case, expected_error);',
