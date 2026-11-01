@@ -81,7 +81,7 @@ use test_parser::rst_vs_yaml;
 // #[case::substitution_references("substitution_references_03")]
 // #[case::substitution_references("substitution_references_05")]
 // #[case::substitution_references("substitution_references_06")]
-#[case::citation_reference("citation_reference_00")]
+#[case::c00("citation_reference_00")]
 #[case::citation_reference("citation_reference_01")]
 #[case::citation_reference("citation_reference_02")]
 #[case::emphasis("emphasis_00")]

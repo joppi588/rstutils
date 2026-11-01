@@ -1,0 +1,92 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: |
+        Test bad subsection order (Title 4, with overlines).
+- class: BlankLine
+- class: Section
+  attributes:
+    marker_len: 7
+    marker_len_opening: 7
+    section_marker: "="
+  children:
+  - class: Title
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: |
+            Title 1
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: |
+          Paragraph 1.
+  - class: BlankLine
+  - class: Section
+    attributes:
+      marker_len: 7
+      marker_len_opening: 7
+      section_marker: '-'
+    children:
+    - class: Title
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: |
+              Title 2
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: |
+            Paragraph 2.
+    - class: BlankLine
+- class: Section
+  attributes:
+    marker_len: 7
+    marker_len_opening: 7
+    section_marker: "="
+  children:
+  - class: Title
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: |
+            Title 3
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: |
+          Paragraph 3.
+  - class: BlankLine
+  - class: Section
+    attributes:
+      marker_len: 7
+      marker_len_opening: 7
+      section_marker: "`"
+    children:
+    - class: Title
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: |
+              Title 4
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: |
+            Paragraph 4.

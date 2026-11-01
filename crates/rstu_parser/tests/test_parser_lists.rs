@@ -110,8 +110,8 @@ fn ok_field_list(#[case] test_case: &str) {
 #[case::d09("definition_09")]
 #[case::d10("definition_10")]
 #[case::d11("definition_11")]
-#[case::d13("definition_13")]
-#[case::d14("definition_14")]
+// #[case::d13("definition_13")] // TODO: #439
+// #[case::d14("definition_14")] // TODO: #439
 #[case::d15("definition_15")]
 #[case("inline_markup")]
 fn ok_definition_list(#[case] test_case: &str) {

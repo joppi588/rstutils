@@ -62,6 +62,14 @@ fn parse_body_element(
             stream.token_at_cursor().kind,
             stream.token_at_nextline().kind,
         ) {
+            (TK::EoF | TK::Dedent, _) => {
+                break;
+            }
+            (TK::Indent, _) => {
+                return Err(ParserError::UnexpectedIndentError {
+                    position: stream.position_at_cursor(),
+                });
+            }
             (TK::BlankLine, TK::Separator) => {
                 current_parent.push_blank_lines(stream.consume().len());
 
@@ -75,14 +83,6 @@ fn parse_body_element(
                 let section = parse_section_header(stream)?;
                 current_parent.push_section_ref(section.clone());
                 current_parent = section;
-            }
-            (TK::Indent, _) => {
-                return Err(ParserError::UnexpectedIndentError {
-                    position: stream.position_at_cursor(),
-                });
-            }
-            (TK::EoF, _) => {
-                break;
             }
             (TK::BulletListMarker, _) => {
                 let bullet_list = parse_bullet_list(stream)?;
@@ -159,9 +159,6 @@ fn parse_body_element(
                 let paragraph = parse_paragraph_hanging_indent(stream)?;
                 attribution.push_child(paragraph);
                 current_parent.push_child(attribution);
-            }
-            (TK::Dedent, _) => {
-                break;
             }
             (kind, _) if kind.is(TC::PARAGRAPH_END) => {
                 return Err(ParserError::UnexpectedToken {

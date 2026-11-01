@@ -3,16 +3,15 @@
 // SPDX-License-Identifier: MIT
 
 use rstest::rstest;
-use rstu_parser::parser_errors::ParserErrorKind as PE;
 #[path = "common/mod.rs"]
 mod test_parser;
-use test_parser::rst_err;
 use test_parser::rst_vs_yaml;
 
 #[rstest]
 #[case::t00("transitions_00")]
 #[case::t01("transitions_01")]
 #[case::t02("transitions_02")]
+#[case::t03("transitions_03")]
 #[case::t04("transitions_04")]
 #[case::t05("transitions_05")]
 #[case::t06("transitions_06")]
@@ -24,12 +23,4 @@ use test_parser::rst_vs_yaml;
 #[case::t12("transitions_12")]
 fn ok_transitions(#[case] test_case: &str) {
     rst_vs_yaml!("transitions", test_case)
-}
-
-// TODO: Implement
-#[rstest]
-#[case::t03("transitions_03", PE::UnexpectedToken)]
-#[ignore = "Docutils system-message diagnostics for indented separators are not implemented"]
-fn err_transition(#[case] test_case: &str, #[case] expected_error: PE) {
-    rst_err!("transitions", test_case, expected_error);
 }
