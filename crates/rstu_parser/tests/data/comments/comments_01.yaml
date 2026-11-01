@@ -1,0 +1,15 @@
+class: Document
+children:
+- class: Comment
+  attributes:
+    indent: 3
+    text: |
+      A comment
+      block.
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: |
+        Paragraph.

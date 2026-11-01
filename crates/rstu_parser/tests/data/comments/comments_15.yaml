@@ -1,0 +1,30 @@
+class: Document
+children:
+- class: BulletList
+  children:
+  - class: BulletListItem
+    attributes:
+      marker: +
+    children:
+    - class: Block
+      attributes:
+        indent: 2
+      children:
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: |
+              bullet paragraph 1
+      - class: BlankLine
+      - class: Comment
+        attributes:
+          text: |+
+            comment between bullet paragraphs 1 (leader) and 2
+
+      - class: Paragraph
+        children:
+        - class: PlainText
+          attributes:
+            text: |
+              bullet paragraph 2
