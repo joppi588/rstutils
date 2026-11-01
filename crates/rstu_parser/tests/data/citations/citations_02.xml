@@ -1,0 +1,7 @@
+<document source="test data">
+    <citation ids="citation" names="citation">
+        <label>
+            citation
+        <paragraph>
+            This is a citation
+            on multiple lines.

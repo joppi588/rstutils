@@ -1,0 +1,13 @@
+<document source="test data">
+    <citation ids="citation1" names="citation1">
+        <label>
+            citation1
+        <paragraph>
+            This is a citation
+            on multiple lines with more space.
+    <citation ids="citation2" names="citation2">
+        <label>
+            citation2
+        <paragraph>
+            This is a citation
+            on multiple lines with less space.

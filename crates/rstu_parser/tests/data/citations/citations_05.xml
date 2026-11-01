@@ -1,0 +1,9 @@
+<document source="test data">
+    <citation ids="citation" names="citation">
+        <label>
+            citation
+        <system_message level="2" line="2" source="test data" type="WARNING">
+            <paragraph>
+                Citation content expected.
+    <paragraph>
+        That was an empty citation.

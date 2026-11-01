@@ -1,0 +1,11 @@
+<document source="test data">
+    <citation ids="citation" names="citation">
+        <label>
+            citation
+        <paragraph>
+            The Source
+    <system_message level="2" line="2" source="test data" type="WARNING">
+        <paragraph>
+            Explicit markup ends without a blank line; unexpected unindent.
+    <paragraph>
+        No blank line.

@@ -1,0 +1,31 @@
+<document source="test data">
+    <paragraph>
+        isolated internals :
+        <literal>
+            .-_
+        .
+    <citation ids="citation-withdot" names="citation.withdot">
+        <label>
+            citation.withdot
+        <paragraph>
+            one dot
+    <citation ids="citation-withdot-1" names="citation-withdot">
+        <label>
+            citation-withdot
+        <paragraph>
+            one hyphen
+    <citation ids="citation-withunderscore" names="citation_withunderscore">
+        <label>
+            citation_withunderscore
+        <paragraph>
+            one underscore
+    <citation ids="citation-with-colons" names="citation:with:colons">
+        <label>
+            citation:with:colons
+        <paragraph>
+            two colons
+    <citation ids="citation-withplus" names="citation+withplus">
+        <label>
+            citation+withplus
+        <paragraph>
+            one plus
