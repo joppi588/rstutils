@@ -1,0 +1,29 @@
+class: Document
+children:
+- class: Citation
+  attributes:
+    label: citation1
+  children:
+  - class: Paragraph
+    attributes:
+      hanging_indent: 5
+    children:
+    - class: PlainText
+      attributes:
+        text: |
+          This is a citation
+          on multiple lines with more space.
+- class: BlankLine
+- class: Citation
+  attributes:
+    label: citation2
+  children:
+  - class: Paragraph
+    attributes:
+      hanging_indent: 2
+    children:
+    - class: PlainText
+      attributes:
+        text: |
+          This is a citation
+          on multiple lines with less space.

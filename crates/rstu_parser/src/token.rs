@@ -8,6 +8,7 @@ use strum::EnumCount;
 
 static RECOMMENDED_SECTION_CHARS: &str = r##"=-`:.'"~^_*+#"##;
 static FOOTNOTE_LABEL: &str = r"(?:[0-9]+|#(?:[\p{L}\p{N}]+(?:[-_.][\p{L}\p{N}]+)*)?|\*)";
+static CITATION_LABEL: &str = r"[\p{L}\p{N}]+(?:[-_.][\p{L}\p{N}]+)*";
 static INLINE_PRE_CHARS: &str = r#"(?:[\n\s\-:/'"<(\[{]|\p{Ps}|\p{Pi}|\p{Pf}|\p{Pd}|\p{Po})"#;
 static INLINE_PRE_CHARS_NO_ASTERISK: &str =
     r#"(?:[\n\s\-:/'"<(\[{]|\p{Ps}|\p{Pi}|\p{Pf}|\p{Pd}|[\p{Po}&&[^*]])"#;
@@ -230,6 +231,7 @@ impl TokenCategory {
     pub const EOL: &'static [TokenKind] = &[
         TokenKind::BlankLine,
         TokenKind::EoF,
+        TokenKind::Citation,
         TokenKind::FootNote,
         TokenKind::LiteralBlock,
         TokenKind::LiteralBlockMinimized,
@@ -263,6 +265,7 @@ impl TokenCategory {
         TokenKind::BlankLine,
         TokenKind::Dedent,
         TokenKind::EoF,
+        TokenKind::Citation,
         TokenKind::FootNote,
         TokenKind::Indent,
         TokenKind::LineBlock,
@@ -297,6 +300,7 @@ pub enum TokenKind {
     BlankLine,
     BulletListMarker,
     ClassifierSeparator,
+    Citation,
     CitationReference,
     Dedent,
     Directive,
@@ -353,6 +357,7 @@ impl TokenKind {
         (DoctestStart, r"\s>>>\s"),
 
         (FootNote, format!(r"(.|\n)(?:\.\. \[{0}\])(.|\n)", FOOTNOTE_LABEL)),
+        (Citation, format!(r"(.|\n)(?:\.\. \[{0}\])(.|\n)", CITATION_LABEL)),
 
         // Comments
         (DoubleDot, r"\s\.\. *\s"),
@@ -383,8 +388,8 @@ impl TokenKind {
         (SubstitutionReference, format!(r"{0}\|.+?\|{1}", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
         // TODO SubsRefHyperLink rst l.3033
         // TODO SubRefAnonymousHyperlink
-        (FootnoteReference, format!(r"{0}\[{2}\]_{1}", INLINE_PRE_CHARS, INLINE_POST_CHARS, FOOTNOTE_LABEL)),
-        (CitationReference, format!(r"{0}\[[\p{{L}}\p{{N}}]+(?:[-_.][\p{{L}}\p{{N}}]+)*\]_{1}", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
+        (FootnoteReference, format!(r"{0}\[{1}\]_{2}", INLINE_PRE_CHARS, FOOTNOTE_LABEL, INLINE_POST_CHARS)),
+        (CitationReference, format!(r"{0}\[{1}\]_{2}", INLINE_PRE_CHARS, CITATION_LABEL, INLINE_POST_CHARS)),
         (HyperlinkReferenceEnd, format!(r"(?:[^\s]`_|[^\s]_){}", INLINE_POST_CHARS)),
         (SimpleAnonymousHyperLinkReference,r"[\W_][\w&&[^_]]+(?:[-_.:+][\w&&[^_]]+)*__\s"),
         (SimpleHyperlinkReference,r"[\W_][\w&&[^_]]+(?:[-_.:+][\w&&[^_]]+)*_\s"),
@@ -711,6 +716,19 @@ mod tests {
             TK::SimpleAnonymousHyperLinkReference.find_lexeme("_This__ "),
             Some("This__")
         );
+    }
+
+    /// GIVEN citation labels with valid and invalid punctuation
+    /// WHEN explicit citation markers are tokenized
+    /// THEN only simple reference-name labels match
+    #[test]
+    fn citation_definition_label_matches_simple_reference_names() {
+        assert_eq!(
+            TK::Citation.find_lexeme(" .. [GVR-2001.foo_bar] body"),
+            Some(".. [GVR-2001.foo_bar]")
+        );
+        assert_eq!(TK::Citation.find_lexeme(" .. [bad--label] body"), None);
+        assert_eq!(TK::Citation.find_lexeme(" .. [two words] body"), None);
     }
 
     #[test]

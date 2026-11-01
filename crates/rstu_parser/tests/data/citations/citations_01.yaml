@@ -1,0 +1,12 @@
+class: Document
+children:
+- class: Citation
+  attributes:
+    label: citation1234
+  children:
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: |
+          This is a citation with year.

@@ -14,6 +14,7 @@ pub enum NodeClass {
     BulletListItem,
     Classifier,
     Comment,
+    Citation,
     Definition,
     DefinitionList,
     DefinitionListItem,
