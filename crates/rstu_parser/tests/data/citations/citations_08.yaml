@@ -1,0 +1,45 @@
+class: Document
+children:
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "isolated internals\n"
+- class: BlankLine
+- class: Citation
+  attributes:
+    label: citation.withdot
+  children:
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: "one dot\n"
+- class: BlankLine
+- class: Citation
+  attributes:
+    label: citation-withdot
+  children:
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: "one hyphen\n"
+- class: BlankLine
+- class: Citation
+  attributes:
+    label: citation_withunderscore
+  children:
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: "one underscore\n"
+- class: BlankLine
+- class: Comment
+  attributes:
+    text: "[citation:with:colons] two colons\n\n"
+- class: Comment
+  attributes:
+    text: "[citation+withplus] one plus\n"

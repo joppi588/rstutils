@@ -1,0 +1,11 @@
+class: Document
+children:
+- class: Comment
+  attributes:
+    text: |+
+      [citation label with spaces] this isn't a citation
+
+- class: Comment
+  attributes:
+    text: |
+      [*citationlabelwithmarkup*] this isn't a citation
