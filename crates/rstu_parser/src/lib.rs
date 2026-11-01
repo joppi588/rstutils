@@ -18,7 +18,7 @@ use parsers::comments::parse_comment;
 use parsers::definition_list::{is_definition_list_item, parse_definition_list};
 use parsers::directives::parse_directive;
 use parsers::doctest_block::parse_doctest_block;
-use parsers::footnote::parse_footnote;
+use parsers::footnote::{parse_citation, parse_footnote};
 use parsers::line_block::parse_line_block;
 use parsers::lists::{
     parse_bullet_list, parse_enumerated_list, parse_field_list, parse_option_list,
@@ -101,6 +101,11 @@ fn parse_body_element(
             (TK::FootNote, _) => {
                 let footnote = parse_footnote(stream)?;
                 current_parent.push_child(footnote);
+            }
+
+            (TK::Citation, _) => {
+                let citation = parse_citation(stream)?;
+                current_parent.push_child(citation);
             }
 
             (TK::DoubleDot, _) => {
