@@ -68,9 +68,6 @@ pub enum ParserError {
         found: String,
         position: Position,
     },
-    UnexpectedSeparation {
-        position: Position,
-    },
 }
 
 impl std::fmt::Display for ParserError {
@@ -155,12 +152,6 @@ impl std::fmt::Display for ParserError {
             ),
             Self::UnexpectedIndentError { position } => {
                 write!(formatter, "{position}: Unexpected indentation")
-            }
-            Self::UnexpectedSeparation { position } => {
-                write!(
-                    formatter,
-                    "{position}: Unexpected section marker or transition."
-                )
             }
             Self::UnexpectedToken {
                 expected,
