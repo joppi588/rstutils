@@ -4,3 +4,10 @@
 ..
 
     A block quote.
+
+.. As it would happen
+   in
+
+   this
+
+   case

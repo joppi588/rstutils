@@ -1,0 +1,10 @@
+class: Document
+children:
+- class: Comment
+  attributes:
+    text: "A comment::\n\n"
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Paragraph.\n"

@@ -26,6 +26,7 @@ use test_parser::rst_vs_yaml;
 #[case("comments_14")]
 #[case("comments_15")]
 #[case("comments_16")]
+#[case("comments_17")]
 fn ok_comments(#[case] test_case: &str) {
     rst_vs_yaml!("comments", test_case);
 }

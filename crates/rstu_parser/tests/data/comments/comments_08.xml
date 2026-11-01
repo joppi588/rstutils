@@ -1,6 +1,0 @@
-<document source="test data">
-    <comment xml:space="preserve">
-        _comment: http://example.org
-    <paragraph>
-        The extra newline before the comment text prevents
-        the parser from recognizing a hyperlink target.

@@ -1,0 +1,23 @@
+class: Document
+children:
+- class: Comment
+  attributes:
+    text: |
+      A comment.
+- class: Comment
+  attributes:
+    text: |
+      Another.
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: |
+        no blank line
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: |
+        Paragraph.
