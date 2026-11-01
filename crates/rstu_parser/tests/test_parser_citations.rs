@@ -11,20 +11,20 @@ use test_parser::rst_err;
 use test_parser::rst_vs_yaml;
 
 #[rstest]
-#[case("citations_00")]
-#[case("citations_01")]
-#[case("citations_02")]
-#[case("citations_03")]
-#[case("citations_04")]
-#[case("citations_05")]
-#[case("citations_07")]
+#[case::c00("citations_00")]
+#[case::c01("citations_01")]
+#[case::c02("citations_02")]
+#[case::c03("citations_03")]
+#[case::c04("citations_04")]
+#[case::c05("citations_05")]
+#[case::c07("citations_07")]
 // #[case("citations_08")] //TODO: #444
 fn ok_citations(#[case] test_case: &str) {
     rst_vs_yaml!("citations", test_case);
 }
 
 #[rstest]
-#[case("citations_06", PE::UnexpectedToken)]
+#[case::c08("citations_06", PE::UnexpectedToken)]
 fn err_citations(#[case] test_case: &str, #[case] expected_error: PE) {
     rst_err!("citations", test_case, expected_error);
 }
