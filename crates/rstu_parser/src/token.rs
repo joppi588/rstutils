@@ -6,7 +6,7 @@ use regex::Regex;
 use std::sync::LazyLock;
 use strum::EnumCount;
 
-static RECOMMENDED_SECTION_CHARS: &str = "=\\-`:.'\"~\\^_\\*\\+#"; // escaped =-`:.'"~^_*+#
+static RECOMMENDED_SECTION_CHARS: &str = r##"=-`:.'"~^_*+#"##;
 static FOOTNOTE_LABEL: &str = r"(?:[0-9]+|#(?:[\p{L}\p{N}]+(?:[-_.][\p{L}\p{N}]+)*)?|\*)";
 static INLINE_PRE_CHARS: &str = r#"(?:[\n\s\-:/'"<(\[{]|\p{Ps}|\p{Pi}|\p{Pf}|\p{Pd}|\p{Po})"#;
 static INLINE_PRE_CHARS_NO_ASTERISK: &str =
@@ -121,6 +121,15 @@ fn enclosed_inline_start_pattern() -> String {
         .join("|");
 
     format!(r"(.|\n)(?:{enclosed_patterns})(.|\n)")
+}
+
+fn section_separator_pattern() -> String {
+    let repetitions = RECOMMENDED_SECTION_CHARS
+        .chars()
+        .map(|character| format!(r"{}{{3,}}", regex::escape(&character.to_string())))
+        .collect::<Vec<_>>()
+        .join("|");
+    format!(r"\s(?:{repetitions})\n")
 }
 
 // Option parsing, Lexer:
@@ -332,7 +341,7 @@ impl TokenKind {
         // IMPORTANT:
         // The order of the enum matters, as the first matching token will be picked.
         // Format (name, token regex)
-        (Separator, format!(r"\s[{0}]{{3,}}\n", RECOMMENDED_SECTION_CHARS)),
+        (Separator, section_separator_pattern()),
         (Attribution, r" (?:—|--|---) +(?:.|\n)"),
 
         (Indent, r"\n[ \t]+[^ \t\n]"),
