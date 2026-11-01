@@ -17,4 +17,4 @@ children:
     children:
     - class: PlainText
       attributes:
-        text: Short title.
+        text: "Short title.\n"
