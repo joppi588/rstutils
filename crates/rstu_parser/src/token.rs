@@ -388,7 +388,7 @@ impl TokenKind {
         (SubstitutionReference, format!(r"{0}\|.+?\|{1}", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
         // TODO SubsRefHyperLink rst l.3033
         // TODO SubRefAnonymousHyperlink
-        (FootnoteReference, format!(r"{0}\[{2}\]_{1}", INLINE_PRE_CHARS, INLINE_POST_CHARS, FOOTNOTE_LABEL)),
+        (FootnoteReference, format!(r"{0}\[{1}\]_{2}", INLINE_PRE_CHARS, FOOTNOTE_LABEL, INLINE_POST_CHARS)),
         (CitationReference, format!(r"{0}\[{1}\]_{2}", INLINE_PRE_CHARS, CITATION_LABEL, INLINE_POST_CHARS)),
         (HyperlinkReferenceEnd, format!(r"(?:[^\s]`_|[^\s]_){}", INLINE_POST_CHARS)),
         (SimpleAnonymousHyperLinkReference,r"[\W_][\w&&[^_]]+(?:[-_.:+][\w&&[^_]]+)*__\s"),
