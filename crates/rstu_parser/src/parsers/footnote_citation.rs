@@ -9,7 +9,6 @@ use super::paragraph::parse_paragraph_hanging_indent;
 use crate::parser_errors::ParserError;
 use crate::token::TokenKind as TK;
 use crate::token_stream::TokenStream;
-use std::debug_assert_matches;
 
 pub(crate) fn parse_footnote(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     parse_note(stream, TK::FootNote, NodeClass::Footnote)
@@ -24,7 +23,6 @@ fn parse_note(
     token_kind: TK,
     node_class: NodeClass,
 ) -> Result<NodeRef, ParserError> {
-    debug_assert_matches!(stream.token_at_cursor().kind, TK::FootNote | TK::Citation);
     debug_assert_eq!(stream.token_at_cursor().kind, token_kind);
 
     let marker = stream.consume().lexeme;
@@ -41,10 +39,12 @@ fn parse_note(
     let index_next_line: usize = stream.find_end_of_line() + 1;
     let paragraph = match stream.token_at(index_next_line).kind {
         TK::Indent => parse_paragraph_hanging_indent(stream)?,
-        TK::BlankLine | TK::EoF | TK::FootNote | TK::Citation => parse_paragraph(stream)?,
+        kind if matches!(kind, TK::BlankLine | TK::EoF) || (kind == token_kind) => {
+            parse_paragraph(stream)?
+        }
         kind => {
             return Err(ParserError::UnexpectedToken {
-                expected: "Indent, Citation, Footnote or Blankline".to_owned(),
+                expected: format!("Indent, Blankline or {:?}", token_kind).to_owned(),
                 found: format!("{:?}", kind),
                 position: stream.position_at(index_next_line),
             });
