@@ -24,7 +24,7 @@ for file in "$DIRECTORY"/*.rst; do
     fi
 
     # Call rst2yaml.sh for each .rst file
-    if bash "$SCRIPT_DIR/rst2yaml.sh" "$file" "--prefer-block-scalars=false"; then
+    if bash "$SCRIPT_DIR/rst2yaml.sh" "$file" "--prefer-block-scalars=true"; then
         echo "Successfully converted: $file"
     else
         echo "Error converting: $file"

@@ -1,0 +1,16 @@
+class: Document
+children:
+- class: Comment
+  attributes:
+    indent: 3
+    text: |
+
+      [comment] Not a citation.
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: |
+        The extra newline before the comment text prevents
+        the parser from recognizing a citation.
