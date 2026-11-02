@@ -2,8 +2,7 @@ This document lists deviations from the rst specification / implementation.
 
 # Directives
 rstu_parser does not support syntax extension via directives.
-Rationale:
-- Allowing arbitrary syntax extension is a powerful tool, but it prevents building a universal rst parser;
+Rationale: Allowing arbitrary syntax extension is a powerful tool, but it prevents building a universal rst parser.
 Directives content should follow rst syntax.
 If post-processing is needed (e.g. type checking of arguments) this should be implemented
 in a separate transform module, taking the abstract syntax tree as input.
@@ -52,7 +51,7 @@ All of these are believed to be non-critical.
 Things that would be according to the spec book but not to the python parser implementation:
 - Substitution definitions:
   * Missing :: or directive name are treated as a comments.
-  *
+  * Line breaks within substitutions ("|a \n b|") are not allowed.
 
 
 # Proposals

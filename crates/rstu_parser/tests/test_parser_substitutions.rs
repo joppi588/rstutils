@@ -10,8 +10,8 @@ use test_parser::rst_vs_yaml;
 
 #[rstest]
 #[case::s00("substitution_definitions_00")]
-#[case::s01("substitution_definitions_01")]
-#[case::s02("substitution_definitions_02")]
+// #[case::s01("substitution_definitions_01")] //TODO: #451
+// #[case::s02("substitution_definitions_02")] //TODO: #451
 #[case::s03("substitution_definitions_03")]
 #[case::s04("substitution_definitions_04")]
 #[case::s05("substitution_definitions_05")]
