@@ -96,12 +96,12 @@ fn ok_inline_markup(#[case] test_case: &str) {
 }
 
 #[rstest]
-#[case::substitution_references("substitution_references_00")]
-#[case::substitution_references("substitution_references_01")]
-#[case::substitution_references("substitution_references_02")]
-#[case::substitution_references("substitution_references_03")]
-#[case::substitution_references("substitution_references_05")]
-#[case::substitution_references("substitution_references_06")]
+#[case::s00("substitution_references_00")]
+#[case::s01("substitution_references_01")]
+#[case::s02("substitution_references_02")]
+#[case::s03("substitution_references_03")]
+#[case::s05("substitution_references_05")]
+#[case::s06("substitution_references_06")]
 fn ok_substitution_references(#[case] test_case: &str) {
     rst_vs_yaml!("inline_markup", test_case)
 }
