@@ -100,6 +100,7 @@ fn ok_inline_markup(#[case] test_case: &str) {
 #[case::s01("substitution_references_01")]
 #[case::s02("substitution_references_02")]
 #[case::s03("substitution_references_03")]
+#[case::s04("substitution_references_04")]
 #[case::s05("substitution_references_05")]
 #[case::s06("substitution_references_06")]
 fn ok_substitution_references(#[case] test_case: &str) {
@@ -122,4 +123,3 @@ fn ok_substitution_references(#[case] test_case: &str) {
 // #[case::phrase_references("phrase_references_13")]
 // #[case::strong("strong_03")]
 // #[case::strong("strong_05")]
-// #[case::substitution_references("substitution_references_04")]
