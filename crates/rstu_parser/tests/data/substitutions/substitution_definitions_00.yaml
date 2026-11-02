@@ -1,0 +1,14 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: |
+        Here's an image substitution definition:
+- class: BlankLine
+- class: Directive
+  attributes:
+    directive_arguments: symbol.png
+    directive_type: image
+    substitution: symbol
