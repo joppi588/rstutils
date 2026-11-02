@@ -1,0 +1,10 @@
+<document source="test data">
+    <paragraph>
+        Here are some duplicate substitution definitions:
+    <substitution_definition dupnames="symbol">
+        <image alt="symbol" uri="symbol.png">
+    <system_message level="3" line="4" source="test data" type="ERROR">
+        <paragraph>
+            Duplicate substitution definition name: "symbol".
+    <substitution_definition names="symbol">
+        <image alt="symbol" uri="symbol.png">

@@ -1,0 +1,5 @@
+<document source="test data">
+    <paragraph>
+        Trailing spaces should not be significant:
+    <substitution_definition names="symbol">
+        <image alt="symbol" uri="symbol.png">
