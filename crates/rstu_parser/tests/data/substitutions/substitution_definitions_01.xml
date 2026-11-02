@@ -1,0 +1,5 @@
+<document source="test data">
+    <paragraph>
+        Embedded directive starts on the next line:
+    <substitution_definition names="symbol">
+        <image alt="symbol" uri="symbol.png">
