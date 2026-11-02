@@ -1,7 +1,20 @@
 This document lists deviations from the rst specification / implementation.
+
+# Directives
+rstu_parser does not support syntax extension via directives.
+Rationale:
+- Allowing arbitrary syntax extension is a powerful tool, but it prevents building a universal rst parser;
+Directives content should follow rst syntax.
+If post-processing is needed (e.g. type checking of arguments) this should be implemented
+in a separate transform module, taking the abstract syntax tree as input.
+
+Consequences:
+- Directive bodies are parsed as sub-documents.
+  New section hierarchy is started.
+
+# Other spec limitations
 All of these are believed to be non-critical.
 
-# Spec limitations
 - Allowed section/transition markers: restrict to the "recommended" set.
 - character_level_inline_markup = False
 - Field names only allow [A-Za-z0-9_ ]
@@ -37,10 +50,9 @@ All of these are believed to be non-critical.
 
 # Interpretations
 Things that would be according to the spec book but not to the python parser implementation:
-- Directives: rstu_parser does not support behavior extension via directives.
-  Directive bodies are parsed as sub-documents.
-  Consequences:
-  * New section hierarchy is started.
-- Substitution definition without :: or missing directive name are treated as a comments.
+- Substitution definitions:
+  * Missing :: or directive name are treated as a comments.
+  *
+
 
 # Proposals
