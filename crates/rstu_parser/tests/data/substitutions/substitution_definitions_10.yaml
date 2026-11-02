@@ -1,0 +1,50 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Here are some bad cases:\n"
+- class: BlankLine
+- class: Directive
+  attributes:
+    directive_arguments: symbol.png
+    directive_type: image
+    substitution: symbol
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "No blank line after.\n"
+- class: BlankLine
+- class: Comment
+  attributes:
+    text: "|empty|\n\n"
+- class: Directive
+  attributes:
+    directive_arguments: symbol.png
+    directive_type: directive
+    substitution: unknown
+  children:
+  - class: BlankLine
+- class: Comment
+  attributes:
+    text: "|invalid 1| there's no directive here\n"
+- class: Comment
+  attributes:
+    indent: 3
+    text: "|invalid 2| there's no directive here\nWith some block quote text, line 1.\nAnd some more, line 2.\n"
+- class: BlankLine
+- class: Comment
+  attributes:
+    text: "|invalid 3| there's no directive here\n\n"
+- class: Comment
+  attributes:
+    text: "| bad name | bad data\n\n"
+- class: Comment
+  attributes:
+    text: "|\n\n"
+- class: Comment
+  attributes:
+    indent: 3
+    text: "|symbol2| ::\nEmpty directive name\n"

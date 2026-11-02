@@ -1,0 +1,26 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: |
+        Raw substitution, backslashes should be preserved:
+- class: BlankLine
+- class: Directive
+  attributes:
+    directive_arguments: latex
+    directive_type: raw
+    substitution: alpha
+  children:
+  - class: BlankLine
+  - class: Block
+    attributes:
+      indent: 3
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: |
+            $\\alpha$

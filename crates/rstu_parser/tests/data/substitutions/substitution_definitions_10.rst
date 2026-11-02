@@ -17,3 +17,6 @@ No blank line after.
 .. | bad name | bad data
 
 .. |
+
+.. |symbol2| ::
+   Empty directive name

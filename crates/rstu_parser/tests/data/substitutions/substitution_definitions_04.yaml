@@ -1,0 +1,8 @@
+class: Document
+children:
+- class: Comment
+  attributes:
+    indent: 3
+    text: |
+      |very long substitution text,
+      split across lines| image:: symbol.png

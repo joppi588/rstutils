@@ -1,0 +1,37 @@
+class: Document
+children:
+- class: Directive
+  attributes:
+    directive_arguments: symbol.png
+    directive_type: image
+    substitution: symbol 1
+  children:
+  - class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: |
+        Followed by a paragraph.
+- class: BlankLine
+- class: Directive
+  attributes:
+    directive_arguments: symbol.png
+    directive_type: image
+    substitution: symbol 2
+  children:
+  - class: BlankLine
+- class: Comment
+- class: BlockQuote
+  children:
+  - class: BlankLine
+  - class: Block
+    attributes:
+      indent: 4
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: |
+            Followed by a block quote.

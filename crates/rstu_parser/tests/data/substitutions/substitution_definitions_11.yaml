@@ -1,0 +1,24 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: |
+        Elements that are prohibited inside of substitution definitions:
+- class: BlankLine
+- class: Directive
+  attributes:
+    directive_arguments: _`target`
+    directive_type: replace
+    substitution: target
+- class: Directive
+  attributes:
+    directive_arguments: anonymous__
+    directive_type: replace
+    substitution: reference
+- class: Directive
+  attributes:
+    directive_arguments: "[#]_"
+    directive_type: replace
+    substitution: auto-numbered footnote

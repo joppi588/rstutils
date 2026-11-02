@@ -1,0 +1,59 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: |
+        Here's a series of substitution definitions:
+- class: BlankLine
+- class: Directive
+  attributes:
+    directive_arguments: symbol1.png
+    directive_type: image
+    substitution: symbol 1
+- class: Directive
+  attributes:
+    directive_arguments: symbol2.png
+    directive_type: image
+    substitution: SYMBOL 2
+  children:
+  - class: Block
+    attributes:
+      indent: 3
+    children:
+    - class: FieldList
+      children:
+      - class: FieldListItem
+        attributes:
+          fieldname: height
+        children:
+        - class: Block
+          attributes:
+            indent: 9
+          children:
+          - class: Paragraph
+            children:
+            - class: PlainText
+              attributes:
+                text: |
+                  50
+      - class: FieldListItem
+        attributes:
+          fieldname: width
+        children:
+        - class: Block
+          attributes:
+            indent: 8
+          children:
+          - class: Paragraph
+            children:
+            - class: PlainText
+              attributes:
+                text: |
+                  100
+- class: Directive
+  attributes:
+    directive_arguments: symbol3.png
+    directive_type: image
+    substitution: symbol 3

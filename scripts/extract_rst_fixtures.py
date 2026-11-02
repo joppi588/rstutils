@@ -46,7 +46,7 @@ def render_test(topic: str, cases: dict[str, list[str]]) -> str:
     names = cases["ok"]
     if names:
         lines.extend(["", "#[rstest]"])
-        lines.extend(f'#[case("{name}")]' for name in names)
+        lines.extend(f'#[case::{name[0]}{name[-2:]}("{name}")]' for name in names)
         lines.extend([
             f"fn ok_{topic_id}(#[case] test_case: &str) {{",
             f'    rst_vs_yaml!("{topic}", test_case);',

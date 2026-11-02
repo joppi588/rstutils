@@ -1,0 +1,19 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: |
+        Here are some duplicate substitution definitions:
+- class: BlankLine
+- class: Directive
+  attributes:
+    directive_arguments: symbol.png
+    directive_type: image
+    substitution: symbol
+- class: Directive
+  attributes:
+    directive_arguments: symbol.png
+    directive_type: image
+    substitution: symbol

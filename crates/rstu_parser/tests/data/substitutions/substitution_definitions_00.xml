@@ -1,5 +1,0 @@
-<document source="test data">
-    <paragraph>
-        Here's an image substitution definition:
-    <substitution_definition names="symbol">
-        <image alt="symbol" uri="symbol.png">
