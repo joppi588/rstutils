@@ -1,0 +1,19 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: |
+        Substitutions support case differences:
+- class: BlankLine
+- class: Directive
+  attributes:
+    directive_arguments: é
+    directive_type: replace
+    substitution: eacute
+- class: Directive
+  attributes:
+    directive_arguments: É
+    directive_type: replace
+    substitution: Eacute

@@ -41,5 +41,6 @@ Things that would be according to the spec book but not to the python parser imp
   Directive bodies are parsed as sub-documents.
   Consequences:
   * New section hierarchy is started.
+- Substitution definition without :: or missing directive name are treated as a comments.
 
 # Proposals

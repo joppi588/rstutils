@@ -1,7 +1,0 @@
-<document source="test data">
-    <paragraph>
-        Substitutions support case differences:
-    <substitution_definition names="eacute">
-        é
-    <substitution_definition names="Eacute">
-        É
