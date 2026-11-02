@@ -11,6 +11,11 @@ Standing on the shoulders of giants:
 - ruff
 - docutils
 
+# Quick start
+```
+cargo install rstu
+rstu convert -o yaml <some_file.rst>
+```
 
 # What does "rstu" stand for?
 
