@@ -50,8 +50,8 @@ All of these are believed to be non-critical.
 # Interpretations
 Things that would be according to the spec book but not to the python parser implementation:
 - Substitution definitions:
-  * Missing :: or directive name are treated as a comments.
-  * Line breaks within substitutions ("|a \n b|") are not allowed.
+  * Missing :: or missing directive name are treated as a comments.
+
 
 
 # Proposals
