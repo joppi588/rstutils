@@ -11,7 +11,7 @@ static FOOTNOTE_LABEL: &str = r"(?:[0-9]+|#(?:[\p{L}\p{N}]+(?:[-_.][\p{L}\p{N}]+
 static CITATION_LABEL: &str = r"[\p{L}\p{N}]+(?:[-_.][\p{L}\p{N}]+)*";
 static SUBSTITUTION_NAME: &str = r"[^ |\n](?:[^|]*[^ |\n])?";
 static IANA_URI_SCHEMES: LazyLock<String> = LazyLock::new(|| {
-    include_str!("iana_uri_schemes.txt")
+    include_str!("../resources/iana_uri_schemes.txt")
         .lines()
         .filter(|scheme| !scheme.is_empty() && !scheme.starts_with('#'))
         .map(regex::escape)
