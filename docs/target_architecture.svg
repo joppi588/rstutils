@@ -27,7 +27,7 @@
      showguides="true"
      inkscape:zoom="1.0667919"
      inkscape:cx="244.65878"
-     inkscape:cy="544.15486"
+     inkscape:cy="545.09225"
      inkscape:window-width="1854"
      inkscape:window-height="1019"
      inkscape:window-x="0"
@@ -363,7 +363,7 @@
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:FreeSans;-inkscape-font-specification:FreeSans;stroke-width:0.264583"
            x="99.257507"
            y="150.9642">HTML</tspan></text></g><path
-       style="fill:none;stroke:#e6e6e6;stroke-width:0.465;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#TriangleStart)"
+       style="fill:none;stroke:#cccccc;stroke-width:0.465;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#TriangleStart)"
        d="m 114.73492,171.64185 c 20.48977,-1.85346 34.04414,-21.98373 33.88897,-30.14311"
        id="path7083"
        sodipodi:nodetypes="cc" /><path
@@ -463,17 +463,17 @@
                  x="85.440422"
                  y="150.70677">ref check</tspan></text></g></g></g></g><text
        xml:space="preserve"
-       style="font-size:4.93889px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;stroke-width:0.264583;stroke:none;fill:#e6e6e6"
+       style="font-size:4.93889px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;stroke-width:0.264583;stroke:none;fill:#cccccc"
        x="139.49542"
        y="129.80144"
        id="text7163"><tspan
          sodipodi:role="line"
          id="tspan7159"
-         style="font-size:4.93889px;stroke-width:0.264583;stroke:none;fill:#e6e6e6"
+         style="font-size:4.93889px;stroke-width:0.264583;stroke:none;fill:#cccccc"
          x="139.49542"
          y="129.80144">Syntax</tspan><tspan
          sodipodi:role="line"
-         style="font-size:4.93889px;stroke-width:0.264583;stroke:none;fill:#e6e6e6"
+         style="font-size:4.93889px;stroke-width:0.264583;stroke:none;fill:#cccccc"
          x="139.49542"
          y="135.97505"
          id="tspan7161">Highlighting</tspan></text><g
@@ -498,7 +498,7 @@
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:FreeSans;-inkscape-font-specification:FreeSans;stroke-width:0.264583"
            x="99.257507"
            y="150.9642">IDE</tspan></text></g><path
-       style="fill:none;stroke:#e6e6e6;stroke-width:0.465;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#TriangleStart)"
+       style="fill:none;stroke:#cccccc;stroke-width:0.465;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#TriangleStart)"
        d="m 153.17635,122.79776 c 1.38947,-11.96983 18.58593,-14.00356 18.43077,-22.16294"
        id="path7179"
        sodipodi:nodetypes="cc" /><path
