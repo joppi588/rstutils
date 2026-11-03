@@ -36,3 +36,6 @@ Remove empty lines
 Parsing errors.
 Linter warnings
 Check internal & external links
+
+# Constraints
+- Cache
