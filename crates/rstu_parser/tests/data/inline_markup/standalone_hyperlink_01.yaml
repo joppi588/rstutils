@@ -1,0 +1,34 @@
+class: Document
+children:
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Valid URLs with escaped markup characters:\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      refuri: http://example.com/*content*/whatever
+    children:
+    - class: PlainText
+      attributes:
+        text: http://example.com/*content*/whatever
+  - class: PlainText
+    attributes:
+      text: "\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      refuri: http://example.com/*content*/whatever
+    children:
+    - class: PlainText
+      attributes:
+        text: http://example.com/*content*/whatever
+  - class: PlainText
+    attributes:
+      text: "\n"

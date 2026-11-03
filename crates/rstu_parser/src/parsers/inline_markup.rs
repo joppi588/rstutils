@@ -44,6 +44,19 @@ pub(crate) fn parse_inline_token(stream: &mut TokenStream) -> Result<NodeRef, Pa
             node.with_attr("label", &lexeme[0..lexeme.len() - 2])
                 .with_attr("type", "simple_anonymous_ref");
         }
+        TK::Uri => {
+            let uri = lexeme.replace("\\*", "*").replace("\\_", "_");
+            node.with_attr("refuri", uri.as_str());
+            let text = AstNode::new_ref(NodeClass::PlainText);
+            text.with_attr("text", uri);
+            node.push_child(text);
+        }
+        TK::Email => {
+            node.with_attr("refuri", format!("mailto:{lexeme}"));
+            let text = AstNode::new_ref(NodeClass::PlainText);
+            text.with_attr("text", lexeme.as_str());
+            node.push_child(text);
+        }
 
         _ => {
             return Err(ParserError::UnexpectedToken {

@@ -1,0 +1,7 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Escaped email addresses are not recognized: test\\@example.org\n"
