@@ -64,7 +64,7 @@ mod tests {
 
     #[test]
     fn parse_substitution_directive_marker() {
-        let mut stream = tokenize(".. | name | replace:: target\n");
+        let mut stream = tokenize(".. |name| replace:: target\n");
         stream.consume(); //synthetic blank line
 
         let directive = parse_directive(&mut stream).unwrap();
@@ -72,7 +72,7 @@ mod tests {
 
         assert_eq!(
             directive.attributes.get_str("substitution").as_deref(),
-            Some(" name ")
+            Some("name")
         );
         assert_eq!(
             directive.attributes.get_str("directive_type").as_deref(),

@@ -1,4 +1,4 @@
-This document lists deviations from the rst specification / implementation.
+This document lists deviations from the docutils parser implementation.
 
 # Directives
 rstu_parser does not support syntax extension via directives.
@@ -11,7 +11,7 @@ Consequences:
 - Directive bodies are parsed as sub-documents.
   New section hierarchy is started.
 
-# Other spec limitations
+# Other parser behavior changes
 All of these are believed to be non-critical.
 
 - Allowed section/transition markers: restrict to the "recommended" set.
@@ -34,8 +34,8 @@ All of these are believed to be non-critical.
   * First indent defines the block indent.
   * Representation: The first line is a direct child of the line block, even if nested line blocks follow.
 - Inline markup
-  * Asterisks-only surrounded emphasis markers need to be escaped (see emphasis_06.rst) to avoid confusion with
-    section marker.
+  * Asterisks-only surrounded emphasis markers need to be escaped (see emphasis_06.rst) to avoid confusion with section marker.
+  * Substitution definitions without closing | are treated as ordinary paragraph and will not  cause an error.
 
 # Spec extensions
 - Enumerated list:
@@ -50,8 +50,8 @@ All of these are believed to be non-critical.
 # Interpretations
 Things that would be according to the spec book but not to the python parser implementation:
 - Substitution definitions:
-  * Missing :: or directive name are treated as a comments.
-  * Line breaks within substitutions ("|a \n b|") are not allowed.
+  * Missing :: or missing directive name are treated as a comments.
+
 
 
 # Proposals

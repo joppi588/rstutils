@@ -75,12 +75,6 @@ use test_parser::rst_vs_yaml;
 // #[case::standalone_hyperlink("standalone_hyperlink_03")]
 // #[case::standalone_hyperlink("standalone_hyperlink_04")]
 // #[case::standalone_hyperlink("standalone_hyperlink_05")]
-// #[case::substitution_references("substitution_references_00")]
-// #[case::substitution_references("substitution_references_01")]
-// #[case::substitution_references("substitution_references_02")]
-// #[case::substitution_references("substitution_references_03")]
-// #[case::substitution_references("substitution_references_05")]
-// #[case::substitution_references("substitution_references_06")]
 #[case::c00("citation_reference_00")]
 #[case::citation_reference("citation_reference_01")]
 #[case::citation_reference("citation_reference_02")]
@@ -101,6 +95,18 @@ fn ok_inline_markup(#[case] test_case: &str) {
     rst_vs_yaml!("inline_markup", test_case)
 }
 
+#[rstest]
+#[case::s00("substitution_references_00")]
+#[case::s01("substitution_references_01")]
+#[case::s02("substitution_references_02")]
+#[case::s03("substitution_references_03")]
+#[case::s04("substitution_references_04")]
+#[case::s05("substitution_references_05")]
+#[case::s06("substitution_references_06")]
+fn ok_substitution_references(#[case] test_case: &str) {
+    rst_vs_yaml!("inline_markup", test_case)
+}
+
 // TODO: Err cases
 // #[case::embedded_aliases("embedded_aliases_09")]
 // #[case::embedded_uris("embedded_uris_11")]
@@ -117,4 +123,3 @@ fn ok_inline_markup(#[case] test_case: &str) {
 // #[case::phrase_references("phrase_references_13")]
 // #[case::strong("strong_03")]
 // #[case::strong("strong_05")]
-// #[case::substitution_references("substitution_references_04")]

@@ -1,0 +1,11 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      label: subref
+      type: sub_ref
+  - class: PlainText
+    attributes:
+      text: "\n"
