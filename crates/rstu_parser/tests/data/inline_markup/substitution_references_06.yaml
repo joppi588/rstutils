@@ -1,0 +1,20 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Substitution reference with "
+  - class: Reference
+    attributes:
+      label: mix
+      type: sub_ref
+  - class: PlainText
+    attributes:
+      text: ".\n"
+- class: BlankLine
+- class: Directive
+  attributes:
+    directive_arguments: text and hyperlink-reference_
+    directive_type: replace
+    substitution: mix

@@ -26,7 +26,15 @@ pub(crate) fn parse_inline_token(stream: &mut TokenStream) -> Result<NodeRef, Pa
         }
         TK::SubstitutionReference => {
             node.with_attr("label", &lexeme[1..lexeme.len() - 1])
-                .with_attr("type", "sub");
+                .with_attr("type", "sub_ref");
+        }
+        TK::SubRefHyperlink => {
+            node.with_attr("label", &lexeme[1..lexeme.len() - 2])
+                .with_attr("type", "sub_href");
+        }
+        TK::SubRefAnonymousHyperlink => {
+            node.with_attr("label", &lexeme[1..lexeme.len() - 3])
+                .with_attr("type", "sub_ahref");
         }
         TK::SimpleHyperlinkReference => {
             node.with_attr("label", &lexeme[0..lexeme.len() - 1])

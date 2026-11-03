@@ -1,8 +1,9 @@
 class: Document
 children:
-- class: Comment
+- class: Directive
   attributes:
-    indent: 3
-    text: |
-      |very long substitution text,
-      split across lines| image:: symbol.png
+    directive_arguments: symbol.png
+    directive_type: image
+    substitution: |-
+      very long substitution text,
+         split across lines

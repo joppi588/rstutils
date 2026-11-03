@@ -1,0 +1,18 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      label: subref
+      type: sub_href
+  - class: PlainText
+    attributes:
+      text: " and "
+  - class: Reference
+    attributes:
+      label: subref
+      type: sub_ahref
+  - class: PlainText
+    attributes:
+      text: "\n"
