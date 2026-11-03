@@ -5,7 +5,7 @@ children:
   - class: Reference
     attributes:
       label: subref
-      type: sub
+      type: sub_ref
   - class: PlainText
     attributes:
       text: "\n"

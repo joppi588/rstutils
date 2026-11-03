@@ -9,7 +9,7 @@ use strum::EnumCount;
 static RECOMMENDED_SECTION_CHARS: &str = r##"=-`:.'"~^_*+#"##;
 static FOOTNOTE_LABEL: &str = r"(?:[0-9]+|#(?:[\p{L}\p{N}]+(?:[-_.][\p{L}\p{N}]+)*)?|\*)";
 static CITATION_LABEL: &str = r"[\p{L}\p{N}]+(?:[-_.][\p{L}\p{N}]+)*";
-static SUBSTITUTION_NAME: &str = r"[^ |](?:[^|]*[^ |])?";
+static SUBSTITUTION_NAME: &str = r"[^ |\n](?:[^|]*[^ |\n])?";
 static INLINE_PRE_CHARS: &str = r#"(?:[\n\s\-:/'"<(\[{]|\p{Ps}|\p{Pi}|\p{Pf}|\p{Pd}|\p{Po})"#;
 static INLINE_PRE_CHARS_NO_ASTERISK: &str =
     r#"(?:[\n\s\-:/'"<(\[{]|\p{Ps}|\p{Pi}|\p{Pf}|\p{Pd}|[\p{Po}&&[^*]])"#;
@@ -357,7 +357,7 @@ impl TokenKind {
         (BlankLine, r"\n[ \t]*\n+(.|\n)"),
         (NewLine, r"[^\n]\n(.|\n)"),
 
-        (Directive, r"[\n\s]\.\.\s(?:\|[^|\n]+\|\s)?[\p{L}\p{N}]+(?:[-_+:.][\p{L}\p{N}]+)*::\s"),
+        (Directive, format!(r"[\n\s]\.\.\s(?:\|{0}\|\s)?[\p{{L}}\p{{N}}]+(?:[-_+:.][\p{{L}}\p{{N}}]+)*::\s", SUBSTITUTION_NAME)),
 
         (DoctestStart, r"\s>>>\s"),
 
@@ -531,6 +531,10 @@ mod tests {
             Some(".. |name surname| replace-text::")
         );
         assert_eq!(
+            TK::Directive.find_lexeme("\n.. |name\nsurname| replace-text:: text\n"),
+            Some(".. |name\nsurname| replace-text::")
+        );
+        assert_eq!(
             TK::Directive.find_lexeme("\n.. custom_name+type.v2:: text\n"),
             Some(".. custom_name+type.v2::")
         );
@@ -542,23 +546,27 @@ mod tests {
             TK::Directive.find_lexeme("\n.. ImAgE:: text\n"),
             Some(".. ImAgE::")
         );
-        assert_eq!(
-            TK::Directive.find_lexeme("\n.. | name| replace:: text\n"),
-            Some(".. | name| replace::")
-        );
-        assert_eq!(
-            TK::Directive.find_lexeme("\n.. |name | replace:: text\n"),
-            Some(".. |name | replace::")
-        );
-        assert_eq!(
-            TK::Directive.find_lexeme("\n.. | name | replace:: text\n"),
-            Some(".. | name | replace::")
-        );
     }
 
     #[test]
     fn directive_rejects_unsupported_syntax() {
         assert_eq!(TK::Directive.find_lexeme("\n.. image:\n"), None);
+        assert_eq!(
+            TK::Directive.find_lexeme("\n.. | name| replace:: text\n"),
+            None
+        );
+        assert_eq!(
+            TK::Directive.find_lexeme("\n.. |name | replace:: text\n"),
+            None
+        );
+        assert_eq!(
+            TK::Directive.find_lexeme("\n.. |\nname| replace:: text\n"),
+            None
+        );
+        assert_eq!(
+            TK::Directive.find_lexeme("\n.. |name\n| replace:: text\n"),
+            None
+        );
         assert_eq!(
             TK::Directive.find_lexeme("\n.. |name replace:: text\n"),
             None
@@ -742,12 +750,22 @@ mod tests {
             assert_eq!(kind.find_lexeme(input), Some(expected));
         }
 
-        for (kind, empty, leading_space, trailing_space, inner_pipe) in [
+        for (
+            kind,
+            empty,
+            leading_space,
+            trailing_space,
+            leading_newline,
+            trailing_newline,
+            inner_pipe,
+        ) in [
             (
                 TK::SubstitutionReference,
                 " || ",
                 " | name| ",
                 " |name | ",
+                " |\nname| ",
+                " |name\n| ",
                 " |na|me| ",
             ),
             (
@@ -755,6 +773,8 @@ mod tests {
                 " ||_ ",
                 " | name|_ ",
                 " |name |_ ",
+                " |\nname|_ ",
+                " |name\n|_ ",
                 " |na|me|_ ",
             ),
             (
@@ -762,10 +782,19 @@ mod tests {
                 " ||__ ",
                 " | name|__ ",
                 " |name |__ ",
+                " |\nname|__ ",
+                " |name\n|__ ",
                 " |na|me|__ ",
             ),
         ] {
-            for input in [empty, leading_space, trailing_space, inner_pipe] {
+            for input in [
+                empty,
+                leading_space,
+                trailing_space,
+                leading_newline,
+                trailing_newline,
+                inner_pipe,
+            ] {
                 assert_eq!(kind.find_lexeme(input), None, "{input:?}");
             }
         }
