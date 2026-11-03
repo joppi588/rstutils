@@ -87,7 +87,7 @@ children:
           - class: Reference
             attributes:
               label: "sub"
-              type: sub
+              type: subref
           - class: PlainText
             attributes:
               text: "\n"

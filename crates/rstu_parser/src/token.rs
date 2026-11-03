@@ -9,6 +9,7 @@ use strum::EnumCount;
 static RECOMMENDED_SECTION_CHARS: &str = r##"=-`:.'"~^_*+#"##;
 static FOOTNOTE_LABEL: &str = r"(?:[0-9]+|#(?:[\p{L}\p{N}]+(?:[-_.][\p{L}\p{N}]+)*)?|\*)";
 static CITATION_LABEL: &str = r"[\p{L}\p{N}]+(?:[-_.][\p{L}\p{N}]+)*";
+static SUBSTITUTION_NAME: &str = r"[^ |](?:[^|]*[^ |])?";
 static INLINE_PRE_CHARS: &str = r#"(?:[\n\s\-:/'"<(\[{]|\p{Ps}|\p{Pi}|\p{Pf}|\p{Pd}|\p{Po})"#;
 static INLINE_PRE_CHARS_NO_ASTERISK: &str =
     r#"(?:[\n\s\-:/'"<(\[{]|\p{Ps}|\p{Pi}|\p{Pf}|\p{Pd}|[\p{Po}&&[^*]])"#;
@@ -252,6 +253,8 @@ impl TokenCategory {
         TokenKind::SimpleAnonymousHyperLinkReference,
         TokenKind::SimpleHyperlinkReference,
         TokenKind::SubstitutionReference,
+        TokenKind::SubRefHyperlink,
+        TokenKind::SubRefAnonymousHyperlink,
     ];
 
     pub const LIST_MARKER: &'static [TokenKind] = &[
@@ -329,6 +332,8 @@ pub enum TokenKind {
     Option,
     Punctuation,
     Separator,
+    SubRefHyperlink,
+    SubRefAnonymousHyperlink,
     SimpleAnonymousHyperLinkReference,
     SimpleHyperlinkReference,
     Spaces,
@@ -385,9 +390,10 @@ impl TokenKind {
         (BackquoteEnd, format!(r"[^\s]`{0}", INLINE_POST_CHARS)),
 
         // Inline references
-        (SubstitutionReference, format!(r"{0}\|.+?\|{1}", INLINE_PRE_CHARS, INLINE_POST_CHARS)),
-        // TODO SubsRefHyperLink rst l.3033
-        // TODO SubRefAnonymousHyperlink
+        (SubRefAnonymousHyperlink, format!(r"{0}\|{1}\|__{2}", INLINE_PRE_CHARS, SUBSTITUTION_NAME, INLINE_POST_CHARS)),
+        (SubRefHyperlink, format!(r"{0}\|{1}\|_{2}", INLINE_PRE_CHARS, SUBSTITUTION_NAME, INLINE_POST_CHARS)),
+        (SubstitutionReference, format!(r"{0}\|{1}\|{2}", INLINE_PRE_CHARS, SUBSTITUTION_NAME, INLINE_POST_CHARS)),
+
         (FootnoteReference, format!(r"{0}\[{1}\]_{2}", INLINE_PRE_CHARS, FOOTNOTE_LABEL, INLINE_POST_CHARS)),
         (CitationReference, format!(r"{0}\[{1}\]_{2}", INLINE_PRE_CHARS, CITATION_LABEL, INLINE_POST_CHARS)),
         (HyperlinkReferenceEnd, format!(r"(?:[^\s]`_|[^\s]_){}", INLINE_POST_CHARS)),
@@ -716,6 +722,53 @@ mod tests {
             TK::SimpleAnonymousHyperLinkReference.find_lexeme("_This__ "),
             Some("This__")
         );
+    }
+
+    #[test]
+    fn substitution_reference_name_requires_non_space_boundaries_and_allows_newlines() {
+        for (kind, input, expected) in [
+            (
+                TK::SubstitutionReference,
+                " |line1\nline2| ",
+                "|line1\nline2|",
+            ),
+            (TK::SubRefHyperlink, " |line1\nline2|_ ", "|line1\nline2|_"),
+            (
+                TK::SubRefAnonymousHyperlink,
+                " |line1\nline2|__ ",
+                "|line1\nline2|__",
+            ),
+        ] {
+            assert_eq!(kind.find_lexeme(input), Some(expected));
+        }
+
+        for (kind, empty, leading_space, trailing_space, inner_pipe) in [
+            (
+                TK::SubstitutionReference,
+                " || ",
+                " | name| ",
+                " |name | ",
+                " |na|me| ",
+            ),
+            (
+                TK::SubRefHyperlink,
+                " ||_ ",
+                " | name|_ ",
+                " |name |_ ",
+                " |na|me|_ ",
+            ),
+            (
+                TK::SubRefAnonymousHyperlink,
+                " ||__ ",
+                " | name|__ ",
+                " |name |__ ",
+                " |na|me|__ ",
+            ),
+        ] {
+            for input in [empty, leading_space, trailing_space, inner_pipe] {
+                assert_eq!(kind.find_lexeme(input), None, "{input:?}");
+            }
+        }
     }
 
     /// GIVEN citation labels with valid and invalid punctuation
