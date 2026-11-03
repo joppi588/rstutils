@@ -14,11 +14,12 @@ Round-trip capable
 - Syntax highlighting
 - doctree transform
 - html transform
+- database transforms
+  * extract references
+  * directives to relational db (fields and content as typed fields, indexed by an "id" field)
 
-## Semantic checks
+## Structure checks
 Check numbering of enumerations
-Validate the doctree against a schema.
-    validate data, e.g. numbers, units
 Check url format
 
 ## Formatter
@@ -28,14 +29,12 @@ Remove empty lines
 (replace tabs by spaces)
 
 ## Artifact server
-- Link database
-- directive database (fields and content as typed fields, indexed by an "id" field)
-- consistency checks
+- References database
+- directive database
+- consistency checks, validation
 
 ## Language server
-Parsing errors.
-Linter warnings
-Check internal & external links
+Parsing errors, warnings, linked artifacts
 
 # Constraints
 - Cache
