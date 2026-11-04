@@ -84,7 +84,7 @@ fn err_enumerated_list(#[case] test_case: &str, #[case] expected_error: PE) {
     rst_err!("lists/enumerated_list", test_case, expected_error);
 }
 
-// TODO
+// TODO: Activate tests
 // NOT IMPLEMENTED: Docutils emits system messages for ordinal validation.
 // #[case::e15("15_scrambled_sequences")]
 // #[case::e16("16_skipping_item")]
