@@ -1,0 +1,23 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Valid URLs may end with punctuation inside \"<>\":\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: <
+  - class: Reference
+    attributes:
+      refuri: http://example.org/ends-with-dot.
+    children:
+    - class: PlainText
+      attributes:
+        text: http://example.org/ends-with-dot.
+  - class: PlainText
+    attributes:
+      text: ">\n"

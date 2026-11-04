@@ -1,0 +1,7 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "None of these are standalone hyperlinks (their \"schemes\"\nare not recognized): signal:noise, a:b.\n"
