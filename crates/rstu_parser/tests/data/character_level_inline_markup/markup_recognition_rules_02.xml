@@ -1,0 +1,31 @@
+<document source="test data">
+    <paragraph>
+        text-
+        <emphasis>
+            separated
+        ‐
+        <emphasis>
+            by
+        ‑
+        <emphasis>
+            various
+        ‒
+        <emphasis>
+            dashes
+        –
+        <emphasis>
+            and
+        —
+        <emphasis>
+            hyphens
+        .
+        ¿
+        <emphasis>
+            punctuation
+        ? ¡
+        <emphasis>
+            examples
+        ! 
+        <emphasis>
+            no-break-space
+         .

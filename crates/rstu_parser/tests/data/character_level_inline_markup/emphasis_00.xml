@@ -1,0 +1,86 @@
+<document source="test data">
+    <paragraph>
+        some punctuation is allowed around inline markup, e.g.
+        /
+        <emphasis>
+            emphasis
+        /, -
+        <emphasis>
+            emphasis
+        -, and :
+        <emphasis>
+            emphasis
+        : (delimiters),
+        (
+        <emphasis>
+            emphasis
+        ), [
+        <emphasis>
+            emphasis
+        ], <
+        <emphasis>
+            emphasis
+        >, {
+        <emphasis>
+            emphasis
+        } (open/close pairs)
+        <emphasis>
+            emphasis
+        .,
+        <emphasis>
+            emphasis
+        ,,
+        <emphasis>
+            emphasis
+        !, and
+        <emphasis>
+            emphasis
+        (closing delimiters),
+    <paragraph>
+        With simple-inline-markup also
+        )
+        <emphasis>
+            emphasis
+        (, ]
+        <emphasis>
+            emphasis
+        [, >
+        <emphasis>
+            emphasis
+        >, }
+        <emphasis>
+            emphasis
+        { (close/open pairs),
+        x
+        <emphasis>
+            2
+         or 2
+        <emphasis>
+            x
+         (alphanumeric char before),
+    <paragraph>
+        but not
+        (*), [*], '*' or '"*"' ("quoted" start-string),
+        *args or * (escaped; whitespace behind start-string),
+        or
+        <emphasis>
+            the* *stars* *inside
+         (escaped; whitespace before end-string).
+    <paragraph>
+        However, '
+        <problematic ids="problematic-1" refid="system-message-1">
+            *
+        args' triggers a warning.
+    <system_message backrefs="problematic-1" ids="system-message-1" level="2" line="15" source="test data" type="WARNING">
+        <paragraph>
+            Inline emphasis start-string without end-string.
+    <paragraph>
+        Also
+        <emphasis>
+            this
+        <problematic ids="problematic-2" refid="system-message-2">
+            *
+        .
+    <system_message backrefs="problematic-2" ids="system-message-2" level="2" line="17" source="test data" type="WARNING">
+        <paragraph>
+            Inline emphasis start-string without end-string.

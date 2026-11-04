@@ -1,0 +1,12 @@
+<document source="test data">
+    <paragraph>
+        Strong asterisk:
+        <strong>
+            *
+
+        and
+        strong double asterisk:
+        <strong>
+            **
+
+        require escaping with simple-inline-markup.

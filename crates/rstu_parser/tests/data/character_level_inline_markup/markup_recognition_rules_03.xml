@@ -1,0 +1,81 @@
+<document source="test data">
+    <paragraph>
+        inline markup surrounded by various whitespace characters:
+        <emphasis>
+            newline
+
+        or
+        <emphasis>
+            space
+         or one of
+         
+        <emphasis>
+            NO-BREAK SPACE
+         ,
+         
+        <emphasis>
+            OGHAM SPACE MARK
+         ,
+        ᠎
+        <emphasis>
+            MONGOLIAN VOWEL SEPARATOR
+        ᠎,
+         
+        <emphasis>
+            EN QUAD
+         ,
+         
+        <emphasis>
+            EM QUAD
+         ,
+         
+        <emphasis>
+            EN SPACE
+         ,
+         
+        <emphasis>
+            EM SPACE
+         ,
+         
+        <emphasis>
+            THREE-PER-EM SPACE
+         ,
+         
+        <emphasis>
+            FOUR-PER-EM SPACE
+         ,
+         
+        <emphasis>
+            SIX-PER-EM SPACE
+         ,
+         
+        <emphasis>
+            FIGURE SPACE
+         ,
+         
+        <emphasis>
+            PUNCTUATION SPACE
+         ,
+         
+        <emphasis>
+            THIN SPACE
+         ,
+         
+        <emphasis>
+            HAIR SPACE
+         ,
+         
+        <emphasis>
+            NARROW NO-BREAK SPACE
+         ,
+         
+        <emphasis>
+            MEDIUM MATHEMATICAL SPACE
+         ,
+        　
+        <emphasis>
+            IDEOGRAPHIC SPACE
+        　,
+    <paragraph>
+        <emphasis>
+            LINE SEPARATOR
