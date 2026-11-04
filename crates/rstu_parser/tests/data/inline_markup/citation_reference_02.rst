@@ -1,1 +1,2 @@
-Adjacent citation refs are not possible: [citation]_[CIT1]_
+Adjacent citation refs are possible [citation]_[CIT1]_
+only when separated by a space: [citation]_ [CIT1]_

@@ -10,7 +10,6 @@ mod test_parser;
 use test_parser::rst_err;
 use test_parser::rst_vs_yaml;
 #[rstest]
-#[case::c00("citation_reference_00")] // TODO: FIX
 #[case::e00("embedded_uris_00")]
 // TODO: 462
 // #[case::e01("emphasis_01")]

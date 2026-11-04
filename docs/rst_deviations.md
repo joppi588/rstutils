@@ -37,6 +37,7 @@ All of these are believed to be non-critical.
   * Asterisks-only surrounded emphasis markers need to be escaped (see emphasis_06.rst) to avoid confusion with section marker.
   * Substitution definitions without closing | are treated as ordinary paragraph and will not  cause an error.
 
+
 # Spec extensions
 - Enumerated list:
     * Auto in between explicit markers is accepted.
@@ -51,7 +52,8 @@ All of these are believed to be non-critical.
 Things that would be according to the spec book but not to the python parser implementation:
 - Substitution definitions:
   * Missing :: or missing directive name are treated as a comments.
-
+- citation references: Adjacent citation references seem to be possible in special cases only,
+  search the .py test cases for "[citation]_[CIT1]_". rstu_parser requires a space in between.
 
 
 # Proposals
