@@ -7,7 +7,7 @@ children:
       text: __
   - class: Reference
     attributes:
-      text: This
+      label: This
       type: simple_anonymous_ref
   - class: PlainText
     attributes:

@@ -4,25 +4,4 @@ children:
   children:
   - class: PlainText
     attributes:
-      text: |
-        no inline markup due to whitespace inside and behind: *
-        newline
-        *
-        * space * or one of
-        * NO-BREAK SPACE *
-        * OGHAM SPACE MARK *
-        * EN QUAD *
-        * EM QUAD *
-        * EN SPACE *
-        * EM SPACE *
-        * THREE-PER-EM SPACE *
-        * FOUR-PER-EM SPACE *
-        * SIX-PER-EM SPACE *
-        * FIGURE SPACE *
-        * PUNCTUATION SPACE *
-        * THIN SPACE *
-        * HAIR SPACE *
-        * NARROW NO-BREAK SPACE *
-        * MEDIUM MATHEMATICAL SPACE *
-        *　IDEOGRAPHIC SPACE　*
-        *\LLINE SEPARATOR\L*
+      text: "no inline markup due to whitespace inside and behind: *\nnewline\n*\n* space * or one of\n* NO-BREAK SPACE *\n* OGHAM SPACE MARK *\n* EN QUAD *\n* EM QUAD *\n* EN SPACE *\n* EM SPACE *\n* THREE-PER-EM SPACE *\n* FOUR-PER-EM SPACE *\n* SIX-PER-EM SPACE *\n* FIGURE SPACE *\n* PUNCTUATION SPACE *\n* THIN SPACE *\n* HAIR SPACE *\n* NARROW NO-BREAK SPACE *\n* MEDIUM MATHEMATICAL SPACE *\n*　IDEOGRAPHIC SPACE　*\n*\LLINE SEPARATOR\L*\n"

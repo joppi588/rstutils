@@ -7,8 +7,9 @@ children:
       text: "Adjacent citation refs are possible with simple-inline-markup:\n"
   - class: Reference
     attributes:
-      text: citation
+      label: citation
       type: citation
-  - class: PlainText
+  - class: Reference
     attributes:
-      text: "[CIT1]_\n"
+      label: CIT1
+      type: citation
