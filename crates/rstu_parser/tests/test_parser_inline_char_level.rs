@@ -5,6 +5,9 @@
 use rstest::rstest;
 use rstu_parser::parser_errors::ParserErrorKind as PE;
 
+// IMPORTANT: character_level_inline_markup setting is not implemented, so
+// these tests model the behavior in character_level_inline_markup=False (default) mode
+
 #[path = "common/mod.rs"]
 mod test_parser;
 use test_parser::rst_err;
