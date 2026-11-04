@@ -10,6 +10,9 @@ mod test_parser;
 use test_parser::rst_err;
 use test_parser::rst_vs_yaml;
 
+// IMPORTANT: character_level_inline_markup setting is not implemented, so
+// these tests are just included for completeness.
+
 #[rstest]
 #[case::e01("emphasis_01")]
 #[case::s00("strong_00")]

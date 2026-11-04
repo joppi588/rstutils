@@ -1,7 +1,0 @@
-class: Document
-children:
-- class: Paragraph
-  children:
-  - class: PlainText
-    attributes:
-      text: "no inline markup due to whitespace inside and behind: *\nnewline\n*\n* space * or one of\n* NO-BREAK SPACE *\n* OGHAM SPACE MARK *\n* EN QUAD *\n* EM QUAD *\n* EN SPACE *\n* EM SPACE *\n* THREE-PER-EM SPACE *\n* FOUR-PER-EM SPACE *\n* SIX-PER-EM SPACE *\n* FIGURE SPACE *\n* PUNCTUATION SPACE *\n* THIN SPACE *\n* HAIR SPACE *\n* NARROW NO-BREAK SPACE *\n* MEDIUM MATHEMATICAL SPACE *\n*　IDEOGRAPHIC SPACE　*\n*\LLINE SEPARATOR\L*\n"

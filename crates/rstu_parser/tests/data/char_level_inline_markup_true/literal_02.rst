@@ -1,2 +1,0 @@
-
-Python ``list``s use square bracket syntax.
