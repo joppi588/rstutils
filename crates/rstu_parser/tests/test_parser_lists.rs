@@ -26,15 +26,37 @@ fn ok_bullet_list(#[case] test_case: &str) {
 
 #[rstest]
 #[case::b05("bullet_05", PE::ListStyleError)]
-fn err_bullet_list_style(#[case] test_case: &str, #[case] expected_error: PE) {
+#[case::b06("bullet_06", PE::ListEndError)]
+#[case::b08("bullet_08", PE::ListEndError)]
+fn err_bullet_list(#[case] test_case: &str, #[case] expected_error: PE) {
     rst_err!("lists/bullet_list", test_case, expected_error);
 }
 
 #[rstest]
-#[case::b06("bullet_06", PE::ListEndError)]
-#[case::b08("bullet_08", PE::ListEndError)]
-fn err_bullet_list_end(#[case] test_case: &str, #[case] expected_error: PE) {
-    rst_err!("lists/bullet_list", test_case, expected_error);
+#[case::d00("definition_00")]
+#[case::d01("definition_01")]
+#[case::d05("definition_05")]
+#[case::d06("definition_06")]
+#[case::d08("definition_08")]
+#[case::d09("definition_09")]
+#[case::d10("definition_10")]
+#[case::d11("definition_11")]
+// #[case::d13("definition_13")] // TODO: #439
+// #[case::d14("definition_14")] // TODO: #439
+#[case::d15("definition_15")]
+#[case("inline_markup")]
+fn ok_definition_list(#[case] test_case: &str) {
+    rst_vs_yaml!("lists/definition_list", test_case);
+}
+
+#[rstest]
+#[case::d02("definition_02", PE::MissingFinalBlankLineError)]
+#[case::d03("definition_03", PE::LiteralBlockMissingBlankLine)]
+#[case::d04("definition_04", PE::UnexpectedIndentError)]
+#[case::d07("definition_07", PE::MissingFinalBlankLineError)]
+#[case::d12("definition_12", PE::InlineMissingClosing)]
+fn err_definition_list(#[case] test_case: &str, #[case] expected_error: PE) {
+    rst_err!("lists/definition_list", test_case, expected_error);
 }
 
 #[rstest]
@@ -92,7 +114,6 @@ fn err_enumerated_list(#[case] test_case: &str, #[case] expected_error: PE) {
 // #[case("edge_cases")]
 // #[case("embedded_colons_comment_split")]
 // #[case("embedded_colons_interpreted_text")]
-
 fn ok_field_list(#[case] test_case: &str) {
     // GIVEN field-list examples
     // WHEN we parse and compare them against YAML snapshots
@@ -102,52 +123,25 @@ fn ok_field_list(#[case] test_case: &str) {
 }
 
 #[rstest]
-#[case::d00("definition_00")]
-#[case::d01("definition_01")]
-#[case::d05("definition_05")]
-#[case::d06("definition_06")]
-#[case::d08("definition_08")]
-#[case::d09("definition_09")]
-#[case::d10("definition_10")]
-#[case::d11("definition_11")]
-// #[case::d13("definition_13")] // TODO: #439
-// #[case::d14("definition_14")] // TODO: #439
-#[case::d15("definition_15")]
-#[case("inline_markup")]
-fn ok_definition_list(#[case] test_case: &str) {
-    rst_vs_yaml!("lists/definition_list", test_case);
-}
-
-#[rstest]
-#[case::d02("definition_02", PE::MissingFinalBlankLineError)]
-#[case::d03("definition_03", PE::LiteralBlockMissingBlankLine)]
-#[case::d04("definition_04", PE::UnexpectedIndentError)]
-#[case::d07("definition_07", PE::MissingFinalBlankLineError)]
-#[case::d12("definition_12", PE::InlineMissingClosing)]
-fn err_definition_list(#[case] test_case: &str, #[case] expected_error: PE) {
-    rst_err!("lists/definition_list", test_case, expected_error);
-}
-
-#[rstest]
 #[case("empty_item_no_blank", PE::ListEndError)]
 #[case("list_end_no_blank", PE::ListEndError)]
-fn err_field_list_end(#[case] test_case: &str, #[case] expected_error: PE) {
+fn err_field_list(#[case] test_case: &str, #[case] expected_error: PE) {
     rst_err!("lists/field_list", test_case, expected_error);
 }
 
 #[rstest]
-#[case("01_short_options")]
-#[case("02_long_options")]
-#[case("03_old_gnu_options")]
-#[case("04_vms_dos_options")]
-#[case("05_mixed_options")]
-#[case("06_aliased_options")]
-#[case("07_descriptions_aligned")]
-#[case("08_descriptions_unaligned")]
-#[case("09_descriptions_next_line")]
-#[case("10_multiple_body_elements")]
-#[case("11_empty_item_no_blank")]
-#[case("12_argument_delimiters")]
+#[case::o01("01_short_options")]
+#[case::o02("02_long_options")]
+#[case::o03("03_old_gnu_options")]
+#[case::o04("04_vms_dos_options")]
+#[case::o05("05_mixed_options")]
+#[case::o06("06_aliased_options")]
+#[case::o07("07_descriptions_aligned")]
+#[case::o08("08_descriptions_unaligned")]
+#[case::o09("09_descriptions_next_line")]
+#[case::o10("10_multiple_body_elements")]
+#[case::o11("11_empty_item_no_blank")]
+#[case::o12("12_argument_delimiters")]
 // #[case("13_edge_cases")] // TODO: Separate into errors and warnings (-> linter)
 // #[case("14_complex_arguments")]
 // TODO: Lexer currently panics on the Unicode arrow in this paragraph.
