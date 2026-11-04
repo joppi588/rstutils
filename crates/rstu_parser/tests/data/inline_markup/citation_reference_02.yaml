@@ -4,11 +4,25 @@ children:
   children:
   - class: PlainText
     attributes:
-      text: "Adjacent citation refs are not possible: "
+      text: "Adjacent citation refs are possible "
   - class: Reference
     attributes:
       label: citation
       type: citation
   - class: PlainText
     attributes:
-      text: "[CIT1]_\n"
+      text: "[CIT1]_\nonly when separated by a space: "
+  - class: Reference
+    attributes:
+      label: citation
+      type: citation
+  - class: PlainText
+    attributes:
+      text: " "
+  - class: Reference
+    attributes:
+      label: CIT1
+      type: citation
+  - class: PlainText
+    attributes:
+      text: "\n"

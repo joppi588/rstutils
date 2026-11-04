@@ -12,9 +12,16 @@ children:
       children:
       - class: Paragraph
         children:
+        - class: Reference
+          attributes:
+            refuri: http://waste.paper.com/bin2/shreddered
+          children:
+          - class: PlainText
+            attributes:
+              text: http://waste.paper.com/bin2/shreddered
         - class: PlainText
           attributes:
-            text: "http://waste.paper.com/bin2/shreddered\n"
+            text: "\n"
   - class: FieldListItem
     attributes:
       fieldname: script

@@ -10,6 +10,14 @@ static RECOMMENDED_SECTION_CHARS: &str = r##"=-`:.'"~^_*+#"##;
 static FOOTNOTE_LABEL: &str = r"(?:[0-9]+|#(?:[\p{L}\p{N}]+(?:[-_.][\p{L}\p{N}]+)*)?|\*)";
 static CITATION_LABEL: &str = r"[\p{L}\p{N}]+(?:[-_.][\p{L}\p{N}]+)*";
 static SUBSTITUTION_NAME: &str = r"[^ |\n](?:[^|]*[^ |\n])?";
+static IANA_URI_SCHEMES: LazyLock<String> = LazyLock::new(|| {
+    include_str!("../resources/iana_uri_schemes.txt")
+        .lines()
+        .filter(|scheme| !scheme.is_empty() && !scheme.starts_with('#'))
+        .map(regex::escape)
+        .collect::<Vec<_>>()
+        .join("|")
+});
 static INLINE_PRE_CHARS: &str = r#"(?:[\n\s\-:/'"<(\[{]|\p{Ps}|\p{Pi}|\p{Pf}|\p{Pd}|\p{Po})"#;
 static INLINE_PRE_CHARS_NO_ASTERISK: &str =
     r#"(?:[\n\s\-:/'"<(\[{]|\p{Ps}|\p{Pi}|\p{Pf}|\p{Pd}|[\p{Po}&&[^*]])"#;
@@ -134,6 +142,20 @@ fn section_separator_pattern() -> String {
     format!(r"\s(?:{repetitions})\n")
 }
 
+fn uri_pattern() -> String {
+    let uri_chars = r"[A-Za-z0-9._~:/?#\[\]@!$&'()*+,;=%\\\-]";
+    let uri_end = r"[A-Za-z0-9/#~_*+%\-]";
+    let uri_punctuation = r"[.,:;!?&=+$'()*%-]";
+    format!(
+        r"[^A-Za-z0-9+.-](?i:(?:{}):(?:{uri_chars}*{uri_end}[\s[:punct:]]|{uri_chars}*{uri_punctuation}>))",
+        *IANA_URI_SCHEMES,
+    )
+}
+
+fn email_pattern() -> &'static str {
+    r"[^A-Za-z0-9.!#$%&'*+/=?^_`{|}~-][A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?)*[\s[:punct:]]"
+}
+
 // Option parsing, Lexer:
 static OPTION: &str = concat!(
     r"\n(?:",
@@ -249,12 +271,14 @@ impl TokenCategory {
     ];
     pub const INLINE_TOKEN: &'static [TokenKind] = &[
         TokenKind::CitationReference,
+        TokenKind::Email,
         TokenKind::FootnoteReference,
         TokenKind::SimpleAnonymousHyperLinkReference,
         TokenKind::SimpleHyperlinkReference,
         TokenKind::SubstitutionReference,
         TokenKind::SubRefHyperlink,
         TokenKind::SubRefAnonymousHyperlink,
+        TokenKind::Uri,
     ];
 
     pub const LIST_MARKER: &'static [TokenKind] = &[
@@ -309,6 +333,7 @@ pub enum TokenKind {
     Directive,
     DoctestStart,
     DoubleDot,
+    Email,
     EmphasisEnd,
     EmphasisStart,
     EnclosedInlineStart,
@@ -341,6 +366,7 @@ pub enum TokenKind {
     StrongStart,
     SubstitutionReference,
     TableHorizontal,
+    Uri,
     Word,
 }
 
@@ -400,6 +426,8 @@ impl TokenKind {
         (SimpleAnonymousHyperLinkReference,r"[\W_][\w&&[^_]]+(?:[-_.:+][\w&&[^_]]+)*__\s"),
         (SimpleHyperlinkReference,r"[\W_][\w&&[^_]]+(?:[-_.:+][\w&&[^_]]+)*_\s"),
         (EnclosedInlineStart, enclosed_inline_start_pattern()),
+        (Uri, uri_pattern()),
+        (Email, email_pattern()),
 
         // Classifiers for definition list (must precede Field: " : x :" would match Field)
         (ClassifierSeparator,r"(.|\n)\s+:\s+(.|\n)"),
@@ -443,7 +471,7 @@ impl TokenKind {
 
 #[cfg(test)]
 mod tests {
-    use super::{Token, TokenCategory, TokenKind as TK};
+    use super::{Token, TokenCategory, TokenKind as TK, IANA_URI_SCHEMES};
     use rstest::rstest;
 
     #[rstest]
@@ -729,6 +757,84 @@ mod tests {
         assert_eq!(
             TK::SimpleAnonymousHyperLinkReference.find_lexeme("_This__ "),
             Some("This__")
+        );
+    }
+
+    #[test]
+    fn uri_matches_registered_schemes_and_preserves_uri_forms() {
+        for (input, expected) in [
+            (" http://example.com ", "http://example.com"),
+            (
+                " http:/one-slash-only.absolute.path ",
+                "http:/one-slash-only.absolute.path",
+            ),
+            (
+                " news:comp.infosystems.www.servers.unix ",
+                "news:comp.infosystems.www.servers.unix",
+            ),
+            (" tel:+48-816-555-1212 ", "tel:+48-816-555-1212"),
+            (" urn:isbn:0-486-27557-4 ", "urn:isbn:0-486-27557-4"),
+            (
+                " http://[1080:0:0:0:8:800:200C:417A]/IPv6address.html ",
+                "http://[1080:0:0:0:8:800:200C:417A]/IPv6address.html",
+            ),
+            (
+                " http://[3ffe:2a00:100:7031::1] (text)",
+                "http://[3ffe:2a00:100:7031::1",
+            ),
+            (
+                " http://example.org/ends-with-dot.>",
+                "http://example.org/ends-with-dot.",
+            ),
+            (
+                " http://example.org/ends-with-pluses++ ",
+                "http://example.org/ends-with-pluses++",
+            ),
+        ] {
+            assert_eq!(TK::Uri.find_lexeme(input), Some(expected), "{input:?}");
+        }
+    }
+
+    #[test]
+    fn uri_rejects_unregistered_schemes_and_trims_sentence_punctuation() {
+        assert_eq!(TK::Uri.find_lexeme(" signal:noise "), None);
+        assert_eq!(TK::Uri.find_lexeme(" a:b "), None);
+        assert_eq!(
+            TK::Uri.find_lexeme(" https://example.com. "),
+            Some("https://example.com")
+        );
+        assert_eq!(
+            TK::match_token(" https://example.com ").map(|(kind, _)| kind),
+            Some(TK::Uri)
+        );
+    }
+
+    #[test]
+    fn uri_scheme_snapshot_contains_iana_active_schemes_only() {
+        let schemes = IANA_URI_SCHEMES.split('|').collect::<Vec<_>>();
+
+        assert_eq!(schemes.len(), 434);
+        for scheme in ["http", "ftp", "news", "tel", "urn", "mailto"] {
+            assert!(schemes.contains(&scheme));
+        }
+        assert!(!schemes.contains(&"fax"));
+        assert!(!schemes.contains(&"signal"));
+    }
+
+    #[test]
+    fn email_matches_bare_addresses_and_excludes_sentence_punctuation() {
+        assert_eq!(
+            TK::Email.find_lexeme(" someone@somewhere.com. "),
+            Some("someone@somewhere.com")
+        );
+        assert_eq!(
+            TK::Email.find_lexeme("(a.question.mark@end?)"),
+            Some("a.question.mark@end")
+        );
+        assert_eq!(TK::Email.find_lexeme(" not-an-email "), None);
+        assert_eq!(
+            TK::match_token(" someone@somewhere.com ").map(|(kind, _)| kind),
+            Some(TK::Email)
         );
     }
 

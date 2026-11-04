@@ -15,7 +15,6 @@ Consequences:
 All of these are believed to be non-critical.
 
 - Allowed section/transition markers: restrict to the "recommended" set.
-- character_level_inline_markup = False
 - Field names only allow [A-Za-z0-9_ ]
   Rationale: Field names are like identifiers.
 - Bullet list:
@@ -37,6 +36,7 @@ All of these are believed to be non-critical.
   * Asterisks-only surrounded emphasis markers need to be escaped (see emphasis_06.rst) to avoid confusion with section marker.
   * Substitution definitions without closing | are treated as ordinary paragraph and will not  cause an error.
 
+
 # Spec extensions
 - Enumerated list:
     * Auto in between explicit markers is accepted.
@@ -51,7 +51,8 @@ All of these are believed to be non-critical.
 Things that would be according to the spec book but not to the python parser implementation:
 - Substitution definitions:
   * Missing :: or missing directive name are treated as a comments.
-
+- character_level_inline_markup setting is not implemented and uses the default behavior.
+  Test fixtures are included for completeness but not executed.
 
 
 # Proposals

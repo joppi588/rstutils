@@ -1,0 +1,185 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      refuri: http://www.standalone.hyperlink.com
+    children:
+    - class: PlainText
+      attributes:
+        text: http://www.standalone.hyperlink.com
+  - class: PlainText
+    attributes:
+      text: "\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      refuri: http:/one-slash-only.absolute.path
+    children:
+    - class: PlainText
+      attributes:
+        text: http:/one-slash-only.absolute.path
+  - class: PlainText
+    attributes:
+      text: "\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "["
+  - class: Reference
+    attributes:
+      refuri: http://example.com
+    children:
+    - class: PlainText
+      attributes:
+        text: http://example.com
+  - class: PlainText
+    attributes:
+      text: "]\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: (
+  - class: Reference
+    attributes:
+      refuri: http://example.com
+    children:
+    - class: PlainText
+      attributes:
+        text: http://example.com
+  - class: PlainText
+    attributes:
+      text: ")\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: <
+  - class: Reference
+    attributes:
+      refuri: http://example.com
+    children:
+    - class: PlainText
+      attributes:
+        text: http://example.com
+  - class: PlainText
+    attributes:
+      text: ">\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      refuri: http://[1080:0:0:0:8:800:200C:417A]/IPv6address.html
+    children:
+    - class: PlainText
+      attributes:
+        text: http://[1080:0:0:0:8:800:200C:417A]/IPv6address.html
+  - class: PlainText
+    attributes:
+      text: "\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      refuri: http://[3ffe:2a00:100:7031::1
+    children:
+    - class: PlainText
+      attributes:
+        text: http://[3ffe:2a00:100:7031::1
+  - class: PlainText
+    attributes:
+      text: "] (the final \"]\" is ambiguous in text)\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      refuri: http://[3ffe:2a00:100:7031::1]/
+    children:
+    - class: PlainText
+      attributes:
+        text: http://[3ffe:2a00:100:7031::1]/
+  - class: PlainText
+    attributes:
+      text: "\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      refuri: mailto:someone@somewhere.com
+    children:
+    - class: PlainText
+      attributes:
+        text: mailto:someone@somewhere.com
+  - class: PlainText
+    attributes:
+      text: "\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      refuri: news:comp.lang.python
+    children:
+    - class: PlainText
+      attributes:
+        text: news:comp.lang.python
+  - class: PlainText
+    attributes:
+      text: "\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "An email address in a sentence: "
+  - class: Reference
+    attributes:
+      refuri: mailto:someone@somewhere.com
+    children:
+    - class: PlainText
+      attributes:
+        text: someone@somewhere.com
+  - class: PlainText
+    attributes:
+      text: ".\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      refuri: ftp://ends.with.a.period
+    children:
+    - class: PlainText
+      attributes:
+        text: ftp://ends.with.a.period
+  - class: PlainText
+    attributes:
+      text: ".\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: (
+  - class: Reference
+    attributes:
+      refuri: mailto:a.question.mark@end
+    children:
+    - class: PlainText
+      attributes:
+        text: a.question.mark@end
+  - class: PlainText
+    attributes:
+      text: "?)\n"
