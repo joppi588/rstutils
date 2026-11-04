@@ -109,12 +109,12 @@ fn err_enumerated_list(#[case] test_case: &str, #[case] expected_error: PE) {
 #[case::f08("08_oneliners_no_blank")]
 #[case::f09("09_complex_field_bodies")]
 // TODO: NOT IMPLEMENTED:
-// #[case::inline_markup_in_name("inline_markup_in_name")]
-// #[case::bad_inline_markup("bad_inline_markup")]
-// #[case::edge_cases("edge_cases")]
-// #[case::embedded_colons_comment_split("embedded_colons_comment_split")]
-// #[case::embedded_colons_interpreted_text("embedded_colons_interpreted_text")]
-// #[case::oneliners("oneliners")]
+// #[case::f12("12_inline_markup_in_name")]
+// #[case::f13("13_bad_inline_markup")]
+// #[case::f14("14_edge_cases")]
+// #[case::f15("15_embedded_colons_comment_split")]
+// #[case::f16("16_embedded_colons_interpreted_text")]
+// #[case::f17("17_oneliners")]
 fn ok_field_list(#[case] test_case: &str) {
     // GIVEN field-list examples
     // WHEN we parse and compare them against YAML snapshots
