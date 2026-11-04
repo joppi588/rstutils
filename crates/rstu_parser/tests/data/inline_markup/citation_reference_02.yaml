@@ -25,4 +25,4 @@ children:
       type: citation
   - class: PlainText
     attributes:
-      text: " \n"
+      text: "\n"
