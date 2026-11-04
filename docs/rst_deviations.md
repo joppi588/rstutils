@@ -15,7 +15,6 @@ Consequences:
 All of these are believed to be non-critical.
 
 - Allowed section/transition markers: restrict to the "recommended" set.
-- character_level_inline_markup = False
 - Field names only allow [A-Za-z0-9_ ]
   Rationale: Field names are like identifiers.
 - Bullet list:
@@ -52,8 +51,8 @@ All of these are believed to be non-critical.
 Things that would be according to the spec book but not to the python parser implementation:
 - Substitution definitions:
   * Missing :: or missing directive name are treated as a comments.
-- citation references: Adjacent citation references seem to be possible in special cases only,
-  search the .py test cases for "[citation]_[CIT1]_". rstu_parser requires a space in between.
+- character_level_inline_markup setting is not implemented and uses the default behavior.
+  Test fixtures are included for completeness but not executed.
 
 
 # Proposals
