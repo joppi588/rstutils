@@ -60,43 +60,43 @@ fn err_definition_list(#[case] test_case: &str, #[case] expected_error: PE) {
 }
 
 #[rstest]
-#[case("auto_enumerator")]
-#[case("auto_only")]
-#[case("definitely_ambiguous")]
-#[case("different_enumeration_formats")]
-#[case("different_enumeration_sequences")]
-#[case("empty_item_no_blank")]
-#[case("enumerated_list")]
-#[case("loweralpha_auto")]
-#[case("lowerroman_auto")]
-#[case("mixed_auto_and_explicit")]
-#[case("nested_enumerated_lists")]
-#[case("no_blank_lines_between_items")]
-#[case("non_marker_period")]
-#[case("potentially_ambiguous")]
+#[case::e00("00_auto_enumerator")]
+#[case::e01("01_auto_only")]
+#[case::e02("02_definitely_ambiguous")]
+#[case::e03("03_different_enumeration_formats")]
+#[case::e04("04_different_enumeration_sequences")]
+#[case::e05("05_empty_item_no_blank")]
+#[case::e06("06_enumerated_list")]
+#[case::e07("07_loweralpha_auto")]
+#[case::e08("08_lowerroman_auto")]
+#[case::e09("09_mixed_auto_and_explicit")]
+#[case::e10("10_nested_enumerated_lists")]
+#[case::e11("11_no_blank_lines_between_items")]
+#[case::e12("12_non_marker_period")]
+#[case::e13("13_potentially_ambiguous")]
 fn ok_enumerated_list(#[case] test_case: &str) {
     rst_vs_yaml!("lists/enumerated_list", test_case)
 }
 
 #[rstest]
-#[case("unindented_enumerated_continuation", PE::ListEndError)]
+#[case::e14("14_unindented_enumerated_continuation", PE::ListEndError)]
 fn err_enumerated_list(#[case] test_case: &str, #[case] expected_error: PE) {
     rst_err!("lists/enumerated_list", test_case, expected_error);
 }
 
 // TODO
 // NOT IMPLEMENTED: Docutils emits system messages for ordinal validation.
-// #[case("scrambled_sequences")]
-// #[case("skipping_item")]
-// #[case("nonordinal_starts")]
+// #[case::e15("15_scrambled_sequences")]
+// #[case::e16("16_skipping_item")]
+// #[case::e17("17_nonordinal_starts")]
 // NOT IMPLEMENTED: Roman numeral validation and recovery differ.
-// #[case("bad_roman_numerals")]
+// #[case::e18("18_bad_roman_numerals")]
 // NOT IMPLEMENTED: Docutils recovers misaligned continuation lines as warnings/block quotes.
-// #[case("misaligned_multiline_items")]
+// #[case::e19("19_misaligned_multiline_items")]
 // NOT IMPLEMENTED: Non-breaking-space handling is not supported by the current lexer.
-// #[case("nonbreaking_space_workaround")]
-// #[case("enumerated_item_indentation")]
-// #[case("multiline_enumerated_items")]
+// #[case::e20("20_nonbreaking_space_workaround")]
+// #[case::e21("21_enumerated_item_indentation")]
+// #[case::e22("22_multiline_enumerated_items")]
 
 #[rstest]
 #[case::f01("01_bodies_next_line")]
