@@ -99,32 +99,33 @@ fn err_enumerated_list(#[case] test_case: &str, #[case] expected_error: PE) {
 // #[case("multiline_enumerated_items")]
 
 #[rstest]
-#[case("bodies_next_line")]
-#[case("multiline_aligned")]
-#[case("multiline_not_lined_up")]
-#[case("multiple_arguments")]
-#[case("multiple_body_elements")]
-#[case("nested_one_line")]
-#[case("field_list")]
-#[case("oneliners_no_blank")]
-#[case("complex_field_bodies")]
+#[case::f01("01_bodies_next_line")]
+#[case::f02("02_multiline_aligned")]
+#[case::f03("03_multiline_not_lined_up")]
+#[case::f04("04_multiple_arguments")]
+#[case::f05("05_multiple_body_elements")]
+#[case::f06("06_nested_one_line")]
+#[case::f07("07_field_list")]
+#[case::f08("08_oneliners_no_blank")]
+#[case::f09("09_complex_field_bodies")]
 // TODO: NOT IMPLEMENTED:
-// #[case("inline_markup_in_name")]
-// #[case("bad_inline_markup")]
-// #[case("edge_cases")]
-// #[case("embedded_colons_comment_split")]
-// #[case("embedded_colons_interpreted_text")]
+// #[case::inline_markup_in_name("inline_markup_in_name")]
+// #[case::bad_inline_markup("bad_inline_markup")]
+// #[case::edge_cases("edge_cases")]
+// #[case::embedded_colons_comment_split("embedded_colons_comment_split")]
+// #[case::embedded_colons_interpreted_text("embedded_colons_interpreted_text")]
+// #[case::oneliners("oneliners")]
 fn ok_field_list(#[case] test_case: &str) {
     // GIVEN field-list examples
     // WHEN we parse and compare them against YAML snapshots
-    // THEN this acts as a compatibility porting test surface (expected to fail for now)
+    // THEN this covers the currently supported compatibility fixtures
 
     rst_vs_yaml!("lists/field_list", test_case);
 }
 
 #[rstest]
-#[case("empty_item_no_blank", PE::ListEndError)]
-#[case("list_end_no_blank", PE::ListEndError)]
+#[case::f10("10_empty_item_no_blank", PE::ListEndError)]
+#[case::f11("11_list_end_no_blank", PE::ListEndError)]
 fn err_field_list(#[case] test_case: &str, #[case] expected_error: PE) {
     rst_err!("lists/field_list", test_case, expected_error);
 }
@@ -142,10 +143,10 @@ fn err_field_list(#[case] test_case: &str, #[case] expected_error: PE) {
 #[case::o10("10_multiple_body_elements")]
 #[case::o11("11_empty_item_no_blank")]
 #[case::o12("12_argument_delimiters")]
-// #[case("13_edge_cases")] // TODO: Separate into errors and warnings (-> linter)
-// #[case("14_complex_arguments")]
+// #[case::o13("13_edge_cases")] // TODO: Separate into errors and warnings (-> linter)
+// #[case::o14("14_complex_arguments")]
 // TODO: Lexer currently panics on the Unicode arrow in this paragraph.
-// #[case("15_incorrect_syntax")]
+// #[case::o15("15_incorrect_syntax")]
 fn ok_option_list(#[case] test_case: &str) {
     rst_vs_yaml!("lists/option_list", test_case)
 }
