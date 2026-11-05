@@ -1,0 +1,32 @@
+class: Document
+children:
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Escape trailing low-line char in URIs:\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: InlineMarkup
+    attributes:
+      label: reference_
+      markup: href
+      raw: <reference\_>
+      refuri: reference_
+  - class: PlainText
+    attributes:
+      text: "\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: InlineMarkup
+    attributes:
+      label: anonymous_
+      markup: ahref
+      raw: <anonymous\_>
+      refuri: anonymous_
+  - class: PlainText
+    attributes:
+      text: "\n"

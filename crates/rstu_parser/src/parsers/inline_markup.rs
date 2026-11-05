@@ -5,8 +5,8 @@ use regex::Regex;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 use std::sync::LazyLock;
 
-static EMBEDDED_URI_WHITESPACE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"\\([ \r\n])|[ \r\n]").unwrap());
+static EMBEDDED_URI_NORMALIZATION: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"\\([_ \r\n])|[ \r\n]").unwrap());
 
 use crate::parser_errors::ParserError;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
@@ -128,7 +128,7 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
     match embedded {
         Some((before, refuri)) => {
             let trimmed = before.trim_end();
-            let normalized_refuri = EMBEDDED_URI_WHITESPACE
+            let normalized_refuri = EMBEDDED_URI_NORMALIZATION
                 .replace_all(refuri, "$1")
                 .into_owned();
             let label = if trimmed.is_empty() {

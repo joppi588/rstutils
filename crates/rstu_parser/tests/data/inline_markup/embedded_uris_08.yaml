@@ -1,0 +1,31 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Relative URIs' reference text can be omitted:\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: InlineMarkup
+    attributes:
+      label: reference
+      markup: href
+      raw: <reference>
+      refuri: reference
+  - class: PlainText
+    attributes:
+      text: "\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: InlineMarkup
+    attributes:
+      label: anonymous
+      markup: ahref
+      raw: <anonymous>
+      refuri: anonymous
+  - class: PlainText
+    attributes:
+      text: "\n"

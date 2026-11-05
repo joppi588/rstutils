@@ -1,0 +1,51 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Report duplicate refname.\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Explicit targets: "
+  - class: InlineMarkup
+    attributes:
+      markup: inline_internal_target
+      text: file.txt
+  - class: PlainText
+    attributes:
+      text: ", "
+  - class: InlineMarkup
+    attributes:
+      markup: inline_internal_target
+      text: file.html
+  - class: PlainText
+    attributes:
+      text: ".\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Embedded URI: named "
+  - class: InlineMarkup
+    attributes:
+      label: file.txt
+      markup: href
+      raw: <file.txt>
+      refuri: file.txt
+  - class: PlainText
+    attributes:
+      text: " and anonymous "
+  - class: InlineMarkup
+    attributes:
+      label: file.html
+      markup: ahref
+      raw: <file.html>
+      refuri: file.html
+  - class: PlainText
+    attributes:
+      text: ".\n"
