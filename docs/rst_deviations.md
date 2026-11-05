@@ -45,6 +45,7 @@ All of these are believed to be non-critical.
   Rationale:
     * <BlankLine>===<BlankLine> would be interpreted by the parser as a section header with
       empty title and missing closing -> error
+- whitespaces in uris are accepted, see tests\data\inline_markup\embedded_uris_07.rst
 
 
 # Interpretations
