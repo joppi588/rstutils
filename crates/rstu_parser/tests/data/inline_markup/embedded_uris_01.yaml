@@ -6,7 +6,7 @@ children:
     attributes:
       markup: ahref
       refuri: http://example.com
-      space: " "
+      separator: " "
       text: anonymous reference
   - class: PlainText
     attributes:

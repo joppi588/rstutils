@@ -1,0 +1,13 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: InlineMarkup
+    attributes:
+      markup: ahref
+      refuri: http://example.com
+      separator: "\n"
+      text: embedded URI on next line
+  - class: PlainText
+    attributes:
+      text: "\n"

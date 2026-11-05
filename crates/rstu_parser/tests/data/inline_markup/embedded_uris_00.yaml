@@ -4,9 +4,9 @@ children:
   children:
   - class: InlineMarkup
     attributes:
-      markup: hyperlink_reference
+      markup: href
       refuri: http://example.com
-      space: " "
+      separator: " "
       text: phrase reference
   - class: PlainText
     attributes:

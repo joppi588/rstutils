@@ -83,7 +83,7 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
             "interpreted_or_hyperlink",
             &[
                 TK::BackquoteEnd,
-                TK::AnonymousHyperlinkReference,
+                TK::AnonymousHyperlinkReferenceEnd,
                 TK::HyperlinkReferenceEnd,
             ],
         ),
@@ -106,7 +106,7 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
 
     let effective_markup = match (kind, stream.consume().kind) {
         (TK::BackquoteStart, TK::HyperlinkReferenceEnd) => "href",
-        (TK::BackquoteStart, TK::AnonymousHyperlinkReference) => "ahref",
+        (TK::BackquoteStart, TK::AnonymousHyperlinkReferenceEnd) => "ahref",
         (TK::BackquoteStart, TK::BackquoteEnd) => "interpreted_text",
         _ => markup,
     };
@@ -114,7 +114,7 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
     let inline = AstNode::new_ref(NodeClass::InlineMarkup);
     inline.with_attr("markup", effective_markup);
 
-    let embedded = if effective_markup == "href" {
+    let embedded = if matches!(effective_markup, "href" | "ahref") {
         text.strip_suffix('>')
             .and_then(|rest| rest.rfind('<').map(|idx| (&rest[..idx], &rest[idx + 1..])))
     } else {
@@ -125,7 +125,7 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
             let trimmed = before.trim_end();
             inline
                 .with_attr("text", trimmed)
-                .with_attr("space", &before[trimmed.len()..])
+                .with_attr("separator", &before[trimmed.len()..])
                 .with_attr("refuri", refuri);
         }
         None => {
