@@ -1,0 +1,13 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: InlineMarkup
+    attributes:
+      markup: hyperlink_reference
+      refuri: http://example.com
+      space: " "
+      text: phrase reference
+  - class: PlainText
+    attributes:
+      text: "\n"

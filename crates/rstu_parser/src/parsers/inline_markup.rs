@@ -81,7 +81,11 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
         TK::InlineInternalTargetStart => ("inline_internal_target", &[TK::BackquoteEnd]),
         TK::BackquoteStart => (
             "interpreted_or_hyperlink",
-            &[TK::BackquoteEnd, TK::HyperlinkReferenceEnd],
+            &[
+                TK::BackquoteEnd,
+                TK::AnonymousHyperlinkReference,
+                TK::HyperlinkReferenceEnd,
+            ],
         ),
         _ => {
             return Err(ParserError::UnexpectedToken {
@@ -101,14 +105,32 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
     }
 
     let effective_markup = match (kind, stream.consume().kind) {
-        (TK::BackquoteStart, TK::HyperlinkReferenceEnd) => "hyperlink_reference",
+        (TK::BackquoteStart, TK::HyperlinkReferenceEnd) => "href",
+        (TK::BackquoteStart, TK::AnonymousHyperlinkReference) => "ahref",
         (TK::BackquoteStart, TK::BackquoteEnd) => "interpreted_text",
         _ => markup,
     };
 
     let inline = AstNode::new_ref(NodeClass::InlineMarkup);
-    inline
-        .with_attr("markup", effective_markup)
-        .with_attr("text", text);
+    inline.with_attr("markup", effective_markup);
+
+    let embedded = if effective_markup == "href" {
+        text.strip_suffix('>')
+            .and_then(|rest| rest.rfind('<').map(|idx| (&rest[..idx], &rest[idx + 1..])))
+    } else {
+        None
+    };
+    match embedded {
+        Some((before, refuri)) => {
+            let trimmed = before.trim_end();
+            inline
+                .with_attr("text", trimmed)
+                .with_attr("space", &before[trimmed.len()..])
+                .with_attr("refuri", refuri);
+        }
+        None => {
+            inline.with_attr("text", text);
+        }
+    }
     Ok(inline)
 }

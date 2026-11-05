@@ -343,6 +343,7 @@ pub enum TokenKind {
     Field,
     FootNote,
     FootnoteReference,
+    AnonymousHyperlinkReference,
     HyperlinkReferenceEnd,
     Indent,
     InlineInternalTargetStart,
@@ -422,6 +423,7 @@ impl TokenKind {
 
         (FootnoteReference, format!(r"{0}\[{1}\]_{2}", INLINE_PRE_CHARS, FOOTNOTE_LABEL, INLINE_POST_CHARS)),
         (CitationReference, format!(r"{0}\[{1}\]_{2}", INLINE_PRE_CHARS, CITATION_LABEL, INLINE_POST_CHARS)),
+        (AnonymousHyperlinkReference, format!(r"(?:[^\s]`__|[^\s]__){}", INLINE_POST_CHARS)),
         (HyperlinkReferenceEnd, format!(r"(?:[^\s]`_|[^\s]_){}", INLINE_POST_CHARS)),
         (SimpleAnonymousHyperLinkReference,r"[\W_][\w&&[^_]]+(?:[-_.:+][\w&&[^_]]+)*__\s"),
         (SimpleHyperlinkReference,r"[\W_][\w&&[^_]]+(?:[-_.:+][\w&&[^_]]+)*_\s"),
@@ -757,6 +759,21 @@ mod tests {
         assert_eq!(
             TK::SimpleAnonymousHyperLinkReference.find_lexeme("_This__ "),
             Some("This__")
+        );
+    }
+
+    /// GIVEN an anonymous hyperlink reference ending in double underscores
+    /// WHEN its end marker is tokenized
+    /// THEN the complete marker is recognized as the anonymous reference token
+    #[test]
+    fn anonymous_hyperlink_reference_matches_double_underscore_endings() {
+        assert_eq!(
+            TK::AnonymousHyperlinkReference.find_lexeme(">`__ "),
+            Some("`__")
+        );
+        assert_eq!(
+            TK::AnonymousHyperlinkReference.find_lexeme("e__ "),
+            Some("__")
         );
     }
 

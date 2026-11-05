@@ -1,0 +1,13 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: InlineMarkup
+    attributes:
+      markup: ahref
+      refuri: http://example.com
+      space: " "
+      text: anonymous reference
+  - class: PlainText
+    attributes:
+      text: "\n"
