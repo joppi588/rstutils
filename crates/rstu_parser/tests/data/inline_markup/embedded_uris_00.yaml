@@ -4,10 +4,10 @@ children:
   children:
   - class: InlineMarkup
     attributes:
+      label: phrase reference
       markup: href
+      raw: phrase reference <http://example.com>
       refuri: http://example.com
-      separator: " "
-      text: phrase reference
   - class: PlainText
     attributes:
       text: "\n"

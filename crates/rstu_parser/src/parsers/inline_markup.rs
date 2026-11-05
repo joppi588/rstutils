@@ -123,9 +123,13 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
     match embedded {
         Some((before, refuri)) => {
             let trimmed = before.trim_end();
+            let refuri = refuri
+                .chars()
+                .filter(|character| !matches!(character, '\r' | '\n'))
+                .collect::<String>();
             inline
-                .with_attr("text", trimmed)
-                .with_attr("separator", &before[trimmed.len()..])
+                .with_attr("raw", text.clone())
+                .with_attr("label", trimmed)
                 .with_attr("refuri", refuri);
         }
         None => {

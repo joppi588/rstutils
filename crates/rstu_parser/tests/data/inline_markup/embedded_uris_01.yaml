@@ -4,10 +4,10 @@ children:
   children:
   - class: InlineMarkup
     attributes:
+      label: anonymous reference
       markup: ahref
+      raw: anonymous reference <http://example.com>
       refuri: http://example.com
-      separator: " "
-      text: anonymous reference
   - class: PlainText
     attributes:
       text: "\n"

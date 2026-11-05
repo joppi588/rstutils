@@ -4,10 +4,10 @@ children:
   children:
   - class: InlineMarkup
     attributes:
+      label: embedded URI on next line
       markup: ahref
+      raw: "embedded URI on next line\n<http://example.com>"
       refuri: http://example.com
-      separator: "\n"
-      text: embedded URI on next line
   - class: PlainText
     attributes:
       text: "\n"
