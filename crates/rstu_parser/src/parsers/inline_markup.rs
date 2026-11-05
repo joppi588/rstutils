@@ -1,7 +1,12 @@
 // SPDX-FileCopyrightText: 2026 Jochen Schmaehling <tostmann1@web.de>
 //
 // SPDX-License-Identifier: MIT
+use regex::Regex;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
+use std::sync::LazyLock;
+
+static EMBEDDED_URI_WHITESPACE: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"\\([ \r\n])|[ \r\n]").unwrap());
 
 use crate::parser_errors::ParserError;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
@@ -123,14 +128,18 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
     match embedded {
         Some((before, refuri)) => {
             let trimmed = before.trim_end();
-            let refuri = refuri
-                .chars()
-                .filter(|character| !matches!(character, '\r' | '\n' | ' '))
-                .collect::<String>();
+            let normalized_refuri = EMBEDDED_URI_WHITESPACE
+                .replace_all(refuri, "$1")
+                .into_owned();
+            let label = if trimmed.is_empty() {
+                &normalized_refuri
+            } else {
+                trimmed
+            };
             inline
                 .with_attr("raw", text.clone())
-                .with_attr("label", trimmed)
-                .with_attr("refuri", refuri);
+                .with_attr("label", label)
+                .with_attr("refuri", normalized_refuri);
         }
         None => {
             inline.with_attr("text", text);

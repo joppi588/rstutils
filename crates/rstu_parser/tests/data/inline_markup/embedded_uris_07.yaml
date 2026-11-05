@@ -1,0 +1,65 @@
+class: Document
+children:
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: InlineMarkup
+    attributes:
+      label: embedded URI with too much whitespace
+      markup: ahref
+      raw: "embedded URI with too much whitespace < http://example.com/\nlong/path /and  /whitespace >"
+      refuri: http://example.com/long/path/and/whitespace
+  - class: PlainText
+    attributes:
+      text: "\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: InlineMarkup
+    attributes:
+      label: embedded URI with too much whitespace at end
+      markup: ahref
+      raw: "embedded URI with too much whitespace at end <http://example.com/\nlong/path /and  /whitespace >"
+      refuri: http://example.com/long/path/and/whitespace
+  - class: PlainText
+    attributes:
+      text: "\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: InlineMarkup
+    attributes:
+      label: embedded URI with no preceding whitespace
+      markup: ahref
+      raw: embedded URI with no preceding whitespace<http://example.com>
+      refuri: http://example.com
+  - class: PlainText
+    attributes:
+      text: "\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: InlineMarkup
+    attributes:
+      label: escaped URI \
+      markup: ahref
+      raw: escaped URI \<http://example.com>
+      refuri: http://example.com
+  - class: PlainText
+    attributes:
+      text: "\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "See "
+  - class: InlineMarkup
+    attributes:
+      label: "HTML Anchors: \\"
+      markup: href
+      raw: "HTML Anchors: \\<a>"
+      refuri: a
+  - class: PlainText
+    attributes:
+      text: ".\n"

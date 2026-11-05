@@ -1,0 +1,25 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: InlineMarkup
+    attributes:
+      label: embedded email address
+      markup: ahref
+      raw: embedded email address <jdoe@example.com>
+      refuri: jdoe@example.com
+  - class: PlainText
+    attributes:
+      text: "\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: InlineMarkup
+    attributes:
+      label: embedded email address broken across lines
+      markup: ahref
+      raw: "embedded email address broken across lines <jdoe\n@example.com>"
+      refuri: jdoe@example.com
+  - class: PlainText
+    attributes:
+      text: "\n"
