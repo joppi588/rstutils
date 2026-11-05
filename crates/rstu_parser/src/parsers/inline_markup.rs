@@ -125,7 +125,7 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
             let trimmed = before.trim_end();
             let refuri = refuri
                 .chars()
-                .filter(|character| !matches!(character, '\r' | '\n'))
+                .filter(|character| !matches!(character, '\r' | '\n' | ' '))
                 .collect::<String>();
             inline
                 .with_attr("raw", text.clone())

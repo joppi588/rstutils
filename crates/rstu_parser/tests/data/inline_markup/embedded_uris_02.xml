@@ -1,4 +1,0 @@
-<document source="test data">
-    <paragraph>
-        <reference refuri="http://example.com">
-            embedded URI on next line
