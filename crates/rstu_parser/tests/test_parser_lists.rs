@@ -44,7 +44,7 @@ fn err_bullet_list(#[case] test_case: &str, #[case] expected_error: PE) {
 // #[case::d13("definition_13")] // TODO: #439
 // #[case::d14("definition_14")] // TODO: #439
 #[case::d15("definition_15")]
-#[case("inline_markup")]
+#[case::im("inline_markup")]
 fn ok_definition_list(#[case] test_case: &str) {
     rst_vs_yaml!("lists/definition_list", test_case);
 }
