@@ -119,13 +119,32 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
     let inline = AstNode::new_ref(NodeClass::InlineMarkup);
     inline.with_attr("markup", effective_markup);
 
-    let embedded = if matches!(effective_markup, "href" | "ahref") {
+    let embedded_ref = if matches!(effective_markup, "href" | "ahref") {
         text.strip_suffix('>')
             .and_then(|rest| rest.rfind('<').map(|idx| (&rest[..idx], &rest[idx + 1..])))
     } else {
         None
     };
-    match embedded {
+    match embedded_ref {
+        Some((before, refname)) if refname.ends_with("_") => {
+            let trimmed = before.trim_end();
+            let normalized_refname = &refname
+                .strip_suffix("_")
+                .unwrap()
+                .split_whitespace()
+                .collect::<Vec<_>>()
+                .join(" ");
+
+            let label = if trimmed.is_empty() {
+                normalized_refname
+            } else {
+                trimmed
+            };
+            inline
+                .with_attr("raw", text.clone())
+                .with_attr("label", label)
+                .with_attr("refname", normalized_refname.clone());
+        }
         Some((before, refuri)) => {
             let trimmed = before.trim_end();
             let normalized_refuri = EMBEDDED_URI_NORMALIZATION
