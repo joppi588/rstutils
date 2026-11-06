@@ -5,10 +5,8 @@ children:
   children:
   - class: InlineMarkup
     attributes:
-      label: embedded URI with too much whitespace
       markup: ahref
-      raw: "embedded URI with too much whitespace < http://example.com/\nlong/path /and  /whitespace >"
-      refuri: http://example.com/long/path/and/whitespace
+      text: "embedded URI with too much whitespace < http://example.com/\nlong/path /and  /whitespace >"
   - class: PlainText
     attributes:
       text: "\n"
@@ -17,10 +15,8 @@ children:
   children:
   - class: InlineMarkup
     attributes:
-      label: embedded URI with too much whitespace at end
       markup: ahref
-      raw: "embedded URI with too much whitespace at end <http://example.com/\nlong/path /and  /whitespace >"
-      refuri: http://example.com/long/path/and/whitespace
+      text: "embedded URI with too much whitespace at end <http://example.com/\nlong/path /and  /whitespace >"
   - class: PlainText
     attributes:
       text: "\n"
@@ -29,10 +25,8 @@ children:
   children:
   - class: InlineMarkup
     attributes:
-      label: embedded URI with no preceding whitespace
       markup: ahref
-      raw: embedded URI with no preceding whitespace<http://example.com>
-      refuri: http://example.com
+      text: embedded URI with no preceding whitespace<http://example.com>
   - class: PlainText
     attributes:
       text: "\n"
@@ -41,10 +35,8 @@ children:
   children:
   - class: InlineMarkup
     attributes:
-      label: escaped URI \
       markup: ahref
-      raw: escaped URI \<http://example.com>
-      refuri: http://example.com
+      text: escaped URI \<http://example.com>
   - class: PlainText
     attributes:
       text: "\n"
@@ -56,10 +48,8 @@ children:
       text: "See "
   - class: InlineMarkup
     attributes:
-      label: "HTML Anchors: \\"
       markup: href
-      raw: "HTML Anchors: \\<a>"
-      refuri: a
+      text: "HTML Anchors: \\<a>"
   - class: PlainText
     attributes:
       text: ".\n"

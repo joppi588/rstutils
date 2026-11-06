@@ -7,6 +7,9 @@ use std::sync::LazyLock;
 
 static EMBEDDED_URI_NORMALIZATION: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"\\(.)|[ \n]").unwrap());
+static EMBEDDED_REF: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"(?s)^(?P<before>.*\s)?<(?P<ref>[^<>\s](?:[^<>]*[^<>\s])?)>$").unwrap()
+});
 
 use crate::parser_errors::ParserError;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
@@ -120,8 +123,11 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
     inline.with_attr("markup", effective_markup);
 
     let embedded_ref = if matches!(effective_markup, "href" | "ahref") {
-        text.strip_suffix('>')
-            .and_then(|rest| rest.rfind('<').map(|idx| (&rest[..idx], &rest[idx + 1..])))
+        EMBEDDED_REF.captures(&text).map(|captures| {
+            let before = captures.name("before").map_or("", |value| value.as_str());
+            let reference = captures.name("ref").unwrap().as_str();
+            (before, reference)
+        })
     } else {
         None
     };
@@ -160,7 +166,7 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
                 .with_attr("label", label)
                 .with_attr("refuri", normalized_refuri);
         }
-        None => {
+        _ => {
             inline.with_attr("text", text);
         }
     }
