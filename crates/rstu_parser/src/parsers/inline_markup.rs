@@ -6,7 +6,7 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 use std::sync::LazyLock;
 
 static EMBEDDED_URI_NORMALIZATION: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"\\([_ \r\n])|[ \r\n]").unwrap());
+    LazyLock::new(|| Regex::new(r"\\(.)|[ \n]").unwrap());
 
 use crate::parser_errors::ParserError;
 use crate::token::{TokenCategory as TC, TokenKind as TK};

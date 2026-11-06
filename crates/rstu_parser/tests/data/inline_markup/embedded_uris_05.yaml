@@ -7,7 +7,7 @@ children:
     attributes:
       label: embedded URI with escaped whitespace
       markup: ahref
-      raw: "embedded URI with escaped whitespace <http://example.com/a\\ \nlong/path\\ and/some\\_escaped\\ whitespace>"
+      raw: "embedded URI with escaped whitespace <http://example.com/\na\\ long/path\\ and/some\\_escaped\\ whitespace>"
       refuri: http://example.com/a long/path and/some_escaped whitespace
   - class: PlainText
     attributes:

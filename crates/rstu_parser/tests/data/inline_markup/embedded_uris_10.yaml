@@ -10,10 +10,10 @@ children:
   children:
   - class: InlineMarkup
     attributes:
-      label: reference\:1
+      label: reference:1
       markup: href
       raw: <reference\:1>
-      refuri: reference\:1
+      refuri: reference:1
   - class: PlainText
     attributes:
       text: "\n"
@@ -22,10 +22,10 @@ children:
   children:
   - class: InlineMarkup
     attributes:
-      label: anonymous\call
+      label: anonymouscall
       markup: ahref
       raw: <anonymous\call>
-      refuri: anonymous\call
+      refuri: anonymouscall
   - class: PlainText
     attributes:
       text: "\n"
