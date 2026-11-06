@@ -7,6 +7,8 @@ use std::sync::LazyLock;
 
 static EMBEDDED_URI_NORMALIZATION: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"\\(.)|[ \n]").unwrap());
+static EMBEDDED_ALIAS_NORMALIZATION: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"\\(.)").unwrap());
 static EMBEDDED_REF: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"(?s)^(?P<before>.*\s)?<(?P<ref>[^<>\s](?:[^<>]*[^<>\s])?)>$").unwrap()
 });
@@ -132,24 +134,24 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
         None
     };
     match embedded_ref {
-        Some((before, refname)) if refname.ends_with("_") => {
+        Some((before, refname)) if refname.ends_with("_") && !refname.ends_with(r"\_") => {
             let trimmed = before.trim_end();
-            let normalized_refname = &refname
-                .strip_suffix("_")
-                .unwrap()
+            let normalized_refname = EMBEDDED_ALIAS_NORMALIZATION
+                .replace_all(refname.strip_suffix('_').unwrap(), "$1")
+                .into_owned()
                 .split_whitespace()
                 .collect::<Vec<_>>()
                 .join(" ");
 
             let label = if trimmed.is_empty() {
-                normalized_refname
+                &normalized_refname
             } else {
                 trimmed
             };
             inline
                 .with_attr("raw", text.clone())
                 .with_attr("label", label)
-                .with_attr("refname", normalized_refname.clone());
+                .with_attr("refname", normalized_refname);
         }
         Some((before, refuri)) => {
             let trimmed = before.trim_end();

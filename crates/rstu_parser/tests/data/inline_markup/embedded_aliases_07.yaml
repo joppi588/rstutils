@@ -8,7 +8,7 @@ children:
       label: anonymous reference
       markup: ahref
       raw: anonymous reference <alias\ with\\ escaped \:characters_>
-      refname: alias\ with\\ escaped \:characters
+      refname: alias with\ escaped :characters
   - class: PlainText
     attributes:
       text: "\n"

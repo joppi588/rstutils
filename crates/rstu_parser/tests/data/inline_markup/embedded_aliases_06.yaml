@@ -5,10 +5,8 @@ children:
   children:
   - class: InlineMarkup
     attributes:
-      label: no embedded alias (whitespace inside bracket)
       markup: ahref
-      raw: no embedded alias (whitespace inside bracket) < alias_ >
-      refuri: alias_
+      text: no embedded alias (whitespace inside bracket) < alias_ >
   - class: PlainText
     attributes:
       text: "\n"
@@ -17,10 +15,8 @@ children:
   children:
   - class: InlineMarkup
     attributes:
-      label: no embedded alias (no preceding whitespace)
       markup: ahref
-      raw: no embedded alias (no preceding whitespace)<alias_>
-      refname: alias
+      text: no embedded alias (no preceding whitespace)<alias_>
   - class: PlainText
     attributes:
       text: "\n"
