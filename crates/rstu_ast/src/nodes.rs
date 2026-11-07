@@ -29,6 +29,7 @@ pub enum NodeClass {
     InlineMarkup,
     Line,
     LineBlock,
+    Literal,
     LiteralBlock,
     Option,
     OptionGroup,

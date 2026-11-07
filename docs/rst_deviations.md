@@ -35,7 +35,7 @@ All of these are believed to be non-critical. A few might even be considered as 
 - Inline markup
   * Asterisks-only surrounded emphasis markers need to be escaped (see emphasis_06.rst) to avoid confusion with section marker.
   * Substitution definitions without closing | are treated as ordinary paragraph and will not  cause an error.
-  * Escaped whitespace is treated as whitespace in aliases: inline_markup/embedded_aliases_07.rst
+- Escaped whitespace is treated as whitespace and not removed: e.g. inline_markup/embedded_aliases_07.rst
 
 
 # Spec extensions

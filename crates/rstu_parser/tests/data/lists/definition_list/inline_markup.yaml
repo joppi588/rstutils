@@ -13,9 +13,8 @@ children:
               - class: PlainText
                 attributes:
                   text: " with "
-              - class: InlineMarkup
+              - class: Literal
                 attributes:
-                  markup: inline_literal
                   text: literal
           - class: Definition
             children:

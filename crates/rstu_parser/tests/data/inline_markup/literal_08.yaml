@@ -1,0 +1,13 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Find the "
+  - class: Literal
+    attributes:
+      text: "`interpreted text`"
+  - class: PlainText
+    attributes:
+      text: " in this paragraph!\n"

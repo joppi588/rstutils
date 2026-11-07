@@ -1,0 +1,14 @@
+class: Document
+children:
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "dot "
+  - class: Literal
+    attributes:
+      text: after closing
+  - class: PlainText
+    attributes:
+      text: ". is possible.\n"

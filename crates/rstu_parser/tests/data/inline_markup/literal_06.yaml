@@ -1,0 +1,34 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: Literal
+    attributes:
+      text: "'literal'"
+  - class: PlainText
+    attributes:
+      text: " with quotes, "
+  - class: Literal
+    attributes:
+      text: "\"literal\""
+  - class: PlainText
+    attributes:
+      text: " with quotes,\n"
+  - class: Literal
+    attributes:
+      text: ‘literal’
+  - class: PlainText
+    attributes:
+      text: " with quotes, "
+  - class: Literal
+    attributes:
+      text: “literal”
+  - class: PlainText
+    attributes:
+      text: " with quotes,\n"
+  - class: Literal
+    attributes:
+      text: «literal»
+  - class: PlainText
+    attributes:
+      text: " with quotes\n"

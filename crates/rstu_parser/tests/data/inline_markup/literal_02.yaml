@@ -1,0 +1,11 @@
+class: Document
+children:
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: Literal
+    attributes:
+      text: lite\ral
+  - class: PlainText
+    attributes:
+      text: "\n"
