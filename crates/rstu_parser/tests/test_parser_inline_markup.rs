@@ -12,18 +12,6 @@ use test_parser::rst_vs_yaml;
 // #[case::inline_targets("inline_targets_01")]
 // #[case::inline_targets("inline_targets_02")]
 // #[case::inline_targets("inline_targets_03")]
-// #[case::literal("literal_00")]
-// #[case::literal("literal_01")]
-// #[case::literal("literal_02")]
-// #[case::literal("literal_03")]
-// #[case::literal("literal_04")]
-// #[case::literal("literal_05")]
-// #[case::literal("literal_06")]
-// #[case::literal("literal_08")]
-// #[case::literal("literal_10")]
-// #[case::literal("literal_11")]
-// #[case::literal("literal_12")]
-// #[case::literal("literal_13")]
 // #[case::markup_recognition_rules("markup_recognition_rules_00")]
 // #[case::markup_recognition_rules("markup_recognition_rules_01")]
 // #[case::markup_recognition_rules("markup_recognition_rules_02")]
@@ -100,6 +88,22 @@ fn ok_embedded_uris(#[case] test_case: &str) {
 }
 
 #[rstest]
+#[case::literal("literal_00")]
+#[case::literal("literal_01")]
+#[case::literal("literal_02")]
+#[case::literal("literal_03")]
+#[case::literal("literal_04")]
+#[case::literal("literal_05")]
+#[case::literal("literal_06")]
+#[case::literal("literal_08")]
+#[case::literal("literal_10")]
+#[case::literal("literal_11")]
+#[case::literal("literal_12")]
+#[case::literal("literal_13")]
+fn ok_literal(#[case] test_case: &str) {
+    rst_vs_yaml!("inline_markup", test_case)
+}
+
 #[case::sh00("standalone_hyperlink_00")]
 #[case::sh01("standalone_hyperlink_01")]
 #[case::sh02("standalone_hyperlink_02")]
