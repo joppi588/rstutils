@@ -8,26 +8,6 @@ mod test_parser;
 use test_parser::rst_vs_yaml;
 
 #[rstest]
-// #[case::embedded_aliases("embedded_aliases_00")]
-// #[case::embedded_aliases("embedded_aliases_01")]
-// #[case::embedded_aliases("embedded_aliases_02")]
-// #[case::embedded_aliases("embedded_aliases_03")]
-// #[case::embedded_aliases("embedded_aliases_04")]
-// #[case::embedded_aliases("embedded_aliases_05")]
-// #[case::embedded_aliases("embedded_aliases_06")]
-// #[case::embedded_aliases("embedded_aliases_07")]
-// #[case::embedded_aliases("embedded_aliases_08")]
-// #[case::embedded_uris("embedded_uris_00")]
-// #[case::embedded_uris("embedded_uris_01")]
-// #[case::embedded_uris("embedded_uris_02")]
-// #[case::embedded_uris("embedded_uris_03")]
-// #[case::embedded_uris("embedded_uris_04")]
-// #[case::embedded_uris("embedded_uris_05")]
-// #[case::embedded_uris("embedded_uris_06")]
-// #[case::embedded_uris("embedded_uris_07")]
-// #[case::embedded_uris("embedded_uris_08")]
-// #[case::embedded_uris("embedded_uris_09")]
-// #[case::embedded_uris("embedded_uris_10")]
 // #[case::inline_targets("inline_targets_00")]
 // #[case::inline_targets("inline_targets_01")]
 // #[case::inline_targets("inline_targets_02")]
@@ -86,6 +66,36 @@ use test_parser::rst_vs_yaml;
 #[case::strong("strong_02")]
 // #[case::strong("strong_04")] TODO: #439
 fn ok_inline_markup(#[case] test_case: &str) {
+    rst_vs_yaml!("inline_markup", test_case)
+}
+
+#[rstest]
+#[case::ea01("embedded_aliases_00")]
+#[case::ea01("embedded_aliases_01")]
+#[case::ea02("embedded_aliases_02")]
+#[case::ea03("embedded_aliases_03")]
+#[case::ea04("embedded_aliases_04")]
+#[case::ea05("embedded_aliases_05")]
+#[case::ea06("embedded_aliases_06")]
+#[case::ea07("embedded_aliases_07")]
+#[case::ea08("embedded_aliases_08")]
+fn ok_embedded_alias(#[case] test_case: &str) {
+    rst_vs_yaml!("inline_markup", test_case)
+}
+
+#[rstest]
+#[case::e00("embedded_uris_00")]
+#[case::e01("embedded_uris_01")]
+#[case::e02("embedded_uris_02")]
+#[case::e03("embedded_uris_03")]
+#[case::e04("embedded_uris_04")]
+#[case::e05("embedded_uris_05")]
+#[case::e06("embedded_uris_06")]
+#[case::e07("embedded_uris_07")]
+#[case::e08("embedded_uris_08")]
+#[case::e09("embedded_uris_09")]
+#[case::e10("embedded_uris_10")]
+fn ok_embedded_uris(#[case] test_case: &str) {
     rst_vs_yaml!("inline_markup", test_case)
 }
 

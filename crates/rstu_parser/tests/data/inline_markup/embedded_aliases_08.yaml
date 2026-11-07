@@ -1,0 +1,14 @@
+class: Document
+children:
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: InlineMarkup
+    attributes:
+      label: anonymous reference
+      markup: ahref
+      raw: anonymous reference <alias\ with\\ escaped \:characters_>
+      refname: alias with\ escaped :characters
+  - class: PlainText
+    attributes:
+      text: "\n"
