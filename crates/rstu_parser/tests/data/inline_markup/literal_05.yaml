@@ -1,0 +1,37 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: quoted '
+  - class: Literal
+    attributes:
+      text: literal
+  - class: PlainText
+    attributes:
+      text: "', quoted \""
+  - class: Literal
+    attributes:
+      text: literal
+  - class: PlainText
+    attributes:
+      text: "\",\nquoted ‘"
+  - class: Literal
+    attributes:
+      text: literal
+  - class: PlainText
+    attributes:
+      text: ’, quoted “
+  - class: Literal
+    attributes:
+      text: literal
+  - class: PlainText
+    attributes:
+      text: "”,\nquoted «"
+  - class: Literal
+    attributes:
+      text: literal
+  - class: PlainText
+    attributes:
+      text: "»\n"

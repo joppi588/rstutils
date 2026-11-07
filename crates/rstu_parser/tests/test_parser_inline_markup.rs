@@ -3,8 +3,11 @@
 // SPDX-License-Identifier: MIT
 
 use rstest::rstest;
+use rstu_parser::parser_errors::ParserErrorKind as PE;
+
 #[path = "common/mod.rs"]
 mod test_parser;
+use test_parser::rst_err;
 use test_parser::rst_vs_yaml;
 
 #[rstest]
@@ -104,6 +107,13 @@ fn ok_literal(#[case] test_case: &str) {
     rst_vs_yaml!("inline_markup", test_case)
 }
 
+#[rstest]
+#[case::literal("literal_07", PE::InlineMissingClosing)]
+#[case::literal("literal_09", PE::InlineMissingClosing)]
+fn err_literal(#[case] test_case: &str, #[case] expected_error: PE) {
+    rst_err!("line_blocks", test_case, expected_error);
+}
+#[rstest]
 #[case::sh00("standalone_hyperlink_00")]
 #[case::sh01("standalone_hyperlink_01")]
 #[case::sh02("standalone_hyperlink_02")]
@@ -134,8 +144,6 @@ fn ok_substitution_references(#[case] test_case: &str) {
 // #[case::footnote_reference("footnote_reference_04")]
 // #[case::inline_targets("inline_targets_04")]
 // #[case::inline_targets("inline_targets_05")]
-// #[case::literal("literal_07")]
-// #[case::literal("literal_09")]
 // #[case::phrase_references("phrase_references_10")]
 // #[case::phrase_references("phrase_references_11")]
 // #[case::phrase_references("phrase_references_12")]
