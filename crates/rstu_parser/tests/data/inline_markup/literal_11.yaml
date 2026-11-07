@@ -1,0 +1,15 @@
+class: Document
+children:
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Blank after opening "
+  - class: InlineMarkup
+    attributes:
+      markup: interpreted_text
+      text: ""
+  - class: PlainText
+    attributes:
+      text: " not allowed.\n"

@@ -3,8 +3,11 @@
 // SPDX-License-Identifier: MIT
 
 use rstest::rstest;
+use rstu_parser::parser_errors::ParserErrorKind as PE;
+
 #[path = "common/mod.rs"]
 mod test_parser;
+use test_parser::rst_err;
 use test_parser::rst_vs_yaml;
 
 #[rstest]
@@ -12,18 +15,6 @@ use test_parser::rst_vs_yaml;
 // #[case::inline_targets("inline_targets_01")]
 // #[case::inline_targets("inline_targets_02")]
 // #[case::inline_targets("inline_targets_03")]
-// #[case::literal("literal_00")]
-// #[case::literal("literal_01")]
-// #[case::literal("literal_02")]
-// #[case::literal("literal_03")]
-// #[case::literal("literal_04")]
-// #[case::literal("literal_05")]
-// #[case::literal("literal_06")]
-// #[case::literal("literal_08")]
-// #[case::literal("literal_10")]
-// #[case::literal("literal_11")]
-// #[case::literal("literal_12")]
-// #[case::literal("literal_13")]
 // #[case::markup_recognition_rules("markup_recognition_rules_00")]
 // #[case::markup_recognition_rules("markup_recognition_rules_01")]
 // #[case::markup_recognition_rules("markup_recognition_rules_02")]
@@ -100,6 +91,29 @@ fn ok_embedded_uris(#[case] test_case: &str) {
 }
 
 #[rstest]
+#[case::l00("literal_00")]
+#[case::l01("literal_01")]
+#[case::l02("literal_02")]
+// #[case::l03("literal_03")] // TODO: #464
+#[case::l04("literal_04")]
+#[case::l05("literal_05")]
+#[case::l06("literal_06")]
+#[case::l08("literal_08")]
+#[case::l10("literal_10")]
+#[case::l11("literal_11")]
+#[case::l12("literal_12")]
+#[case::l13("literal_13")]
+fn ok_literal(#[case] test_case: &str) {
+    rst_vs_yaml!("inline_markup", test_case)
+}
+
+#[rstest]
+#[case::l07("literal_07", PE::InlineMissingClosing)]
+#[case::l09("literal_09", PE::InlineMissingClosing)]
+fn err_literal(#[case] test_case: &str, #[case] expected_error: PE) {
+    rst_err!("inline_markup", test_case, expected_error);
+}
+#[rstest]
 #[case::sh00("standalone_hyperlink_00")]
 #[case::sh01("standalone_hyperlink_01")]
 #[case::sh02("standalone_hyperlink_02")]
@@ -130,8 +144,6 @@ fn ok_substitution_references(#[case] test_case: &str) {
 // #[case::footnote_reference("footnote_reference_04")]
 // #[case::inline_targets("inline_targets_04")]
 // #[case::inline_targets("inline_targets_05")]
-// #[case::literal("literal_07")]
-// #[case::literal("literal_09")]
 // #[case::phrase_references("phrase_references_10")]
 // #[case::phrase_references("phrase_references_11")]
 // #[case::phrase_references("phrase_references_12")]

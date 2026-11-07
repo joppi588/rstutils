@@ -121,8 +121,10 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
         _ => markup,
     };
 
-    let inline = AstNode::new_ref(NodeClass::InlineMarkup);
-    inline.with_attr("markup", effective_markup);
+    let inline = match effective_markup {
+        "inline_literal" => AstNode::new_ref(NodeClass::Literal),
+        _ => AstNode::new_ref(NodeClass::InlineMarkup).with_attr("markup", effective_markup),
+    };
 
     let embedded_ref = if matches!(effective_markup, "href" | "ahref") {
         EMBEDDED_REF.captures(&text).map(|captures| {

@@ -1,0 +1,14 @@
+class: Document
+children:
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "no blank "
+  - class: Literal
+    attributes:
+      text: after closing``continues
+  - class: PlainText
+    attributes:
+      text: " literal.\n"
