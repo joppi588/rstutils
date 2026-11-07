@@ -1,0 +1,13 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: InlineMarkup
+    attributes:
+      label: embedded URI with whitespace
+      markup: ahref
+      raw: "embedded URI with whitespace <http://example.com/\nlong/path /and  /whitespace>"
+      refuri: http://example.com/long/path/and/whitespace
+  - class: PlainText
+    attributes:
+      text: "\n"

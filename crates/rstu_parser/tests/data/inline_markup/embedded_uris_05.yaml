@@ -1,0 +1,26 @@
+class: Document
+children:
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: InlineMarkup
+    attributes:
+      label: embedded URI with escaped whitespace
+      markup: ahref
+      raw: "embedded URI with escaped whitespace <http://example.com/\na\\ long/path\\ and/some\\_escaped\\ whitespace>"
+      refuri: http://example.com/a long/path and/some_escaped whitespace
+  - class: PlainText
+    attributes:
+      text: "\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: InlineMarkup
+    attributes:
+      label: omitted_reference text with escaped whitespace
+      markup: ahref
+      raw: <omitted\_reference\ text\ with\ escaped\ whitespace>
+      refuri: omitted_reference text with escaped whitespace
+  - class: PlainText
+    attributes:
+      text: "\n"

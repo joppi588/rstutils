@@ -1,14 +1,17 @@
+My favorite quotes & concepts
 
 # Coding guidelines
 
 Inside every large program is a small program struggling to get out. (Tony Hoare)
 
-Programs are meant to be read by humans and only incidentally for computers to execute. (Donald Knuth)
+Programming is the art of telling another human being what one wants the computer to do. (Donald Knuth)
+
+Programs are meant to be read by humans and only incidentally for computers to execute. (Abelson, Sussman & Sussman)
 
 Red-green-(refactor){5,}
 
 Show me your flowcharts and conceal your tables, and I shall continue to be mystified. Show me your tables, and I won’t usually need your flowcharts; they’ll be obvious. (Fred Brooks)
--- Focus on finding good abstractions (Data structures, APIs)
+-- Focus on shaping good abstractions, i.e. data structures and APIs
 
 https://milkov.tech/assets/psd.pdf
 
@@ -18,7 +21,7 @@ Code never lies, comments sometimes do (Ron Jeffries)
 -- Try to avoid comments and express yourself in code. Comments should explain the why, not the how.
 
 Neo: "Do you always look at it encoded?"
-Cypher: "[...] You get used to it... I, I don't even see the code. All I see is... blond, brunette, red-head."
+Cypher: "[...] You get used to it... I, I don't even see the code. All I see is... blond, brunette, red-head." -- Try to express as much as possible in code.
 
 "Read the source, Luke!"
 

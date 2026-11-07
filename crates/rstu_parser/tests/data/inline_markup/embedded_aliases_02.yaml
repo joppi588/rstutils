@@ -1,0 +1,13 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: InlineMarkup
+    attributes:
+      label: embedded alias on next line
+      markup: ahref
+      raw: "embedded alias on next line\n<alias_>"
+      refname: alias
+  - class: PlainText
+    attributes:
+      text: "\n"

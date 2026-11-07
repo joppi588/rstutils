@@ -14,8 +14,10 @@ children:
       children:
       - class: InlineMarkup
         attributes:
-          markup: hyperlink_reference
-          text: uff <test1>
+          label: uff
+          markup: href
+          raw: uff <test1>
+          refuri: test1
       - class: PlainText
         attributes:
           text: "\n"
@@ -25,8 +27,10 @@ children:
       children:
       - class: InlineMarkup
         attributes:
-          markup: hyperlink_reference
-          text: uff <test2>
+          label: uff
+          markup: href
+          raw: uff <test2>
+          refuri: test2
       - class: PlainText
         attributes:
           text: "\n"

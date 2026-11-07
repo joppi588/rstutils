@@ -1,0 +1,31 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Escape other char in URIs:\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: InlineMarkup
+    attributes:
+      label: reference:1
+      markup: href
+      raw: <reference\:1>
+      refuri: reference:1
+  - class: PlainText
+    attributes:
+      text: "\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: InlineMarkup
+    attributes:
+      label: anonymouscall
+      markup: ahref
+      raw: <anonymous\call>
+      refuri: anonymouscall
+  - class: PlainText
+    attributes:
+      text: "\n"

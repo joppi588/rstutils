@@ -4,8 +4,10 @@ children:
   children:
   - class: InlineMarkup
     attributes:
-      markup: hyperlink_reference
-      text: phrase reference <alias_>
+      label: phrase reference
+      markup: href
+      raw: phrase reference <alias_>
+      refname: alias
   - class: PlainText
     attributes:
       text: "\n"

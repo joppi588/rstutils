@@ -8,7 +8,7 @@ children:
             children:
               - class: InlineMarkup
                 attributes:
-                  markup: hyperlink_reference
+                  markup: href
                   text: linked term
               - class: PlainText
                 attributes:

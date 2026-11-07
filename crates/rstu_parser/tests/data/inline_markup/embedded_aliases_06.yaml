@@ -1,0 +1,22 @@
+class: Document
+children:
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: InlineMarkup
+    attributes:
+      markup: ahref
+      text: no embedded alias (whitespace inside bracket) < alias_ >
+  - class: PlainText
+    attributes:
+      text: "\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: InlineMarkup
+    attributes:
+      markup: ahref
+      text: no embedded alias (no preceding whitespace)<alias_>
+  - class: PlainText
+    attributes:
+      text: "\n"
