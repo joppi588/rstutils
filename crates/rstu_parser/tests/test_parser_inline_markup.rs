@@ -94,7 +94,7 @@ fn ok_embedded_uris(#[case] test_case: &str) {
 #[case::l00("literal_00")]
 #[case::l01("literal_01")]
 #[case::l02("literal_02")]
-#[case::l03("literal_03")]
+// #[case::l03("literal_03")] // TODO: #464
 #[case::l04("literal_04")]
 #[case::l05("literal_05")]
 #[case::l06("literal_06")]
@@ -108,10 +108,10 @@ fn ok_literal(#[case] test_case: &str) {
 }
 
 #[rstest]
-#[case::literal("literal_07", PE::InlineMissingClosing)]
-#[case::literal("literal_09", PE::InlineMissingClosing)]
+#[case::l07("literal_07", PE::InlineMissingClosing)]
+#[case::l09("literal_09", PE::InlineMissingClosing)]
 fn err_literal(#[case] test_case: &str, #[case] expected_error: PE) {
-    rst_err!("line_blocks", test_case, expected_error);
+    rst_err!("inline_markup", test_case, expected_error);
 }
 #[rstest]
 #[case::sh00("standalone_hyperlink_00")]

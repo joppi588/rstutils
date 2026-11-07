@@ -6,9 +6,8 @@ children:
         children:
           - class: Term
             children:
-              - class: InlineMarkup
+              - class: Literal
                 attributes:
-                  markup: inline_literal
                   text: "Term : not a classifier"
           - class: Definition
             children:
