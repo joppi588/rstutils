@@ -88,18 +88,18 @@ fn ok_embedded_uris(#[case] test_case: &str) {
 }
 
 #[rstest]
-#[case::literal("literal_00")]
-#[case::literal("literal_01")]
-#[case::literal("literal_02")]
-#[case::literal("literal_03")]
-#[case::literal("literal_04")]
-#[case::literal("literal_05")]
-#[case::literal("literal_06")]
-#[case::literal("literal_08")]
-#[case::literal("literal_10")]
-#[case::literal("literal_11")]
-#[case::literal("literal_12")]
-#[case::literal("literal_13")]
+#[case::l00("literal_00")]
+#[case::l01("literal_01")]
+#[case::l02("literal_02")]
+#[case::l03("literal_03")]
+#[case::l04("literal_04")]
+#[case::l05("literal_05")]
+#[case::l06("literal_06")]
+#[case::l08("literal_08")]
+#[case::l10("literal_10")]
+#[case::l11("literal_11")]
+#[case::l12("literal_12")]
+#[case::l13("literal_13")]
 fn ok_literal(#[case] test_case: &str) {
     rst_vs_yaml!("inline_markup", test_case)
 }
