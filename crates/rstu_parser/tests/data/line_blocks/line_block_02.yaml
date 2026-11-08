@@ -12,9 +12,8 @@ children:
         attributes:
           text: |
             Individual lines in line blocks
-      - class: InlineMarkup
+      - class: Emphasis
         attributes:
-          markup: emphasis
           text: may
       - class: PlainText
         attributes:

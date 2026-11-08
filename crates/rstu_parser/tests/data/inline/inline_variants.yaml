@@ -10,10 +10,9 @@ children:
           text: "All inline markups"
       - class: Paragraph
         children:
-          - class: InlineMarkup
+          - class: Emphasis
             attributes:
               text: em
-              markup: emphasis
           - class: PlainText
             attributes:
               text: " "

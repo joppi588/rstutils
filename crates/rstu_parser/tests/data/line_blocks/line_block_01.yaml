@@ -21,9 +21,8 @@ children:
         - class: PlainText
           attributes:
             text: 'Initial indentation is '
-        - class: InlineMarkup
+        - class: Emphasis
           attributes:
-            markup: emphasis
             text: also
         - class: PlainText
           attributes:

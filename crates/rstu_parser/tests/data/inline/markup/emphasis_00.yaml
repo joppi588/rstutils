@@ -2,9 +2,8 @@ class: Document
 children:
 - class: Paragraph
   children:
-  - class: InlineMarkup
+  - class: Emphasis
     attributes:
-      markup: emphasis
       text: emphasis
   - class: PlainText
     attributes:
