@@ -151,7 +151,7 @@ pub(crate) fn parse_inline_markup(stream: &mut TokenStream) -> Result<NodeRef, P
     };
 
     let text = stream.consume_text_until(&[&[end_kind], TC::PARAGRAPH_END].concat());
-    if stream.token_at_cursor().kind != end_kind {
+    if stream.consume().kind != end_kind {
         return Err(ParserError::InlineMissingClosing {
             markup: format!("{:?}", kind),
             position,
