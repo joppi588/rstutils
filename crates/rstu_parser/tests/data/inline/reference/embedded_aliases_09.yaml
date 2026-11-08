@@ -11,16 +11,14 @@ children:
   - class: PlainText
     attributes:
       text: "Explicit targets: "
-  - class: Reference
+  - class: Target
     attributes:
-      type: inline_internal_target
       label: tg1
   - class: PlainText
     attributes:
       text: " and "
-  - class: Reference
+  - class: Target
     attributes:
-      type: inline_internal_target
       label: tg2
   - class: PlainText
     attributes:

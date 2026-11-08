@@ -100,10 +100,9 @@ children:
           text: "Inline internal targets"
       - class: Paragraph
         children:
-          - class: Reference
+          - class: Target
             attributes:
               label: target
-              type: inline_internal_target
           - class: PlainText
             attributes:
               text: "\n"

@@ -11,16 +11,14 @@ children:
   - class: PlainText
     attributes:
       text: "Explicit targets: "
-  - class: Reference
+  - class: Target
     attributes:
-      type: inline_internal_target
       label: file.txt
   - class: PlainText
     attributes:
       text: ", "
-  - class: Reference
+  - class: Target
     attributes:
-      type: inline_internal_target
       label: file.html
   - class: PlainText
     attributes:

@@ -121,15 +121,13 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
         _ => markup,
     };
 
-    let is_reference_markup = matches!(
-        effective_markup,
-        "href" | "ahref" | "inline_internal_target"
-    );
+    let is_reference_markup = matches!(effective_markup, "href" | "ahref");
     let inline = match effective_markup {
         "inline_literal" => AstNode::new_ref(NodeClass::Literal),
         "emphasis" => AstNode::new_ref(NodeClass::Emphasis),
         "strong" => AstNode::new_ref(NodeClass::Strong),
-        "href" | "ahref" | "inline_internal_target" => {
+        "inline_internal_target" => AstNode::new_ref(NodeClass::Target),
+        "href" | "ahref" => {
             AstNode::new_ref(NodeClass::Reference).with_attr("type", effective_markup)
         }
         _ => AstNode::new_ref(NodeClass::InlineMarkup).with_attr("markup", effective_markup),
@@ -180,7 +178,7 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
                 .with_attr("refuri", normalized_refuri);
         }
         _ => {
-            if is_reference_markup {
+            if is_reference_markup || effective_markup == "inline_internal_target" {
                 inline.with_attr("label", text);
             } else {
                 inline.with_attr("text", text);
