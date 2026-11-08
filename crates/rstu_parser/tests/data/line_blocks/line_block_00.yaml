@@ -17,9 +17,8 @@ children:
       - class: PlainText
         attributes:
           text: 'Line breaks are '
-      - class: InlineMarkup
+      - class: Emphasis
         attributes:
-          markup: emphasis
           text: preserved
       - class: PlainText
         attributes:

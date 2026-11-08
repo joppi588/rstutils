@@ -21,9 +21,8 @@ children:
           - class: PlainText
             attributes:
               text: "docutils: A section in a block-quote is invalid.\nrstu_parser: A section in a block-quote is "
-          - class: InlineMarkup
+          - class: Emphasis
             attributes:
-              markup: emphasis
               text: valid
           - class: PlainText
             attributes:
