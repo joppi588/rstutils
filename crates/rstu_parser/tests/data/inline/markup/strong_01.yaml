@@ -5,16 +5,14 @@ children:
   - class: PlainText
     attributes:
       text: l'
-  - class: InlineMarkup
+  - class: Strong
     attributes:
-      markup: strong
       text: strong
   - class: PlainText
     attributes:
       text: " and l’"
-  - class: InlineMarkup
+  - class: Strong
     attributes:
-      markup: strong
       text: strong
   - class: PlainText
     attributes:
