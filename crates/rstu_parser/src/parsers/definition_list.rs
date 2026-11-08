@@ -80,7 +80,7 @@ fn parse_term_or_classifier(stream: &mut TokenStream, node: &NodeRef) -> Result<
             kind if kind.is(TC::INLINE_REFERENCE) => {
                 node.push_child(parse_inline_reference(stream)?)
             }
-            TK::InlineInternalTargetStart => node.push_child(parse_inline_target),
+            TK::InlineInternalTargetStart => node.push_child(parse_inline_target(stream)?),
             kind if is_term_text(kind) => {
                 let mut text = String::new();
                 while {
