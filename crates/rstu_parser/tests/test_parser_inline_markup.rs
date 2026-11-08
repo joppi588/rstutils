@@ -104,14 +104,14 @@ fn ok_embedded_uris(#[case] test_case: &str) {
 #[case::l12("literal_12")]
 #[case::l13("literal_13")]
 fn ok_literal(#[case] test_case: &str) {
-    rst_vs_yaml!("inline_markup", test_case)
+    rst_vs_yaml!("inline/markup", test_case)
 }
 
 #[rstest]
 #[case::l07("literal_07", PE::InlineMissingClosing)]
 #[case::l09("literal_09", PE::InlineMissingClosing)]
 fn err_literal(#[case] test_case: &str, #[case] expected_error: PE) {
-    rst_err!("inline_markup", test_case, expected_error);
+    rst_err!("inline/markup", test_case, expected_error);
 }
 #[rstest]
 #[case::sh00("standalone_hyperlink_00")]
