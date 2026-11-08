@@ -161,6 +161,7 @@ pub(crate) fn parse_inline_markup(stream: &mut TokenStream) -> Result<NodeRef, P
     let inline = match kind {
         TK::EmphasisStart => AstNode::new_ref(NodeClass::Emphasis),
         TK::StrongStart => AstNode::new_ref(NodeClass::Strong),
+        TK::InlineLiteralStart => AstNode::new_ref(NodeClass::Literal),
         _ => AstNode::new_ref(NodeClass::InlineMarkup).with_attr("markup", "Inline".to_owned()),
     };
 
