@@ -14,10 +14,10 @@ children:
               - class: PlainText
                 attributes:
                   text: "a "
-              - class: InlineMarkup
+              - class: Reference
                 attributes:
-                  markup: hyperlink_reference
-                  text: reference
+                  type: href
+                  label: reference
               - class: PlainText
                 attributes:
                   text: " in text"

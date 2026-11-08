@@ -9,10 +9,10 @@ children:
 - class: BlankLine
 - class: Paragraph
   children:
-  - class: InlineMarkup
+  - class: Reference
     attributes:
       label: reference_
-      markup: href
+      type: href
       raw: <reference\_>
       refuri: reference_
   - class: PlainText
@@ -21,10 +21,10 @@ children:
 - class: BlankLine
 - class: Paragraph
   children:
-  - class: InlineMarkup
+  - class: Reference
     attributes:
       label: anonymous_
-      markup: ahref
+      type: ahref
       raw: <anonymous\_>
       refuri: anonymous_
   - class: PlainText

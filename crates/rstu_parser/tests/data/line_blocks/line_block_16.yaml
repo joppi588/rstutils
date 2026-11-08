@@ -12,10 +12,10 @@ children:
     children:
     - class: Paragraph
       children:
-      - class: InlineMarkup
+      - class: Reference
         attributes:
           label: uff
-          markup: href
+          type: href
           raw: uff <test1>
           refuri: test1
       - class: PlainText
@@ -25,10 +25,10 @@ children:
     children:
     - class: Paragraph
       children:
-      - class: InlineMarkup
+      - class: Reference
         attributes:
           label: uff
-          markup: href
+          type: href
           raw: uff <test2>
           refuri: test2
       - class: PlainText

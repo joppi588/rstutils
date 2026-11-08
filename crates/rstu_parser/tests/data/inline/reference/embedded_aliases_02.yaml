@@ -2,10 +2,10 @@ class: Document
 children:
 - class: Paragraph
   children:
-  - class: InlineMarkup
+  - class: Reference
     attributes:
       label: embedded alias on next line
-      markup: ahref
+      type: ahref
       raw: "embedded alias on next line\n<alias_>"
       refname: alias
   - class: PlainText

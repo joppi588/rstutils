@@ -6,10 +6,10 @@ children:
         children:
           - class: Term
             children:
-              - class: InlineMarkup
+              - class: Reference
                 attributes:
-                  markup: href
-                  text: linked term
+                  type: href
+                  label: linked term
               - class: PlainText
                 attributes:
                   text: " with "

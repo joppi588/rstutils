@@ -11,10 +11,10 @@ children:
                   text: "Term"
           - class: Classifier
             children:
-              - class: InlineMarkup
+              - class: Reference
                 attributes:
-                  markup: hyperlink_reference
-                  text: reference
+                  type: href
+                  label: reference
           - class: Definition
             children:
               - class: Block

@@ -8,10 +8,10 @@ children:
 - class: BlankLine
 - class: Paragraph
   children:
-  - class: InlineMarkup
+  - class: Reference
     attributes:
       label: reference:1
-      markup: href
+      type: href
       raw: <reference\:1>
       refuri: reference:1
   - class: PlainText
@@ -20,10 +20,10 @@ children:
 - class: BlankLine
 - class: Paragraph
   children:
-  - class: InlineMarkup
+  - class: Reference
     attributes:
       label: anonymouscall
-      markup: ahref
+      type: ahref
       raw: <anonymous\call>
       refuri: anonymouscall
   - class: PlainText

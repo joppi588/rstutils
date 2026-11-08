@@ -61,10 +61,10 @@ children:
           - class: PlainText
             attributes:
               text: " "
-          - class: InlineMarkup
+          - class: Reference
             attributes:
-              text: link
-              markup: hyperlink_reference
+              label: link
+              type: href
           - class: PlainText
             attributes:
               text: " "
@@ -100,10 +100,10 @@ children:
           text: "Inline internal targets"
       - class: Paragraph
         children:
-          - class: InlineMarkup
+          - class: Reference
             attributes:
-              text: target
-              markup: inline_internal_target
+              label: target
+              type: inline_internal_target
           - class: PlainText
             attributes:
               text: "\n"
