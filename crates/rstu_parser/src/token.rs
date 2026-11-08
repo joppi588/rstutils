@@ -262,14 +262,13 @@ impl TokenCategory {
         TokenKind::NewLine,
     ];
 
-    pub const INLINE_MARKER: &'static [TokenKind] = &[
-        TokenKind::BackquoteStart,
+    pub const INLINE_MARKUP: &'static [TokenKind] = &[
         TokenKind::EmphasisStart,
-        TokenKind::InlineInternalTargetStart,
         TokenKind::InlineLiteralStart,
         TokenKind::StrongStart,
     ];
-    pub const INLINE_TOKEN: &'static [TokenKind] = &[
+    pub const INLINE_REFERENCE: &'static [TokenKind] = &[
+        TokenKind::BackquoteStart,
         TokenKind::CitationReference,
         TokenKind::Email,
         TokenKind::FootnoteReference,

@@ -67,14 +67,7 @@ pub(crate) fn parse_inline_token(stream: &mut TokenStream) -> Result<NodeRef, Pa
             text.with_attr("text", lexeme.as_str());
             node.push_child(text);
         }
-
-        _ => {
-            return Err(ParserError::UnexpectedToken {
-                expected: "Reference token".to_owned(),
-                found: format!("{:?}", kind),
-                position,
-            });
-        }
+        _ => unreachable!(),
     };
     Ok(node)
 }
