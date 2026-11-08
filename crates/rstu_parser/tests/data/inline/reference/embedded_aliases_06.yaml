@@ -3,20 +3,20 @@ children:
 - class: BlankLine
 - class: Paragraph
   children:
-  - class: InlineMarkup
+  - class: Reference
     attributes:
-      markup: ahref
-      text: no embedded alias (whitespace inside bracket) < alias_ >
+      type: ahref
+      label: no embedded alias (whitespace inside bracket) < alias_ >
   - class: PlainText
     attributes:
       text: "\n"
 - class: BlankLine
 - class: Paragraph
   children:
-  - class: InlineMarkup
+  - class: Reference
     attributes:
-      markup: ahref
-      text: no embedded alias (no preceding whitespace)<alias_>
+      type: ahref
+      label: no embedded alias (no preceding whitespace)<alias_>
   - class: PlainText
     attributes:
       text: "\n"

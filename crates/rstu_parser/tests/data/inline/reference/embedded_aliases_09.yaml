@@ -11,17 +11,15 @@ children:
   - class: PlainText
     attributes:
       text: "Explicit targets: "
-  - class: InlineMarkup
+  - class: Target
     attributes:
-      markup: inline_internal_target
-      text: tg1
+      label: tg1
   - class: PlainText
     attributes:
       text: " and "
-  - class: InlineMarkup
+  - class: Target
     attributes:
-      markup: inline_internal_target
-      text: tg2
+      label: tg2
   - class: PlainText
     attributes:
       text: ".\n"
@@ -31,19 +29,19 @@ children:
   - class: PlainText
     attributes:
       text: "References with embedded alias: "
-  - class: InlineMarkup
+  - class: Reference
     attributes:
       label: link
-      markup: href
+      type: href
       raw: link <tg1_>
       refname: tg1
   - class: PlainText
     attributes:
       text: " and "
-  - class: InlineMarkup
+  - class: Reference
     attributes:
       label: link
-      markup: href
+      type: href
       raw: link <tg2_>
       refname: tg2
   - class: PlainText
@@ -55,10 +53,10 @@ children:
   - class: PlainText
     attributes:
       text: "No clash with anonymous reference "
-  - class: InlineMarkup
+  - class: Reference
     attributes:
       label: link
-      markup: ahref
+      type: ahref
       raw: link <tg1_>
       refname: tg1
   - class: PlainText

@@ -3,40 +3,40 @@ children:
 - class: BlankLine
 - class: Paragraph
   children:
-  - class: InlineMarkup
+  - class: Reference
     attributes:
-      markup: ahref
-      text: "embedded URI with too much whitespace < http://example.com/\nlong/path /and  /whitespace >"
+      type: ahref
+      label: "embedded URI with too much whitespace < http://example.com/\nlong/path /and  /whitespace >"
   - class: PlainText
     attributes:
       text: "\n"
 - class: BlankLine
 - class: Paragraph
   children:
-  - class: InlineMarkup
+  - class: Reference
     attributes:
-      markup: ahref
-      text: "embedded URI with too much whitespace at end <http://example.com/\nlong/path /and  /whitespace >"
+      type: ahref
+      label: "embedded URI with too much whitespace at end <http://example.com/\nlong/path /and  /whitespace >"
   - class: PlainText
     attributes:
       text: "\n"
 - class: BlankLine
 - class: Paragraph
   children:
-  - class: InlineMarkup
+  - class: Reference
     attributes:
-      markup: ahref
-      text: embedded URI with no preceding whitespace<http://example.com>
+      type: ahref
+      label: embedded URI with no preceding whitespace<http://example.com>
   - class: PlainText
     attributes:
       text: "\n"
 - class: BlankLine
 - class: Paragraph
   children:
-  - class: InlineMarkup
+  - class: Reference
     attributes:
-      markup: ahref
-      text: escaped URI \<http://example.com>
+      type: ahref
+      label: escaped URI \<http://example.com>
   - class: PlainText
     attributes:
       text: "\n"
@@ -46,10 +46,10 @@ children:
   - class: PlainText
     attributes:
       text: "See "
-  - class: InlineMarkup
+  - class: Reference
     attributes:
-      markup: href
-      text: "HTML Anchors: \\<a>"
+      type: href
+      label: "HTML Anchors: \\<a>"
   - class: PlainText
     attributes:
       text: ".\n"

@@ -3,10 +3,10 @@ children:
 - class: BlankLine
 - class: Paragraph
   children:
-  - class: InlineMarkup
+  - class: Reference
     attributes:
       label: anonymous reference
-      markup: ahref
+      type: ahref
       raw: anonymous reference <alias\ with\\ escaped \:characters_>
       refname: alias with\ escaped :characters
   - class: PlainText

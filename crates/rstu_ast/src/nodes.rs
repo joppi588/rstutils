@@ -42,6 +42,7 @@ pub enum NodeClass {
     Section,
     Spaces,
     Strong,
+    Target,
     Term,
     Title,
     Transition,
