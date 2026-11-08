@@ -123,6 +123,7 @@ pub(crate) fn parse_inline(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
 
     let inline = match effective_markup {
         "inline_literal" => AstNode::new_ref(NodeClass::Literal),
+        "strong" => AstNode::new_ref(NodeClass::Strong),
         _ => AstNode::new_ref(NodeClass::InlineMarkup).with_attr("markup", effective_markup),
     };
 

@@ -2,9 +2,8 @@ class: Document
 children:
 - class: Paragraph
   children:
-  - class: InlineMarkup
+  - class: Strong
     attributes:
-      markup: strong
       text: strong
   - class: PlainText
     attributes:
