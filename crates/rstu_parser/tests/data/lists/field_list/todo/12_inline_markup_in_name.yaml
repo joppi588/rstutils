@@ -5,9 +5,8 @@ children:
       - class: PlainText
         attributes:
           text: ":Field "
-      - class: InlineMarkup
+      - class: Emphasis
         attributes:
-          markup: emphasis
           text: name
       - class: PlainText
         attributes:
