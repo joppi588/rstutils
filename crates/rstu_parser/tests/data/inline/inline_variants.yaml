@@ -17,10 +17,9 @@ children:
           - class: PlainText
             attributes:
               text: " "
-          - class: InlineMarkup
+          - class: Strong
             attributes:
               text: strong
-              markup: strong
           - class: PlainText
             attributes:
               text: " "

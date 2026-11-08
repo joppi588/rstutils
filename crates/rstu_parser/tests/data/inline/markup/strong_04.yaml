@@ -5,9 +5,8 @@ children:
   - class: PlainText
     attributes:
       text: "Strong asterisk: "
-  - class: InlineMarkup
+  - class: Strong
     attributes:
-      markup: strong
       text: "*"
   - class: PlainText
     attributes:
@@ -18,9 +17,8 @@ children:
   - class: PlainText
     attributes:
       text: "Strong double asterisk: "
-  - class: InlineMarkup
+  - class: Strong
     attributes:
-      markup: strong
       text: "**"
   - class: PlainText
     attributes:
