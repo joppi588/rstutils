@@ -2,10 +2,10 @@ class: Document
 children:
 - class: Paragraph
   children:
-  - class: InlineMarkup
+  - class: Reference
     attributes:
       label: anonymous reference
-      markup: ahref
+      type: ahref
       raw: anonymous reference <alias_>
       refname: alias
   - class: PlainText

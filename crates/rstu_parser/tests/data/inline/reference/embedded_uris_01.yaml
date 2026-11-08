@@ -2,10 +2,10 @@ class: Document
 children:
 - class: Paragraph
   children:
-  - class: InlineMarkup
+  - class: Reference
     attributes:
       label: anonymous reference
-      markup: ahref
+      type: ahref
       raw: anonymous reference <http://example.com>
       refuri: http://example.com
   - class: PlainText

@@ -2,10 +2,10 @@ class: Document
 children:
 - class: Paragraph
   children:
-  - class: InlineMarkup
+  - class: Reference
     attributes:
       label: embedded URI with whitespace
-      markup: ahref
+      type: ahref
       raw: "embedded URI with whitespace <http://example.com/\nlong/path /and  /whitespace>"
       refuri: http://example.com/long/path/and/whitespace
   - class: PlainText

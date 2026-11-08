@@ -2,10 +2,10 @@ class: Document
 children:
 - class: Paragraph
   children:
-  - class: InlineMarkup
+  - class: Reference
     attributes:
       label: phrase reference
-      markup: href
+      type: href
       raw: phrase reference <http://example.com>
       refuri: http://example.com
   - class: PlainText

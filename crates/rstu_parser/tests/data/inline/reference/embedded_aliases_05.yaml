@@ -2,10 +2,10 @@ class: Document
 children:
 - class: Paragraph
   children:
-  - class: InlineMarkup
+  - class: Reference
     attributes:
       label: embedded alias with whitespace
-      markup: ahref
+      type: ahref
       raw: <embedded alias with whitespace_>
       refname: embedded alias with whitespace
   - class: PlainText

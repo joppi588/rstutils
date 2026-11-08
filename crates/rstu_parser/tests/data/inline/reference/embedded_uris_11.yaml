@@ -11,17 +11,15 @@ children:
   - class: PlainText
     attributes:
       text: "Explicit targets: "
-  - class: InlineMarkup
+  - class: Target
     attributes:
-      markup: inline_internal_target
-      text: file.txt
+      label: file.txt
   - class: PlainText
     attributes:
       text: ", "
-  - class: InlineMarkup
+  - class: Target
     attributes:
-      markup: inline_internal_target
-      text: file.html
+      label: file.html
   - class: PlainText
     attributes:
       text: ".\n"
@@ -31,19 +29,19 @@ children:
   - class: PlainText
     attributes:
       text: "Embedded URI: named "
-  - class: InlineMarkup
+  - class: Reference
     attributes:
       label: file.txt
-      markup: href
+      type: href
       raw: <file.txt>
       refuri: file.txt
   - class: PlainText
     attributes:
       text: " and anonymous "
-  - class: InlineMarkup
+  - class: Reference
     attributes:
       label: file.html
-      markup: ahref
+      type: ahref
       raw: <file.html>
       refuri: file.html
   - class: PlainText

@@ -3,10 +3,10 @@ children:
 - class: BlankLine
 - class: Paragraph
   children:
-  - class: InlineMarkup
+  - class: Reference
     attributes:
       label: embedded URI with escaped whitespace
-      markup: ahref
+      type: ahref
       raw: "embedded URI with escaped whitespace <http://example.com/\na\\ long/path\\ and/some\\_escaped\\ whitespace>"
       refuri: http://example.com/a long/path and/some_escaped whitespace
   - class: PlainText
@@ -15,10 +15,10 @@ children:
 - class: BlankLine
 - class: Paragraph
   children:
-  - class: InlineMarkup
+  - class: Reference
     attributes:
       label: omitted_reference text with escaped whitespace
-      markup: ahref
+      type: ahref
       raw: <omitted\_reference\ text\ with\ escaped\ whitespace>
       refuri: omitted_reference text with escaped whitespace
   - class: PlainText

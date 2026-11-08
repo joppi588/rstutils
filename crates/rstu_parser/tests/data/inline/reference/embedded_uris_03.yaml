@@ -2,10 +2,10 @@ class: Document
 children:
 - class: Paragraph
   children:
-  - class: InlineMarkup
+  - class: Reference
     attributes:
       label: embedded URI across lines
-      markup: ahref
+      type: ahref
       raw: "embedded URI across lines <http://example.com/\nlong/path>"
       refuri: http://example.com/long/path
   - class: PlainText
