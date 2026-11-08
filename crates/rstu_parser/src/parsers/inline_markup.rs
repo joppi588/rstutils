@@ -82,6 +82,15 @@ pub(crate) fn parse_inline_reference(stream: &mut TokenStream) -> Result<NodeRef
                 });
             }
             let end_kind = stream.consume().kind;
+            match end_kind {
+                TK::AnonymousHyperlinkReferenceEnd => {
+                    node.with_attr("type", "ahref");
+                }
+                TK::HyperlinkReferenceEnd => {
+                    node.with_attr("type", "href");
+                }
+                _ => {}
+            }
 
             let embedded_ref = if matches!(
                 end_kind,
