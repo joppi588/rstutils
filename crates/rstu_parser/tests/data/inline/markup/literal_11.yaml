@@ -6,10 +6,9 @@ children:
   - class: PlainText
     attributes:
       text: "Blank after opening "
-  - class: InlineMarkup
+  - class: InterpretedText
     attributes:
-      markup: interpreted_text
-      text: ""
+      label: ""
   - class: PlainText
     attributes:
-      text: " not allowed.\n"
+      text: " not allowed.\nIt will be interpreted as interpreted text markup.\n"

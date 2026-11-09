@@ -74,33 +74,30 @@ pub(crate) fn parse_inline_reference(stream: &mut TokenStream) -> Result<NodeRef
 pub(crate) fn parse_role_or_ref(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert!(stream.token_at_cursor().kind == TK::BackquoteStart);
 
-    let node = AstNode::new_ref(NodeClass::Reference);
     let position = stream.position_at_cursor();
-    let token = stream.consume();
-    let kind = token.kind;
-    let lexeme = &token.lexeme;
+    stream.consume();
     let end_kind_candidates = &[
         TK::BackquoteEnd,
         TK::AnonymousHyperlinkReferenceEnd,
         TK::HyperlinkReferenceEnd,
     ];
     let text = stream.consume_text_until(&[end_kind_candidates, TC::PARAGRAPH_END].concat());
-    if !stream.token_at_cursor().kind.is(end_kind_candidates) {
-        return Err(ParserError::InlineMissingClosing {
-            markup: "`,`_,`__".to_owned(),
-            position,
-        });
-    }
     let end_kind = stream.consume().kind;
-    match end_kind {
+    let node = match end_kind {
         TK::AnonymousHyperlinkReferenceEnd => {
-            node.with_attr("type", "ahref");
+            AstNode::new_ref(NodeClass::Reference).with_attr("type", "ahref")
         }
         TK::HyperlinkReferenceEnd => {
-            node.with_attr("type", "href");
+            AstNode::new_ref(NodeClass::Reference).with_attr("type", "href")
         }
-        _ => {}
-    }
+        TK::BackquoteEnd => AstNode::new_ref(NodeClass::InterpretedText),
+        _ => {
+            return Err(ParserError::InlineMissingClosing {
+                markup: "`,`_,`__".to_owned(),
+                position,
+            });
+        }
+    };
 
     let embedded_ref = if matches!(
         end_kind,
@@ -179,7 +176,7 @@ pub(crate) fn parse_inline_markup(stream: &mut TokenStream) -> Result<NodeRef, P
         TK::EmphasisStart => AstNode::new_ref(NodeClass::Emphasis),
         TK::StrongStart => AstNode::new_ref(NodeClass::Strong),
         TK::InlineLiteralStart => AstNode::new_ref(NodeClass::Literal),
-        _ => AstNode::new_ref(NodeClass::InlineMarkup).with_attr("markup", "Inline".to_owned()),
+        _ => unreachable!(),
     };
 
     inline.with_attr("text", text);
