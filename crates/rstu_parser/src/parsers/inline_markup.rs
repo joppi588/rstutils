@@ -21,7 +21,6 @@ pub(crate) fn parse_inline_reference(stream: &mut TokenStream) -> Result<NodeRef
     debug_assert!(stream.token_at_cursor().kind.is(TC::INLINE_REFERENCE));
 
     let node = AstNode::new_ref(NodeClass::Reference);
-    let position = stream.position_at_cursor();
     let token = stream.consume();
     let kind = token.kind;
     let lexeme = &token.lexeme;
@@ -67,83 +66,92 @@ pub(crate) fn parse_inline_reference(stream: &mut TokenStream) -> Result<NodeRef
             text.with_attr("text", lexeme.as_str());
             node.push_child(text);
         }
-        TK::BackquoteStart => {
-            let end_kind_candidates = &[
-                TK::BackquoteEnd,
-                TK::AnonymousHyperlinkReferenceEnd,
-                TK::HyperlinkReferenceEnd,
-            ];
-            let text =
-                stream.consume_text_until(&[end_kind_candidates, TC::PARAGRAPH_END].concat());
-            if !stream.token_at_cursor().kind.is(end_kind_candidates) {
-                return Err(ParserError::InlineMissingClosing {
-                    markup: "`,`_,`__".to_owned(),
-                    position,
-                });
-            }
-            let end_kind = stream.consume().kind;
-            match end_kind {
-                TK::AnonymousHyperlinkReferenceEnd => {
-                    node.with_attr("type", "ahref");
-                }
-                TK::HyperlinkReferenceEnd => {
-                    node.with_attr("type", "href");
-                }
-                _ => {}
-            }
-
-            let embedded_ref = if matches!(
-                end_kind,
-                TK::AnonymousHyperlinkReferenceEnd | TK::HyperlinkReferenceEnd
-            ) {
-                EMBEDDED_REF.captures(&text).map(|captures| {
-                    let before = captures.name("before").map_or("", |value| value.as_str());
-                    let reference = captures.name("ref").unwrap().as_str();
-                    (before, reference)
-                })
-            } else {
-                None
-            };
-            match embedded_ref {
-                Some((before, refname)) if refname.ends_with("_") && !refname.ends_with(r"\_") => {
-                    let trimmed = before.trim_end();
-                    let normalized_refname = EMBEDDED_ALIAS_NORMALIZATION
-                        .replace_all(refname.strip_suffix('_').unwrap(), "$1")
-                        .into_owned()
-                        .split_whitespace()
-                        .collect::<Vec<_>>()
-                        .join(" ");
-
-                    let label = if trimmed.is_empty() {
-                        &normalized_refname
-                    } else {
-                        trimmed
-                    };
-                    node.with_attr("raw", text.clone())
-                        .with_attr("label", label)
-                        .with_attr("refname", normalized_refname);
-                }
-                Some((before, refuri)) => {
-                    let trimmed = before.trim_end();
-                    let normalized_refuri = EMBEDDED_URI_NORMALIZATION
-                        .replace_all(refuri, "$1")
-                        .into_owned();
-                    let label = if trimmed.is_empty() {
-                        &normalized_refuri
-                    } else {
-                        trimmed
-                    };
-                    node.with_attr("raw", text.clone())
-                        .with_attr("label", label)
-                        .with_attr("refuri", normalized_refuri);
-                }
-                _ => {
-                    node.with_attr("label", text);
-                }
-            }
-        }
         _ => unreachable!(),
     };
+    Ok(node)
+}
+
+pub(crate) fn parse_role_or_ref(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    debug_assert!(stream.token_at_cursor().kind == TK::BackquoteStart);
+
+    let node = AstNode::new_ref(NodeClass::Reference);
+    let position = stream.position_at_cursor();
+    let token = stream.consume();
+    let kind = token.kind;
+    let lexeme = &token.lexeme;
+    let end_kind_candidates = &[
+        TK::BackquoteEnd,
+        TK::AnonymousHyperlinkReferenceEnd,
+        TK::HyperlinkReferenceEnd,
+    ];
+    let text = stream.consume_text_until(&[end_kind_candidates, TC::PARAGRAPH_END].concat());
+    if !stream.token_at_cursor().kind.is(end_kind_candidates) {
+        return Err(ParserError::InlineMissingClosing {
+            markup: "`,`_,`__".to_owned(),
+            position,
+        });
+    }
+    let end_kind = stream.consume().kind;
+    match end_kind {
+        TK::AnonymousHyperlinkReferenceEnd => {
+            node.with_attr("type", "ahref");
+        }
+        TK::HyperlinkReferenceEnd => {
+            node.with_attr("type", "href");
+        }
+        _ => {}
+    }
+
+    let embedded_ref = if matches!(
+        end_kind,
+        TK::AnonymousHyperlinkReferenceEnd | TK::HyperlinkReferenceEnd
+    ) {
+        EMBEDDED_REF.captures(&text).map(|captures| {
+            let before = captures.name("before").map_or("", |value| value.as_str());
+            let reference = captures.name("ref").unwrap().as_str();
+            (before, reference)
+        })
+    } else {
+        None
+    };
+    match embedded_ref {
+        Some((before, refname)) if refname.ends_with("_") && !refname.ends_with(r"\_") => {
+            let trimmed = before.trim_end();
+            let normalized_refname = EMBEDDED_ALIAS_NORMALIZATION
+                .replace_all(refname.strip_suffix('_').unwrap(), "$1")
+                .into_owned()
+                .split_whitespace()
+                .collect::<Vec<_>>()
+                .join(" ");
+
+            let label = if trimmed.is_empty() {
+                &normalized_refname
+            } else {
+                trimmed
+            };
+            node.with_attr("raw", text.clone())
+                .with_attr("label", label)
+                .with_attr("refname", normalized_refname);
+        }
+        Some((before, refuri)) => {
+            let trimmed = before.trim_end();
+            let normalized_refuri = EMBEDDED_URI_NORMALIZATION
+                .replace_all(refuri, "$1")
+                .into_owned();
+            let label = if trimmed.is_empty() {
+                &normalized_refuri
+            } else {
+                trimmed
+            };
+            node.with_attr("raw", text.clone())
+                .with_attr("label", label)
+                .with_attr("refuri", normalized_refuri);
+        }
+        _ => {
+            node.with_attr("label", text);
+        }
+    }
+
     Ok(node)
 }
 

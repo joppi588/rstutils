@@ -268,7 +268,6 @@ impl TokenCategory {
         TokenKind::StrongStart,
     ];
     pub const INLINE_REFERENCE: &'static [TokenKind] = &[
-        TokenKind::BackquoteStart,
         TokenKind::CitationReference,
         TokenKind::Email,
         TokenKind::FootnoteReference,
