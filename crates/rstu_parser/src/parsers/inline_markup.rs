@@ -84,13 +84,9 @@ pub(crate) fn parse_role_or_ref(stream: &mut TokenStream) -> Result<NodeRef, Par
     let text = stream.consume_text_until(&[end_kind_candidates, TC::PARAGRAPH_END].concat());
     let end_kind = stream.consume().kind;
     let node = match end_kind {
-        TK::AnonymousHyperlinkReferenceEnd => {
-            AstNode::new_ref(NodeClass::Reference).with_attr("type", "ahref")
-        }
-        TK::HyperlinkReferenceEnd => {
-            AstNode::new_ref(NodeClass::Reference).with_attr("type", "href")
-        }
-        TK::BackquoteEnd => AstNode::new_ref(NodeClass::InterpretedText),
+        TK::AnonymousHyperlinkReferenceEnd => parse_hyperlink_reference(&text, "ahref")?,
+        TK::HyperlinkReferenceEnd => parse_hyperlink_reference(&text, "href")?,
+        TK::BackquoteEnd => AstNode::new_ref(NodeClass::InterpretedText).with_attr("raw", text),
         _ => {
             return Err(ParserError::InlineMissingClosing {
                 markup: "`,`_,`__".to_owned(),
@@ -98,19 +94,19 @@ pub(crate) fn parse_role_or_ref(stream: &mut TokenStream) -> Result<NodeRef, Par
             });
         }
     };
+    Ok(node)
+}
 
-    let embedded_ref = if matches!(
-        end_kind,
-        TK::AnonymousHyperlinkReferenceEnd | TK::HyperlinkReferenceEnd
-    ) {
-        EMBEDDED_REF.captures(&text).map(|captures| {
-            let before = captures.name("before").map_or("", |value| value.as_str());
-            let reference = captures.name("ref").unwrap().as_str();
-            (before, reference)
-        })
-    } else {
-        None
-    };
+pub(crate) fn parse_hyperlink_reference(
+    text: &str,
+    ref_type: &str,
+) -> Result<NodeRef, ParserError> {
+    let node = AstNode::new_ref(NodeClass::Reference).with_attr("type", ref_type);
+    let embedded_ref = EMBEDDED_REF.captures(&text).map(|captures| {
+        let before = captures.name("before").map_or("", |value| value.as_str());
+        let reference = captures.name("ref").unwrap().as_str();
+        (before, reference)
+    });
     match embedded_ref {
         Some((before, refname)) if refname.ends_with("_") && !refname.ends_with(r"\_") => {
             let trimmed = before.trim_end();
@@ -126,7 +122,7 @@ pub(crate) fn parse_role_or_ref(stream: &mut TokenStream) -> Result<NodeRef, Par
             } else {
                 trimmed
             };
-            node.with_attr("raw", text.clone())
+            node.with_attr("raw", text)
                 .with_attr("label", label)
                 .with_attr("refname", normalized_refname);
         }
@@ -140,15 +136,14 @@ pub(crate) fn parse_role_or_ref(stream: &mut TokenStream) -> Result<NodeRef, Par
             } else {
                 trimmed
             };
-            node.with_attr("raw", text.clone())
+            node.with_attr("raw", text)
                 .with_attr("label", label)
                 .with_attr("refuri", normalized_refuri);
         }
         _ => {
             node.with_attr("label", text);
-        }
-    }
-
+        } // TODO: catch unsupported pattern?
+    };
     Ok(node)
 }
 

@@ -8,7 +8,7 @@ children:
       text: "Blank after opening "
   - class: InterpretedText
     attributes:
-      label: ""
+      raw: ""
   - class: PlainText
     attributes:
       text: " not allowed.\nIt will be interpreted as interpreted text markup.\n"
