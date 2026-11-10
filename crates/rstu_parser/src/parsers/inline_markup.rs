@@ -10,7 +10,8 @@ static EMBEDDED_URI_NORMALIZATION: LazyLock<Regex> =
 static EMBEDDED_ALIAS_NORMALIZATION: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"\\(.)").unwrap());
 static EMBEDDED_REF: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"(?s)^(?P<before>.*\s)?<(?P<ref>[^<>\s](?:[^<>]*[^<>\s])?)>$").unwrap()
+    Regex::new(r"(?s)^(?:(?P<label>.*?)(?P<separator>\s+))?<(?P<ref>[^<>\s](?:[^<>]*[^<>\s])?)>$")
+        .unwrap()
 });
 
 use crate::parser_errors::ParserError;
@@ -102,14 +103,17 @@ pub(crate) fn parse_hyperlink_reference(
     ref_type: &str,
 ) -> Result<NodeRef, ParserError> {
     let node = AstNode::new_ref(NodeClass::Reference).with_attr("type", ref_type);
-    let embedded_ref = EMBEDDED_REF.captures(&text).map(|captures| {
-        let before = captures.name("before").map_or("", |value| value.as_str());
-        let reference = captures.name("ref").unwrap().as_str();
-        (before, reference)
-    });
-    match embedded_ref {
-        Some((before, refname)) if refname.ends_with("_") && !refname.ends_with(r"\_") => {
-            let trimmed = before.trim_end();
+    let captures = EMBEDDED_REF
+        .captures(&text)
+        .expect("There must be some match"); // TODO: Capture the whole string if < > is malformed
+    if let Some(label) = captures.name("label") {
+        node.with_attr("label", label.as_str());
+    };
+    let refname = captures
+        .name("ref")
+        .map_or(None, |value| Some(value.as_str()));
+    match refname {
+        Some(refname) if refname.ends_with("_") && !refname.ends_with(r"\_") => {
             let normalized_refname = EMBEDDED_ALIAS_NORMALIZATION
                 .replace_all(refname.strip_suffix('_').unwrap(), "$1")
                 .into_owned()
@@ -117,32 +121,17 @@ pub(crate) fn parse_hyperlink_reference(
                 .collect::<Vec<_>>()
                 .join(" ");
 
-            let label = if trimmed.is_empty() {
-                &normalized_refname
-            } else {
-                trimmed
-            };
-            node.with_attr("raw", text)
-                .with_attr("label", label)
-                .with_attr("refname", normalized_refname);
+            node.with_attr("refname", normalized_refname)
+                .with_attr("raw", text);
         }
-        Some((before, refuri)) => {
-            let trimmed = before.trim_end();
+        Some(refuri) => {
             let normalized_refuri = EMBEDDED_URI_NORMALIZATION
                 .replace_all(refuri, "$1")
                 .into_owned();
-            let label = if trimmed.is_empty() {
-                &normalized_refuri
-            } else {
-                trimmed
-            };
-            node.with_attr("raw", text)
-                .with_attr("label", label)
-                .with_attr("refuri", normalized_refuri);
+            node.with_attr("refuri", normalized_refuri)
+                .with_attr("raw", text);
         }
-        _ => {
-            node.with_attr("label", text);
-        } // TODO: catch unsupported pattern?
+        _ => {}
     };
     Ok(node)
 }
