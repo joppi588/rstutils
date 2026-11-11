@@ -10,8 +10,10 @@ static EMBEDDED_URI_NORMALIZATION: LazyLock<Regex> =
 static EMBEDDED_ALIAS_NORMALIZATION: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"\\(.)").unwrap());
 static EMBEDDED_REF: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"(?s)^(?:(?P<label>.*?)(?P<separator>\s+))?<(?P<ref>[^<>\s](?:[^<>]*[^<>\s])?)>$")
-        .unwrap()
+    Regex::new(
+        r"(?s)^(?P<label>.*?)(?:(?:(?P<separator>\s+)|^)<(?P<ref>[^<>\s](?:[^<>]*[^<>\s])?)>)?$",
+    )
+    .unwrap()
 });
 
 use crate::parser_errors::ParserError;
@@ -105,8 +107,11 @@ pub(crate) fn parse_hyperlink_reference(
     let node = AstNode::new_ref(NodeClass::Reference).with_attr("type", ref_type);
     let captures = EMBEDDED_REF
         .captures(&text)
-        .expect("There must be some match"); // TODO: Capture the whole string if < > is malformed
-    if let Some(label) = captures.name("label") {
+        .expect("There must be some match");
+    if let Some(label) = captures
+        .name("label")
+        .filter(|label| !label.as_str().is_empty() || captures.name("ref").is_none())
+    {
         node.with_attr("label", label.as_str());
     };
     let refname = captures
