@@ -29,8 +29,9 @@ RUN rustup toolchain install 1.96 --profile minimal \
     && rustup default 1.96
 
 # Install cargo-nextest for aggregated Rust test execution and summaries.
-RUN cargo install --locked cargo-nextest \
-    && chown -R vscode:rustlang /usr/local/cargo
+RUN cargo install --locked cargo-nextest
 
 # Install cargo-edit for the set-version command.
 RUN cargo install --locked cargo-edit
+
+RUN chown -R vscode:rustlang /usr/local/cargo

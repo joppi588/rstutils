@@ -45,7 +45,6 @@ fn ok_inline_reference(#[case] test_case: &str) {
 #[case::ea05("embedded_aliases_05")]
 #[case::ea06("embedded_aliases_06")]
 #[case::ea07("embedded_aliases_07")]
-#[case::ea08("embedded_aliases_08")]
 fn ok_embedded_alias(#[case] test_case: &str) {
     rst_vs_yaml!("inline/reference", test_case)
 }

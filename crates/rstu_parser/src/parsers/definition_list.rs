@@ -3,7 +3,9 @@
 // SPDX-License-Identifier: MIT
 
 use super::block::parse_block;
-use super::inline_markup::{parse_inline, parse_inline_token};
+use super::inline_markup::{
+    parse_inline_markup, parse_inline_reference, parse_inline_target, parse_role_or_ref,
+};
 use crate::parser_errors::ParserError;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
 use crate::token_stream::TokenStream;
@@ -68,15 +70,20 @@ fn is_term_text(kind: TK) -> bool {
 }
 
 fn parse_term_or_classifier(stream: &mut TokenStream, node: &NodeRef) -> Result<(), ParserError> {
+    // TODO: #465 very similar to paragraph parsing, reuse.
     loop {
         let kind = stream.token_at_cursor().kind;
         match kind {
             TK::NewLine | TK::ClassifierSeparator | TK::EoF => break,
-            kind if kind.is(TC::INLINE_MARKER) => {
-                let inline = parse_inline(stream)?;
+            kind if kind.is(TC::INLINE_MARKUP) => {
+                let inline = parse_inline_markup(stream)?;
                 node.push_child(inline);
             }
-            kind if kind.is(TC::INLINE_TOKEN) => node.push_child(parse_inline_token(stream)?),
+            kind if kind.is(TC::INLINE_REFERENCE) => {
+                node.push_child(parse_inline_reference(stream)?)
+            }
+            TK::InlineInternalTargetStart => node.push_child(parse_inline_target(stream)?),
+            TK::BackquoteStart => node.push_child(parse_role_or_ref(stream)?),
             kind if is_term_text(kind) => {
                 let mut text = String::new();
                 while {

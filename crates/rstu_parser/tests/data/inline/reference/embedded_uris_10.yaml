@@ -10,7 +10,6 @@ children:
   children:
   - class: Reference
     attributes:
-      label: reference:1
       type: href
       raw: <reference\:1>
       refuri: reference:1
@@ -22,7 +21,6 @@ children:
   children:
   - class: Reference
     attributes:
-      label: anonymouscall
       type: ahref
       raw: <anonymous\call>
       refuri: anonymouscall

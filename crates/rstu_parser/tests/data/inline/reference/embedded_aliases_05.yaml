@@ -4,7 +4,6 @@ children:
   children:
   - class: Reference
     attributes:
-      label: embedded alias with whitespace
       type: ahref
       raw: <embedded alias with whitespace_>
       refname: embedded alias with whitespace

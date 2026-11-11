@@ -5,9 +5,9 @@ children:
   - class: Reference
     attributes:
       label: phrase reference
-      type: href
       raw: phrase reference <alias_>
       refname: alias
+      type: href
   - class: PlainText
     attributes:
       text: "\n"

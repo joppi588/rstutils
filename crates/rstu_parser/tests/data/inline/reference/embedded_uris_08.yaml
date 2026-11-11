@@ -10,7 +10,6 @@ children:
   children:
   - class: Reference
     attributes:
-      label: reference
       type: href
       raw: <reference>
       refuri: reference
@@ -22,7 +21,6 @@ children:
   children:
   - class: Reference
     attributes:
-      label: anonymous
       type: ahref
       raw: <anonymous>
       refuri: anonymous

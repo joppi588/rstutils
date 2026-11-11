@@ -262,14 +262,12 @@ impl TokenCategory {
         TokenKind::NewLine,
     ];
 
-    pub const INLINE_MARKER: &'static [TokenKind] = &[
-        TokenKind::BackquoteStart,
+    pub const INLINE_MARKUP: &'static [TokenKind] = &[
         TokenKind::EmphasisStart,
-        TokenKind::InlineInternalTargetStart,
         TokenKind::InlineLiteralStart,
         TokenKind::StrongStart,
     ];
-    pub const INLINE_TOKEN: &'static [TokenKind] = &[
+    pub const INLINE_REFERENCE: &'static [TokenKind] = &[
         TokenKind::CitationReference,
         TokenKind::Email,
         TokenKind::FootnoteReference,
@@ -729,7 +727,7 @@ mod tests {
 
             assert_eq!(kind, expected_kind);
             assert_eq!(lexeme, expected_lexeme);
-            assert!(kind.is(TokenCategory::INLINE_TOKEN));
+            assert!(kind.is(TokenCategory::INLINE_REFERENCE));
             assert!(kind.is(TokenCategory::DEFINITION_LIST));
         }
     }
@@ -954,7 +952,7 @@ mod tests {
 
     #[test]
     fn kind_is_matches_category_membership() {
-        assert!(TK::StrongStart.is(TokenCategory::INLINE_MARKER));
+        assert!(TK::StrongStart.is(TokenCategory::INLINE_MARKUP));
         assert!(TK::Word.is(TokenCategory::PLAIN));
         assert!(TK::Punctuation.is(TokenCategory::PLAIN));
         assert!(!TK::Separator.is(TokenCategory::PLAIN));
