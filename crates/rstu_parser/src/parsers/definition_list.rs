@@ -98,13 +98,7 @@ fn parse_term_or_classifier(stream: &mut TokenStream, node: &NodeRef) -> Result<
                     node.push_child(plain_text);
                 }
             }
-            _ => {
-                return Err(ParserError::UnexpectedToken {
-                    expected: "Inline/plain".to_owned(),
-                    found: format!("{:?}", kind),
-                    position: stream.position_at_cursor(),
-                });
-            }
+            _ => unreachable!(),
         }
     }
     Ok(())
