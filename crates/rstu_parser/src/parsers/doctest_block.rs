@@ -16,6 +16,7 @@ pub(crate) fn parse_doctest_block(stream: &mut TokenStream) -> Result<NodeRef, P
     let mut text = String::new();
     let mut rel_indent = 0;
 
+    // TODO: #465 very similar to comment parsing, reuse?
     loop {
         match stream.token_at_cursor().kind {
             TK::Indent => {
