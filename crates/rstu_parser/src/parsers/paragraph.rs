@@ -4,8 +4,9 @@
 
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
-use super::inline_markup::parse_inline;
-use super::inline_markup::parse_inline_token;
+use super::inline_markup::{
+    parse_inline_markup, parse_inline_reference, parse_inline_target, parse_role_or_ref,
+};
 use crate::parser_errors::ParserError;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
 use crate::token_stream::TokenStream;
@@ -51,8 +52,10 @@ pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, Parse
     loop {
         let kind = stream.token_at_cursor().kind;
         let node = match kind {
-            kind if kind.is(TC::INLINE_MARKER) => parse_inline(stream)?,
-            kind if kind.is(TC::INLINE_TOKEN) => parse_inline_token(stream)?,
+            kind if kind.is(TC::INLINE_MARKUP) => parse_inline_markup(stream)?,
+            kind if kind.is(TC::INLINE_REFERENCE) => parse_inline_reference(stream)?,
+            TK::InlineInternalTargetStart => parse_inline_target(stream)?,
+            TK::BackquoteStart => parse_role_or_ref(stream)?,
             kind if kind.is(TC::PARAGRAPH_END) => break,
             _ => {
                 let plain_text = parse_plain(stream);
@@ -77,7 +80,11 @@ pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, Parse
 fn parse_plain(stream: &mut TokenStream) -> NodeRef {
     let kind = stream.token_at_cursor().kind;
     debug_assert!(
-        !(kind.is(&TC::PARAGRAPH_END) || kind.is(&TC::INLINE_MARKER) || kind.is(&TC::INLINE_TOKEN))
+        !(kind.is(&TC::PARAGRAPH_END)
+            || kind.is(&TC::INLINE_MARKUP)
+            || kind.is(&TC::INLINE_REFERENCE)
+            || kind == TK::InlineInternalTargetStart)
+            || kind == TK::BackquoteStart
     );
 
     let mut text = String::new();
@@ -85,8 +92,10 @@ fn parse_plain(stream: &mut TokenStream) -> NodeRef {
     loop {
         match stream.token_at_cursor().kind {
             kind if kind.is(&TC::PARAGRAPH_END)
-                || kind.is(&TC::INLINE_MARKER)
-                || kind.is(&TC::INLINE_TOKEN) =>
+                || kind.is(&TC::INLINE_MARKUP)
+                || kind.is(&TC::INLINE_REFERENCE)
+                || kind == TK::BackquoteStart
+                || kind == TK::InlineInternalTargetStart =>
             {
                 break;
             }

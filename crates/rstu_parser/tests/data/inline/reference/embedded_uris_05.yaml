@@ -17,7 +17,6 @@ children:
   children:
   - class: Reference
     attributes:
-      label: omitted_reference text with escaped whitespace
       type: ahref
       raw: <omitted\_reference\ text\ with\ escaped\ whitespace>
       refuri: omitted_reference text with escaped whitespace

@@ -1,14 +1,64 @@
 class: Document
 children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Duplicate refnames in references with embedded alias.\n"
 - class: BlankLine
 - class: Paragraph
   children:
-  - class: Reference
-    attributes:
-      label: anonymous reference
-      type: ahref
-      raw: anonymous reference <alias\ with\\ escaped \:characters_>
-      refname: alias with\ escaped :characters
   - class: PlainText
     attributes:
-      text: "\n"
+      text: "Explicit targets: "
+  - class: Target
+    attributes:
+      label: tg1
+  - class: PlainText
+    attributes:
+      text: " and "
+  - class: Target
+    attributes:
+      label: tg2
+  - class: PlainText
+    attributes:
+      text: ".\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "References with embedded alias: "
+  - class: Reference
+    attributes:
+      label: link
+      type: href
+      raw: link <tg1_>
+      refname: tg1
+  - class: PlainText
+    attributes:
+      text: " and "
+  - class: Reference
+    attributes:
+      label: link
+      type: href
+      raw: link <tg2_>
+      refname: tg2
+  - class: PlainText
+    attributes:
+      text: ".\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "No clash with anonymous reference "
+  - class: Reference
+    attributes:
+      label: link
+      type: ahref
+      raw: link <tg1_>
+      refname: tg1
+  - class: PlainText
+    attributes:
+      text: ".\n"
