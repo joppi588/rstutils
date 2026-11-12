@@ -1,0 +1,49 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: quoted '
+  - class: Reference
+    attributes:
+      label: phrase reference
+      type: href
+  - class: PlainText
+    attributes:
+      text: "', quoted \""
+  - class: Reference
+    attributes:
+      label: phrase reference
+      type: href
+  - class: PlainText
+    attributes:
+      text: |-
+        ",
+        quoted ‘
+  - class: Reference
+    attributes:
+      label: phrase reference
+      type: href
+  - class: PlainText
+    attributes:
+      text: |-
+        ’,
+        quoted “
+  - class: Reference
+    attributes:
+      label: phrase reference
+      type: href
+  - class: PlainText
+    attributes:
+      text: |-
+        ”,
+        quoted «
+  - class: Reference
+    attributes:
+      label: phrase reference
+      type: href
+  - class: PlainText
+    attributes:
+      text: |
+        »

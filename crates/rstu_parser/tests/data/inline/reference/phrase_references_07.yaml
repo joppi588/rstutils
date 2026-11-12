@@ -1,0 +1,39 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      label: "'anonymous reference'"
+      type: ahref
+  - class: PlainText
+    attributes:
+      text: " with quotes, "
+  - class: Reference
+    attributes:
+      label: "\"anonymous reference\""
+      type: ahref
+  - class: PlainText
+    attributes:
+      text: " with quotes,\n"
+  - class: Reference
+    attributes:
+      label: ‘anonymous reference’
+      type: ahref
+  - class: PlainText
+    attributes:
+      text: " with quotes,\n"
+  - class: Reference
+    attributes:
+      label: “anonymous reference”
+      type: ahref
+  - class: PlainText
+    attributes:
+      text: " with quotes,\n"
+  - class: Reference
+    attributes:
+      label: «anonymous reference»
+      type: ahref
+  - class: PlainText
+    attributes:
+      text: " with quotes\n"
