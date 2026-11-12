@@ -4,9 +4,7 @@ children:
   children:
   - class: Reference
     attributes:
-      label: |-
-        phrase reference
-        across lines
+      label: "phrase reference\nacross lines"
       type: href
   - class: PlainText
     attributes:
