@@ -108,12 +108,14 @@ pub(crate) fn parse_hyperlink_reference(
     let captures = EMBEDDED_REF
         .captures(&text)
         .expect("There must be some match");
+
     if let Some(label) = captures
         .name("label")
         .filter(|label| !label.as_str().is_empty() || captures.name("ref").is_none())
     {
         node.with_attr("label", label.as_str());
     };
+
     let refname = captures
         .name("ref")
         .map_or(None, |value| Some(value.as_str()));

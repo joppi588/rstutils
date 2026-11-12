@@ -1,0 +1,11 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      label: "phrase reference\nacross lines"
+      type: href
+  - class: PlainText
+    attributes:
+      text: "\n"
