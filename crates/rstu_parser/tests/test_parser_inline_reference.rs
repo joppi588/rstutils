@@ -100,6 +100,7 @@ fn ok_standalone_hyperlink(#[case] test_case: &str) {
 #[case::s04("substitution_references_04")]
 #[case::s05("substitution_references_05")]
 #[case::s06("substitution_references_06")]
+#[case::s06("substitution_references_07")]
 fn ok_substitution_references(#[case] test_case: &str) {
     rst_vs_yaml!("inline/reference", test_case)
 }
