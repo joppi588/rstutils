@@ -1,0 +1,21 @@
+<document source="test data">
+    <paragraph>
+        Custom role based on code role:
+        <literal classes="code tex latex">
+            <inline classes="literal string">
+                $
+            <inline classes="name builtin">
+                lpha
+            <inline classes="operator">
+                =
+            <inline classes="name builtin">
+                 f
+            <inline classes="operator">
+                (
+            <inline classes="name builtin">
+                x
+            <inline classes="operator">
+                )
+            <inline classes="literal string">
+                $
+        .

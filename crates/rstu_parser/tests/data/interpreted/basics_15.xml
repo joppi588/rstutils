@@ -1,0 +1,18 @@
+<document source="test data">
+    <paragraph>
+        Simple explicit roles:
+        <abbreviation>
+            abbreviation
+        ,
+        <acronym>
+            acronym
+        ,
+        <superscript>
+            superscript
+        ,
+        <subscript>
+            subscript
+        ,
+        <title_reference>
+            title reference
+        .
