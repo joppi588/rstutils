@@ -2,10 +2,14 @@ FROM mcr.microsoft.com/devcontainers/rust:1
 
 # Install REUSE CLI for SPDX/license compliance workflows.
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends python3-pip reuse ripgrep \
+    && apt-get install -y --no-install-recommends curl python3-venv reuse ripgrep \
     && rm -rf /var/lib/apt/lists/*
 
-RUN python3 -m pip install --break-system-packages --no-cache-dir pre-commit
+RUN curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR=/usr/local/bin sh \
+    && uv venv /opt/pre-commit \
+    && uv pip install --python /opt/pre-commit/bin/python pre-commit
+
+ENV PATH="/opt/pre-commit/bin:${PATH}"
 
 
 # Persist zsh history in a mounted volume across container rebuilds.
@@ -32,6 +36,6 @@ RUN rustup toolchain install 1.96 --profile minimal \
 RUN cargo install --locked cargo-nextest
 
 # Install cargo-edit for the set-version command.
-RUN cargo install --locked cargo-edit
+RUN cargo install --locked cargo-edit --version 0.13.13
 
 RUN chown -R vscode:rustlang /usr/local/cargo
