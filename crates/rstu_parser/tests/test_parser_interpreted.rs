@@ -32,7 +32,6 @@ use test_parser::rst_vs_yaml;
 #[case::r00("references_00")]
 #[case::r02("references_02")]
 #[case::r04("references_04")]
-#[ignore]
 fn ok_interpreted(#[case] test_case: &str) {
     rst_vs_yaml!("interpreted", test_case);
 }
