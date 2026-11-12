@@ -1,0 +1,12 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: InterpretedText
+    attributes:
+      pos: suffix
+      role: title
+      text: interpreted
+  - class: PlainText
+    attributes:
+      text: "\n"

@@ -267,6 +267,7 @@ impl TokenCategory {
         TokenKind::EmphasisStart,
         TokenKind::InlineLiteralStart,
         TokenKind::StrongStart,
+        TokenKind::RolePrefix,
     ];
     pub const INLINE_REFERENCE: &'static [TokenKind] = &[
         TokenKind::CitationReference,
