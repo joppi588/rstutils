@@ -1,0 +1,49 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: quoted '
+  - class: Reference
+    attributes:
+      label: anonymous reference
+      type: ahref
+  - class: PlainText
+    attributes:
+      text: "', quoted \""
+  - class: Reference
+    attributes:
+      label: anonymous reference
+      type: ahref
+  - class: PlainText
+    attributes:
+      text: |-
+        ",
+        quoted ‘
+  - class: Reference
+    attributes:
+      label: anonymous reference
+      type: ahref
+  - class: PlainText
+    attributes:
+      text: |-
+        ’,
+        quoted “
+  - class: Reference
+    attributes:
+      label: anonymous reference
+      type: ahref
+  - class: PlainText
+    attributes:
+      text: |-
+        ”,
+        quoted «
+  - class: Reference
+    attributes:
+      label: anonymous reference
+      type: ahref
+  - class: PlainText
+    attributes:
+      text: |
+        »

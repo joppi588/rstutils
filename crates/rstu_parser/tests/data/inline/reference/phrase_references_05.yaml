@@ -1,0 +1,22 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: l'
+  - class: Reference
+    attributes:
+      label: anonymous reference
+      type: ahref
+  - class: PlainText
+    attributes:
+      text: " and l’"
+  - class: Reference
+    attributes:
+      label: anonymous reference
+      type: ahref
+  - class: PlainText
+    attributes:
+      text: |2
+         with apostrophe

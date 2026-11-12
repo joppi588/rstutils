@@ -33,7 +33,7 @@ done
 
 for file in "${files[@]}"; do
     # Call rst2yaml.sh for each .rst file
-    if bash "$SCRIPT_DIR/rst2yaml.sh" "$file" "--prefer-block-scalars=true"; then
+    if bash "$SCRIPT_DIR/rst2yaml.sh" "$file" "--prefer-block-scalars=false"; then
         echo "Successfully converted: $file"
     else
         echo "Error converting: $file"

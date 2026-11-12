@@ -1,0 +1,21 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: l'
+  - class: Reference
+    attributes:
+      label: phrase reference
+      type: href
+  - class: PlainText
+    attributes:
+      text: " and l’"
+  - class: Reference
+    attributes:
+      label: phrase reference
+      type: href
+  - class: PlainText
+    attributes:
+      text: " with apostrophe\n"

@@ -1,0 +1,13 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      label: |-
+        phrase reference
+        across lines
+      type: href
+  - class: PlainText
+    attributes:
+      text: "\n"
