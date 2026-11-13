@@ -410,7 +410,7 @@ impl TokenKind {
         (EmphasisEnd, format!(r"[^\s\\]\*{0}", INLINE_POST_CHARS_NO_ASTERISK)),
         (InlineLiteralStart, format!(r"{0}``[^\s]", INLINE_PRE_CHARS)),
         (InlineLiteralEnd, format!(r"[^\s]``{0}", INLINE_POST_CHARS)),
-        (InlineInternalTargetStart, format!(r"{0}_`[^\s]", INLINE_PRE_CHARS)),
+        (InlineInternalTargetStart, format!(r"{0}_`[^\s`]", INLINE_PRE_CHARS)),
 
         // Inline references
         (SubRefAnonymousHyperlink, format!(r"{0}\|{1}\|__{2}", INLINE_PRE_CHARS, SUBSTITUTION_NAME, INLINE_POST_CHARS)),
