@@ -4,7 +4,7 @@
 
 use super::block::parse_block;
 use super::inline_markup::{
-    parse_inline_markup, parse_inline_reference, parse_inline_target, parse_role_or_ref,
+    parse_inline_markup, parse_inline_reference, parse_inline_target, parse_interpreted_or_ref,
 };
 use crate::parser_errors::ParserError;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
@@ -83,7 +83,7 @@ fn parse_term_or_classifier(stream: &mut TokenStream, node: &NodeRef) -> Result<
                 node.push_child(parse_inline_reference(stream)?)
             }
             TK::InlineInternalTargetStart => node.push_child(parse_inline_target(stream)?),
-            TK::BackquoteStart => node.push_child(parse_role_or_ref(stream)?),
+            TK::BackquoteStart => node.push_child(parse_interpreted_or_ref(stream)?),
             kind if is_term_text(kind) => {
                 let mut text = String::new();
                 while {

@@ -74,7 +74,7 @@ pub(crate) fn parse_inline_reference(stream: &mut TokenStream) -> Result<NodeRef
     Ok(node)
 }
 
-pub(crate) fn parse_role_or_ref(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+pub(crate) fn parse_interpreted_or_ref(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert!(stream.token_at_cursor().kind == TK::BackquoteStart);
 
     let position = stream.position_at_cursor();

@@ -5,7 +5,7 @@
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use super::inline_markup::{
-    parse_inline_markup, parse_inline_reference, parse_inline_target, parse_role_or_ref,
+    parse_inline_markup, parse_inline_reference, parse_inline_target, parse_interpreted_or_ref,
 };
 use crate::parser_errors::ParserError;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
@@ -55,7 +55,7 @@ pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, Parse
             kind if kind.is(TC::INLINE_MARKUP) => parse_inline_markup(stream)?,
             kind if kind.is(TC::INLINE_REFERENCE) => parse_inline_reference(stream)?,
             TK::InlineInternalTargetStart => parse_inline_target(stream)?,
-            TK::BackquoteStart => parse_role_or_ref(stream)?,
+            TK::BackquoteStart => parse_interpreted_or_ref(stream)?,
             kind if kind.is(TC::PARAGRAPH_END) => break,
             _ => {
                 let plain_text = parse_plain(stream);
