@@ -30,8 +30,14 @@ use test_parser::rst_vs_yaml;
 #[case::c01("code_parsing_01")]
 #[case::c02("code_parsing_02")]
 #[case::r00("references_00")]
+#[case::r01("references_01")]
 #[case::r02("references_02")]
+#[case::r03("references_03")]
 #[case::r04("references_04")]
+#[case::u00("unknown_roles_00")]
+#[case::u01("unknown_roles_01")]
+#[case::u03("unknown_roles_03")]
+#[case::u04("unknown_roles_04")]
 fn ok_interpreted(#[case] test_case: &str) {
     rst_vs_yaml!("interpreted", test_case);
 }
@@ -40,13 +46,7 @@ fn ok_interpreted(#[case] test_case: &str) {
 #[case::b03a("basics_03b", PE::InlineMissingClosing)]
 #[case::b07("basics_07", PE::InlineMissingClosing)]
 #[case::b13("basics_13", PE::InlineMissingClosing)]
-#[case::r01("references_01", PE::UnexpectedToken)]
-#[case::r03("references_03", PE::UnexpectedToken)]
-#[case::u00("unknown_roles_00", PE::UnexpectedToken)]
-#[case::u01("unknown_roles_01", PE::UnexpectedToken)]
-#[case::u02("unknown_roles_02", PE::UnexpectedToken)]
-#[case::u03("unknown_roles_03", PE::UnexpectedToken)]
-#[case::u04("unknown_roles_04", PE::UnexpectedToken)]
+#[case::u02("unknown_roles_02", PE::RolePrefixAndPostfix)]
 fn err_interpreted(#[case] test_case: &str, #[case] expected_error: PE) {
     rst_err!("interpreted", test_case, expected_error);
 }

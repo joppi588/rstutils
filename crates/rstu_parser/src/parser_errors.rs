@@ -52,6 +52,9 @@ pub enum ParserError {
         text: String,
         position: Position,
     },
+    RolePrefixAndPostfix {
+        position: Position,
+    },
     SectionTitleMissingClosingAfterOpening {
         position: Position,
     },
@@ -135,6 +138,7 @@ impl std::fmt::Display for ParserError {
             Self::OptionError { text, position } => {
                 write!(formatter, "{position}: Invalid option {text:?}.")
             }
+            Self::RolePrefixAndPostfix { position } =>{write!(formatter,"{position}: Both role pre- and postfix are not allowed.")}
             Self::SectionTitleMissingClosingAfterOpening { position, .. } => {
                 write!(
                     formatter,
