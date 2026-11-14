@@ -1,0 +1,12 @@
+<document source="test data">
+    <paragraph>
+        Explicit roles for standard inline markup:
+        <emphasis>
+            emphasis
+        ,
+        <strong>
+            strong
+        ,
+        <literal>
+            inline literal text
+        .

@@ -1,0 +1,7 @@
+<document source="test data">
+    <paragraph>
+        <problematic ids="problematic-1" refid="system-message-1">
+            :PEP:`-1`
+    <system_message backrefs="problematic-1" ids="system-message-1" level="3" line="1" source="test data" type="ERROR">
+        <paragraph>
+            PEP number must be a number from 0 to 9999; "-1" is invalid.
