@@ -1,0 +1,46 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Custom role based on code role:\n"
+- class: BlankLine
+- class: Directive
+  attributes:
+    directive_arguments: python(code)
+    directive_type: role
+  children:
+  - class: Block
+    attributes:
+      indent: 3
+    children:
+    - class: FieldList
+      children:
+      - class: FieldListItem
+        attributes:
+          fieldname: class
+        children:
+        - class: Block
+          attributes:
+            indent: 8
+          children:
+          - class: Paragraph
+            children:
+            - class: PlainText
+              attributes:
+                text: "testclass\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Python code "
+  - class: InterpretedText
+    attributes:
+      pos: prefix
+      role: python
+      text: print("The end")
+  - class: PlainText
+    attributes:
+      text: ".\n"

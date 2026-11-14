@@ -1,0 +1,40 @@
+class: Document
+children:
+- class: Directive
+  attributes:
+    directive_arguments: tex(code)
+    directive_type: role
+  children:
+  - class: Block
+    attributes:
+      indent: 3
+    children:
+    - class: FieldList
+      children:
+      - class: FieldListItem
+        attributes:
+          fieldname: language
+        children:
+        - class: Block
+          attributes:
+            indent: 11
+          children:
+          - class: Paragraph
+            children:
+            - class: PlainText
+              attributes:
+                text: "latex\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Custom role based on code role:\n"
+  - class: InterpretedText
+    attributes:
+      pos: prefix
+      role: tex
+      text: $\alpha = f(x)$
+  - class: PlainText
+    attributes:
+      text: ".\n"

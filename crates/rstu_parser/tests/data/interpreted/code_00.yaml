@@ -1,0 +1,16 @@
+class: Document
+children:
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Code role for inline code snippets:\n"
+  - class: InterpretedText
+    attributes:
+      pos: prefix
+      role: code
+      text: $\alpha = \int_0^\infty f(x) dx$
+  - class: PlainText
+    attributes:
+      text: ".\n"

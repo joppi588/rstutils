@@ -1,6 +1,0 @@
-<document source="test data">
-    <paragraph>
-        Code role for inline code snippets:
-        <literal classes="code">
-            $\alpha = \int_0^\infty f(x) dx$
-        .

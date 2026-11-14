@@ -1,9 +1,0 @@
-<document source="test data">
-    <paragraph>
-        :title:
-        <problematic ids="problematic-1" refid="system-message-1">
-            `
-         ` (trailing unquoted space)
-    <system_message backrefs="problematic-1" ids="system-message-1" level="2" line="2" source="test data" type="WARNING">
-        <paragraph>
-            Inline interpreted text or phrase reference start-string without end-string.

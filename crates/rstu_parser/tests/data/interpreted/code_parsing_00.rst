@@ -2,4 +2,4 @@
    :language: latex
 
 Custom role based on code role:
-:tex:`$lpha = f(x)$`.
+:tex:`$\alpha = f(x)$`.

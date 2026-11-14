@@ -1,0 +1,12 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: InterpretedText
+    attributes:
+      pos: prefix
+      role: restructuredtext-unimplemented-role
+      text: interpreted
+  - class: PlainText
+    attributes:
+      text: "\n"

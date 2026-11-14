@@ -74,25 +74,27 @@ pub(crate) fn parse_inline_reference(stream: &mut TokenStream) -> Result<NodeRef
     Ok(node)
 }
 
-pub(crate) fn parse_role_or_ref(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+pub(crate) fn parse_interpreted_or_ref(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert!(stream.token_at_cursor().kind == TK::BackquoteStart);
 
     let position = stream.position_at_cursor();
     stream.consume();
-    let end_kind_candidates = &[
-        TK::BackquoteEnd,
-        TK::AnonymousHyperlinkReferenceEnd,
-        TK::HyperlinkReferenceEnd,
-    ];
-    let text = stream.consume_text_until(&[end_kind_candidates, TC::PARAGRAPH_END].concat());
-    let end_kind = stream.consume().kind;
-    let node = match end_kind {
+    let text = stream.consume_text_until(&[TC::BACKQUOTE, TC::PARAGRAPH_END].concat());
+    let end_token = stream.consume();
+    let node = match end_token.kind {
         TK::AnonymousHyperlinkReferenceEnd => parse_hyperlink_reference(&text, "ahref")?,
         TK::HyperlinkReferenceEnd => parse_hyperlink_reference(&text, "href")?,
-        TK::BackquoteEnd => AstNode::new_ref(NodeClass::InterpretedText).with_attr("raw", text),
+        TK::BackquoteEnd => AstNode::new_ref(NodeClass::InterpretedText).with_attr("text", text),
+        TK::RolePostfix => {
+            let lexeme = &end_token.lexeme;
+            AstNode::new_ref(NodeClass::InterpretedText)
+                .with_attr("text", text)
+                .with_attr("role", &lexeme[2..lexeme.len() - 1])
+                .with_attr("pos", "postfix".to_owned())
+        }
         _ => {
             return Err(ParserError::InlineMissingClosing {
-                markup: "`,`_,`__".to_owned(),
+                markup: "interpreted text or reference".to_owned(),
                 position,
             });
         }
@@ -143,27 +145,58 @@ pub(crate) fn parse_hyperlink_reference(
     Ok(node)
 }
 
+pub(crate) fn parse_prefix_role(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    debug_assert!(stream.token_at_cursor().kind == TK::RolePrefix);
+
+    let position = stream.position_at_cursor();
+    let token = stream.consume();
+    let text = stream.consume_text_until(&[TC::BACKQUOTE, TC::PARAGRAPH_END].concat());
+    let end_kind = stream.consume().kind;
+
+    match end_kind {
+        TK::RolePostfix => {
+            return Err(ParserError::RolePrefixAndPostfix { position });
+        }
+        TK::HyperlinkReferenceEnd | TK::AnonymousHyperlinkReferenceEnd => {
+            return Err(ParserError::RoleReferenceMismatch { position });
+        }
+        TK::BackquoteEnd => {}
+        _ => {
+            return Err(ParserError::InlineMissingClosing {
+                markup: format!("{:?}", token.kind),
+                position,
+            });
+        }
+    }
+
+    let role = &token.lexeme;
+    Ok(AstNode::new_ref(NodeClass::InterpretedText)
+        .with_attr("role", &role[1..role.len() - 2])
+        .with_attr("pos", "prefix".to_owned())
+        .with_attr("text", text))
+}
+
 pub(crate) fn parse_inline_markup(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert!(stream.token_at_cursor().kind.is(TC::INLINE_MARKUP));
 
     let position = stream.position_at_cursor();
-    let kind = stream.consume().kind;
-    let end_kind: TK = match kind {
+    let token = stream.consume();
+    let expected_end_kind = match token.kind {
         TK::StrongStart => TK::StrongEnd,
         TK::EmphasisStart => TK::EmphasisEnd,
         TK::InlineLiteralStart => TK::InlineLiteralEnd,
         _ => unreachable!(),
     };
 
-    let text = stream.consume_text_until(&[&[end_kind], TC::PARAGRAPH_END].concat());
-    if stream.consume().kind != end_kind {
+    let text = stream.consume_text_until(&[&[expected_end_kind], TC::PARAGRAPH_END].concat());
+    if stream.consume().kind != expected_end_kind {
         return Err(ParserError::InlineMissingClosing {
-            markup: format!("{:?}", kind),
+            markup: format!("{:?}", token.kind),
             position,
         });
     }
 
-    let inline = match kind {
+    let inline = match token.kind {
         TK::EmphasisStart => AstNode::new_ref(NodeClass::Emphasis),
         TK::StrongStart => AstNode::new_ref(NodeClass::Strong),
         TK::InlineLiteralStart => AstNode::new_ref(NodeClass::Literal),

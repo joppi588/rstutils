@@ -1,7 +1,0 @@
-<document source="test data">
-    <paragraph>
-        <problematic ids="problematic-1" refid="system-message-1">
-            :role:`interpreted`:role:
-    <system_message backrefs="problematic-1" ids="system-message-1" level="2" line="1" source="test data" type="WARNING">
-        <paragraph>
-            Multiple roles in interpreted text (both prefix and suffix present; only one allowed).

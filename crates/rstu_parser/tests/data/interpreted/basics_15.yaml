@@ -1,0 +1,47 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Simple explicit roles:\n"
+  - class: InterpretedText
+    attributes:
+      pos: prefix
+      role: ab
+      text: abbreviation
+  - class: PlainText
+    attributes:
+      text: ",\n"
+  - class: InterpretedText
+    attributes:
+      pos: prefix
+      role: ac
+      text: acronym
+  - class: PlainText
+    attributes:
+      text: ",\n"
+  - class: InterpretedText
+    attributes:
+      pos: prefix
+      role: sup
+      text: superscript
+  - class: PlainText
+    attributes:
+      text: ",\n"
+  - class: InterpretedText
+    attributes:
+      pos: prefix
+      role: sub
+      text: subscript
+  - class: PlainText
+    attributes:
+      text: ",\n"
+  - class: InterpretedText
+    attributes:
+      pos: prefix
+      role: title
+      text: title reference
+  - class: PlainText
+    attributes:
+      text: ".\n"
