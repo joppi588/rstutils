@@ -1,0 +1,11 @@
+<document source="test data">
+    <paragraph>
+        <problematic ids="problematic-1" refid="system-message-1">
+            :very.long-role_name:`interpreted`
+    <system_message level="1" line="1" source="test data" type="INFO">
+        <paragraph>
+            No role entry for "very.long-role_name" in module "docutils.parsers.rst.languages.en".
+            Trying "very.long-role_name" as canonical role name.
+    <system_message backrefs="problematic-1" ids="system-message-1" level="3" line="1" source="test data" type="ERROR">
+        <paragraph>
+            Unknown interpreted text role "very.long-role_name".

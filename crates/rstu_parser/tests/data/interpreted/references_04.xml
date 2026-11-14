@@ -1,0 +1,4 @@
+<document source="test data">
+    <paragraph>
+        <reference refuri="https://tools.ietf.org/html/rfc2822.html#section1">
+            RFC 2822
