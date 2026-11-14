@@ -1,0 +1,16 @@
+<document source="test data">
+    <paragraph>
+        Duplicate indirect
+        <target names="targets">
+            targets
+         (same refname):
+    <target names="link" refname="targets">
+    <system_message level="1" line="5" source="test data" type="INFO">
+        <paragraph>
+            Duplicate name "link" for external target "targets".
+    <target dupnames="link" refname="targets">
+    <paragraph>
+        do not conflict. The reference name can be used in a
+        <reference refname="link">
+            link
+        .

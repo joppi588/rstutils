@@ -1,0 +1,3 @@
+<document source="test data">
+    <target names="a\ very\ long\ target\ name,\ split\ across\ lines">
+    <target names="and\ another,\ with\ backquotes">

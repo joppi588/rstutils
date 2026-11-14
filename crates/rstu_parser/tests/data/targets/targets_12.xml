@@ -1,0 +1,16 @@
+<document source="test data">
+    <paragraph>
+        Duplicate external targets (embedded/explicit, same URIs):
+    <paragraph>
+        See the
+        <reference refuri="example.rst">
+            example
+        <target names="example" refuri="example.rst">
+    <paragraph>
+        See the
+        <reference refname="example">
+            example
+    <system_message level="1" line="7" source="test data" type="INFO">
+        <paragraph>
+            Duplicate name "example" for external target "example.rst".
+    <target dupnames="example" refuri="example.rst">

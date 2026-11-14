@@ -1,0 +1,11 @@
+<document source="test data">
+    <paragraph>
+        Duplicate explicit/directive targets.
+    <target dupnames="title">
+    <paragraph>
+        First.
+    <rubric dupnames="title" ids="title-1">
+        this is a title too
+    <paragraph>
+        The system message is left dangling
+        (to be handled by the "universal.Messages" transform).
