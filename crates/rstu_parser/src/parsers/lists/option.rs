@@ -4,10 +4,7 @@
 
 use super::{consume_trailing_blank_lines, parse_item_body};
 use crate::parser_errors::ParserError;
-use crate::token::{
-    TokenCategory as TC, TokenKind as TK, DOS_OPTIONS_MATCH, LONG_OPTIONS_MATCH,
-    SHORT_OPTIONS_MATCH,
-};
+use crate::token::{TokenKind as TK, DOS_OPTIONS_MATCH, LONG_OPTIONS_MATCH, SHORT_OPTIONS_MATCH};
 use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 use std::debug_assert_matches;
@@ -24,7 +21,7 @@ pub(crate) fn parse_option_list(stream: &mut TokenStream) -> Result<NodeRef, Par
 
     let list = AstNode::new_ref(NodeClass::OptionList);
 
-    while stream.token_at_cursor().kind.is(TC::OPTION_MARKER) {
+    while stream.token_at_cursor().kind == TK::Option {
         let position = stream.position_at_cursor();
         let option_item = AstNode::new_ref(NodeClass::OptionListItem);
         let mut dedent_len: usize = 0;
