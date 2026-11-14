@@ -1,0 +1,8 @@
+<document source="test data">
+    <paragraph>
+        External hyperlink targets:
+    <target names="one-liner" refuri="http://structuredtext.sourceforge.net">
+    <target names="starts-on-this-line" refuri="http://structuredtext.sourceforge.net">
+    <target names="entirely-below" refuri="http://structuredtext.sourceforge.net">
+    <target names="escaped-whitespace" refuri="http://example.org/a path with spaces.html">
+    <target names="not-indirect" refuri="uri_">

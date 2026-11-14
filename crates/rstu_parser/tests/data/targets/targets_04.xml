@@ -1,0 +1,4 @@
+<document source="test data">
+    <target names="a\ long\ target\ name">
+    <target names="a\ target\ name:\ including\ a\ colon\ (quoted)">
+    <target names="a\ target\ name:\ including\ a\ colon\ (escaped)">

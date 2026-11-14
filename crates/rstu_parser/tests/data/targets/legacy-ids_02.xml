@@ -1,0 +1,12 @@
+<document source="test data">
+    <paragraph>
+        Duplicate implicit/explicit targets.
+    <section dupnames="title" ids="title">
+        <title>
+            Title
+        <system_message level="1" line="6" source="test data" type="INFO">
+            <paragraph>
+                Target name overrides implicit target name "title".
+        <target ids="title-1" names="title">
+        <paragraph>
+            Paragraph.

@@ -1,0 +1,5 @@
+<document source="test data">
+    <paragraph>
+        Anonymous external hyperlink target, not indirect:
+    <target anonymous="1" refuri="uri_">
+    <target anonymous="1" refuri="thisURIendswithanunderscore_">
