@@ -1,0 +1,12 @@
+<document source="test data">
+    <paragraph>
+        Duplicate implicit/directive targets.
+    <section dupnames="title">
+        <title>
+            Title
+        <note ids="title" names="title">
+            <system_message backrefs="title" level="1" line="7" source="test data" type="INFO">
+                <paragraph>
+                    Target name overrides implicit target name "title".
+            <paragraph>
+                remember remember

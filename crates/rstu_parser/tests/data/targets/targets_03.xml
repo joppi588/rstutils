@@ -1,0 +1,5 @@
+<document source="test data">
+    <paragraph>
+        Indirect hyperlink targets:
+    <target names="target1" refname="reference">
+    <target names="target2" refname="phrase-link reference">

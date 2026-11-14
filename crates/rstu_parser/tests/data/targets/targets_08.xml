@@ -1,0 +1,3 @@
+<document source="test data">
+    <target names="email" refuri="mailto:jdoe@example.com">
+    <target names="multi-line\ email" refuri="mailto:jdoe@example.com">

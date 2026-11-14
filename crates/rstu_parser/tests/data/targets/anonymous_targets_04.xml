@@ -1,0 +1,5 @@
+<document source="test data">
+    <paragraph>
+        Anonymous indirect hyperlink targets:
+    <target anonymous="1" refname="reference">
+    <target anonymous="1" refname="a very long reference">
