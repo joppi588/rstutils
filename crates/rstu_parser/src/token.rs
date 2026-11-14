@@ -318,12 +318,6 @@ impl TokenCategory {
         TokenKind::Spaces,
         TokenKind::Word,
     ];
-
-    pub const OPTION_MARKER: &'static [TokenKind] = &[TokenKind::Option];
-
-    pub const STRUCTURAL: &'static [TokenKind] = &[TokenKind::Separator];
-
-    pub const TABLE: &'static [TokenKind] = &[TokenKind::TableHorizontal];
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, EnumCount)]
