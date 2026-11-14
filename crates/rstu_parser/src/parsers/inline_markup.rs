@@ -181,17 +181,15 @@ pub(crate) fn parse_inline_markup(stream: &mut TokenStream) -> Result<NodeRef, P
 
     let position = stream.position_at_cursor();
     let token = stream.consume();
-    let expected_end_kind: &[TK] = match token.kind {
-        TK::StrongStart => &[TK::StrongEnd],
-        TK::EmphasisStart => &[TK::EmphasisEnd],
-        TK::InlineLiteralStart => &[TK::InlineLiteralEnd],
+    let expected_end_kind = match token.kind {
+        TK::StrongStart => TK::StrongEnd,
+        TK::EmphasisStart => TK::EmphasisEnd,
+        TK::InlineLiteralStart => TK::InlineLiteralEnd,
         _ => unreachable!(),
     };
 
-    let text = stream.consume_text_until(&[expected_end_kind, TC::PARAGRAPH_END].concat());
-    let end_kind = stream.consume().kind;
-
-    if !end_kind.is(expected_end_kind) {
+    let text = stream.consume_text_until(&[&[expected_end_kind], TC::PARAGRAPH_END].concat());
+    if stream.consume().kind != expected_end_kind {
         return Err(ParserError::InlineMissingClosing {
             markup: format!("{:?}", token.kind),
             position,
