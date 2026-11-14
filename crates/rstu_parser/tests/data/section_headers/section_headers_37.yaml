@@ -1,0 +1,13 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Not a valid section header\n=~=~=~=~=~=~=~=~=~=~=~=~=~=\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "=~=`=*=\nNeither\n=~=`=*=\n"
