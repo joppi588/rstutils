@@ -5,7 +5,13 @@ children:
   children:
   - class: PlainText
     attributes:
-      text: "isolated internals\n"
+      text: "isolated internals : "
+  - class: Literal
+    attributes:
+      text: .-_
+  - class: PlainText
+    attributes:
+      text: ".\n"
 - class: BlankLine
 - class: Citation
   attributes:

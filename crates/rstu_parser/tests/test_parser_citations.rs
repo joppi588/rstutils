@@ -18,7 +18,7 @@ use test_parser::rst_vs_yaml;
 #[case::c04("citations_04")]
 #[case::c05("citations_05")]
 #[case::c07("citations_07")]
-// #[case::c08("citations_08")] // TODO:#424
+#[case::c08("citations_08")]
 fn ok_citations(#[case] test_case: &str) {
     rst_vs_yaml!("citations", test_case);
 }
