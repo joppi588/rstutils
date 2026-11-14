@@ -151,6 +151,32 @@ pub(crate) fn parse_hyperlink_reference(
     Ok(node)
 }
 
+pub(crate) fn parse_prefix_role(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    debug_assert!(stream.token_at_cursor().kind == TK::RolePrefix);
+
+    let position = stream.position_at_cursor();
+    let token = stream.consume();
+    let text = stream
+        .consume_text_until(&[&[TK::BackquoteEnd, TK::RolePostfix], TC::PARAGRAPH_END].concat());
+    let end_kind = stream.consume().kind;
+
+    if end_kind == TK::RolePostfix {
+        return Err(ParserError::RolePrefixAndPostfix { position });
+    }
+    if end_kind != TK::BackquoteEnd {
+        return Err(ParserError::InlineMissingClosing {
+            markup: format!("{:?}", token.kind),
+            position,
+        });
+    }
+
+    let role = &token.lexeme;
+    Ok(AstNode::new_ref(NodeClass::InterpretedText)
+        .with_attr("role", &role[1..role.len() - 2])
+        .with_attr("pos", "prefix".to_owned())
+        .with_attr("text", text))
+}
+
 pub(crate) fn parse_inline_markup(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert!(stream.token_at_cursor().kind.is(TC::INLINE_MARKUP));
 
@@ -160,16 +186,12 @@ pub(crate) fn parse_inline_markup(stream: &mut TokenStream) -> Result<NodeRef, P
         TK::StrongStart => &[TK::StrongEnd],
         TK::EmphasisStart => &[TK::EmphasisEnd],
         TK::InlineLiteralStart => &[TK::InlineLiteralEnd],
-        TK::RolePrefix => &[TK::BackquoteEnd, TK::RolePostfix],
         _ => unreachable!(),
     };
 
     let text = stream.consume_text_until(&[expected_end_kind, TC::PARAGRAPH_END].concat());
     let end_kind = stream.consume().kind;
 
-    if token.kind == TK::RolePrefix && end_kind == TK::RolePostfix {
-        return Err(ParserError::RolePrefixAndPostfix { position });
-    }
     if !end_kind.is(expected_end_kind) {
         return Err(ParserError::InlineMissingClosing {
             markup: format!("{:?}", token.kind),
@@ -181,13 +203,6 @@ pub(crate) fn parse_inline_markup(stream: &mut TokenStream) -> Result<NodeRef, P
         TK::EmphasisStart => AstNode::new_ref(NodeClass::Emphasis),
         TK::StrongStart => AstNode::new_ref(NodeClass::Strong),
         TK::InlineLiteralStart => AstNode::new_ref(NodeClass::Literal),
-        TK::RolePrefix => {
-            let role = &token.lexeme;
-            AstNode::new_ref(NodeClass::InterpretedText)
-                .with_attr("role", &role[1..role.len() - 2])
-                .with_attr("pos", "prefix".to_owned())
-        }
-
         _ => unreachable!(),
     };
 
