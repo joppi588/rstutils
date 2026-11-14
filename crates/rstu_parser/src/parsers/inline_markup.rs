@@ -81,7 +81,7 @@ pub(crate) fn parse_interpreted_or_ref(stream: &mut TokenStream) -> Result<NodeR
     stream.consume();
     let end_kind_candidates = &[
         TK::BackquoteEnd,
-        TK::RoleSuffix,
+        TK::RolePostfix,
         TK::AnonymousHyperlinkReferenceEnd,
         TK::HyperlinkReferenceEnd,
     ];
@@ -90,13 +90,13 @@ pub(crate) fn parse_interpreted_or_ref(stream: &mut TokenStream) -> Result<NodeR
     let node = match end_token.kind {
         TK::AnonymousHyperlinkReferenceEnd => parse_hyperlink_reference(&text, "ahref")?,
         TK::HyperlinkReferenceEnd => parse_hyperlink_reference(&text, "href")?,
-        TK::BackquoteEnd => AstNode::new_ref(NodeClass::InterpretedText).with_attr("raw", text),
-        TK::RoleSuffix => {
+        TK::BackquoteEnd => AstNode::new_ref(NodeClass::InterpretedText).with_attr("text", text),
+        TK::RolePostfix => {
             let lexeme = &end_token.lexeme;
             AstNode::new_ref(NodeClass::InterpretedText)
                 .with_attr("text", text)
                 .with_attr("role", &lexeme[2..lexeme.len() - 1])
-                .with_attr("pos", "suffix".to_owned())
+                .with_attr("pos", "postfix".to_owned())
         }
         _ => {
             return Err(ParserError::InlineMissingClosing {

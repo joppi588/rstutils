@@ -1,0 +1,31 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Explicit roles for standard inline markup:\n"
+  - class: InterpretedText
+    attributes:
+      pos: prefix
+      role: emphasis
+      text: emphasis
+  - class: PlainText
+    attributes:
+      text: ",\n"
+  - class: InterpretedText
+    attributes:
+      pos: prefix
+      role: strong
+      text: strong
+  - class: PlainText
+    attributes:
+      text: ",\n"
+  - class: InterpretedText
+    attributes:
+      pos: prefix
+      role: literal
+      text: inline literal text
+  - class: PlainText
+    attributes:
+      text: ".\n"

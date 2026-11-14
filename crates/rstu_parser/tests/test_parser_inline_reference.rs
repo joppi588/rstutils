@@ -73,8 +73,8 @@ fn ok_phrase_reference(#[case] test_case: &str) {
 }
 
 #[rstest]
-// #[case::pr10("phrase_references_10", PE::UnexpectedToken)] // TODO: Role cases #279
-// #[case::pr11("phrase_references_11", PE::UnexpectedToken)]
+#[case::pr10("phrase_references_10", PE::UnexpectedToken)]
+#[case::pr11("phrase_references_11", PE::UnexpectedToken)]
 #[case::pr12("phrase_references_12", PE::InlineMissingClosing)]
 #[case::pr13("phrase_references_13", PE::InlineMissingClosing)]
 fn err_phrase_reference(#[case] test_case: &str, #[case] expected_error: PE) {

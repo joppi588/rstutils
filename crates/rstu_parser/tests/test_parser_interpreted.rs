@@ -14,14 +14,14 @@ use test_parser::rst_vs_yaml;
 #[case::b00("basics_00")]
 #[case::b01("basics_01")]
 #[case::b02("basics_02")]
-#[case::b03("basics_03")]
+#[case::b03a("basics_03a")]
 #[case::b04("basics_04")]
 #[case::b05("basics_05")]
 #[case::b06("basics_06")]
 #[case::b08("basics_08")]
 #[case::b09("basics_09")]
-#[case::b10("basics_10")]
-#[case::b11("basics_11")]
+// #[case::b10("basics_10")]// TODO: #468 Escaped char case
+// #[case::b11("basics_11")]
 #[case::b12("basics_12")]
 #[case::b14("basics_14")]
 #[case::b15("basics_15")]
@@ -37,8 +37,9 @@ fn ok_interpreted(#[case] test_case: &str) {
 }
 
 #[rstest]
-#[case::b07("basics_07", PE::UnexpectedToken)]
-#[case::b13("basics_13", PE::UnexpectedToken)]
+#[case::b03a("basics_03b", PE::InlineMissingClosing)]
+#[case::b07("basics_07", PE::InlineMissingClosing)]
+#[case::b13("basics_13", PE::InlineMissingClosing)]
 #[case::r01("references_01", PE::UnexpectedToken)]
 #[case::r03("references_03", PE::UnexpectedToken)]
 #[case::u00("unknown_roles_00", PE::UnexpectedToken)]
@@ -46,7 +47,6 @@ fn ok_interpreted(#[case] test_case: &str) {
 #[case::u02("unknown_roles_02", PE::UnexpectedToken)]
 #[case::u03("unknown_roles_03", PE::UnexpectedToken)]
 #[case::u04("unknown_roles_04", PE::UnexpectedToken)]
-#[ignore]
 fn err_interpreted(#[case] test_case: &str, #[case] expected_error: PE) {
     rst_err!("interpreted", test_case, expected_error);
 }

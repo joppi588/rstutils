@@ -1,0 +1,13 @@
+class: Document
+children:
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: InterpretedText
+    attributes:
+      pos: prefix
+      role: title
+      text: \ non-empty
+  - class: PlainText
+    attributes:
+      text: "\n"

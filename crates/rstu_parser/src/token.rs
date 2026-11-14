@@ -358,7 +358,7 @@ pub enum TokenKind {
     Option,
     Punctuation,
     RolePrefix,
-    RoleSuffix,
+    RolePostfix,
     Separator,
     SubRefHyperlink,
     SubRefAnonymousHyperlink,
@@ -416,7 +416,7 @@ impl TokenKind {
         (InlineLiteralEnd, format!(r"[^\s]``{0}", INLINE_POST_CHARS)),
         (InlineInternalTargetStart, format!(r"{0}_`[^\s`]", INLINE_PRE_CHARS)),
         (RolePrefix, format!(r"{0}(:{1}:`)([^\s`])", INLINE_PRE_CHARS, ROLE_NAME)),
-        (RoleSuffix, format!(r"[^\s\\](`:{0}:){1}", ROLE_NAME, INLINE_POST_CHARS)),
+        (RolePostfix, format!(r"[^\s\\](`:{0}:){1}", ROLE_NAME, INLINE_POST_CHARS)),
 
         // Inline references
         (SubRefAnonymousHyperlink, format!(r"{0}\|{1}\|__{2}", INLINE_PRE_CHARS, SUBSTITUTION_NAME, INLINE_POST_CHARS)),
@@ -642,7 +642,7 @@ mod tests {
     fn role_delimiters_match_and_precede_backquote_tokens() {
         for (input, expected_kind, expected_lexeme) in [
             (" :custom-role:`text", TK::RolePrefix, ":custom-role:`"),
-            ("x`:custom_role: ", TK::RoleSuffix, "`:custom_role:"),
+            ("x`:custom_role: ", TK::RolePostfix, "`:custom_role:"),
             (" :é+role.v2:`value", TK::RolePrefix, ":é+role.v2:`"),
         ] {
             let (kind, lexeme) = TK::match_token(input).unwrap();
@@ -665,7 +665,7 @@ mod tests {
             "x`:role..name: ",
         ] {
             assert_eq!(TK::RolePrefix.find_lexeme(input), None, "{input:?}");
-            assert_eq!(TK::RoleSuffix.find_lexeme(input), None, "{input:?}");
+            assert_eq!(TK::RolePostfix.find_lexeme(input), None, "{input:?}");
         }
     }
 

@@ -4,7 +4,7 @@ children:
   children:
   - class: InterpretedText
     attributes:
-      pos: suffix
+      pos: postfix
       role: title
       text: interpreted
   - class: PlainText

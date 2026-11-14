@@ -4,7 +4,7 @@ children:
   children:
   - class: InterpretedText
     attributes:
-      raw: interpreted
+      text: interpreted
   - class: PlainText
     attributes:
       text: "\n"
