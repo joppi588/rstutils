@@ -41,7 +41,7 @@ use test_parser::rst_vs_yaml;
 #[case::sh34("section_headers_34")]
 #[case::sh35("section_headers_35")]
 #[case::sh36("section_headers_36")]
-#[case::sh36("section_headers_37")]
+#[case::sh37("section_headers_37")]
 fn ok_section_headers(#[case] test_case: &str) {
     rst_vs_yaml!("section_headers", test_case);
 }

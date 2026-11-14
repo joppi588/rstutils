@@ -10,4 +10,4 @@ children:
   children:
   - class: PlainText
     attributes:
-      text: "=~=`=*=\nNeither\n=~=`=*="
+      text: "=~=`=*=\nNeither\n=~=`=*=\n"
