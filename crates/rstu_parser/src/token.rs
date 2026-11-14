@@ -9,6 +9,7 @@ use strum::EnumCount;
 static RECOMMENDED_SECTION_CHARS: &str = r##"=-`:.'"~^_*+#"##;
 static FOOTNOTE_LABEL: &str = r"(?:[0-9]+|#(?:[\p{L}\p{N}]+(?:[-_.][\p{L}\p{N}]+)*)?|\*)";
 static CITATION_LABEL: &str = r"[\p{L}\p{N}]+(?:[-_.][\p{L}\p{N}]+)*";
+static ROLE_NAME: &str = r"[\p{L}\p{N}]+(?:[-_+:.][\p{L}\p{N}]+)*";
 static SUBSTITUTION_NAME: &str = r"[^ |\n](?:[^|]*[^ |\n])?";
 static IANA_URI_SCHEMES: LazyLock<String> = LazyLock::new(|| {
     include_str!("../resources/iana_uri_schemes.txt")
@@ -235,6 +236,13 @@ impl Token {
 pub struct TokenCategory;
 
 impl TokenCategory {
+    pub const BACKQUOTE: &'static [TokenKind] = &[
+        TokenKind::AnonymousHyperlinkReferenceEnd,
+        TokenKind::BackquoteEnd,
+        TokenKind::HyperlinkReferenceEnd,
+        TokenKind::RolePostfix,
+    ];
+
     pub const DEFINITION_LIST: &'static [TokenKind] = &[
         TokenKind::BackquoteStart,
         TokenKind::CitationReference,
@@ -266,6 +274,7 @@ impl TokenCategory {
         TokenKind::EmphasisStart,
         TokenKind::InlineLiteralStart,
         TokenKind::StrongStart,
+        TokenKind::RolePrefix,
     ];
     pub const INLINE_REFERENCE: &'static [TokenKind] = &[
         TokenKind::CitationReference,
@@ -355,6 +364,8 @@ pub enum TokenKind {
     NewLine,
     Option,
     Punctuation,
+    RolePrefix,
+    RolePostfix,
     Separator,
     SubRefHyperlink,
     SubRefAnonymousHyperlink,
@@ -411,6 +422,8 @@ impl TokenKind {
         (InlineLiteralStart, format!(r"{0}``[^\s]", INLINE_PRE_CHARS)),
         (InlineLiteralEnd, format!(r"[^\s]``{0}", INLINE_POST_CHARS)),
         (InlineInternalTargetStart, format!(r"{0}_`[^\s`]", INLINE_PRE_CHARS)),
+        (RolePrefix, format!(r"{0}(:{1}:`)([^\s`])", INLINE_PRE_CHARS, ROLE_NAME)),
+        (RolePostfix, format!(r"[^\s\\](`:{0}:){1}", ROLE_NAME, INLINE_POST_CHARS)),
 
         // Inline references
         (SubRefAnonymousHyperlink, format!(r"{0}\|{1}\|__{2}", INLINE_PRE_CHARS, SUBSTITUTION_NAME, INLINE_POST_CHARS)),
@@ -630,6 +643,37 @@ mod tests {
         assert_eq!(TK::BackquoteEnd.find_lexeme("x` "), Some("`"));
         assert_eq!(TK::InlineLiteralStart.find_lexeme(" ``x"), Some("``"));
         assert_eq!(TK::InlineLiteralEnd.find_lexeme("x`` "), Some("``"));
+    }
+
+    #[test]
+    fn role_delimiters_match_and_precede_backquote_tokens() {
+        for (input, expected_kind, expected_lexeme) in [
+            (" :custom-role:`text", TK::RolePrefix, ":custom-role:`"),
+            ("x`:custom_role: ", TK::RolePostfix, "`:custom_role:"),
+            (" :é+role.v2:`value", TK::RolePrefix, ":é+role.v2:`"),
+        ] {
+            let (kind, lexeme) = TK::match_token(input).unwrap();
+
+            assert_eq!(kind, expected_kind, "{input:?}");
+            assert_eq!(lexeme, expected_lexeme, "{input:?}");
+        }
+    }
+
+    #[test]
+    fn role_delimiters_reject_invalid_role_names() {
+        for input in [
+            " :-role:`text",
+            " :role-:`text",
+            " :role--name:`text",
+            " :role__name:`text",
+            " :role name:`text",
+            "x`:+role: ",
+            "x`:role.: ",
+            "x`:role..name: ",
+        ] {
+            assert_eq!(TK::RolePrefix.find_lexeme(input), None, "{input:?}");
+            assert_eq!(TK::RolePostfix.find_lexeme(input), None, "{input:?}");
+        }
     }
 
     /// GIVEN an inline start delimiter immediately enclosed by matching brackets or quotes

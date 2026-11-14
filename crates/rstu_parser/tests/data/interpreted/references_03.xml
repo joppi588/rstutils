@@ -1,7 +1,0 @@
-<document source="test data">
-    <paragraph>
-        <problematic ids="problematic-1" refid="system-message-1">
-            :RFC:`0`
-    <system_message backrefs="problematic-1" ids="system-message-1" level="3" line="1" source="test data" type="ERROR">
-        <paragraph>
-            RFC number must be a number greater than or equal to 1; "0" is invalid.

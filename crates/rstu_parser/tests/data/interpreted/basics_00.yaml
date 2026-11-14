@@ -1,0 +1,10 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: InterpretedText
+    attributes:
+      text: interpreted
+  - class: PlainText
+    attributes:
+      text: "\n"

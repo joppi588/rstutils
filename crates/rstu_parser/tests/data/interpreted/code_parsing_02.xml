@@ -1,8 +1,0 @@
-<document source="test data">
-    <paragraph>
-        Turn off syntax highlight with language "none".
-    <paragraph>
-        Python code
-        <literal classes="code python">
-            print("The end")
-        .

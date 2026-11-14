@@ -1,0 +1,16 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Invalid phrase reference:\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: InterpretedText
+    attributes:
+      text: phrase reference
+  - class: PlainText
+    attributes:
+      text: ":role:_\n"
