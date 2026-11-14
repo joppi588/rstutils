@@ -67,14 +67,15 @@ fn ok_embedded_uris(#[case] test_case: &str) {
 #[case::pr06("phrase_references_06")]
 #[case::pr07("phrase_references_07")]
 #[case::pr08("phrase_references_08")]
-// #[case::pr09("phrase_references_09")]
+// #[case::pr09("phrase_references_09")] // TODO: Activate test
+#[case::pr11("phrase_references_11")]
+
 fn ok_phrase_reference(#[case] test_case: &str) {
     rst_vs_yaml!("inline/reference", test_case)
 }
 
 #[rstest]
-#[case::pr10("phrase_references_10", PE::UnexpectedToken)]
-#[case::pr11("phrase_references_11", PE::UnexpectedToken)]
+#[case::pr10("phrase_references_10", PE::RoleReferenceMismatch)]
 #[case::pr12("phrase_references_12", PE::InlineMissingClosing)]
 #[case::pr13("phrase_references_13", PE::InlineMissingClosing)]
 fn err_phrase_reference(#[case] test_case: &str, #[case] expected_error: PE) {

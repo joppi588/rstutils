@@ -236,6 +236,13 @@ impl Token {
 pub struct TokenCategory;
 
 impl TokenCategory {
+    pub const BACKQUOTE: &'static [TokenKind] = &[
+        TokenKind::AnonymousHyperlinkReferenceEnd,
+        TokenKind::BackquoteEnd,
+        TokenKind::HyperlinkReferenceEnd,
+        TokenKind::RolePostfix,
+    ];
+
     pub const DEFINITION_LIST: &'static [TokenKind] = &[
         TokenKind::BackquoteStart,
         TokenKind::CitationReference,

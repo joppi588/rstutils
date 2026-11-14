@@ -79,13 +79,7 @@ pub(crate) fn parse_interpreted_or_ref(stream: &mut TokenStream) -> Result<NodeR
 
     let position = stream.position_at_cursor();
     stream.consume();
-    let end_kind_candidates = &[
-        TK::BackquoteEnd,
-        TK::RolePostfix,
-        TK::AnonymousHyperlinkReferenceEnd,
-        TK::HyperlinkReferenceEnd,
-    ];
-    let text = stream.consume_text_until(&[end_kind_candidates, TC::PARAGRAPH_END].concat());
+    let text = stream.consume_text_until(&[TC::BACKQUOTE, TC::PARAGRAPH_END].concat());
     let end_token = stream.consume();
     let node = match end_token.kind {
         TK::AnonymousHyperlinkReferenceEnd => parse_hyperlink_reference(&text, "ahref")?,
@@ -156,18 +150,23 @@ pub(crate) fn parse_prefix_role(stream: &mut TokenStream) -> Result<NodeRef, Par
 
     let position = stream.position_at_cursor();
     let token = stream.consume();
-    let text = stream
-        .consume_text_until(&[&[TK::BackquoteEnd, TK::RolePostfix], TC::PARAGRAPH_END].concat());
+    let text = stream.consume_text_until(&[TC::BACKQUOTE, TC::PARAGRAPH_END].concat());
     let end_kind = stream.consume().kind;
 
-    if end_kind == TK::RolePostfix {
-        return Err(ParserError::RolePrefixAndPostfix { position });
-    }
-    if end_kind != TK::BackquoteEnd {
-        return Err(ParserError::InlineMissingClosing {
-            markup: format!("{:?}", token.kind),
-            position,
-        });
+    match end_kind {
+        TK::RolePostfix => {
+            return Err(ParserError::RolePrefixAndPostfix { position });
+        }
+        TK::HyperlinkReferenceEnd | TK::AnonymousHyperlinkReferenceEnd => {
+            return Err(ParserError::RoleReferenceMismatch { position });
+        }
+        TK::BackquoteEnd => {}
+        _ => {
+            return Err(ParserError::InlineMissingClosing {
+                markup: format!("{:?}", token.kind),
+                position,
+            });
+        }
     }
 
     let role = &token.lexeme;

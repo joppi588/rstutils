@@ -55,6 +55,9 @@ pub enum ParserError {
     RolePrefixAndPostfix {
         position: Position,
     },
+    RoleReferenceMismatch {
+        position: Position,
+    },
     SectionTitleMissingClosingAfterOpening {
         position: Position,
     },
@@ -139,6 +142,9 @@ impl std::fmt::Display for ParserError {
                 write!(formatter, "{position}: Invalid option {text:?}.")
             }
             Self::RolePrefixAndPostfix { position } =>{write!(formatter,"{position}: Both role pre- and postfix are not allowed.")}
+            Self::RoleReferenceMismatch { position } => {
+                write!(formatter, "{position}: Role cannot be closed by reference suffix")
+            }
             Self::SectionTitleMissingClosingAfterOpening { position, .. } => {
                 write!(
                     formatter,
