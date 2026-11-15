@@ -1,0 +1,41 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: Target
+    attributes:
+      label: target
+      target_type: inline
+  - class: PlainText
+    attributes:
+      text: "\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Here is "
+  - class: Target
+    attributes:
+      label: another target
+      target_type: inline
+  - class: PlainText
+    attributes:
+      text: " in some text. And "
+  - class: Target
+    attributes:
+      label: "yet\nanother target"
+      target_type: inline
+  - class: PlainText
+    attributes:
+      text: ", spanning lines.\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: Target
+    attributes:
+      label: Here is  a    TaRgeT
+      target_type: inline
+  - class: PlainText
+    attributes:
+      text: " with case and spacial difficulties.\n"

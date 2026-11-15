@@ -1,0 +1,39 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: Target
+    attributes:
+      label: "'target1'"
+      target_type: inline
+  - class: PlainText
+    attributes:
+      text: " with quotes, "
+  - class: Target
+    attributes:
+      label: "\"target2\""
+      target_type: inline
+  - class: PlainText
+    attributes:
+      text: " with quotes,\n"
+  - class: Target
+    attributes:
+      label: ‘target3’
+      target_type: inline
+  - class: PlainText
+    attributes:
+      text: " with quotes, "
+  - class: Target
+    attributes:
+      label: “target4”
+      target_type: inline
+  - class: PlainText
+    attributes:
+      text: " with quotes,\n"
+  - class: Target
+    attributes:
+      label: «target5»
+      target_type: inline
+  - class: PlainText
+    attributes:
+      text: " with quotes\n"
