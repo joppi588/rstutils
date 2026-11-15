@@ -67,3 +67,19 @@ fn ok_targets(#[case] test_case: &str) {
 fn err_targets(#[case] test_case: &str, #[case] expected_error: PE) {
     rst_err!("targets", test_case, expected_error);
 }
+
+#[rstest]
+#[case::inline_targets("inline_targets_00")]
+#[case::inline_targets("inline_targets_01")]
+#[case::inline_targets("inline_targets_02")]
+#[case::inline_targets("inline_targets_03")]
+fn ok_inline_target(#[case] test_case: &str) {
+    rst_vs_yaml!("targets/internal_target", test_case)
+}
+
+#[rstest]
+#[case::inline_targets("inline_targets_04", PE::InlineMissingClosing)]
+#[case::inline_targets("inline_targets_05", PE::InlineMissingClosing)]
+fn err_inline_targets(#[case] test_case: &str, #[case] expected_error: PE) {
+    rst_err!("targets/internal_target", test_case, expected_error);
+}
