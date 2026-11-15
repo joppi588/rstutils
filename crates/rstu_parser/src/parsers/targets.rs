@@ -4,10 +4,10 @@
 
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
+use crate::parser_errors::ParserError;
+use crate::token::TokenCategory as TC;
 use crate::token::TokenKind as TK;
 use crate::token_stream::TokenStream;
-
-use crate::token::TokenCategory as TC;
 
 pub(crate) fn parse_inline_target(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert!(stream.token_at_cursor().kind == TK::InlineInternalTargetStart);
