@@ -4,9 +4,9 @@
 
 use super::block::parse_block;
 use super::inline_markup::{
-    parse_inline_markup, parse_inline_reference, parse_inline_target, parse_interpreted_or_ref,
-    parse_prefix_role,
+    parse_inline_markup, parse_inline_reference, parse_interpreted_or_ref, parse_prefix_role,
 };
+use super::targets::parse_inline_target;
 use crate::parser_errors::ParserError;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
 use crate::token_stream::TokenStream;
