@@ -1,0 +1,10 @@
+class: Document
+children:
+- class: Target
+  attributes:
+    label: a very long target name, split across lines
+    target_type: explicit
+- class: Target
+  attributes:
+    label: and another, with backquotes
+    target_type: explicit

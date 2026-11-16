@@ -1,0 +1,6 @@
+class: Document
+children:
+- class: Target
+  attributes:
+    label: optional space before colon
+    target_type: explicit

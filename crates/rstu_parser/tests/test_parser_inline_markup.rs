@@ -10,6 +10,11 @@ mod test_parser;
 use test_parser::rst_err;
 use test_parser::rst_vs_yaml;
 
+#[test]
+fn ok_variants() {
+    rst_vs_yaml!("inline", "inline_variants")
+}
+
 #[rstest]
 #[case::emphasis("emphasis_00")]
 #[case::emphasis("emphasis_01")]

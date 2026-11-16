@@ -1,0 +1,12 @@
+class: Document
+children:
+- class: Target
+  attributes:
+    label: target
+    target_type: explicit
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "(Internal hyperlink target.)\n"

@@ -26,6 +26,7 @@ use parsers::lists::{
 use parsers::literal_block::parse_literal_block;
 use parsers::paragraph::parse_paragraph;
 use parsers::section::parse_section_header;
+use parsers::targets::parse_hyperlink_target;
 use parsers::transition::parse_transition;
 use parsers::with_hanging_indent;
 pub mod parser_errors;
@@ -86,6 +87,15 @@ fn parse_body_element(
             (TK::BulletListMarker, _) => {
                 let bullet_list = parse_bullet_list(stream)?;
                 current_parent.push_child(bullet_list);
+            }
+            (
+                TK::HyperlinkTarget
+                | TK::HyperlinkTargetAnonymous
+                | TK::HyperlinkTargetAnonymousShort,
+                _,
+            ) => {
+                let target = parse_hyperlink_target(stream)?;
+                current_parent.push_child(target);
             }
             (TK::Directive, _) => {
                 let directive = parse_directive(stream)?;

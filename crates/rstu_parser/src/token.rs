@@ -296,11 +296,13 @@ impl TokenCategory {
     ];
 
     pub const PARAGRAPH_END: &'static [TokenKind] = &[
+        TokenKind::HyperlinkTargetAnonymous,
         TokenKind::BlankLine,
+        TokenKind::Citation,
         TokenKind::Dedent,
         TokenKind::EoF,
-        TokenKind::Citation,
         TokenKind::FootNote,
+        TokenKind::HyperlinkTarget,
         TokenKind::Indent,
         TokenKind::LineBlock,
         TokenKind::LiteralBlock,
@@ -322,14 +324,17 @@ impl TokenCategory {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, EnumCount)]
 pub enum TokenKind {
+    AnonymousHyperlinkReferenceEnd,
+    HyperlinkTargetAnonymous,
+    HyperlinkTargetAnonymousShort,
     Attribution,
     BackquoteEnd,
     BackquoteStart,
     BlankLine,
     BulletListMarker,
-    ClassifierSeparator,
     Citation,
     CitationReference,
+    ClassifierSeparator,
     Dedent,
     Directive,
     DoctestStart,
@@ -344,8 +349,8 @@ pub enum TokenKind {
     Field,
     FootNote,
     FootnoteReference,
-    AnonymousHyperlinkReferenceEnd,
     HyperlinkReferenceEnd,
+    HyperlinkTarget,
     Indent,
     InlineInternalTargetStart,
     InlineLiteralEnd,
@@ -358,16 +363,16 @@ pub enum TokenKind {
     NewLine,
     Option,
     Punctuation,
-    RolePrefix,
     RolePostfix,
+    RolePrefix,
     Separator,
-    SubRefHyperlink,
-    SubRefAnonymousHyperlink,
     SimpleAnonymousHyperLinkReference,
     SimpleHyperlinkReference,
     Spaces,
     StrongEnd,
     StrongStart,
+    SubRefAnonymousHyperlink,
+    SubRefHyperlink,
     SubstitutionReference,
     TableHorizontal,
     Uri,
@@ -387,6 +392,9 @@ impl TokenKind {
         (BlankLine, r"\n[ \t]*\n+(.|\n)"),
         (NewLine, r"[^\n]\n(.|\n)"),
 
+        (HyperlinkTarget, r"(.|\n)\.\. _(?:`[^`]+`|[^\s_:\n](?:\\.|[^:])*)[ \t]*:(.|\n)"),
+        (HyperlinkTargetAnonymous, r"(.|\n)\.\. __:(.|\n)"),
+        (HyperlinkTargetAnonymousShort, r"(.|\n)__ (.|\n)"),
         (Directive, format!(r"[\n\s]\.\.\s(?:\|{0}\|\s)?[\p{{L}}\p{{N}}]+(?:[-_+:.][\p{{L}}\p{{N}}]+)*::\s", SUBSTITUTION_NAME)),
 
         (DoctestStart, r"\s>>>\s"),
@@ -614,6 +622,64 @@ mod tests {
         );
         assert_eq!(TK::Directive.find_lexeme("\n.. -custom:: text\n"), None);
         assert_eq!(TK::Directive.find_lexeme("\n.. custom_:: text\n"), None);
+    }
+
+    /// GIVEN named, colon-anonymous, and shorthand anonymous target markers
+    /// WHEN the lexer matches the line-start token
+    /// THEN it returns the complete marker without consuming surrounding text
+    #[test]
+    fn hyperlink_target_markers_match_before_generic_explicit_markup() {
+        for (input, expected_kind, expected_lexeme) in [
+            ("\n.. _target:\n", TK::HyperlinkTarget, ".. _target:"),
+            (
+                "\n.. _`a: phrase`:\n",
+                TK::HyperlinkTarget,
+                ".. _`a: phrase`:",
+            ),
+            (
+                "\n.. _a very long target name,\n   split across lines:\n",
+                TK::HyperlinkTarget,
+                ".. _a very long target name,\n   split across lines:",
+            ),
+            (
+                "\n.. _`and another,\n   with backquotes`:\n",
+                TK::HyperlinkTarget,
+                ".. _`and another,\n   with backquotes`:",
+            ),
+            (
+                "\n.. __: https://example.org\n",
+                TK::HyperlinkTargetAnonymous,
+                ".. __:",
+            ),
+            (
+                "\n__ https://example.org\n",
+                TK::HyperlinkTargetAnonymous,
+                "__ ",
+            ),
+        ] {
+            let (kind, lexeme) = TK::match_token(input).unwrap();
+            assert_eq!(kind, expected_kind, "{input:?}");
+            assert_eq!(lexeme, expected_lexeme, "{input:?}");
+        }
+    }
+
+    /// GIVEN directive, comment, or non-line-start underscore text
+    /// WHEN target tokens are matched
+    /// THEN the text is not classified as a hyperlink target
+    #[test]
+    fn hyperlink_target_markers_reject_nearby_syntax() {
+        for input in ["\n.. image:: file.png\n", "\n.. ordinary comment\n"] {
+            assert_eq!(TK::HyperlinkTarget.find_lexeme(input), None, "{input:?}");
+            assert_eq!(
+                TK::HyperlinkTargetAnonymous.find_lexeme(input),
+                None,
+                "{input:?}"
+            );
+        }
+        assert_eq!(
+            TK::HyperlinkTargetAnonymous.find_lexeme("word__ text"),
+            None
+        );
     }
 
     #[test]

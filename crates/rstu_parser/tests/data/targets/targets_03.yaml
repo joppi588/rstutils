@@ -1,0 +1,19 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Indirect hyperlink targets:\n"
+- class: BlankLine
+- class: Target
+  attributes:
+    label: target1
+    refname: reference
+    target_type: explicit
+- class: BlankLine
+- class: Target
+  attributes:
+    label: target2
+    refname: phrase-link reference
+    target_type: explicit

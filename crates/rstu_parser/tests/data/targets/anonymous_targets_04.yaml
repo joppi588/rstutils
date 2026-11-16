@@ -1,0 +1,18 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Anonymous indirect hyperlink targets:\n"
+- class: BlankLine
+- class: Target
+  attributes:
+    anonymous: "true"
+    refname: reference
+    target_type: explicit
+- class: Target
+  attributes:
+    anonymous: "true"
+    refname: a very long reference
+    target_type: explicit

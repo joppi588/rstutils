@@ -1,0 +1,38 @@
+class: Document
+children:
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "External hyperlink targets:\n"
+- class: BlankLine
+- class: Target
+  attributes:
+    label: one-liner
+    refuri: http://structuredtext.sourceforge.net
+    target_type: explicit
+- class: BlankLine
+- class: Target
+  attributes:
+    label: starts-on-this-line
+    refuri: http://structuredtext.sourceforge.net
+    target_type: explicit
+- class: BlankLine
+- class: Target
+  attributes:
+    label: entirely-below
+    refuri: http://structuredtext.sourceforge.net
+    target_type: explicit
+- class: BlankLine
+- class: Target
+  attributes:
+    label: escaped-whitespace
+    refuri: http://example.org/a path withspaces.html
+    target_type: explicit
+- class: BlankLine
+- class: Target
+  attributes:
+    label: not-indirect
+    refuri: uri_
+    target_type: explicit

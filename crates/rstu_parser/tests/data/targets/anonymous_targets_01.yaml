@@ -1,0 +1,13 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Anonymous external hyperlink target:\n"
+- class: BlankLine
+- class: Target
+  attributes:
+    anonymous: "true"
+    refuri: http://w3c.org/
+    target_type: explicit
