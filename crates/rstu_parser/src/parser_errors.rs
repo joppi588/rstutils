@@ -66,6 +66,10 @@ pub enum ParserError {
         closing_style: String,
         position: Position,
     },
+    TargetMissingClosing {
+        markup: String,
+        position: Position,
+    },
     UnexpectedIndentError {
         position: Position,
     },
@@ -160,7 +164,12 @@ impl std::fmt::Display for ParserError {
                 formatter,
                 "{position}: Section underline {closing_style:?} does not match overline {opening_style:?}"
             ),
-            Self::UnexpectedIndentError { position } => {
+            Self::TargetMissingClosing {
+                markup, position, ..
+            } => write!(
+                formatter,
+                "{position}: Target ({markup}) is not closed."
+            ),            Self::UnexpectedIndentError { position } => {
                 write!(formatter, "{position}: Unexpected indentation")
             }
             Self::UnexpectedToken {

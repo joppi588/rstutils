@@ -6,8 +6,12 @@ children:
       section_marker: "-"
     children:
       - class: Title
-        attributes:
-          text: "All inline markups"
+        children:
+          - class: Paragraph
+            children:
+              - class: PlainText
+                attributes:
+                  text: "All inline markups\n"
       - class: Paragraph
         children:
           - class: Emphasis
@@ -22,17 +26,15 @@ children:
           - class: PlainText
             attributes:
               text: " "
-          - class: InlineMarkup
+          - class: Literal
             attributes:
               text: lit
-              markup: inline_literal
           - class: PlainText
             attributes:
               text: " "
-          - class: InlineMarkup
+          - class: InterpretedText
             attributes:
               text: interp
-              markup: interpreted_text
           - class: PlainText
             attributes:
               text: "\n"
@@ -43,8 +45,12 @@ children:
       section_marker: "-"
     children:
       - class: Title
-        attributes:
-          text: "Inline references"
+        children:
+          - class: Paragraph
+            children:
+              - class: PlainText
+                attributes:
+                  text: "Inline references\n"
       - class: Paragraph
         children:
           - class: Reference
@@ -77,15 +83,15 @@ children:
               text: " "
           - class: Reference
             attributes:
-              label: "CIT"
+              label: CIT
               type: citation
           - class: PlainText
             attributes:
               text: " "
           - class: Reference
             attributes:
-              label: "sub"
-              type: subref
+              label: sub
+              type: sub_ref
           - class: PlainText
             attributes:
               text: "\n"
@@ -96,13 +102,18 @@ children:
       section_marker: "-"
     children:
       - class: Title
-        attributes:
-          text: "Inline internal targets"
+        children:
+          - class: Paragraph
+            children:
+              - class: PlainText
+                attributes:
+                  text: "Inline internal targets\n"
       - class: Paragraph
         children:
           - class: Target
             attributes:
               label: target
+              markup: inline
           - class: PlainText
             attributes:
               text: "\n"

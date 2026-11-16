@@ -1,0 +1,13 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "External hyperlink:\n"
+- class: BlankLine
+- class: Target
+  attributes:
+    label: target
+    refuri: http://www.python.org/
+    target_type: explicit

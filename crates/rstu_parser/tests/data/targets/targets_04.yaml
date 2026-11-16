@@ -1,0 +1,16 @@
+class: Document
+children:
+- class: Target
+  attributes:
+    label: a long target name
+    target_type: explicit
+- class: BlankLine
+- class: Target
+  attributes:
+    label: "a target name: including a colon (quoted)"
+    target_type: explicit
+- class: BlankLine
+- class: Target
+  attributes:
+    label: "a target name: including a colon (escaped)"
+    target_type: explicit
