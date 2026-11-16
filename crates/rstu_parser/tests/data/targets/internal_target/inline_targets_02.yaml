@@ -8,35 +8,35 @@ children:
   - class: Target
     attributes:
       label: target1
-      target_type: inline
+      markup: inline
   - class: PlainText
     attributes:
       text: "', quoted \""
   - class: Target
     attributes:
       label: target2
-      target_type: inline
+      markup: inline
   - class: PlainText
     attributes:
       text: "\",\nquoted ‘"
   - class: Target
     attributes:
       label: target3
-      target_type: inline
+      markup: inline
   - class: PlainText
     attributes:
       text: ’, quoted “
   - class: Target
     attributes:
       label: target4
-      target_type: inline
+      markup: inline
   - class: PlainText
     attributes:
       text: "”,\nquoted «"
   - class: Target
     attributes:
       label: target5
-      target_type: inline
+      markup: inline
   - class: PlainText
     attributes:
       text: "»\n"
