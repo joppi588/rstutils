@@ -5,7 +5,7 @@ children:
   - class: Target
     attributes:
       label: target
-      target_type: inline
+      markup: inline
   - class: PlainText
     attributes:
       text: "\n"
@@ -18,14 +18,14 @@ children:
   - class: Target
     attributes:
       label: another target
-      target_type: inline
+      markup: inline
   - class: PlainText
     attributes:
       text: " in some text. And "
   - class: Target
     attributes:
       label: "yet\nanother target"
-      target_type: inline
+      markup: inline
   - class: PlainText
     attributes:
       text: ", spanning lines.\n"
@@ -35,7 +35,7 @@ children:
   - class: Target
     attributes:
       label: Here is  a    TaRgeT
-      target_type: inline
+      markup: inline
   - class: PlainText
     attributes:
       text: " with case and spacial difficulties.\n"

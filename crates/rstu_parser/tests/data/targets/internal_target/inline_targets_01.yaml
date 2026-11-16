@@ -8,14 +8,14 @@ children:
   - class: Target
     attributes:
       label: target1
-      target_type: inline
+      markup: inline
   - class: PlainText
     attributes:
       text: " and l’"
   - class: Target
     attributes:
       label: target2
-      target_type: inline
+      markup: inline
   - class: PlainText
     attributes:
       text: " with apostrophe\n"
