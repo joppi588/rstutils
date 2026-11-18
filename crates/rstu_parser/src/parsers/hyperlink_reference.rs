@@ -19,7 +19,7 @@ static REFERENCE_ESCAPE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\\(?s:(
 static URI_NORMALIZATION: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"\\(?P<escaped>(?s:.))|\\$|\s").unwrap());
 
-fn normalize_reference_name(reference: &str) -> String {
+pub(crate) fn normalize_reference_name(reference: &str) -> String {
     REFERENCE_ESCAPE
         .replace_all(reference, "$1")
         .split_whitespace()
