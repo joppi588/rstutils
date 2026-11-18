@@ -27,7 +27,7 @@ use parsers::literal_block::parse_literal_block;
 use parsers::paragraph::parse_paragraph;
 use parsers::section::parse_section_header;
 use parsers::transition::parse_transition;
-
+use parsers::with_hanging_indent;
 pub mod parser_errors;
 pub mod token;
 pub mod token_stream;
@@ -35,7 +35,6 @@ pub mod token_stream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use crate::lexer::tokenize;
-use crate::parsers::paragraph::parse_paragraph_hanging_indent;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
 use parser_errors::ParserError;
 use token_stream::TokenStream;
@@ -161,7 +160,7 @@ fn parse_body_element(
             (TK::Attribution, _) => {
                 let attribution = AstNode::new_ref(NodeClass::Attribution);
                 attribution.with_attr("marker", stream.consume().lexeme);
-                let paragraph = parse_paragraph_hanging_indent(stream)?;
+                let paragraph = with_hanging_indent(stream, parse_paragraph)?;
                 attribution.push_child(paragraph);
                 current_parent.push_child(attribution);
             }
