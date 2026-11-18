@@ -4,8 +4,9 @@
 
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
+use super::with_hanging_indent;
 use crate::parser_errors::ParserError;
-use crate::parsers::paragraph::{parse_paragraph, parse_paragraph_hanging_indent};
+use crate::parsers::paragraph::parse_paragraph;
 use crate::token::TokenKind as TK;
 use crate::token_stream::TokenStream;
 use std::debug_assert_matches;
@@ -42,7 +43,7 @@ pub(crate) fn parse_line_block(
 
         let index_next_line: usize = stream.find_end_of_line() + 1;
         let paragraph = match stream.token_at(index_next_line).kind {
-            TK::Indent => parse_paragraph_hanging_indent(stream)?,
+            TK::Indent => with_hanging_indent(stream, parse_paragraph)?,
             TK::LineBlock | TK::BlankLine | TK::EoF => parse_paragraph(stream)?,
             kind => {
                 return Err(ParserError::UnexpectedToken {

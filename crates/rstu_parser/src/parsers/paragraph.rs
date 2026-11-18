@@ -13,12 +13,6 @@ use crate::parser_errors::ParserError;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
 use crate::token_stream::TokenStream;
 
-pub(crate) fn parse_paragraph_hanging_indent(
-    stream: &mut TokenStream,
-) -> Result<NodeRef, ParserError> {
-    super::with_hanging_indent(stream, parse_paragraph)
-}
-
 pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     let paragraph = AstNode::new_ref(NodeClass::Paragraph);
     loop {
@@ -85,6 +79,7 @@ fn parse_plain(stream: &mut TokenStream) -> NodeRef {
 mod tests {
     use super::*;
     use crate::lexer::tokenize;
+    use crate::parsers::with_hanging_indent;
 
     /// GIVEN a paragraph consisting of a base line and an indented continuation line
     /// WHEN parse_paragraph is invoked with the expected hanging indent width
@@ -95,8 +90,8 @@ mod tests {
         let mut stream = tokenize(input);
         stream.consume(); //synthetic blank line
 
-        let paragraph =
-            parse_paragraph_hanging_indent(&mut stream).expect("Paragraph parses successfully");
+        let paragraph = with_hanging_indent(&mut stream, parse_paragraph)
+            .expect("Paragraph parses successfully");
         let paragraph = paragraph.borrow();
 
         assert_eq!(
@@ -120,8 +115,8 @@ mod tests {
         let mut stream = tokenize(input);
         stream.consume(); //synthetic blank line
 
-        let paragraph =
-            parse_paragraph_hanging_indent(&mut stream).expect("Paragraph parses successfully");
+        let paragraph = with_hanging_indent(&mut stream, parse_paragraph)
+            .expect("Paragraph parses successfully");
         let paragraph = paragraph.borrow();
 
         assert_eq!(

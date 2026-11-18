@@ -5,7 +5,7 @@
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use super::paragraph::parse_paragraph;
-use super::paragraph::parse_paragraph_hanging_indent;
+use super::with_hanging_indent;
 use crate::parser_errors::ParserError;
 use crate::token::TokenKind as TK;
 use crate::token_stream::TokenStream;
@@ -38,7 +38,7 @@ fn parse_note(
     }
     let index_next_line: usize = stream.find_end_of_line() + 1;
     let paragraph = match stream.token_at(index_next_line).kind {
-        TK::Indent => parse_paragraph_hanging_indent(stream)?,
+        TK::Indent => with_hanging_indent(stream, parse_paragraph)?,
         kind if matches!(kind, TK::BlankLine | TK::EoF) || (kind == token_kind) => {
             parse_paragraph(stream)?
         }
