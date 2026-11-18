@@ -16,37 +16,7 @@ use crate::token_stream::TokenStream;
 pub(crate) fn parse_paragraph_hanging_indent(
     stream: &mut TokenStream,
 ) -> Result<NodeRef, ParserError> {
-    // TODO: Move this upstream?
-    let index_next_line: usize = stream.find_end_of_line() + 1;
-    let indent = match stream.token_at(index_next_line).kind {
-        TK::Indent => stream.take_at(index_next_line).len(),
-        _ => 0,
-    };
-    let paragraph = parse_paragraph(stream)?;
-    if indent > 0 {
-        paragraph.with_attr("hanging_indent", indent);
-
-        let dedent = stream.token_at_cursor();
-        // TODO: Can we reuse this logic somewhere?
-        if dedent.kind != TK::Dedent {
-            return Err(ParserError::UnexpectedToken {
-                expected: "Dedent".to_string(),
-                found: format!("{:?}", dedent.kind),
-                position: stream.position_at_cursor(),
-            });
-        } else if dedent.len() > indent {
-            stream.update_at_cursor(" ".repeat(dedent.len() - indent));
-        } else if dedent.len() < indent {
-            return Err(ParserError::DedentToSmall {
-                expected: dedent.len(),
-                found: indent,
-                position: stream.position_at_cursor(),
-            });
-        } else {
-            stream.consume();
-        }
-    }
-    Ok(paragraph)
+    super::with_hanging_indent(stream, parse_paragraph)
 }
 
 pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
