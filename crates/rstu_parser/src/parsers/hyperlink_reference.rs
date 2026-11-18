@@ -1,0 +1,71 @@
+// SPDX-FileCopyrightText: 2026 Jochen Schmaehling <tostmann1@web.de>
+//
+// SPDX-License-Identifier: MIT
+use crate::parser_errors::ParserError;
+use regex::{Captures, Regex};
+use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
+use std::sync::LazyLock;
+
+static EMBEDDED_REF: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(
+        r"(?s)^(?P<label>.*?)(?:(?:(?P<separator>\s+)|^)<(?P<ref>[^<>\s](?:[^<>]*[^<>\s])?)>)?$",
+    )
+    .unwrap()
+});
+
+static REFERENCE_ESCAPE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\\(?s:(.))|\\$").unwrap());
+static URI_NORMALIZATION: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"\\(?P<escaped>(?s:.))|\\$|\s").unwrap());
+
+fn normalize_reference_name(reference: &str) -> String {
+    REFERENCE_ESCAPE
+        .replace_all(reference, "$1")
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+fn normalize_uri(uri: &str) -> String {
+    URI_NORMALIZATION
+        .replace_all(uri, |captures: &Captures<'_>| {
+            match captures.name("escaped") {
+                Some(escaped) if escaped.as_str().chars().next().unwrap().is_whitespace() => {
+                    " ".to_owned()
+                }
+                Some(escaped) => escaped.as_str().to_owned(),
+                None => String::new(),
+            }
+        })
+        .into_owned()
+}
+
+pub(crate) fn parse_hyperlink_reference(text: &str) -> Result<NodeRef, ParserError> {
+    let node = AstNode::new_ref(NodeClass::Reference);
+    let captures = EMBEDDED_REF
+        .captures(&text)
+        .expect("There must be some match");
+
+    if let Some(label) = captures
+        .name("label")
+        .filter(|label| !label.as_str().is_empty() || captures.name("ref").is_none())
+    {
+        node.with_attr("label", label.as_str());
+    };
+
+    let refname = captures
+        .name("ref")
+        .map_or(None, |value| Some(value.as_str()));
+    match refname {
+        Some(refname) if refname.ends_with("_") && !refname.ends_with(r"\_") => {
+            let normalized_refname = normalize_reference_name(refname.strip_suffix('_').unwrap());
+            node.with_attr("refname", normalized_refname)
+                .with_attr("raw", text);
+        }
+        Some(refuri) => {
+            let normalized_refuri = normalize_uri(refuri);
+            node.with_attr("refuri", normalized_refuri)
+                .with_attr("raw", text);
+        }
+        _ => {}
+    };
+    Ok(node)
+}
