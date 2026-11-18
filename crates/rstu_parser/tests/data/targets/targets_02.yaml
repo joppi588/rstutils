@@ -10,29 +10,100 @@ children:
 - class: Target
   attributes:
     label: one-liner
-    refuri: http://structuredtext.sourceforge.net
-    target_type: explicit
+    label_raw: one-liner
+  children:
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: " "
+    - class: Reference
+      attributes:
+        refuri: http://structuredtext.sourceforge.net
+      children:
+      - class: PlainText
+        attributes:
+          text: http://structuredtext.sourceforge.net
+    - class: PlainText
+      attributes:
+        text: "\n"
 - class: BlankLine
 - class: Target
   attributes:
     label: starts-on-this-line
-    refuri: http://structuredtext.sourceforge.net
-    target_type: explicit
+    label_raw: starts-on-this-line
+  children:
+  - class: Paragraph
+    attributes:
+      hanging_indent: 25
+    children:
+    - class: PlainText
+      attributes:
+        text: " "
+    - class: Reference
+      attributes:
+        refuri: http://
+      children:
+      - class: PlainText
+        attributes:
+          text: http://
+    - class: PlainText
+      attributes:
+        text: "\nstructuredtext.\nsourceforge.net\n"
 - class: BlankLine
 - class: Target
   attributes:
     label: entirely-below
-    refuri: http://structuredtext.sourceforge.net
-    target_type: explicit
+    label_raw: entirely-below
+  children:
+  - class: Paragraph
+    attributes:
+      hanging_indent: 3
+    children:
+    - class: PlainText
+      attributes:
+        text: "\n"
+    - class: Reference
+      attributes:
+        refuri: http://structuredtext
+      children:
+      - class: PlainText
+        attributes:
+          text: http://structuredtext
+    - class: PlainText
+      attributes:
+        text: ".\nsourceforge.net\n"
 - class: BlankLine
 - class: Target
   attributes:
     label: escaped-whitespace
-    refuri: http://example.org/a path withspaces.html
-    target_type: explicit
+    label_raw: escaped-whitespace
+  children:
+  - class: Paragraph
+    attributes:
+      hanging_indent: 3
+    children:
+    - class: PlainText
+      attributes:
+        text: " "
+    - class: Reference
+      attributes:
+        refuri: http://example.org/a
+      children:
+      - class: PlainText
+        attributes:
+          text: http://example.org/a
+    - class: PlainText
+      attributes:
+        text: "\\ path\\ with\\\nspaces.html\n"
 - class: BlankLine
 - class: Target
   attributes:
     label: not-indirect
-    refuri: uri_
-    target_type: explicit
+    label_raw: not-indirect
+  children:
+  - class: Paragraph
+    children:
+    - class: PlainText
+      attributes:
+        text: " uri\\_\n"
