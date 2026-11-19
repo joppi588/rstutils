@@ -66,20 +66,29 @@ pub(crate) fn parse_interpreted_or_ref(stream: &mut TokenStream) -> Result<NodeR
     debug_assert!(stream.token_at_cursor().kind == TK::BackquoteStart);
 
     let position = stream.position_at_cursor();
-    stream.consume();
-    let text = stream.consume_text_until(&[TC::BACKQUOTE, TC::PARAGRAPH_END].concat());
-    let end_token = stream.consume();
-    let node = match end_token.kind {
-        TK::AnonymousHyperlinkReferenceEnd => {
-            parse_hyperlink_reference(&text)?.with_attr("type", "ahref")
+
+    let end_kind_index = stream
+        .find_next_kind(&[TC::BACKQUOTE, TC::PARAGRAPH_END].concat())
+        .expect("At least find EoF");
+    let end_kind = stream.token_at(end_kind_index).kind;
+
+    let node = match end_kind {
+        TK::AnonymousHyperlinkReferenceEnd | TK::HyperlinkReferenceEnd => {
+            parse_hyperlink_reference(stream)?
         }
-        TK::HyperlinkReferenceEnd => parse_hyperlink_reference(&text)?.with_attr("type", "href"),
-        TK::BackquoteEnd => AstNode::new_ref(NodeClass::InterpretedText).with_attr("text", text),
+        TK::BackquoteEnd => {
+            stream.consume(); // Starting Backquote
+            let text = stream.consume_text_until(&[TK::BackquoteEnd]);
+            stream.consume(); // Closing Backquote
+            AstNode::new_ref(NodeClass::InterpretedText).with_attr("text", text)
+        }
         TK::RolePostfix => {
-            let lexeme = &end_token.lexeme;
+            stream.consume();
+            let text = stream.consume_text_until(&[TK::RolePostfix]);
+            let role_lexeme = &stream.consume().lexeme;
             AstNode::new_ref(NodeClass::InterpretedText)
                 .with_attr("text", text)
-                .with_attr("role", &lexeme[2..lexeme.len() - 1])
+                .with_attr("role", &role_lexeme[2..role_lexeme.len() - 1])
                 .with_attr("pos", "postfix".to_owned())
         }
         _ => {

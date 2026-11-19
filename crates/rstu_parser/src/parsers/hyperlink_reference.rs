@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: MIT
 use crate::parser_errors::ParserError;
+use crate::token::TokenKind as TK;
+use crate::token_stream::TokenStream;
 use regex::{Captures, Regex};
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 use std::sync::LazyLock;
@@ -24,6 +26,7 @@ fn normalize_reference_name(reference: &str) -> String {
         .collect::<Vec<_>>()
         .join(" ")
 }
+
 fn normalize_uri(uri: &str) -> String {
     URI_NORMALIZATION
         .replace_all(uri, |captures: &Captures<'_>| {
@@ -38,8 +41,18 @@ fn normalize_uri(uri: &str) -> String {
         .into_owned()
 }
 
-pub(crate) fn parse_hyperlink_reference(text: &str) -> Result<NodeRef, ParserError> {
+pub(crate) fn parse_hyperlink_reference(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    stream.consume();
+    let text = &stream.consume_text_until(&[
+        TK::AnonymousHyperlinkReferenceEnd,
+        TK::HyperlinkReferenceEnd,
+    ]);
     let node = AstNode::new_ref(NodeClass::Reference);
+    match &stream.consume().kind {
+        TK::AnonymousHyperlinkReferenceEnd => node.with_attr("type", "ahref"),
+        TK::HyperlinkReferenceEnd => node.with_attr("type", "href"),
+        _ => unreachable!(),
+    };
     let captures = EMBEDDED_REF
         .captures(&text)
         .expect("There must be some match");
@@ -58,12 +71,12 @@ pub(crate) fn parse_hyperlink_reference(text: &str) -> Result<NodeRef, ParserErr
         Some(refname) if refname.ends_with("_") && !refname.ends_with(r"\_") => {
             let normalized_refname = normalize_reference_name(refname.strip_suffix('_').unwrap());
             node.with_attr("refname", normalized_refname)
-                .with_attr("raw", text);
+                .with_attr("raw", text.to_owned());
         }
         Some(refuri) => {
             let normalized_refuri = normalize_uri(refuri);
             node.with_attr("refuri", normalized_refuri)
-                .with_attr("raw", text);
+                .with_attr("raw", text.to_owned());
         }
         _ => {}
     };
