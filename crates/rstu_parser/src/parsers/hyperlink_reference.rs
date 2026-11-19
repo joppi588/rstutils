@@ -92,14 +92,25 @@ pub(crate) fn parse_reference_token(stream: &mut TokenStream) -> Result<NodeRef,
 
 pub(crate) fn parse_reference_expression(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     stream.consume();
-    let text = &stream.consume_text_until(&[
-        TK::AnonymousHyperlinkReferenceEnd,
-        TK::HyperlinkReferenceEnd,
-    ]);
+    let text = &stream.consume_text_until(
+        &[
+            &[
+                TK::AnonymousHyperlinkReferenceEnd,
+                TK::HyperlinkReferenceEnd,
+            ],
+            TC::PARAGRAPH_END,
+        ]
+        .concat(),
+    );
     let node = AstNode::new_ref(NodeClass::Reference);
     match &stream.consume().kind {
-        TK::AnonymousHyperlinkReferenceEnd => node.with_attr("type", "ahref"),
-        TK::HyperlinkReferenceEnd => node.with_attr("type", "href"),
+        TK::AnonymousHyperlinkReferenceEnd => {
+            node.with_attr("type", "ahref");
+        }
+        TK::HyperlinkReferenceEnd => {
+            node.with_attr("type", "href");
+        }
+        kind if kind.is(TC::PARAGRAPH_END) => {}
         _ => unreachable!(),
     };
     let captures = EMBEDDED_REF
