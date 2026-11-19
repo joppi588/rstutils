@@ -9,6 +9,8 @@ use crate::parsers::hyperlink_reference::{normalize_reference_name, parse_hyperl
 use crate::token::TokenCategory as TC;
 use crate::token::TokenKind as TK;
 use crate::token_stream::TokenStream;
+use crate::with_hanging_indent;
+
 pub(crate) fn parse_inline_target(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert!(stream.token_at_cursor().kind == TK::InlineInternalTargetStart);
 
@@ -58,10 +60,32 @@ pub(crate) fn parse_hyperlink_target(stream: &mut TokenStream) -> Result<NodeRef
                 .with_attr("label_raw", label);
         }
     }
-    let text = stream.consume_text_until(TC::PARAGRAPH_END);
-    if text != "\n" {
-        let link_block = parse_hyperlink_reference(&text)?;
-        target.push_child(link_block);
-    } // TODO: does the paragraph parsing parse correctly (internal = empty, external, indirect)
+    match (
+        stream.token_at_cursor().kind,
+        stream.token_at_nextline().kind,
+    ) {
+        (TK::NewLine | TK::Spaces, TK::Indent) => {
+            target.push_child(
+                AstNode::new_ref(NodeClass::PlainText).with_attr("text", stream.consume().lexeme),
+            );
+            let link_block = with_hanging_indent(stream, parse_hyperlink_reference)?;
+            target.push_child(link_block);
+        }
+        (_, TK::Indent) => {
+            let link_block = with_hanging_indent(stream, parse_hyperlink_reference)?;
+            target.push_child(link_block);
+        }
+        (TK::NewLine, kind) if kind.is(TC::PARAGRAPH_END) => {
+            stream.consume();
+        }
+        (TK::Spaces, kind) if kind.is(TC::PARAGRAPH_END) => {
+            target.push_child(
+                AstNode::new_ref(NodeClass::PlainText).with_attr("text", stream.consume().lexeme),
+            );
+            let link_block = parse_hyperlink_reference(stream)?;
+            target.push_child(link_block);
+        }
+        _ => {}
+    }
     Ok(target)
 }
