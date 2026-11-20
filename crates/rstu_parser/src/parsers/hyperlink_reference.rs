@@ -42,7 +42,7 @@ fn normalize_uri(uri: &str) -> String {
 }
 
 pub(crate) fn parse_hyperlink_reference(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
-    stream.consume();
+    stream.consume(); // TODO: This eats the http
     let text = &stream.consume_text_until(
         &[
             &[
@@ -54,11 +54,13 @@ pub(crate) fn parse_hyperlink_reference(stream: &mut TokenStream) -> Result<Node
         .concat(),
     );
     let node = AstNode::new_ref(NodeClass::Reference);
-    match &stream.consume().kind {
+    match &stream.token_at_cursor().kind {
         TK::AnonymousHyperlinkReferenceEnd => {
+            stream.consume();
             node.with_attr("type", "ahref");
         }
         TK::HyperlinkReferenceEnd => {
+            stream.consume();
             node.with_attr("type", "href");
         }
         kind if kind.is(TC::PARAGRAPH_END) => {}

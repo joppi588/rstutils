@@ -11,7 +11,7 @@ use test_parser::rst_err;
 use test_parser::rst_vs_yaml;
 
 #[test]
-fn ok_variants() {
+fn ok_inline_variants() {
     rst_vs_yaml!("inline", "inline_variants")
 }
 
