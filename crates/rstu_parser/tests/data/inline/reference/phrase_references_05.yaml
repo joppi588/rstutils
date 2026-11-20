@@ -8,6 +8,7 @@ children:
   - class: Reference
     attributes:
       label: anonymous reference
+      markup: inline
       type: ahref
   - class: PlainText
     attributes:
@@ -15,8 +16,8 @@ children:
   - class: Reference
     attributes:
       label: anonymous reference
+      markup: inline
       type: ahref
   - class: PlainText
     attributes:
-      text: |2
-         with apostrophe
+      text: " with apostrophe\n"

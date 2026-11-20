@@ -5,9 +5,10 @@ children:
   - class: Reference
     attributes:
       label: embedded email address
-      type: ahref
+      markup: inline
       raw: embedded email address <jdoe@example.com>
       refuri: jdoe@example.com
+      type: ahref
   - class: PlainText
     attributes:
       text: "\n"
@@ -17,9 +18,10 @@ children:
   - class: Reference
     attributes:
       label: embedded email address broken across lines
-      type: ahref
+      markup: inline
       raw: "embedded email address broken across lines <jdoe\n@example.com>"
       refuri: jdoe@example.com
+      type: ahref
   - class: PlainText
     attributes:
       text: "\n"

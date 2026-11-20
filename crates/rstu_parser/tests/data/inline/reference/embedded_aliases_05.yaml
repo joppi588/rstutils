@@ -4,9 +4,10 @@ children:
   children:
   - class: Reference
     attributes:
-      type: ahref
+      markup: inline
       raw: <embedded alias with whitespace_>
       refname: embedded alias with whitespace
+      type: ahref
   - class: PlainText
     attributes:
       text: "\n"

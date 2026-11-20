@@ -9,6 +9,7 @@ children:
               - class: Reference
                 attributes:
                   type: href
+                  markup: inline
                   label: linked term
               - class: PlainText
                 attributes:

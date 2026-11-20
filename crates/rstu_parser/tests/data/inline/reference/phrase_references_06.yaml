@@ -8,6 +8,7 @@ children:
   - class: Reference
     attributes:
       label: anonymous reference
+      markup: inline
       type: ahref
   - class: PlainText
     attributes:
@@ -15,35 +16,32 @@ children:
   - class: Reference
     attributes:
       label: anonymous reference
+      markup: inline
       type: ahref
   - class: PlainText
     attributes:
-      text: |-
-        ",
-        quoted ‘
+      text: "\",\nquoted ‘"
   - class: Reference
     attributes:
       label: anonymous reference
+      markup: inline
       type: ahref
   - class: PlainText
     attributes:
-      text: |-
-        ’,
-        quoted “
+      text: "’,\nquoted “"
   - class: Reference
     attributes:
       label: anonymous reference
+      markup: inline
       type: ahref
   - class: PlainText
     attributes:
-      text: |-
-        ”,
-        quoted «
+      text: "”,\nquoted «"
   - class: Reference
     attributes:
       label: anonymous reference
+      markup: inline
       type: ahref
   - class: PlainText
     attributes:
-      text: |
-        »
+      text: "»\n"

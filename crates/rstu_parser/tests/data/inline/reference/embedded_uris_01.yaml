@@ -5,9 +5,10 @@ children:
   - class: Reference
     attributes:
       label: anonymous reference
-      type: ahref
+      markup: inline
       raw: anonymous reference <http://example.com>
       refuri: http://example.com
+      type: ahref
   - class: PlainText
     attributes:
       text: "\n"

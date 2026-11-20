@@ -5,8 +5,9 @@ children:
   children:
   - class: Reference
     attributes:
-      type: ahref
       label: "embedded URI with too much whitespace < http://example.com/\nlong/path /and  /whitespace >"
+      markup: inline
+      type: ahref
   - class: PlainText
     attributes:
       text: "\n"
@@ -15,8 +16,9 @@ children:
   children:
   - class: Reference
     attributes:
-      type: ahref
       label: "embedded URI with too much whitespace at end <http://example.com/\nlong/path /and  /whitespace >"
+      markup: inline
+      type: ahref
   - class: PlainText
     attributes:
       text: "\n"
@@ -25,8 +27,9 @@ children:
   children:
   - class: Reference
     attributes:
-      type: ahref
       label: embedded URI with no preceding whitespace<http://example.com>
+      markup: inline
+      type: ahref
   - class: PlainText
     attributes:
       text: "\n"
@@ -35,8 +38,9 @@ children:
   children:
   - class: Reference
     attributes:
-      type: ahref
       label: escaped URI \<http://example.com>
+      markup: inline
+      type: ahref
   - class: PlainText
     attributes:
       text: "\n"
@@ -48,8 +52,9 @@ children:
       text: "See "
   - class: Reference
     attributes:
-      type: href
       label: "HTML Anchors: \\<a>"
+      markup: inline
+      type: href
   - class: PlainText
     attributes:
       text: ".\n"

@@ -8,6 +8,7 @@ children:
   - class: Reference
     attributes:
       label: phrase reference
+      markup: inline
       type: href
   - class: PlainText
     attributes:
@@ -15,6 +16,7 @@ children:
   - class: Reference
     attributes:
       label: phrase reference
+      markup: inline
       type: href
   - class: PlainText
     attributes:

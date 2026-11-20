@@ -5,6 +5,7 @@ children:
   - class: Reference
     attributes:
       label: anonymous reference
+      markup: inline
       type: ahref
   - class: PlainText
     attributes:

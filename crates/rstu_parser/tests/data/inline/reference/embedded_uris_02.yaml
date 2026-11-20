@@ -5,9 +5,10 @@ children:
   - class: Reference
     attributes:
       label: embedded URI on next line
-      type: ahref
+      markup: inline
       raw: "embedded URI on next line\n<http://example.com>"
       refuri: http://example.com
+      type: ahref
   - class: PlainText
     attributes:
       text: "\n"
