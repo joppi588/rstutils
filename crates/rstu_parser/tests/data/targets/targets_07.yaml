@@ -9,5 +9,15 @@ children:
 - class: Target
   attributes:
     label: target
-    refuri: http://www.python.org/
-    target_type: explicit
+    label_raw: target
+  children:
+  - class: Spaces
+    attributes:
+      count: 1
+  - class: Reference
+    attributes:
+      refuri: http://www.python.org/
+    children:
+    - class: PlainText
+      attributes:
+        text: http://www.python.org/

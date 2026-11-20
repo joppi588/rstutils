@@ -6,6 +6,7 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use crate::parser_errors::ParserError;
 use crate::parsers::hyperlink_reference::{normalize_reference_name, parse_hyperlink_reference};
+use crate::parsers::inline_markup::parse_inline_reference;
 use crate::token::TokenCategory as TC;
 use crate::token::TokenKind as TK;
 use crate::token_stream::TokenStream;
@@ -60,11 +61,14 @@ pub(crate) fn parse_hyperlink_target(stream: &mut TokenStream) -> Result<NodeRef
                 .with_attr("label_raw", label);
         }
     }
+    if stream.token_at_cursor().kind == TK::Spaces {
+        target.push_spaces(stream.consume().len());
+    }
     match (
         stream.token_at_cursor().kind,
         stream.token_at_nextline().kind,
     ) {
-        (TK::NewLine | TK::Spaces, TK::Indent) => {
+        (TK::NewLine, TK::Indent) => {
             target.push_child(
                 AstNode::new_ref(NodeClass::PlainText).with_attr("text", stream.consume().lexeme),
             );
@@ -78,14 +82,15 @@ pub(crate) fn parse_hyperlink_target(stream: &mut TokenStream) -> Result<NodeRef
         (TK::NewLine, kind) if kind.is(TC::PARAGRAPH_END) => {
             stream.consume();
         }
-        (TK::Spaces, kind) if kind.is(TC::PARAGRAPH_END) => {
-            target.push_child(
-                AstNode::new_ref(NodeClass::PlainText).with_attr("text", stream.consume().lexeme),
-            );
-            let link_block = parse_hyperlink_reference(stream)?;
-            target.push_child(link_block);
+        (kind1, kind2) if kind1.is(TC::INLINE_REFERENCE) && kind2.is(TC::PARAGRAPH_END) => {
+            target.push_child(parse_inline_reference(stream)?);
+            stream.consume_newline();
         }
-        _ => {}
+        (TK::BackquoteStart, kind2) if kind2.is(TC::PARAGRAPH_END) => {
+            target.push_child(parse_hyperlink_reference(stream)?);
+            stream.consume_newline();
+        }
+        _ => {} // TODO: Err
     }
     Ok(target)
 }
