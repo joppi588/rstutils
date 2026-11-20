@@ -15,6 +15,7 @@ children:
       - class: Reference
         attributes:
           label: uff
+          markup: inline
           type: href
           raw: uff <test1>
           refuri: test1
@@ -28,6 +29,7 @@ children:
       - class: Reference
         attributes:
           label: uff
+          markup: inline
           type: href
           raw: uff <test2>
           refuri: test2
