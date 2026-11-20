@@ -5,9 +5,10 @@ children:
   - class: Reference
     attributes:
       label: embedded alias with whitespace
-      type: ahref
+      markup: inline
       raw: "embedded alias with whitespace <alias\nlong  phrase_>"
       refname: alias long phrase
+      type: ahref
   - class: PlainText
     attributes:
       text: "\n"

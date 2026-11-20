@@ -5,8 +5,9 @@ children:
   children:
   - class: Reference
     attributes:
-      type: ahref
       label: no embedded alias (whitespace inside bracket) < alias_ >
+      markup: inline
+      type: ahref
   - class: PlainText
     attributes:
       text: "\n"
@@ -15,8 +16,9 @@ children:
   children:
   - class: Reference
     attributes:
-      type: ahref
       label: no embedded alias (no preceding whitespace)<alias_>
+      markup: inline
+      type: ahref
   - class: PlainText
     attributes:
       text: "\n"

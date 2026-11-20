@@ -14,12 +14,14 @@ children:
   - class: Target
     attributes:
       label: file.txt
+      markup: inline
   - class: PlainText
     attributes:
       text: ", "
   - class: Target
     attributes:
       label: file.html
+      markup: inline
   - class: PlainText
     attributes:
       text: ".\n"
@@ -31,19 +33,19 @@ children:
       text: "Embedded URI: named "
   - class: Reference
     attributes:
-      label: file.txt
-      type: href
+      markup: inline
       raw: <file.txt>
       refuri: file.txt
+      type: href
   - class: PlainText
     attributes:
       text: " and anonymous "
   - class: Reference
     attributes:
-      label: file.html
-      type: ahref
+      markup: inline
       raw: <file.html>
       refuri: file.html
+      type: ahref
   - class: PlainText
     attributes:
       text: ".\n"

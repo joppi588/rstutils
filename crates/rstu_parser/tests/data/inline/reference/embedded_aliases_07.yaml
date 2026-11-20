@@ -6,9 +6,10 @@ children:
   - class: Reference
     attributes:
       label: anonymous reference
-      type: ahref
+      markup: inline
       raw: anonymous reference <alias\ with\\ escaped \:characters_>
       refname: alias with\ escaped :characters
+      type: ahref
   - class: PlainText
     attributes:
       text: "\n"
