@@ -14,12 +14,14 @@ children:
   - class: Target
     attributes:
       label: tg1
+      markup: inline
   - class: PlainText
     attributes:
       text: " and "
   - class: Target
     attributes:
       label: tg2
+      markup: inline
   - class: PlainText
     attributes:
       text: ".\n"
@@ -32,18 +34,20 @@ children:
   - class: Reference
     attributes:
       label: link
-      type: href
+      markup: inline
       raw: link <tg1_>
       refname: tg1
+      type: href
   - class: PlainText
     attributes:
       text: " and "
   - class: Reference
     attributes:
       label: link
-      type: href
+      markup: inline
       raw: link <tg2_>
       refname: tg2
+      type: href
   - class: PlainText
     attributes:
       text: ".\n"
@@ -56,9 +60,10 @@ children:
   - class: Reference
     attributes:
       label: link
-      type: ahref
+      markup: inline
       raw: link <tg1_>
       refname: tg1
+      type: ahref
   - class: PlainText
     attributes:
       text: ".\n"

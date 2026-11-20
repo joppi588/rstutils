@@ -5,9 +5,10 @@ children:
   - class: Reference
     attributes:
       label: phrase reference
-      type: href
+      markup: inline
       raw: phrase reference <http://example.com>
       refuri: http://example.com
+      type: href
   - class: PlainText
     attributes:
       text: "\n"

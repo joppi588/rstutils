@@ -10,9 +10,10 @@ children:
   children:
   - class: Reference
     attributes:
-      type: href
+      markup: inline
       raw: <reference>
       refuri: reference
+      type: href
   - class: PlainText
     attributes:
       text: "\n"
@@ -21,9 +22,10 @@ children:
   children:
   - class: Reference
     attributes:
-      type: ahref
+      markup: inline
       raw: <anonymous>
       refuri: anonymous
+      type: ahref
   - class: PlainText
     attributes:
       text: "\n"

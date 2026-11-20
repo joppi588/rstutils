@@ -6,9 +6,10 @@ children:
   - class: Reference
     attributes:
       label: embedded URI with escaped whitespace
-      type: ahref
+      markup: inline
       raw: "embedded URI with escaped whitespace <http://example.com/\na\\ long/path\\ and/some\\_escaped\\ whitespace>"
       refuri: http://example.com/a long/path and/some_escaped whitespace
+      type: ahref
   - class: PlainText
     attributes:
       text: "\n"
@@ -17,9 +18,10 @@ children:
   children:
   - class: Reference
     attributes:
-      type: ahref
+      markup: inline
       raw: <omitted\_reference\ text\ with\ escaped\ whitespace>
       refuri: omitted_reference text with escaped whitespace
+      type: ahref
   - class: PlainText
     attributes:
       text: "\n"
