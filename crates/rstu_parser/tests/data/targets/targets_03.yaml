@@ -9,11 +9,25 @@ children:
 - class: Target
   attributes:
     label: target1
-    refname: reference
-    target_type: explicit
+    label_raw: target1
+  children:
+  - class: Spaces
+    attributes:
+      count: 1
+  - class: Reference
+    attributes:
+      label: reference
+      type: simple_href
 - class: BlankLine
 - class: Target
   attributes:
     label: target2
-    refname: phrase-link reference
-    target_type: explicit
+    label_raw: target2
+  children:
+  - class: Spaces
+    attributes:
+      count: 1
+  - class: Reference
+    attributes:
+      label: phrase-link reference
+      type: href
