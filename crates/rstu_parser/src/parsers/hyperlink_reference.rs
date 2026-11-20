@@ -71,11 +71,11 @@ pub(crate) fn parse_reference_token(stream: &mut TokenStream) -> Result<NodeRef,
         }
         TK::SimpleHyperlinkReference => {
             node.with_attr("label", &lexeme[0..lexeme.len() - 1])
-                .with_attr("type", "simple_ref");
+                .with_attr("type", "simple_href");
         }
         TK::SimpleAnonymousHyperLinkReference => {
             node.with_attr("label", &lexeme[0..lexeme.len() - 2])
-                .with_attr("type", "simple_anonymous_ref");
+                .with_attr("type", "simple_ahref");
         }
         TK::Uri => {
             let uri = lexeme.replace("\\*", "*").replace("\\_", "_");
