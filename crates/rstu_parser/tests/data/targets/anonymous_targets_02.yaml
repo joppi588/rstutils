@@ -8,6 +8,12 @@ children:
 - class: BlankLine
 - class: Target
   attributes:
-    anonymous: "true"
-    refname: reference
-    target_type: explicit
+    markup: standalone_anonymous
+  children:
+  - class: Spaces
+    attributes:
+      count: 1
+  - class: Reference
+    attributes:
+      label: reference
+      type: simple_href
