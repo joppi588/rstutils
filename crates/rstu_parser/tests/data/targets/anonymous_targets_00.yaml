@@ -8,6 +8,15 @@ children:
 - class: BlankLine
 - class: Target
   attributes:
-    anonymous: "true"
-    refuri: http://w3c.org/
-    target_type: explicit
+    markup: standalone_anonymous
+  children:
+  - class: Spaces
+    attributes:
+      count: 1
+  - class: Reference
+    attributes:
+      refuri: http://w3c.org/
+    children:
+    - class: PlainText
+      attributes:
+        text: http://w3c.org/

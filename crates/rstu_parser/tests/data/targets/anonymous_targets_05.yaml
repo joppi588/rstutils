@@ -8,52 +8,97 @@ children:
 - class: BlankLine
 - class: Target
   attributes:
-    anonymous: "true"
-    refname: reference
-    target_type: explicit
+    markup: standalone_anonymous_short
+  children:
+  - class: Reference
+    attributes:
+      label: reference
+      type: simple_href
 - class: Target
   attributes:
-    anonymous: "true"
-    refname: reference
-    target_type: explicit
-- class: Target
-  attributes:
-    anonymous: "true"
-    refname: reference
-    target_type: explicit
+    markup: standalone_anonymous
+  children:
+  - class: Spaces
+    attributes:
+      count: 1
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      label: reference
+      type: simple_href
+  - class: PlainText
+    attributes:
+      text: "\n__ "
+  - class: Reference
+    attributes:
+      label: reference
+      type: simple_href
+  - class: PlainText
+    attributes:
+      text: "\n"
 - class: Target
   attributes:
     label: target1
-    refname: reference
-    target_type: explicit
+    label_raw: target1
+  children:
+  - class: Spaces
+    attributes:
+      count: 1
 - class: Paragraph
   children:
+  - class: Reference
+    attributes:
+      label: reference
+      type: simple_href
   - class: PlainText
     attributes:
-      text: "no blank line\n"
+      text: "\nno blank line\n"
 - class: BlankLine
 - class: Target
   attributes:
     label: target2
-    refname: reference
-    target_type: explicit
-- class: Target
-  attributes:
-    anonymous: "true"
-    refname: reference
-    target_type: explicit
-- class: Target
-  attributes:
-    anonymous: "true"
-    refname: reference
-    target_type: explicit
-- class: Target
-  attributes:
-    anonymous: "true"
-    refname: reference
-    target_type: explicit
+    label_raw: target2
+  children:
+  - class: Spaces
+    attributes:
+      count: 1
 - class: Paragraph
   children:
+  - class: Reference
+    attributes:
+      label: reference
+      type: simple_href
   - class: PlainText
     attributes:
-      text: "no blank line\n"
+      text: "\n__ "
+  - class: Reference
+    attributes:
+      label: reference
+      type: simple_href
+  - class: PlainText
+    attributes:
+      text: "\n"
+- class: Target
+  attributes:
+    markup: standalone_anonymous
+  children:
+  - class: Spaces
+    attributes:
+      count: 1
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      label: reference
+      type: simple_href
+  - class: PlainText
+    attributes:
+      text: "\n__ "
+  - class: Reference
+    attributes:
+      label: reference
+      type: simple_href
+  - class: PlainText
+    attributes:
+      text: "\nno blank line\n"
