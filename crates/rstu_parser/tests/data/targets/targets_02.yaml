@@ -12,98 +12,34 @@ children:
     label: one-liner
     label_raw: one-liner
   children:
-  - class: Paragraph
-    children:
-    - class: PlainText
-      attributes:
-        text: " "
-    - class: Reference
-      attributes:
-        refuri: http://structuredtext.sourceforge.net
-      children:
-      - class: PlainText
-        attributes:
-          text: http://structuredtext.sourceforge.net
-    - class: PlainText
-      attributes:
-        text: "\n"
+  - class: PlainText
+    attributes:
+      text: " "
+  - class: Reference
+    attributes:
+      label: "\n"
 - class: BlankLine
 - class: Target
   attributes:
     label: starts-on-this-line
     label_raw: starts-on-this-line
   children:
-  - class: Paragraph
+  - class: PlainText
+    attributes:
+      text: " "
+  - class: Reference
     attributes:
       hanging_indent: 25
-    children:
-    - class: PlainText
-      attributes:
-        text: " "
-    - class: Reference
-      attributes:
-        refuri: http://
-      children:
-      - class: PlainText
-        attributes:
-          text: http://
-    - class: PlainText
-      attributes:
-        text: "\nstructuredtext.\nsourceforge.net\n"
+      label: "\nstructuredtext.\nsourceforge.net\n"
 - class: BlankLine
 - class: Target
   attributes:
     label: entirely-below
     label_raw: entirely-below
   children:
-  - class: Paragraph
+  - class: PlainText
     attributes:
-      hanging_indent: 3
-    children:
-    - class: PlainText
-      attributes:
-        text: "\n"
-    - class: Reference
-      attributes:
-        refuri: http://structuredtext
-      children:
-      - class: PlainText
-        attributes:
-          text: http://structuredtext
-    - class: PlainText
-      attributes:
-        text: ".\nsourceforge.net\n"
-- class: BlankLine
-- class: Target
-  attributes:
-    label: escaped-whitespace
-    label_raw: escaped-whitespace
-  children:
-  - class: Paragraph
+      text: "\n"
+  - class: Reference
     attributes:
-      hanging_indent: 3
-    children:
-    - class: PlainText
-      attributes:
-        text: " "
-    - class: Reference
-      attributes:
-        refuri: http://example.org/a
-      children:
-      - class: PlainText
-        attributes:
-          text: http://example.org/a
-    - class: PlainText
-      attributes:
-        text: "\\ path\\ with\\\nspaces.html\n"
-- class: BlankLine
-- class: Target
-  attributes:
-    label: not-indirect
-    label_raw: not-indirect
-  children:
-  - class: Paragraph
-    children:
-    - class: PlainText
-      attributes:
-        text: " uri\\_\n"
+      label: "http://structuredtext.\nsourceforge.net\n"

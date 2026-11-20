@@ -70,6 +70,7 @@ children:
           - class: Reference
             attributes:
               label: link
+              markup: inline
               type: href
           - class: PlainText
             attributes:

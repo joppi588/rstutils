@@ -91,7 +91,7 @@ pub(crate) fn parse_reference_token(stream: &mut TokenStream) -> Result<NodeRef,
 }
 
 pub(crate) fn parse_reference_expression(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
-    stream.consume();
+    stream.consume(); // TODO: This eats the http
     let text = &stream.consume_text_until(
         &[
             &[
@@ -103,11 +103,13 @@ pub(crate) fn parse_reference_expression(stream: &mut TokenStream) -> Result<Nod
         .concat(),
     );
     let node = AstNode::new_ref(NodeClass::Reference);
-    match &stream.consume().kind {
+    match &stream.token_at_cursor().kind {
         TK::AnonymousHyperlinkReferenceEnd => {
+            stream.consume();
             node.with_attr("type", "ahref");
         }
         TK::HyperlinkReferenceEnd => {
+            stream.consume();
             node.with_attr("type", "href");
         }
         kind if kind.is(TC::PARAGRAPH_END) => {}
