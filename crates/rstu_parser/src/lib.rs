@@ -91,7 +91,8 @@ fn parse_body_element(
             (
                 TK::HyperlinkTarget
                 | TK::HyperlinkTargetAnonymous
-                | TK::HyperlinkTargetAnonymousShort,
+                | TK::HyperlinkTargetAnonymousShort
+                | TK::HyperlinkTargetQuote,
                 _,
             ) => {
                 let target = parse_hyperlink_target(stream)?;
