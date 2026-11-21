@@ -1,0 +1,104 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Mixed anonymous & named indirect hyperlink targets:\n"
+- class: BlankLine
+- class: Target
+  attributes:
+    markup: standalone_anonymous_short
+  children:
+  - class: Reference
+    attributes:
+      label: reference
+      type: simple_href
+- class: Target
+  attributes:
+    markup: standalone_anonymous
+  children:
+  - class: Spaces
+    attributes:
+      count: 1
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      label: reference
+      type: simple_href
+  - class: PlainText
+    attributes:
+      text: "\n__ "
+  - class: Reference
+    attributes:
+      label: reference
+      type: simple_href
+  - class: PlainText
+    attributes:
+      text: "\n"
+- class: Target
+  attributes:
+    label: target1
+    label_raw: target1
+  children:
+  - class: Spaces
+    attributes:
+      count: 1
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      label: reference
+      type: simple_href
+  - class: PlainText
+    attributes:
+      text: "\nno blank line\n"
+- class: BlankLine
+- class: Target
+  attributes:
+    label: target2
+    label_raw: target2
+  children:
+  - class: Spaces
+    attributes:
+      count: 1
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      label: reference
+      type: simple_href
+  - class: PlainText
+    attributes:
+      text: "\n__ "
+  - class: Reference
+    attributes:
+      label: reference
+      type: simple_href
+  - class: PlainText
+    attributes:
+      text: "\n"
+- class: Target
+  attributes:
+    markup: standalone_anonymous
+  children:
+  - class: Spaces
+    attributes:
+      count: 1
+- class: Paragraph
+  children:
+  - class: Reference
+    attributes:
+      label: reference
+      type: simple_href
+  - class: PlainText
+    attributes:
+      text: "\n__ "
+  - class: Reference
+    attributes:
+      label: reference
+      type: simple_href
+  - class: PlainText
+    attributes:
+      text: "\nno blank line\n"

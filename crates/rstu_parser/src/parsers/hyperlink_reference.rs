@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 use crate::parser_errors::ParserError;
-use crate::token::TokenKind as TK;
+use crate::token::{TokenCategory as TC, TokenKind as TK};
 use crate::token_stream::TokenStream;
 use regex::{Captures, Regex};
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
@@ -19,7 +19,7 @@ static REFERENCE_ESCAPE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\\(?s:(
 static URI_NORMALIZATION: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"\\(?P<escaped>(?s:.))|\\$|\s").unwrap());
 
-fn normalize_reference_name(reference: &str) -> String {
+pub(crate) fn normalize_reference_name(reference: &str) -> String {
     REFERENCE_ESCAPE
         .replace_all(reference, "$1")
         .split_whitespace()
@@ -42,15 +42,29 @@ fn normalize_uri(uri: &str) -> String {
 }
 
 pub(crate) fn parse_hyperlink_reference(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
-    stream.consume();
-    let text = &stream.consume_text_until(&[
-        TK::AnonymousHyperlinkReferenceEnd,
-        TK::HyperlinkReferenceEnd,
-    ]);
+    debug_assert_eq!(stream.token_at_cursor().kind, TK::BackquoteStart);
+    stream.consume(); // consume backquote
+    let text = &stream.consume_text_until(
+        &[
+            &[
+                TK::AnonymousHyperlinkReferenceEnd,
+                TK::HyperlinkReferenceEnd,
+            ],
+            TC::PARAGRAPH_END,
+        ]
+        .concat(),
+    );
     let node = AstNode::new_ref(NodeClass::Reference);
-    match &stream.consume().kind {
-        TK::AnonymousHyperlinkReferenceEnd => node.with_attr("type", "ahref"),
-        TK::HyperlinkReferenceEnd => node.with_attr("type", "href"),
+    match &stream.token_at_cursor().kind {
+        TK::AnonymousHyperlinkReferenceEnd => {
+            stream.consume();
+            node.with_attr("type", "ahref");
+        }
+        TK::HyperlinkReferenceEnd => {
+            stream.consume();
+            node.with_attr("type", "href");
+        }
+        kind if kind.is(TC::PARAGRAPH_END) => {}
         _ => unreachable!(),
     };
     let captures = EMBEDDED_REF

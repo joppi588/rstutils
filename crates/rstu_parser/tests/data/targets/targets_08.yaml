@@ -1,0 +1,13 @@
+class: Document
+children:
+- class: Target
+  attributes:
+    label: email
+    refuri: mailto:jdoe@example.com
+    target_type: explicit
+- class: BlankLine
+- class: Target
+  attributes:
+    label: multi-line email
+    refuri: mailto:jdoe@example.com
+    target_type: explicit

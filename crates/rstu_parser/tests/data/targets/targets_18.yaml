@@ -1,0 +1,49 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Duplicate explicit/directive targets.\n"
+- class: BlankLine
+- class: Target
+  attributes:
+    label: title
+    target_type: explicit
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "First.\n"
+- class: BlankLine
+- class: Directive
+  attributes:
+    directive_arguments: this is a title too
+    directive_type: rubric
+  children:
+  - class: Block
+    attributes:
+      indent: 3
+    children:
+    - class: FieldList
+      children:
+      - class: FieldListItem
+        attributes:
+          fieldname: name
+        children:
+        - class: Block
+          attributes:
+            indent: 7
+          children:
+          - class: Paragraph
+            children:
+            - class: PlainText
+              attributes:
+                text: "title\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "The system message is left dangling\n(to be handled by the \"universal.Messages\" transform).\n"

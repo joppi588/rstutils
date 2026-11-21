@@ -5,9 +5,12 @@
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use crate::parser_errors::ParserError;
+use crate::parsers::hyperlink_reference::{normalize_reference_name, parse_hyperlink_reference};
+use crate::parsers::inline_markup::parse_inline_reference;
 use crate::token::TokenCategory as TC;
 use crate::token::TokenKind as TK;
 use crate::token_stream::TokenStream;
+use crate::with_hanging_indent;
 
 pub(crate) fn parse_inline_target(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert!(stream.token_at_cursor().kind == TK::InlineInternalTargetStart);
@@ -17,8 +20,8 @@ pub(crate) fn parse_inline_target(stream: &mut TokenStream) -> Result<NodeRef, P
 
     let text = stream.consume_text_until(&[&[TK::BackquoteEnd], TC::PARAGRAPH_END].concat());
     if stream.token_at_cursor().kind != TK::BackquoteEnd {
-        return Err(ParserError::InlineMissingClosing {
-            markup: "target".to_owned(),
+        return Err(ParserError::TargetMissingClosing {
+            markup: "inline".to_owned(),
             position,
         });
     }
@@ -26,5 +29,84 @@ pub(crate) fn parse_inline_target(stream: &mut TokenStream) -> Result<NodeRef, P
     let target = AstNode::new_ref(NodeClass::Target)
         .with_attr("markup", "inline")
         .with_attr("refname", text);
+    Ok(target)
+}
+
+pub(crate) fn parse_hyperlink_target(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    let marker = stream.consume();
+    debug_assert!(matches!(
+        marker.kind,
+        TK::HyperlinkTarget
+            | TK::HyperlinkTargetAnonymous
+            | TK::HyperlinkTargetAnonymousShort
+            | TK::HyperlinkTargetQuote
+    ));
+
+    let target = AstNode::new_ref(NodeClass::Target);
+    match marker.kind {
+        TK::HyperlinkTargetAnonymous => {
+            target.with_attr("markup", "standalone_anonymous");
+        }
+        TK::HyperlinkTargetAnonymousShort => {
+            target.with_attr("markup", "standalone_anonymous_short");
+        }
+        TK::HyperlinkTarget => {
+            let refname = marker
+                .lexeme
+                .strip_prefix(".. _")
+                .and_then(|refname| refname.strip_suffix(':'))
+                .expect("There is a refname.");
+            target
+                .with_attr("label", normalize_reference_name(&refname))
+                .with_attr("label_raw", refname);
+        }
+        TK::HyperlinkTargetQuote => {
+            let position = stream.position_at_cursor();
+            stream.consume(); // HyperlinkTargetQuote token
+            let refname =
+                stream.consume_text_until(&[&[TK::BackquoteEnd], TC::PARAGRAPH_END].concat());
+            if stream.consume().kind != TK::BackquoteEnd {
+                return Err(ParserError::TargetMissingClosing {
+                    markup: "reference".to_owned(),
+                    position,
+                });
+            }
+            target
+                .with_attr("label", normalize_reference_name(&refname))
+                .with_attr("rlabel_raw", refname);
+        }
+        _ => unreachable!(),
+    }
+    if stream.token_at_cursor().kind == TK::Spaces {
+        target.push_spaces(stream.consume().len());
+    }
+    match (
+        stream.token_at_cursor().kind,
+        stream.token_at_nextline().kind,
+    ) {
+        (TK::NewLine, TK::Indent) => {
+            target.push_child(
+                AstNode::new_ref(NodeClass::PlainText).with_attr("text", stream.consume().lexeme),
+            );
+            let link_block = with_hanging_indent(stream, parse_hyperlink_reference)?;
+            target.push_child(link_block);
+        }
+        (_, TK::Indent) => {
+            let link_block = with_hanging_indent(stream, parse_hyperlink_reference)?;
+            target.push_child(link_block);
+        }
+        (TK::NewLine, kind) if kind.is(TC::PARAGRAPH_END) => {
+            stream.consume();
+        }
+        (kind1, kind2) if kind1.is(TC::INLINE_REFERENCE) && kind2.is(TC::PARAGRAPH_END) => {
+            target.push_child(parse_inline_reference(stream)?);
+            stream.consume_newline();
+        }
+        (TK::BackquoteStart, kind2) if kind2.is(TC::PARAGRAPH_END) => {
+            target.push_child(parse_hyperlink_reference(stream)?);
+            stream.consume_newline();
+        }
+        _ => {} // TODO: Err
+    }
     Ok(target)
 }
