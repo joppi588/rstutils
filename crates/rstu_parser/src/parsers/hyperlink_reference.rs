@@ -42,7 +42,8 @@ fn normalize_uri(uri: &str) -> String {
 }
 
 pub(crate) fn parse_hyperlink_reference(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
-    stream.consume(); // TODO: This eats the http
+    debug_assert_eq!(stream.token_at_cursor().kind, TK::BackquoteStart);
+    stream.consume(); // consume backquote
     let text = &stream.consume_text_until(
         &[
             &[
