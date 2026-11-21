@@ -4,35 +4,35 @@ children:
   children:
   - class: Target
     attributes:
-      label: "'target1'"
+      refname: "'target1'"
       markup: inline
   - class: PlainText
     attributes:
       text: " with quotes, "
   - class: Target
     attributes:
-      label: "\"target2\""
+      refname: "\"target2\""
       markup: inline
   - class: PlainText
     attributes:
       text: " with quotes,\n"
   - class: Target
     attributes:
-      label: ‘target3’
+      refname: ‘target3’
       markup: inline
   - class: PlainText
     attributes:
       text: " with quotes, "
   - class: Target
     attributes:
-      label: “target4”
+      refname: “target4”
       markup: inline
   - class: PlainText
     attributes:
       text: " with quotes,\n"
   - class: Target
     attributes:
-      label: «target5»
+      refname: «target5»
       markup: inline
   - class: PlainText
     attributes:
