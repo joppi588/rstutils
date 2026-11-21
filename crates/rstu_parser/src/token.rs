@@ -351,6 +351,7 @@ pub enum TokenKind {
     FootnoteReference,
     HyperlinkReferenceEnd,
     HyperlinkTarget,
+    HyperlinkTargetQuote,
     Indent,
     InlineInternalTargetStart,
     InlineLiteralEnd,
@@ -392,7 +393,8 @@ impl TokenKind {
         (BlankLine, r"\n[ \t]*\n+(.|\n)"),
         (NewLine, r"[^\n]\n(.|\n)"),
 
-        (HyperlinkTarget, r"(.|\n)\.\. _(?:`[^`]+`|[^\s_:\n](?:\\.|[^:])*)[ \t]*:(.|\n)"),
+        (HyperlinkTargetQuote,r"(.|\n)\.\. _`[^\s]"),
+        (HyperlinkTarget, r"(.|\n)\.\. _(?:[^\s_:\n](?:\\.|[^:])*)[ \t]*:(.|\n)"),
         (HyperlinkTargetAnonymous, r"(.|\n)\.\. __:(.|\n)"),
         (HyperlinkTargetAnonymousShort, r"(.|\n)__ (.|\n)"),
         (Directive, format!(r"[\n\s]\.\.\s(?:\|{0}\|\s)?[\p{{L}}\p{{N}}]+(?:[-_+:.][\p{{L}}\p{{N}}]+)*::\s", SUBSTITUTION_NAME)),

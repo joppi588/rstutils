@@ -21,7 +21,7 @@ pub(crate) fn parse_inline_target(stream: &mut TokenStream) -> Result<NodeRef, P
     let text = stream.consume_text_until(&[&[TK::BackquoteEnd], TC::PARAGRAPH_END].concat());
     if stream.token_at_cursor().kind != TK::BackquoteEnd {
         return Err(ParserError::TargetMissingClosing {
-            markup: "target".to_owned(),
+            markup: "inline".to_owned(),
             position,
         });
     }
@@ -36,7 +36,10 @@ pub(crate) fn parse_hyperlink_target(stream: &mut TokenStream) -> Result<NodeRef
     let marker = stream.consume();
     debug_assert!(matches!(
         marker.kind,
-        TK::HyperlinkTarget | TK::HyperlinkTargetAnonymous | TK::HyperlinkTargetAnonymousShort
+        TK::HyperlinkTarget
+            | TK::HyperlinkTargetAnonymous
+            | TK::HyperlinkTargetAnonymousShort
+            | TK::HyperlinkTargetQuote
     ));
 
     let target = AstNode::new_ref(NodeClass::Target);
@@ -47,19 +50,32 @@ pub(crate) fn parse_hyperlink_target(stream: &mut TokenStream) -> Result<NodeRef
         TK::HyperlinkTargetAnonymousShort => {
             target.with_attr("markup", "standalone_anonymous_short");
         }
-        _ => {
+        TK::HyperlinkTarget => {
             let refname = marker
                 .lexeme
                 .strip_prefix(".. _")
                 .and_then(|refname| refname.strip_suffix(':'))
                 .expect("There is a refname.");
             target
-                .with_attr(
-                    "refname",
-                    normalize_reference_name(refname.trim().trim_matches('`')),
-                )
-                .with_attr("refname_raw", refname);
+                .with_attr("label", normalize_reference_name(&refname))
+                .with_attr("label_raw", refname);
         }
+        TK::HyperlinkTargetQuote => {
+            let position = stream.position_at_cursor();
+            stream.consume(); // HyperlinkTargetQuote token
+            let refname =
+                stream.consume_text_until(&[&[TK::BackquoteEnd], TC::PARAGRAPH_END].concat());
+            if stream.consume().kind != TK::BackquoteEnd {
+                return Err(ParserError::TargetMissingClosing {
+                    markup: "reference".to_owned(),
+                    position,
+                });
+            }
+            target
+                .with_attr("label", normalize_reference_name(&refname))
+                .with_attr("rlabel_raw", refname);
+        }
+        _ => unreachable!(),
     }
     if stream.token_at_cursor().kind == TK::Spaces {
         target.push_spaces(stream.consume().len());
