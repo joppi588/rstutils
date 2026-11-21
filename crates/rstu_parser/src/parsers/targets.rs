@@ -48,17 +48,17 @@ pub(crate) fn parse_hyperlink_target(stream: &mut TokenStream) -> Result<NodeRef
             target.with_attr("markup", "standalone_anonymous_short");
         }
         _ => {
-            let label = marker
+            let refname = marker
                 .lexeme
                 .strip_prefix(".. _")
-                .and_then(|label| label.strip_suffix(':'))
-                .expect("There is a label.");
+                .and_then(|refname| refname.strip_suffix(':'))
+                .expect("There is a refname.");
             target
                 .with_attr(
-                    "label",
-                    normalize_reference_name(label.trim().trim_matches('`')),
+                    "refname",
+                    normalize_reference_name(refname.trim().trim_matches('`')),
                 )
-                .with_attr("label_raw", label);
+                .with_attr("refname_raw", refname);
         }
     }
     if stream.token_at_cursor().kind == TK::Spaces {

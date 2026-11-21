@@ -91,7 +91,8 @@ pub(crate) fn parse_reference_token(stream: &mut TokenStream) -> Result<NodeRef,
 }
 
 pub(crate) fn parse_reference_expression(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
-    stream.consume(); // TODO: This eats the http
+    debug_assert_eq!(stream.token_at_cursor().kind, TK::BackquoteStart);
+    stream.consume(); // consume backquote
     let text = &stream.consume_text_until(
         &[
             &[
