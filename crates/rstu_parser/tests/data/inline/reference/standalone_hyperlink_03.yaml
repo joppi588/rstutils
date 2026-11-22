@@ -15,4 +15,4 @@ children:
       refuri_raw: http://example.org/ends-with-pluses++
   - class: PlainText
     attributes:
-      text: |+
+      text: "\n"

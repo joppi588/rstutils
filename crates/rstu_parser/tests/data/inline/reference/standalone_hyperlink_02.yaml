@@ -1,22 +1,21 @@
 class: Document
 children:
-- class: Paragraph
-  children:
-  - class: PlainText
-    attributes:
-      text: |
-        Valid URLs may end with punctuation inside "<>":
-- class: BlankLine
-- class: Paragraph
-  children:
-  - class: PlainText
-    attributes:
-      text: <
-  - class: Reference
-    attributes:
-      refuri: http://example.org/ends-with-dot.
-      refuri_raw: http://example.org/ends-with-dot.
-  - class: PlainText
-    attributes:
-      text: |
-        >
+  - class: Paragraph
+    children:
+      - class: PlainText
+        attributes:
+          text: |
+            Valid URLs may end with punctuation inside "<>":
+  - class: BlankLine
+  - class: Paragraph
+    children:
+      - class: PlainText
+        attributes:
+          text: <
+      - class: Reference
+        attributes:
+          refuri: http://example.org/ends-with-dot.
+          refuri_raw: http://example.org/ends-with-dot.
+      - class: PlainText
+        attributes:
+          text: ">\n"
