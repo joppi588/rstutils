@@ -10,23 +10,20 @@ children:
 - class: Target
   attributes:
     label: one-liner
-    label_raw: one-liner
+    raw: one-liner
   children:
   - class: Spaces
     attributes:
       count: 1
   - class: Reference
     attributes:
+      raw: http://structuredtext.sourceforge.net
       refuri: http://structuredtext.sourceforge.net
-    children:
-    - class: PlainText
-      attributes:
-        text: http://structuredtext.sourceforge.net
 - class: BlankLine
 - class: Target
   attributes:
     label: starts-on-this-line
-    label_raw: starts-on-this-line
+    raw: starts-on-this-line
   children:
   - class: Spaces
     attributes:
@@ -40,7 +37,7 @@ children:
 - class: Target
   attributes:
     label: entirely-below
-    label_raw: entirely-below
+    raw: entirely-below
   children:
   - class: Reference
     attributes:
@@ -51,7 +48,7 @@ children:
 - class: Target
   attributes:
     label: escaped-whitespace
-    label_raw: escaped-whitespace
+    raw: escaped-whitespace
   children:
   - class: Spaces
     attributes:
@@ -65,15 +62,12 @@ children:
 - class: Target
   attributes:
     label: not-indirect
-    label_raw: not-indirect
+    raw: not-indirect
   children:
   - class: Spaces
     attributes:
       count: 1
   - class: Reference
     attributes:
+      raw: http://uri\_
       refuri: http://uri_
-    children:
-    - class: PlainText
-      attributes:
-        text: http://uri_

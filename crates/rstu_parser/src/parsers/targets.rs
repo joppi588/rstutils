@@ -60,7 +60,7 @@ pub(crate) fn parse_hyperlink_target(stream: &mut TokenStream) -> Result<NodeRef
                 .expect("There is a refname.");
             target
                 .with_attr("label", normalize_reference_name(&refname))
-                .with_attr("label_raw", refname);
+                .with_attr("raw", refname);
         }
         TK::HyperlinkTargetQuote => {
             let position = stream.position_at_cursor();
@@ -78,7 +78,7 @@ pub(crate) fn parse_hyperlink_target(stream: &mut TokenStream) -> Result<NodeRef
             }
             target
                 .with_attr("label", normalize_reference_name(&refname))
-                .with_attr("label_raw", refname);
+                .with_attr("raw", refname);
         }
         _ => unreachable!(),
     }

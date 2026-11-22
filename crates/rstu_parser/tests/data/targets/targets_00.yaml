@@ -3,7 +3,7 @@ children:
 - class: Target
   attributes:
     label: target
-    label_raw: target
+    raw: target
 - class: BlankLine
 - class: Paragraph
   children:
