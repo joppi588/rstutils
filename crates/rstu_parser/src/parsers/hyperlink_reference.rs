@@ -79,16 +79,11 @@ pub(crate) fn parse_reference_token(stream: &mut TokenStream) -> Result<NodeRef,
         }
         TK::Uri => {
             let uri = lexeme.replace("\\*", "*").replace("\\_", "_");
-            node.with_attr("refuri", uri.as_str());
-            let text = AstNode::new_ref(NodeClass::PlainText);
-            text.with_attr("text", uri);
-            node.push_child(text);
+            node.with_attr("refuri", uri.as_str())
+                .with_attr("refuri_raw", lexeme.as_str());
         }
         TK::Email => {
             node.with_attr("refuri", format!("mailto:{lexeme}"));
-            let text = AstNode::new_ref(NodeClass::PlainText);
-            text.with_attr("text", lexeme.as_str());
-            node.push_child(text);
         }
         _ => unreachable!(),
     };

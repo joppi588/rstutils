@@ -4,7 +4,8 @@ children:
   children:
   - class: PlainText
     attributes:
-      text: "Valid URLs may end with punctuation inside \"<>\":\n"
+      text: |
+        Valid URLs may end with punctuation inside "<>":
 - class: BlankLine
 - class: Paragraph
   children:
@@ -14,10 +15,8 @@ children:
   - class: Reference
     attributes:
       refuri: http://example.org/ends-with-dot.
-    children:
-    - class: PlainText
-      attributes:
-        text: http://example.org/ends-with-dot.
+      refuri_raw: http://example.org/ends-with-dot.
   - class: PlainText
     attributes:
-      text: ">\n"
+      text: |
+        >

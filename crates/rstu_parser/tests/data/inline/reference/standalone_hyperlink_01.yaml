@@ -5,30 +5,26 @@ children:
   children:
   - class: PlainText
     attributes:
-      text: "Valid URLs with escaped markup characters:\n"
+      text: |
+        Valid URLs with escaped markup characters:
 - class: BlankLine
 - class: Paragraph
   children:
   - class: Reference
     attributes:
       refuri: http://example.com/*content*/whatever
-    children:
-    - class: PlainText
-      attributes:
-        text: http://example.com/*content*/whatever
+      refuri_raw: http://example.com/\*content\*/whatever
   - class: PlainText
     attributes:
-      text: "\n"
+      text: |+
+
 - class: BlankLine
 - class: Paragraph
   children:
   - class: Reference
     attributes:
       refuri: http://example.com/*content*/whatever
-    children:
-    - class: PlainText
-      attributes:
-        text: http://example.com/*content*/whatever
+      refuri_raw: http://example.com/\*content*/whatever
   - class: PlainText
     attributes:
-      text: "\n"
+      text: |+
