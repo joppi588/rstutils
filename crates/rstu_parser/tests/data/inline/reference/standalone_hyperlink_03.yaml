@@ -4,17 +4,15 @@ children:
   children:
   - class: PlainText
     attributes:
-      text: "Valid URLs with interesting endings:\n"
+      text: |
+        Valid URLs with interesting endings:
 - class: BlankLine
 - class: Paragraph
   children:
   - class: Reference
     attributes:
       refuri: http://example.org/ends-with-pluses++
-    children:
-    - class: PlainText
-      attributes:
-        text: http://example.org/ends-with-pluses++
+      raw: http://example.org/ends-with-pluses++
   - class: PlainText
     attributes:
       text: "\n"

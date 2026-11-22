@@ -15,13 +15,11 @@ children:
         - class: Reference
           attributes:
             refuri: http://waste.paper.com/bin2/shreddered
-          children:
-          - class: PlainText
-            attributes:
-              text: http://waste.paper.com/bin2/shreddered
+            raw: http://waste.paper.com/bin2/shreddered
         - class: PlainText
           attributes:
-            text: "\n"
+            text: |+
+
   - class: FieldListItem
     attributes:
       fieldname: script
@@ -34,7 +32,8 @@ children:
         children:
         - class: PlainText
           attributes:
-            text: "tests/python_script.py\n"
+            text: |
+              tests/python_script.py
   - class: FieldListItem
     attributes:
       fieldname: code_reference
@@ -47,7 +46,8 @@ children:
         children:
         - class: PlainText
           attributes:
-            text: "test_python_script::Line1\n"
+            text: |
+              test_python_script::Line1
   - class: FieldListItem
     attributes:
       fieldname: json
@@ -60,4 +60,5 @@ children:
         children:
         - class: PlainText
           attributes:
-            text: "{test: [name],test_data: [tests/data/file1.dat,tests/data_file2.dat]}\n"
+            text: |
+              {test: [name],test_data: [tests/data/file1.dat,tests/data_file2.dat]}
