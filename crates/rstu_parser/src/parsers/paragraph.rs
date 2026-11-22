@@ -4,9 +4,8 @@
 
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
-use super::inline_markup::{
-    parse_inline_markup, parse_inline_reference, parse_interpreted_or_ref, parse_prefix_role,
-};
+use super::hyperlink_reference::parse_reference_token;
+use super::inline_markup::{parse_inline_markup, parse_interpreted_or_ref, parse_prefix_role};
 use super::targets::parse_inline_target;
 
 use crate::parser_errors::ParserError;
@@ -20,7 +19,7 @@ pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, Parse
         let node = match kind {
             TK::RolePrefix => parse_prefix_role(stream)?,
             kind if kind.is(TC::INLINE_MARKUP) => parse_inline_markup(stream)?,
-            kind if kind.is(TC::INLINE_REFERENCE) => parse_inline_reference(stream)?,
+            kind if kind.is(TC::INLINE_REFERENCE) => parse_reference_token(stream)?,
             TK::InlineInternalTargetStart => parse_inline_target(stream)?,
             TK::BackquoteStart => parse_interpreted_or_ref(stream)?,
             kind if kind.is(TC::PARAGRAPH_END) => break,
