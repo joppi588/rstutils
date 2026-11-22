@@ -2,64 +2,10 @@
 //
 // SPDX-License-Identifier: MIT
 use crate::parser_errors::ParserError;
-use crate::parsers::hyperlink_reference::parse_hyperlink_reference;
+use crate::parsers::hyperlink_reference::parse_reference_expression;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
 use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
-
-pub(crate) fn parse_inline_reference(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
-    debug_assert!(stream.token_at_cursor().kind.is(TC::INLINE_REFERENCE));
-
-    let node = AstNode::new_ref(NodeClass::Reference);
-    let token = stream.consume();
-    let kind = token.kind;
-    let lexeme = &token.lexeme;
-    match kind {
-        TK::CitationReference => {
-            node.with_attr("label", &lexeme[1..lexeme.len() - 2])
-                .with_attr("type", "citation");
-        }
-        TK::FootnoteReference => {
-            node.with_attr("label", &lexeme[1..lexeme.len() - 2])
-                .with_attr("type", "footnote");
-        }
-        TK::SubstitutionReference => {
-            node.with_attr("label", &lexeme[1..lexeme.len() - 1])
-                .with_attr("type", "sub_ref");
-        }
-        TK::SubRefHyperlink => {
-            node.with_attr("label", &lexeme[1..lexeme.len() - 2])
-                .with_attr("type", "sub_href");
-        }
-        TK::SubRefAnonymousHyperlink => {
-            node.with_attr("label", &lexeme[1..lexeme.len() - 3])
-                .with_attr("type", "sub_ahref");
-        }
-        TK::SimpleHyperlinkReference => {
-            node.with_attr("label", &lexeme[0..lexeme.len() - 1])
-                .with_attr("type", "simple_ref");
-        }
-        TK::SimpleAnonymousHyperLinkReference => {
-            node.with_attr("label", &lexeme[0..lexeme.len() - 2])
-                .with_attr("type", "simple_anonymous_ref");
-        }
-        TK::Uri => {
-            let uri = lexeme.replace("\\*", "*").replace("\\_", "_");
-            node.with_attr("refuri", uri.as_str());
-            let text = AstNode::new_ref(NodeClass::PlainText);
-            text.with_attr("text", uri);
-            node.push_child(text);
-        }
-        TK::Email => {
-            node.with_attr("refuri", format!("mailto:{lexeme}"));
-            let text = AstNode::new_ref(NodeClass::PlainText);
-            text.with_attr("text", lexeme.as_str());
-            node.push_child(text);
-        }
-        _ => unreachable!(),
-    };
-    Ok(node)
-}
 
 pub(crate) fn parse_interpreted_or_ref(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert!(stream.token_at_cursor().kind == TK::BackquoteStart);
@@ -73,7 +19,7 @@ pub(crate) fn parse_interpreted_or_ref(stream: &mut TokenStream) -> Result<NodeR
 
     let node = match end_kind {
         TK::AnonymousHyperlinkReferenceEnd | TK::HyperlinkReferenceEnd => {
-            parse_hyperlink_reference(stream)?.with_attr("markup", "inline")
+            parse_reference_expression(stream)?.with_attr("markup", "inline")
         }
         TK::BackquoteEnd => {
             stream.consume(); // Starting Backquote
