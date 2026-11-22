@@ -15,7 +15,7 @@ children:
         - class: Reference
           attributes:
             refuri: http://waste.paper.com/bin2/shreddered
-            refuri_raw: http://waste.paper.com/bin2/shreddered
+            raw: http://waste.paper.com/bin2/shreddered
         - class: PlainText
           attributes:
             text: |+

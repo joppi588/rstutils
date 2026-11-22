@@ -5,7 +5,7 @@ children:
   - class: Reference
     attributes:
       refuri: http://www.standalone.hyperlink.com
-      refuri_raw: http://www.standalone.hyperlink.com
+      raw: http://www.standalone.hyperlink.com
   - class: PlainText
     attributes:
       text: |+
@@ -16,7 +16,7 @@ children:
   - class: Reference
     attributes:
       refuri: http:/one-slash-only.absolute.path
-      refuri_raw: http:/one-slash-only.absolute.path
+      raw: http:/one-slash-only.absolute.path
   - class: PlainText
     attributes:
       text: |+
@@ -30,7 +30,7 @@ children:
   - class: Reference
     attributes:
       refuri: http://example.com
-      refuri_raw: http://example.com
+      raw: http://example.com
   - class: PlainText
     attributes:
       text: |
@@ -44,7 +44,7 @@ children:
   - class: Reference
     attributes:
       refuri: http://example.com
-      refuri_raw: http://example.com
+      raw: http://example.com
   - class: PlainText
     attributes:
       text: |
@@ -58,7 +58,7 @@ children:
   - class: Reference
     attributes:
       refuri: http://example.com
-      refuri_raw: http://example.com
+      raw: http://example.com
   - class: PlainText
     attributes:
       text: |
@@ -69,7 +69,7 @@ children:
   - class: Reference
     attributes:
       refuri: http://[1080:0:0:0:8:800:200C:417A]/IPv6address.html
-      refuri_raw: http://[1080:0:0:0:8:800:200C:417A]/IPv6address.html
+      raw: http://[1080:0:0:0:8:800:200C:417A]/IPv6address.html
   - class: PlainText
     attributes:
       text: |+
@@ -80,7 +80,7 @@ children:
   - class: Reference
     attributes:
       refuri: http://[3ffe:2a00:100:7031::1
-      refuri_raw: http://[3ffe:2a00:100:7031::1
+      raw: http://[3ffe:2a00:100:7031::1
   - class: PlainText
     attributes:
       text: |
@@ -91,7 +91,7 @@ children:
   - class: Reference
     attributes:
       refuri: http://[3ffe:2a00:100:7031::1]/
-      refuri_raw: http://[3ffe:2a00:100:7031::1]/
+      raw: http://[3ffe:2a00:100:7031::1]/
   - class: PlainText
     attributes:
       text: |+
@@ -102,7 +102,7 @@ children:
   - class: Reference
     attributes:
       refuri: mailto:someone@somewhere.com
-      refuri_raw: mailto:someone@somewhere.com
+      raw: mailto:someone@somewhere.com
   - class: PlainText
     attributes:
       text: |+
@@ -113,7 +113,7 @@ children:
   - class: Reference
     attributes:
       refuri: news:comp.lang.python
-      refuri_raw: news:comp.lang.python
+      raw: news:comp.lang.python
   - class: PlainText
     attributes:
       text: |+
@@ -137,7 +137,7 @@ children:
   - class: Reference
     attributes:
       refuri: ftp://ends.with.a.period
-      refuri_raw: ftp://ends.with.a.period
+      raw: ftp://ends.with.a.period
   - class: PlainText
     attributes:
       text: |

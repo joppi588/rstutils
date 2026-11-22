@@ -80,7 +80,7 @@ pub(crate) fn parse_reference_token(stream: &mut TokenStream) -> Result<NodeRef,
         TK::Uri => {
             let uri = lexeme.replace("\\*", "*").replace("\\_", "_");
             node.with_attr("refuri", uri.as_str())
-                .with_attr("refuri_raw", lexeme.as_str());
+                .with_attr("raw", lexeme.as_str());
         }
         TK::Email => {
             node.with_attr("refuri", format!("mailto:{lexeme}"));

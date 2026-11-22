@@ -15,7 +15,7 @@ children:
       - class: Reference
         attributes:
           refuri: http://example.org/ends-with-dot.
-          refuri_raw: http://example.org/ends-with-dot.
+          raw: http://example.org/ends-with-dot.
       - class: PlainText
         attributes:
           text: ">\n"

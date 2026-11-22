@@ -13,7 +13,7 @@ children:
       - class: Reference
         attributes:
           refuri: http://example.com/*content*/whatever
-          refuri_raw: http://example.com/\*content\*/whatever
+          raw: http://example.com/\*content\*/whatever
       - class: PlainText
         attributes:
           text: |+
@@ -24,7 +24,7 @@ children:
       - class: Reference
         attributes:
           refuri: http://example.com/*content*/whatever
-          refuri_raw: http://example.com/\*content*/whatever
+          raw: http://example.com/\*content*/whatever
       - class: PlainText
         attributes:
           text: "\n"

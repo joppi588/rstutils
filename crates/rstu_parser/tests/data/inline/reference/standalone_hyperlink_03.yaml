@@ -12,7 +12,7 @@ children:
   - class: Reference
     attributes:
       refuri: http://example.org/ends-with-pluses++
-      refuri_raw: http://example.org/ends-with-pluses++
+      raw: http://example.org/ends-with-pluses++
   - class: PlainText
     attributes:
       text: "\n"
