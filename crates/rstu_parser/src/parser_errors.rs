@@ -70,6 +70,9 @@ pub enum ParserError {
         markup: String,
         position: Position,
     },
+    TargetHyperlinkMalformed {
+        position: Position,
+    },
     UnexpectedIndentError {
         position: Position,
     },
@@ -169,7 +172,11 @@ impl std::fmt::Display for ParserError {
             } => write!(
                 formatter,
                 "{position}: Target ({markup}) is not closed."
-            ),            Self::UnexpectedIndentError { position } => {
+            ),
+            Self::TargetHyperlinkMalformed { position } => {
+                write!(formatter, "{position}: Malformed hyperlink target.")
+            }
+            Self::UnexpectedIndentError { position } => {
                 write!(formatter, "{position}: Unexpected indentation")
             }
             Self::UnexpectedToken {

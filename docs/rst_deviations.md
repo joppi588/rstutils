@@ -37,6 +37,8 @@ All of these are believed to be non-critical. A few might be considered bug fixe
   * Substitution definitions without closing | are treated as ordinary paragraph and will not  cause an error.
   * All backquotes in interpreted text must be escaped (see interpreted/basics_03a,03b)
   * Escaped whitespace is treated as whitespace and not removed: e.g. inline_markup/embedded_aliases_07.rst
+- targets:
+  * Multi-line hyperlinks need to be quoted (targets_02a)
 
 
 # Spec extensions

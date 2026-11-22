@@ -7,8 +7,13 @@ children:
 - class: BlankLine
 - class: Target
   attributes:
-    label: "a target name: including a colon (quoted)"
-    label_raw: "`a target name: including a colon (quoted)`"
+    label: "target name: including a colon (quoted)"
+    rlabel_raw: " target name: including a colon (quoted)"
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: ":\n"
 - class: BlankLine
 - class: Target
   attributes:

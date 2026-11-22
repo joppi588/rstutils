@@ -7,6 +7,7 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 use crate::parser_errors::ParserError;
 use crate::parsers::hyperlink_reference::{normalize_reference_name, parse_hyperlink_reference};
 use crate::parsers::inline_markup::parse_inline_reference;
+use crate::parsers::paragraph::parse_paragraph;
 use crate::token::TokenCategory as TC;
 use crate::token::TokenKind as TK;
 use crate::token_stream::TokenStream;
@@ -63,6 +64,9 @@ pub(crate) fn parse_hyperlink_target(stream: &mut TokenStream) -> Result<NodeRef
         TK::HyperlinkTargetQuote => {
             let position = stream.position_at_cursor();
             stream.consume(); // HyperlinkTargetQuote token
+
+            // TODO: wrap this in a with hanging indent, e.g. have a shared function with inline target above
+
             let refname =
                 stream.consume_text_until(&[&[TK::BackquoteEnd], TC::PARAGRAPH_END].concat());
             if stream.consume().kind != TK::BackquoteEnd {
@@ -84,15 +88,8 @@ pub(crate) fn parse_hyperlink_target(stream: &mut TokenStream) -> Result<NodeRef
         stream.token_at_cursor().kind,
         stream.token_at_nextline().kind,
     ) {
-        (TK::NewLine, TK::Indent) => {
-            target.push_child(
-                AstNode::new_ref(NodeClass::PlainText).with_attr("text", stream.consume().lexeme),
-            );
-            let link_block = with_hanging_indent(stream, parse_hyperlink_reference)?;
-            target.push_child(link_block);
-        }
         (_, TK::Indent) => {
-            let link_block = with_hanging_indent(stream, parse_hyperlink_reference)?;
+            let link_block = with_hanging_indent(stream, parse_paragraph)?;
             target.push_child(link_block);
         }
         (TK::NewLine, kind) if kind.is(TC::PARAGRAPH_END) => {
@@ -106,7 +103,11 @@ pub(crate) fn parse_hyperlink_target(stream: &mut TokenStream) -> Result<NodeRef
             target.push_child(parse_hyperlink_reference(stream)?);
             stream.consume_newline();
         }
-        _ => {} // TODO: Err
+        _ => {
+            return Err(ParserError::TargetHyperlinkMalformed {
+                position: stream.position_at_cursor(),
+            });
+        }
     }
     Ok(target)
 }

@@ -1,0 +1,101 @@
+class: Document
+children:
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "External hyperlink targets:\n"
+- class: BlankLine
+- class: Target
+  attributes:
+    label: one-liner
+    label_raw: one-liner
+  children:
+  - class: Spaces
+    attributes:
+      count: 1
+  - class: Reference
+    attributes:
+      refuri: http://structuredtext.sourceforge.net
+    children:
+    - class: PlainText
+      attributes:
+        text: http://structuredtext.sourceforge.net
+- class: BlankLine
+- class: Target
+  attributes:
+    label: starts-on-this-line
+    label_raw: starts-on-this-line
+  children:
+  - class: Spaces
+    attributes:
+      count: 1
+  - class: Paragraph
+    attributes:
+      hanging_indent: 25
+    children:
+    - class: Reference
+      attributes:
+        label: "http://\nstructuredtext.\nsourceforge.net"
+        markup: inline
+        type: href
+    - class: PlainText
+      attributes:
+        text: "\n"
+- class: BlankLine
+- class: Target
+  attributes:
+    label: entirely-below
+    label_raw: entirely-below
+  children:
+  - class: Paragraph
+    attributes:
+      hanging_indent: 3
+    children:
+    - class: PlainText
+      attributes:
+        text: "\n"
+    - class: Reference
+      attributes:
+        label: "http://structuredtext.\nsourceforge.net"
+        markup: inline
+        type: href
+    - class: PlainText
+      attributes:
+        text: "\n"
+- class: BlankLine
+- class: Target
+  attributes:
+    label: escaped-whitespace
+    label_raw: escaped-whitespace
+  children:
+  - class: Spaces
+    attributes:
+      count: 1
+  - class: Paragraph
+    attributes:
+      hanging_indent: 3
+    children:
+    - class: Reference
+      attributes:
+        label: "http://example.org/a\\ path\\ with\\\nspaces.html"
+        markup: inline
+        type: href
+    - class: PlainText
+      attributes:
+        text: "\n"
+- class: BlankLine
+- class: Target
+  attributes:
+    label: not-indirect
+    label_raw: not-indirect
+  children:
+  - class: Spaces
+    attributes:
+      count: 1
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "uri\\_\n"
