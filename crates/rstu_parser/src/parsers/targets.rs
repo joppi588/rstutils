@@ -30,7 +30,7 @@ pub(crate) fn parse_inline_target(stream: &mut TokenStream) -> Result<NodeRef, P
     stream.consume();
     let target = AstNode::new_ref(NodeClass::Target)
         .with_attr("markup", "inline")
-        .with_attr("refname", text);
+        .with_attr("label", text);
     Ok(target)
 }
 

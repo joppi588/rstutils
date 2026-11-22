@@ -4,7 +4,7 @@ children:
   children:
   - class: Target
     attributes:
-      refname: target
+      label: target
       markup: inline
   - class: PlainText
     attributes:
@@ -17,14 +17,14 @@ children:
       text: "Here is "
   - class: Target
     attributes:
-      refname: another target
+      label: another target
       markup: inline
   - class: PlainText
     attributes:
       text: " in some text. And "
   - class: Target
     attributes:
-      refname: "yet\nanother target"
+      label: "yet\nanother target"
       markup: inline
   - class: PlainText
     attributes:
@@ -34,7 +34,7 @@ children:
   children:
   - class: Target
     attributes:
-      refname: Here is  a    TaRgeT
+      label: Here is  a    TaRgeT
       markup: inline
   - class: PlainText
     attributes:
