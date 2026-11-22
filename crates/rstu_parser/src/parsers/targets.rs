@@ -78,7 +78,7 @@ pub(crate) fn parse_hyperlink_target(stream: &mut TokenStream) -> Result<NodeRef
             }
             target
                 .with_attr("label", normalize_reference_name(&refname))
-                .with_attr("rlabel_raw", refname);
+                .with_attr("label_raw", refname);
         }
         _ => unreachable!(),
     }
@@ -86,35 +86,29 @@ pub(crate) fn parse_hyperlink_target(stream: &mut TokenStream) -> Result<NodeRef
         target.push_spaces(stream.consume().len());
     }
 
-    // internal: empty
-    // external: uri or e-mail
-    // indirect: simple or quoted internal ref
-    // external and indirect might be multi-line
+    // 1. internal: empty
+    // 2. external: uri or e-mail
+    //    a: single line, b: multi-line
+    // 3. indirect: simple or quoted internal ref
+    //    a: single line, b: multi-line
     match (
         stream.token_at_cursor().kind,
         stream.token_at_nextline().kind,
     ) {
         (TK::BackquoteStart, TK::Indent) => {
             target.push_child(with_hanging_indent(stream, parse_reference_expression)?);
-            stream.consume_newline();
+            stream.consume_newline(); // 3b
         }
         (_, TK::Indent) => {
             target.push_child(with_hanging_indent(stream, parse_reference_plain)?);
+            // 2b
         }
         (TK::NewLine, kind) if kind.is(TC::PARAGRAPH_END) => {
-            target.with_attr("type", "internal");
-            stream.consume();
+            stream.consume(); // 1
         }
         (kind1, kind2) if kind1.is(TC::INLINE_REFERENCE) && kind2.is(TC::PARAGRAPH_END) => {
-            target.push_child(parse_reference_token(stream)?);
+            target.push_child(parse_reference_token(stream)?); //2a, 3a
             stream.consume_newline();
-        }
-        (TK::BackquoteStart, kind2) if kind2.is(TC::PARAGRAPH_END) => {
-            target.push_child(parse_reference_expression(stream)?);
-            stream.consume_newline();
-        }
-        (_, kind2) if kind2.is(TC::PARAGRAPH_END) => {
-            target.push_child(parse_reference_plain(stream)?);
         }
         _ => {
             return Err(ParserError::TargetHyperlinkMalformed {

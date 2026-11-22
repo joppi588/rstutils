@@ -72,5 +72,8 @@ children:
       count: 1
   - class: Reference
     attributes:
-      raw: "uri\\_\n"
-      refname: uri_
+      refuri: http://uri_
+    children:
+    - class: PlainText
+      attributes:
+        text: http://uri_
