@@ -5,8 +5,9 @@
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use crate::parser_errors::ParserError;
-use crate::parsers::hyperlink_reference::{normalize_reference_name, parse_hyperlink_reference};
-use crate::parsers::inline_markup::parse_inline_reference;
+use crate::parsers::hyperlink_reference::{
+    normalize_reference_name, parse_reference_expression, parse_reference_token,
+};
 use crate::parsers::paragraph::parse_paragraph;
 use crate::token::TokenCategory as TC;
 use crate::token::TokenKind as TK;
@@ -96,11 +97,11 @@ pub(crate) fn parse_hyperlink_target(stream: &mut TokenStream) -> Result<NodeRef
             stream.consume();
         }
         (kind1, kind2) if kind1.is(TC::INLINE_REFERENCE) && kind2.is(TC::PARAGRAPH_END) => {
-            target.push_child(parse_inline_reference(stream)?);
+            target.push_child(parse_reference_token(stream)?);
             stream.consume_newline();
         }
         (TK::BackquoteStart, kind2) if kind2.is(TC::PARAGRAPH_END) => {
-            target.push_child(parse_hyperlink_reference(stream)?);
+            target.push_child(parse_reference_expression(stream)?);
             stream.consume_newline();
         }
         _ => {
