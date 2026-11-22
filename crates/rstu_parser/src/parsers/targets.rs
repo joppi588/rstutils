@@ -6,9 +6,9 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use crate::parser_errors::ParserError;
 use crate::parsers::hyperlink_reference::{
-    normalize_reference_name, parse_reference_expression, parse_reference_token,
+    normalize_reference_name, parse_reference_expression, parse_reference_plain,
+    parse_reference_token,
 };
-use crate::parsers::paragraph::parse_paragraph;
 use crate::token::TokenCategory as TC;
 use crate::token::TokenKind as TK;
 use crate::token_stream::TokenStream;
@@ -85,15 +85,24 @@ pub(crate) fn parse_hyperlink_target(stream: &mut TokenStream) -> Result<NodeRef
     if stream.token_at_cursor().kind == TK::Spaces {
         target.push_spaces(stream.consume().len());
     }
+
+    // internal: empty
+    // external: uri or e-mail
+    // indirect: simple or quoted internal ref
+    // external and indirect might be multi-line
     match (
         stream.token_at_cursor().kind,
         stream.token_at_nextline().kind,
     ) {
+        (TK::BackquoteStart, TK::Indent) => {
+            target.push_child(with_hanging_indent(stream, parse_reference_expression)?);
+            stream.consume_newline();
+        }
         (_, TK::Indent) => {
-            let link_block = with_hanging_indent(stream, parse_paragraph)?;
-            target.push_child(link_block);
+            target.push_child(with_hanging_indent(stream, parse_reference_plain)?);
         }
         (TK::NewLine, kind) if kind.is(TC::PARAGRAPH_END) => {
+            target.with_attr("type", "internal");
             stream.consume();
         }
         (kind1, kind2) if kind1.is(TC::INLINE_REFERENCE) && kind2.is(TC::PARAGRAPH_END) => {
@@ -103,6 +112,9 @@ pub(crate) fn parse_hyperlink_target(stream: &mut TokenStream) -> Result<NodeRef
         (TK::BackquoteStart, kind2) if kind2.is(TC::PARAGRAPH_END) => {
             target.push_child(parse_reference_expression(stream)?);
             stream.consume_newline();
+        }
+        (_, kind2) if kind2.is(TC::PARAGRAPH_END) => {
+            target.push_child(parse_reference_plain(stream)?);
         }
         _ => {
             return Err(ParserError::TargetHyperlinkMalformed {

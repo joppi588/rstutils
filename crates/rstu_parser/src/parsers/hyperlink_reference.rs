@@ -145,3 +145,11 @@ pub(crate) fn parse_reference_expression(stream: &mut TokenStream) -> Result<Nod
     };
     Ok(node)
 }
+
+pub(crate) fn parse_reference_plain(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    let text = stream.consume_text_until(TC::PARAGRAPH_END);
+    let node = AstNode::new_ref(NodeClass::Reference);
+    node.with_attr("refname", normalize_reference_name(&text))
+        .with_attr("raw", text);
+    Ok(node)
+}

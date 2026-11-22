@@ -40,11 +40,6 @@ where
 
     let node = parser(stream)?;
 
-    if stream.token_at_cursor().kind == TK::NewLine {
-        stream.consume();
-        node.with_attr("finally", "\n");
-    }
-
     if indent > 0 {
         node.with_attr("hanging_indent", indent);
 

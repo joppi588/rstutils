@@ -31,39 +31,22 @@ children:
   - class: Spaces
     attributes:
       count: 1
-  - class: Paragraph
+  - class: Reference
     attributes:
       hanging_indent: 25
-    children:
-    - class: Reference
-      attributes:
-        label: "http://\nstructuredtext.\nsourceforge.net"
-        markup: inline
-        type: href
-    - class: PlainText
-      attributes:
-        text: "\n"
+      raw: "http://\nstructuredtext.\nsourceforge.net\n"
+      refname: http:// structuredtext. sourceforge.net
 - class: BlankLine
 - class: Target
   attributes:
     label: entirely-below
     label_raw: entirely-below
   children:
-  - class: Paragraph
+  - class: Reference
     attributes:
       hanging_indent: 3
-    children:
-    - class: PlainText
-      attributes:
-        text: "\n"
-    - class: Reference
-      attributes:
-        label: "http://structuredtext.\nsourceforge.net"
-        markup: inline
-        type: href
-    - class: PlainText
-      attributes:
-        text: "\n"
+      raw: "\nhttp://structuredtext.\nsourceforge.net\n"
+      refname: http://structuredtext. sourceforge.net
 - class: BlankLine
 - class: Target
   attributes:
@@ -73,18 +56,11 @@ children:
   - class: Spaces
     attributes:
       count: 1
-  - class: Paragraph
+  - class: Reference
     attributes:
       hanging_indent: 3
-    children:
-    - class: Reference
-      attributes:
-        label: "http://example.org/a\\ path\\ with\\\nspaces.html"
-        markup: inline
-        type: href
-    - class: PlainText
-      attributes:
-        text: "\n"
+      raw: "http://example.org/a\\ path\\ with\\\nspaces.html\n"
+      refname: http://example.org/a path with spaces.html
 - class: BlankLine
 - class: Target
   attributes:
@@ -94,8 +70,7 @@ children:
   - class: Spaces
     attributes:
       count: 1
-- class: Paragraph
-  children:
-  - class: PlainText
+  - class: Reference
     attributes:
-      text: "uri\\_\n"
+      raw: "uri\\_\n"
+      refname: uri_

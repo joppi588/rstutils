@@ -108,6 +108,7 @@ fn explicit_and_inline_targets_are_distinguishable() {
 
 #[rstest]
 #[case::t05("targets_05", PE::TargetMissingClosing)]
+#[case::t02b("targets_02b", PE::TargetMissingClosing)]
 // #[case::t09("targets_09", PE::UnexpectedToken)]
 // #[case::t10("targets_10", PE::UnexpectedToken)]
 // #[case::t11("targets_11", PE::UnexpectedToken)]
