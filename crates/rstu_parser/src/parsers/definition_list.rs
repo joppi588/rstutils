@@ -3,9 +3,8 @@
 // SPDX-License-Identifier: MIT
 
 use super::block::parse_block;
-use super::inline_markup::{
-    parse_inline_markup, parse_inline_reference, parse_interpreted_or_ref, parse_prefix_role,
-};
+use super::hyperlink_reference::parse_reference_token;
+use super::inline_markup::{parse_inline_markup, parse_interpreted_or_ref, parse_prefix_role};
 use super::targets::parse_inline_target;
 use crate::parser_errors::ParserError;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
@@ -85,7 +84,7 @@ fn parse_term_or_classifier(stream: &mut TokenStream, node: &NodeRef) -> Result<
                 node.push_child(inline);
             }
             kind if kind.is(TC::INLINE_REFERENCE) => {
-                node.push_child(parse_inline_reference(stream)?)
+                node.push_child(parse_reference_token(stream)?)
             }
             TK::InlineInternalTargetStart => node.push_child(parse_inline_target(stream)?),
             TK::BackquoteStart => node.push_child(parse_interpreted_or_ref(stream)?),
