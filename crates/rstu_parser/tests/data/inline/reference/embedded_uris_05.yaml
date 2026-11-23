@@ -5,7 +5,7 @@ children:
   children:
   - class: Reference
     attributes:
-      label: embedded URI with escaped whitespace
+      refname: embedded URI with escaped whitespace
       markup: inline
       raw: "embedded URI with escaped whitespace <http://example.com/\na\\ long/path\\ and/some\\_escaped\\ whitespace>"
       refuri: http://example.com/a long/path and/some_escaped whitespace

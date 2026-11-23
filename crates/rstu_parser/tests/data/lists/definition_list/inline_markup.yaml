@@ -10,7 +10,7 @@ children:
                 attributes:
                   type: href
                   markup: inline
-                  label: linked term
+                  refname: linked term
               - class: PlainText
                 attributes:
                   text: " with "

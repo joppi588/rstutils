@@ -5,7 +5,6 @@ children:
   children:
   - class: Reference
     attributes:
-      label: anonymous reference
       markup: inline
       raw: anonymous reference <alias\ with\\ escaped \:characters_>
       refname: alias with\ escaped :characters

@@ -14,7 +14,7 @@ children:
               - class: Reference
                 attributes:
                   type: href
-                  label: reference
+                  refname: reference
           - class: Definition
             children:
               - class: Block

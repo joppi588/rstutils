@@ -10,7 +10,7 @@ use std::sync::LazyLock;
 
 static EMBEDDED_REF: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(
-        r"(?s)^(?P<label>.*?)(?:(?:(?P<separator>\s+)|^)<(?P<ref>[^<>\s](?:[^<>]*[^<>\s])?)>)?$",
+        r"(?s)^(?P<reftext>.*?)(?:(?:(?P<separator>\s+)|^)<(?P<refname>[^<>\s](?:[^<>]*[^<>\s])?)>)?$",
     )
     .unwrap()
 });
@@ -50,31 +50,31 @@ pub(crate) fn parse_reference_token(stream: &mut TokenStream) -> Result<NodeRef,
     let lexeme = &token.lexeme;
     match kind {
         TK::CitationReference => {
-            node.with_attr("label", &lexeme[1..lexeme.len() - 2])
+            node.with_attr("refname", &lexeme[1..lexeme.len() - 2])
                 .with_attr("type", "citation");
         }
         TK::FootnoteReference => {
-            node.with_attr("label", &lexeme[1..lexeme.len() - 2])
+            node.with_attr("refname", &lexeme[1..lexeme.len() - 2])
                 .with_attr("type", "footnote");
         }
         TK::SubstitutionReference => {
-            node.with_attr("label", &lexeme[1..lexeme.len() - 1])
+            node.with_attr("refname", &lexeme[1..lexeme.len() - 1])
                 .with_attr("type", "sub_ref");
         }
         TK::SubRefHyperlink => {
-            node.with_attr("label", &lexeme[1..lexeme.len() - 2])
+            node.with_attr("refname", &lexeme[1..lexeme.len() - 2])
                 .with_attr("type", "sub_href");
         }
         TK::SubRefAnonymousHyperlink => {
-            node.with_attr("label", &lexeme[1..lexeme.len() - 3])
+            node.with_attr("refname", &lexeme[1..lexeme.len() - 3])
                 .with_attr("type", "sub_ahref");
         }
         TK::SimpleHyperlinkReference => {
-            node.with_attr("label", &lexeme[0..lexeme.len() - 1])
+            node.with_attr("refname", &lexeme[0..lexeme.len() - 1])
                 .with_attr("type", "simple_href");
         }
         TK::SimpleAnonymousHyperLinkReference => {
-            node.with_attr("label", &lexeme[0..lexeme.len() - 2])
+            node.with_attr("refname", &lexeme[0..lexeme.len() - 2])
                 .with_attr("type", "simple_ahref");
         }
         TK::Uri => {
@@ -120,15 +120,15 @@ pub(crate) fn parse_reference_expression(stream: &mut TokenStream) -> Result<Nod
         .captures(&text)
         .expect("There must be some match");
 
-    if let Some(label) = captures
-        .name("label")
-        .filter(|label| !label.as_str().is_empty() || captures.name("ref").is_none())
+    if let Some(reftext) = captures
+        .name("reftext")
+        .filter(|reftext| !reftext.as_str().is_empty() || captures.name("refname").is_none())
     {
-        node.with_attr("label", label.as_str());
+        node.with_attr("reftext", reftext.as_str());
     };
 
     let refname = captures
-        .name("ref")
+        .name("refname")
         .map_or(None, |value| Some(value.as_str()));
     match refname {
         Some(refname) if refname.ends_with("_") && !refname.ends_with(r"\_") => {

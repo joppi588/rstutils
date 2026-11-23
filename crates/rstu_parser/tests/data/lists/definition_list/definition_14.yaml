@@ -17,7 +17,7 @@ children:
               - class: Reference
                 attributes:
                   type: href
-                  label: reference
+                  refname: reference
               - class: PlainText
                 attributes:
                   text: " in text"

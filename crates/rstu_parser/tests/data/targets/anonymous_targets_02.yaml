@@ -15,5 +15,5 @@ children:
       count: 1
   - class: Reference
     attributes:
-      label: reference
+      refname: reference
       type: simple_href

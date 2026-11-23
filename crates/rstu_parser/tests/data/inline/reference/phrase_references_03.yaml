@@ -4,7 +4,7 @@ children:
   children:
   - class: Reference
     attributes:
-      label: "'phrase reference'"
+      refname: "'phrase reference'"
       markup: inline
       type: href
   - class: PlainText
@@ -12,7 +12,7 @@ children:
       text: " with quotes, "
   - class: Reference
     attributes:
-      label: "\"phrase reference\""
+      refname: "\"phrase reference\""
       markup: inline
       type: href
   - class: PlainText
@@ -20,7 +20,7 @@ children:
       text: " with quotes,\n"
   - class: Reference
     attributes:
-      label: ‘phrase reference’
+      refname: ‘phrase reference’
       markup: inline
       type: href
   - class: PlainText
@@ -28,7 +28,7 @@ children:
       text: " with quotes,\n"
   - class: Reference
     attributes:
-      label: “phrase reference”
+      refname: “phrase reference”
       markup: inline
       type: href
   - class: PlainText
@@ -36,7 +36,7 @@ children:
       text: " with quotes,\n"
   - class: Reference
     attributes:
-      label: «phrase reference»
+      refname: «phrase reference»
       markup: inline
       type: href
   - class: PlainText

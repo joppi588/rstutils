@@ -5,7 +5,7 @@ children:
   children:
   - class: Reference
     attributes:
-      label: no embedded alias (whitespace inside bracket) < alias_ >
+      refname: no embedded alias (whitespace inside bracket) < alias_ >
       markup: inline
       type: ahref
   - class: PlainText
@@ -16,7 +16,7 @@ children:
   children:
   - class: Reference
     attributes:
-      label: no embedded alias (no preceding whitespace)<alias_>
+      refname: no embedded alias (no preceding whitespace)<alias_>
       markup: inline
       type: ahref
   - class: PlainText

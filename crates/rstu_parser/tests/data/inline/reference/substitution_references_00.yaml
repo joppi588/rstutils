@@ -4,7 +4,7 @@ children:
   children:
   - class: Reference
     attributes:
-      label: subref
+      refname: subref
       type: sub_ref
   - class: PlainText
     attributes:

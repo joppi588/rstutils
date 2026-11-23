@@ -4,7 +4,6 @@ children:
   children:
   - class: Reference
     attributes:
-      label: phrase reference
       markup: inline
       raw: phrase reference <alias_>
       refname: alias

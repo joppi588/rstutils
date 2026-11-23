@@ -12,7 +12,7 @@ children:
   children:
   - class: Reference
     attributes:
-      label: reference
+      refname: reference
       type: simple_href
 - class: Target
   attributes:
@@ -22,5 +22,5 @@ children:
     attributes:
       finally: "\n"
       hanging_indent: 3
-      label: "a very long\nreference"
+      refname: "a very long\nreference"
       type: href

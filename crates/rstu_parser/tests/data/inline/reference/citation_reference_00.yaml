@@ -4,7 +4,7 @@ children:
   children:
   - class: Reference
     attributes:
-      label: citation
+      refname: citation
       type: citation
   - class: PlainText
     attributes:

@@ -16,7 +16,7 @@ children:
       count: 1
   - class: Reference
     attributes:
-      label: reference
+      refname: reference
       type: simple_href
 - class: BlankLine
 - class: Target
@@ -29,5 +29,5 @@ children:
       count: 1
   - class: Reference
     attributes:
-      label: phrase-link reference
+      refname: phrase-link reference
       type: href

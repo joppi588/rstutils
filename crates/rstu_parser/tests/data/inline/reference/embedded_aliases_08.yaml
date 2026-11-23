@@ -33,7 +33,6 @@ children:
       text: "References with embedded alias: "
   - class: Reference
     attributes:
-      label: link
       markup: inline
       raw: link <tg1_>
       refname: tg1
@@ -43,7 +42,6 @@ children:
       text: " and "
   - class: Reference
     attributes:
-      label: link
       markup: inline
       raw: link <tg2_>
       refname: tg2
@@ -59,7 +57,6 @@ children:
       text: "No clash with anonymous reference "
   - class: Reference
     attributes:
-      label: link
       markup: inline
       raw: link <tg1_>
       refname: tg1
