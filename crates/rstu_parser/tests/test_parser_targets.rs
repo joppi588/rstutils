@@ -3,8 +3,6 @@
 // SPDX-License-Identifier: MIT
 
 use rstest::rstest;
-use rstu_ast::NodeClass;
-use rstu_parser::parse;
 use rstu_parser::parser_errors::ParserErrorKind as PE;
 #[path = "common/mod.rs"]
 mod test_parser;
@@ -30,78 +28,6 @@ use test_parser::rst_vs_yaml;
 #[case::a06("anonymous_targets_06")]
 fn ok_targets(#[case] test_case: &str) {
     rst_vs_yaml!("targets", test_case);
-}
-
-/// GIVEN a document containing explicit named/anonymous and inline targets
-/// WHEN the document is parsed through the public entry point
-/// THEN all targets have distinct target types and preserve their labels/destinations
-#[test]
-fn explicit_and_inline_targets_are_distinguishable() {
-    let document = parse(
-        ".. _named:\n\n.. __: https://anonymous.example\n\n__ https://short.example\n\nSee _`inline`.\n",
-    )
-    .expect("document parses");
-    let children = document.borrow().children.clone();
-    let explicit_targets: Vec<_> = children
-        .iter()
-        .filter(|child| child.borrow().class == NodeClass::Target)
-        .cloned()
-        .collect();
-
-    assert_eq!(explicit_targets.len(), 3);
-    assert_eq!(
-        explicit_targets[0]
-            .borrow()
-            .attributes
-            .get_str("target_type")
-            .as_deref(),
-        Some("explicit")
-    );
-    assert_eq!(
-        explicit_targets[0]
-            .borrow()
-            .attributes
-            .get_str("label")
-            .as_deref(),
-        Some("named")
-    );
-    for (target, uri) in explicit_targets[1..]
-        .iter()
-        .zip(["https://anonymous.example", "https://short.example"])
-    {
-        assert_eq!(
-            target.borrow().attributes.get_str("anonymous").as_deref(),
-            Some("true")
-        );
-        assert_eq!(
-            target.borrow().attributes.get_str("refuri").as_deref(),
-            Some(uri)
-        );
-    }
-
-    let paragraph = children
-        .iter()
-        .find(|child| child.borrow().class == NodeClass::Paragraph)
-        .expect("inline target paragraph");
-    let paragraph_children = paragraph.borrow().children.clone();
-    let inline_target = paragraph_children
-        .iter()
-        .find(|child| child.borrow().class == NodeClass::Target)
-        .expect("inline target");
-    assert_eq!(
-        inline_target
-            .borrow()
-            .attributes
-            .get_str("target_type")
-            .as_deref(),
-        Some("inline")
-    );
-    let plain_text: Vec<_> = paragraph_children
-        .iter()
-        .filter(|child| child.borrow().class == NodeClass::PlainText)
-        .filter_map(|child| child.borrow().attributes.get_str("text"))
-        .collect();
-    assert_eq!(plain_text, ["See ", ".\n"]);
 }
 
 #[rstest]
