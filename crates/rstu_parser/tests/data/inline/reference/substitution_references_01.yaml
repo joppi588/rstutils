@@ -4,14 +4,14 @@ children:
   children:
   - class: Reference
     attributes:
-      label: subref
+      refname: subref
       type: sub_href
   - class: PlainText
     attributes:
       text: " and "
   - class: Reference
     attributes:
-      label: subref
+      refname: subref
       type: sub_ahref
   - class: PlainText
     attributes:

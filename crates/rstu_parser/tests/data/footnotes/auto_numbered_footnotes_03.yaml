@@ -12,14 +12,14 @@ children:
   children:
   - class: Reference
     attributes:
-      label: "#four"
+      refname: "#four"
       type: footnote
   - class: PlainText
     attributes:
       text: " should be 4, "
   - class: Reference
     attributes:
-      label: '#'
+      refname: '#'
       type: footnote
   - class: PlainText
     attributes:
@@ -27,14 +27,14 @@ children:
          should be 2,
   - class: Reference
     attributes:
-      label: "1"
+      refname: "1"
       type: footnote
   - class: PlainText
     attributes:
       text: " is 1, "
   - class: Reference
     attributes:
-      label: "3"
+      refname: "3"
       type: footnote
   - class: PlainText
     attributes:
@@ -42,14 +42,14 @@ children:
          is 3,
   - class: Reference
     attributes:
-      label: '#'
+      refname: '#'
       type: footnote
   - class: PlainText
     attributes:
       text: " should be 6, "
   - class: Reference
     attributes:
-      label: '#'
+      refname: '#'
       type: footnote
   - class: PlainText
     attributes:
@@ -57,14 +57,14 @@ children:
          is one too many,
   - class: Reference
     attributes:
-      label: "#five"
+      refname: "#five"
       type: footnote
   - class: PlainText
     attributes:
       text: " should be 5, and "
   - class: Reference
     attributes:
-      label: "#six"
+      refname: "#six"
       type: footnote
   - class: PlainText
     attributes:

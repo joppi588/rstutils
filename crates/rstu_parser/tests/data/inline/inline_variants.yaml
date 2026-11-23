@@ -55,21 +55,21 @@ children:
         children:
           - class: Reference
             attributes:
-              label: simple_reference
+              refname: simple_reference
               type: simple_href
           - class: PlainText
             attributes:
               text: " "
           - class: Reference
             attributes:
-              label: anonymous_reference
+              refname: anonymous_reference
               type: simple_ahref
           - class: PlainText
             attributes:
               text: " "
           - class: Reference
             attributes:
-              label: link
+              reftext: link
               markup: inline
               type: href
           - class: PlainText
@@ -77,21 +77,21 @@ children:
               text: " "
           - class: Reference
             attributes:
-              label: "1"
+              refname: "1"
               type: footnote
           - class: PlainText
             attributes:
               text: " "
           - class: Reference
             attributes:
-              label: CIT
+              refname: CIT
               type: citation
           - class: PlainText
             attributes:
               text: " "
           - class: Reference
             attributes:
-              label: sub
+              refname: sub
               type: sub_ref
           - class: PlainText
             attributes:

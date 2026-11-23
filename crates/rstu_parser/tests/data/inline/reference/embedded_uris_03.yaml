@@ -4,7 +4,7 @@ children:
   children:
   - class: Reference
     attributes:
-      label: embedded URI across lines
+      reftext: embedded URI across lines
       markup: inline
       raw: "embedded URI across lines <http://example.com/\nlong/path>"
       refuri: http://example.com/long/path

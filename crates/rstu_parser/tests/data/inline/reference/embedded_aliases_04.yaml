@@ -4,10 +4,10 @@ children:
   children:
   - class: Reference
     attributes:
-      label: embedded alias with whitespace
       markup: inline
       raw: "embedded alias with whitespace <alias\nlong  phrase_>"
       refname: alias long phrase
+      reftext: embedded alias with whitespace
       type: ahref
   - class: PlainText
     attributes:

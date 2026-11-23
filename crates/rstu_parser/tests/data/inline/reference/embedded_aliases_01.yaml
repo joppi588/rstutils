@@ -4,10 +4,10 @@ children:
   children:
   - class: Reference
     attributes:
-      label: anonymous reference
       markup: inline
       raw: anonymous reference <alias_>
       refname: alias
+      reftext: anonymous reference
       type: ahref
   - class: PlainText
     attributes:

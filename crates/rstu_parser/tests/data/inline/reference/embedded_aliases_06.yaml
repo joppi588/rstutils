@@ -5,8 +5,8 @@ children:
   children:
   - class: Reference
     attributes:
-      label: no embedded alias (whitespace inside bracket) < alias_ >
       markup: inline
+      reftext: no embedded alias (whitespace inside bracket) < alias_ >
       type: ahref
   - class: PlainText
     attributes:
@@ -16,8 +16,8 @@ children:
   children:
   - class: Reference
     attributes:
-      label: no embedded alias (no preceding whitespace)<alias_>
       markup: inline
+      reftext: no embedded alias (no preceding whitespace)<alias_>
       type: ahref
   - class: PlainText
     attributes:

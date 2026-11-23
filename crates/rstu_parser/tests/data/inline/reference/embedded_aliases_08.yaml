@@ -33,20 +33,20 @@ children:
       text: "References with embedded alias: "
   - class: Reference
     attributes:
-      label: link
       markup: inline
       raw: link <tg1_>
       refname: tg1
+      reftext: link
       type: href
   - class: PlainText
     attributes:
       text: " and "
   - class: Reference
     attributes:
-      label: link
       markup: inline
       raw: link <tg2_>
       refname: tg2
+      reftext: link
       type: href
   - class: PlainText
     attributes:
@@ -59,10 +59,10 @@ children:
       text: "No clash with anonymous reference "
   - class: Reference
     attributes:
-      label: link
       markup: inline
       raw: link <tg1_>
       refname: tg1
+      reftext: link
       type: ahref
   - class: PlainText
     attributes:

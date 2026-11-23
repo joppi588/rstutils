@@ -4,7 +4,7 @@ children:
   children:
   - class: Reference
     attributes:
-      label: anonymous reference
+      reftext: anonymous reference
       markup: inline
       type: ahref
   - class: PlainText
