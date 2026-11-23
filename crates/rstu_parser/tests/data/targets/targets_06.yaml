@@ -1,0 +1,10 @@
+class: Document
+children:
+- class: Target
+  attributes:
+    label: a very long target name, split across lines
+    raw: "a very long target name,\n   split across lines"
+- class: Target
+  attributes:
+    label: another, with backquotes
+    raw: " another,\n   with backquotes"

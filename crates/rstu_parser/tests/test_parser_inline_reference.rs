@@ -10,7 +10,7 @@ use test_parser::rst_err;
 use test_parser::rst_vs_yaml;
 
 #[rstest]
-// #[case::references("references_00")]
+// #[case::references("references_00")] // TODO: Activate test cases
 // #[case::references("references_01")]
 // #[case::references("references_02")]
 // #[case::references("references_03")]

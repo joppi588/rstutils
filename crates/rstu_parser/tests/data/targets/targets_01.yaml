@@ -1,0 +1,6 @@
+class: Document
+children:
+- class: Target
+  attributes:
+    label: optional space before colon
+    raw: "optional space before colon "

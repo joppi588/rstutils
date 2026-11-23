@@ -33,11 +33,17 @@ where
 {
     let index_next_line: usize = stream.find_end_of_line() + 1;
     let indent = match stream.token_at(index_next_line).kind {
+        // TODO: use token_at_nextline
         TK::Indent => stream.take_at(index_next_line).len(),
         _ => 0,
     };
 
     let node = parser(stream)?;
+
+    if stream.token_at_cursor().kind == TK::NewLine {
+        node.with_attr("finally", "\n");
+        stream.consume(); // TODO: This should be part of the inner function. Option: Pass a second post-processing function?
+    }
 
     if indent > 0 {
         node.with_attr("hanging_indent", indent);
