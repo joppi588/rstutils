@@ -70,10 +70,7 @@ children:
                 children:
                   - class: PlainText
                     attributes:
-                      text: |
-
-                        This is a field list item's body,
-                        containing multiple elements.
+                      text: "\nThis is a field list item's body,\ncontaining multiple elements.\n"
               - class: BlankLine
               - class: Paragraph
                 children:
@@ -83,10 +80,10 @@ children:
               - class: LiteralBlock
                 attributes:
                   indent: 4
+                  text: "def f(x):\n    return x**2 + x\n"
                   type: FullyMinimized
-                  text: |
-                        def f(x):
-                            return x**2 + x
+                children:
+                  - class: BlankLine
               - class: BlankLine
               - class: Paragraph
                 children:

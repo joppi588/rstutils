@@ -33,10 +33,8 @@ pub(crate) fn parse_literal_block(stream: &mut TokenStream) -> Result<NodeRef, P
     };
     block.with_attr("type", format!("{literal_block_type:?}"));
     stream.consume_newline();
-    if stream.consume().kind != TK::BlankLine {
-        return Err(ParserError::LiteralBlockMissingBlankLine {
-            position: stream.position_at_cursor(),
-        });
+    if stream.token_at_cursor().kind == TK::BlankLine {
+        block.push_blank_lines(stream.consume().len());
     }
     if stream.token_at_cursor().kind == TK::Indent {
         set_text_indented_content(stream, &block)?;

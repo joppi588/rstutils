@@ -35,6 +35,7 @@ fn err_bullet_list(#[case] test_case: &str, #[case] expected_error: PE) {
 #[rstest]
 #[case::d00("definition_00")]
 #[case::d01("definition_01")]
+#[case::d03("definition_03")]
 #[case::d05("definition_05")]
 #[case::d06("definition_06")]
 #[case::d08("definition_08")]
@@ -51,7 +52,6 @@ fn ok_definition_list(#[case] test_case: &str) {
 
 #[rstest]
 #[case::d02("definition_02", PE::MissingFinalBlankLineError)]
-#[case::d03("definition_03", PE::LiteralBlockMissingBlankLine)]
 #[case::d04("definition_04", PE::UnexpectedIndentError)]
 #[case::d07("definition_07", PE::MissingFinalBlankLineError)]
 #[case::d12("definition_12", PE::InlineMissingClosing)]
