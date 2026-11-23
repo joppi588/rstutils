@@ -11,3 +11,5 @@ children:
       indent: 4
       text: "A literal block.\n"
       type: Expanded
+    children:
+      - class: BlankLine

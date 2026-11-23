@@ -7,5 +7,9 @@ children:
           text: "A paragraph:\n"
   - class: LiteralBlock
     attributes:
-      type: FullyMinimized
       text: "> A literal block.\n"
+      type: FullyMinimized
+    children:
+      - class: BlankLine
+        attributes:
+          count: 2
