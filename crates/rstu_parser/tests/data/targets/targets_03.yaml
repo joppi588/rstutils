@@ -9,7 +9,7 @@ children:
 - class: Target
   attributes:
     label: target1
-    label_raw: target1
+    raw: target1
   children:
   - class: Spaces
     attributes:
@@ -22,7 +22,7 @@ children:
 - class: Target
   attributes:
     label: target2
-    label_raw: target2
+    raw: target2
   children:
   - class: Spaces
     attributes:

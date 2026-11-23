@@ -14,4 +14,4 @@ External hyperlink targets:
 .. _escaped-whitespace: http://example.org/a\ path\ with\
    spaces.html
 
-.. _not-indirect: http://uri\_
+.. _not-indirect: uri\_

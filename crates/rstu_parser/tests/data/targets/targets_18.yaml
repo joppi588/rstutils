@@ -9,7 +9,7 @@ children:
 - class: Target
   attributes:
     label: title
-    target_type: explicit
+    raw: title
 - class: BlankLine
 - class: Paragraph
   children:

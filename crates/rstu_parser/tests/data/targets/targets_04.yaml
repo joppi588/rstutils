@@ -3,19 +3,14 @@ children:
 - class: Target
   attributes:
     label: a long target name
-    label_raw: a long target name
+    raw: a long target name
 - class: BlankLine
 - class: Target
   attributes:
     label: "target name: including a colon (quoted)"
-    rlabel_raw: " target name: including a colon (quoted)"
-- class: Paragraph
-  children:
-  - class: PlainText
-    attributes:
-      text: ":\n"
+    raw: " target name: including a colon (quoted)"
 - class: BlankLine
 - class: Target
   attributes:
     label: "a target name: including a colon (escaped)"
-    label_raw: "a target name\\: including a colon (escaped)"
+    raw: "a target name\\: including a colon (escaped)"

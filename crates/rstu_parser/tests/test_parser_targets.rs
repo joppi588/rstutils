@@ -19,17 +19,15 @@ use test_parser::rst_vs_yaml;
 #[case::t06("targets_06")]
 #[case::t07("targets_07")]
 #[case::t08("targets_08")]
+#[case::t10("targets_10")]
 #[case::t18("targets_18")]
 #[case::a00("anonymous_targets_00")]
 #[case::a01("anonymous_targets_01")]
 #[case::a02("anonymous_targets_02")]
 #[case::a03("anonymous_targets_03")]
 #[case::a04("anonymous_targets_04")]
-#[case::a05("anonymous_targets_05")]
+#[case::a05a("anonymous_targets_05a")]
 #[case::a06("anonymous_targets_06")]
-// #[case::l08("legacy auto-id prefix_08")]
-// #[case::l10("legacy auto-id prefix_10")]
-// #[case::l11("legacy auto-id prefix_11")]
 fn ok_targets(#[case] test_case: &str) {
     rst_vs_yaml!("targets", test_case);
 }
@@ -107,10 +105,9 @@ fn explicit_and_inline_targets_are_distinguishable() {
 }
 
 #[rstest]
+#[case::a05b("anonymous_targets_05b", PE::UnexpectedToken)]
 #[case::t05("targets_05", PE::TargetMissingClosing)]
-#[case::t02b("targets_02b", PE::TargetMissingClosing)]
 // #[case::t09("targets_09", PE::UnexpectedToken)]
-// #[case::t10("targets_10", PE::UnexpectedToken)]
 // #[case::t11("targets_11", PE::UnexpectedToken)]
 // #[case::t12("targets_12", PE::UnexpectedToken)]
 // #[case::t13("targets_13", PE::UnexpectedToken)]

@@ -296,13 +296,15 @@ impl TokenCategory {
     ];
 
     pub const PARAGRAPH_END: &'static [TokenKind] = &[
-        TokenKind::HyperlinkTargetAnonymous,
         TokenKind::BlankLine,
         TokenKind::Citation,
         TokenKind::Dedent,
         TokenKind::EoF,
         TokenKind::FootNote,
         TokenKind::HyperlinkTarget,
+        TokenKind::HyperlinkTargetAnonymous,
+        TokenKind::HyperlinkTargetAnonymousShort,
+        TokenKind::HyperlinkTargetQuote,
         TokenKind::Indent,
         TokenKind::LineBlock,
         TokenKind::LiteralBlock,

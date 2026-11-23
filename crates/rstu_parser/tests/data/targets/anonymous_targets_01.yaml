@@ -12,8 +12,5 @@ children:
   children:
   - class: Reference
     attributes:
+      raw: http://w3c.org/
       refuri: http://w3c.org/
-    children:
-    - class: PlainText
-      attributes:
-        text: http://w3c.org/

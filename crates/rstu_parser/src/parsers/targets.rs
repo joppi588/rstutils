@@ -68,12 +68,19 @@ pub(crate) fn parse_hyperlink_target(stream: &mut TokenStream) -> Result<NodeRef
 
             // TODO: wrap this in a with hanging indent, e.g. have a shared function with inline target above
 
-            let refname =
-                stream.consume_text_until(&[&[TK::BackquoteEnd], TC::PARAGRAPH_END].concat());
+            let refname = stream.consume_text_until(&[TK::BackquoteEnd, TK::EoF]);
             if stream.consume().kind != TK::BackquoteEnd {
                 return Err(ParserError::TargetMissingClosing {
                     markup: "reference".to_owned(),
                     position,
+                });
+            }
+            let colon_expected = stream.consume().lexeme;
+            if colon_expected != ":" {
+                return Err(ParserError::UnexpectedToken {
+                    expected: ":".to_owned(),
+                    found: colon_expected,
+                    position: stream.position_at_cursor(),
                 });
             }
             target
@@ -89,15 +96,18 @@ pub(crate) fn parse_hyperlink_target(stream: &mut TokenStream) -> Result<NodeRef
     // 1. internal: empty
     // 2. external: uri or e-mail
     //    a: single line, b: multi-line
-    // 3. indirect: simple or quoted internal ref
-    //    a: single line, b: multi-line
+    // 3. indirect:
+    //    a: simple
+    //    b: quoted internal ref, single-line
+    //    c: quoted internal ref, multi-line
+    //    TODO: d: quoted internal ref, starting on next line -> not implemented yet
     match (
         stream.token_at_cursor().kind,
         stream.token_at_nextline().kind,
     ) {
         (TK::BackquoteStart, TK::Indent) => {
             target.push_child(with_hanging_indent(stream, parse_reference_expression)?);
-            stream.consume_newline(); // 3b
+            // 3c
         }
         (_, TK::Indent) => {
             target.push_child(with_hanging_indent(stream, parse_reference_plain)?);
@@ -107,8 +117,22 @@ pub(crate) fn parse_hyperlink_target(stream: &mut TokenStream) -> Result<NodeRef
             stream.consume(); // 1
         }
         (kind1, kind2) if kind1.is(TC::INLINE_REFERENCE) && kind2.is(TC::PARAGRAPH_END) => {
-            target.push_child(parse_reference_token(stream)?); //2a, 3a
+            target.push_child(parse_reference_token(stream)?); //3a
             stream.consume_newline();
+        }
+        (TK::BackquoteStart, kind2) if kind2.is(TC::PARAGRAPH_END) => {
+            target.push_child(parse_reference_expression(stream)?); //3b
+            stream.consume_newline();
+        }
+        (_, kind2) if kind2.is(TC::PARAGRAPH_END) => {
+            target.push_child(parse_reference_plain(stream)?); //2a
+        }
+        (_, kind2) if !kind2.is(TC::PARAGRAPH_END) => {
+            return Err(ParserError::UnexpectedToken {
+                expected: "Paragraph end".to_owned(),
+                found: format!("{kind2:?}"),
+                position: stream.position_at(stream.find_end_of_line() + 1),
+            });
         }
         _ => {
             return Err(ParserError::TargetHyperlinkMalformed {

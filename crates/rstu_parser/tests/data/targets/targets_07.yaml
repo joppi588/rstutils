@@ -1,23 +1,20 @@
 class: Document
 children:
-- class: Paragraph
-  children:
-  - class: PlainText
-    attributes:
-      text: "External hyperlink:\n"
-- class: BlankLine
-- class: Target
-  attributes:
-    label: target
-    label_raw: target
-  children:
-  - class: Spaces
-    attributes:
-      count: 1
-  - class: Reference
-    attributes:
-      refuri: http://www.python.org/
+  - class: Paragraph
     children:
-    - class: PlainText
-      attributes:
-        text: http://www.python.org/
+      - class: PlainText
+        attributes:
+          text: "External hyperlink:\n"
+  - class: BlankLine
+  - class: Target
+    attributes:
+      label: target
+      raw: target
+    children:
+      - class: Spaces
+        attributes:
+          count: 1
+      - class: Reference
+        attributes:
+          raw: http://www.python.org/
+          refuri: http://www.python.org/

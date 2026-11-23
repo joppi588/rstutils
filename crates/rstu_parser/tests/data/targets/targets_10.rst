@@ -1,5 +1,5 @@
 Duplicate external targets (different URIs):
 
-.. _target: first
+.. _target: http://first
 
-.. _target: second
+.. _target: http://second
