@@ -4,7 +4,7 @@ children:
   children:
   - class: Reference
     attributes:
-      refname: embedded email address
+      reftext: embedded email address
       markup: inline
       raw: embedded email address <jdoe@example.com>
       refuri: jdoe@example.com
@@ -17,7 +17,7 @@ children:
   children:
   - class: Reference
     attributes:
-      refname: embedded email address broken across lines
+      reftext: embedded email address broken across lines
       markup: inline
       raw: "embedded email address broken across lines <jdoe\n@example.com>"
       refuri: jdoe@example.com

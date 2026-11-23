@@ -8,6 +8,7 @@ children:
       markup: inline
       raw: anonymous reference <alias\ with\\ escaped \:characters_>
       refname: alias with\ escaped :characters
+      reftext: anonymous reference
       type: ahref
   - class: PlainText
     attributes:

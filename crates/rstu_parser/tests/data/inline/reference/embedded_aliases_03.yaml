@@ -7,6 +7,7 @@ children:
       markup: inline
       raw: "embedded alias across lines <alias\nphrase_>"
       refname: alias phrase
+      reftext: embedded alias across lines
       type: ahref
   - class: PlainText
     attributes:

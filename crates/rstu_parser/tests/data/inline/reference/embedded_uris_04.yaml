@@ -4,7 +4,7 @@ children:
   children:
   - class: Reference
     attributes:
-      refname: embedded URI with whitespace
+      reftext: embedded URI with whitespace
       markup: inline
       raw: "embedded URI with whitespace <http://example.com/\nlong/path /and  /whitespace>"
       refuri: http://example.com/long/path/and/whitespace

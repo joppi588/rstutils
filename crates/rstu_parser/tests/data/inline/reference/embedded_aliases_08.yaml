@@ -36,6 +36,7 @@ children:
       markup: inline
       raw: link <tg1_>
       refname: tg1
+      reftext: link
       type: href
   - class: PlainText
     attributes:
@@ -45,6 +46,7 @@ children:
       markup: inline
       raw: link <tg2_>
       refname: tg2
+      reftext: link
       type: href
   - class: PlainText
     attributes:
@@ -60,6 +62,7 @@ children:
       markup: inline
       raw: link <tg1_>
       refname: tg1
+      reftext: link
       type: ahref
   - class: PlainText
     attributes:

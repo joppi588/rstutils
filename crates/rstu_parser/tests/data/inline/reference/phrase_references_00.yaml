@@ -4,7 +4,7 @@ children:
   children:
   - class: Reference
     attributes:
-      refname: phrase reference
+      reftext: phrase reference
       markup: inline
       type: href
   - class: PlainText

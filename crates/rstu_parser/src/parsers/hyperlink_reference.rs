@@ -10,7 +10,7 @@ use std::sync::LazyLock;
 
 static EMBEDDED_REF: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(
-        r"(?s)^(?P<reftext>.*?)(?:(?:(?P<separator>\s+)|^)<(?P<refname>[^<>\s](?:[^<>]*[^<>\s])?)>)?$",
+        r"(?s)^(?P<reftext>.*?)(?:(?:(?P<separator>\s+)|^)<(?P<reference>[^<>\s](?:[^<>]*[^<>\s])?)>)?$",
     )
     .unwrap()
 });
@@ -122,15 +122,15 @@ pub(crate) fn parse_reference_expression(stream: &mut TokenStream) -> Result<Nod
 
     if let Some(reftext) = captures
         .name("reftext")
-        .filter(|reftext| !reftext.as_str().is_empty() || captures.name("refname").is_none())
+        .filter(|reftext| !reftext.as_str().is_empty())
     {
         node.with_attr("reftext", reftext.as_str());
     };
 
-    let refname = captures
-        .name("refname")
+    let reference = captures
+        .name("reference")
         .map_or(None, |value| Some(value.as_str()));
-    match refname {
+    match reference {
         Some(refname) if refname.ends_with("_") && !refname.ends_with(r"\_") => {
             let normalized_refname = normalize_reference_name(refname.strip_suffix('_').unwrap());
             node.with_attr("refname", normalized_refname)

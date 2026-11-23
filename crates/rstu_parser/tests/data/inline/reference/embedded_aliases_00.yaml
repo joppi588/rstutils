@@ -7,6 +7,7 @@ children:
       markup: inline
       raw: phrase reference <alias_>
       refname: alias
+      reftext: phrase reference
       type: href
   - class: PlainText
     attributes:

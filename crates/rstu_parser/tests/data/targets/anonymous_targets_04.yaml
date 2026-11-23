@@ -22,5 +22,5 @@ children:
     attributes:
       finally: "\n"
       hanging_indent: 3
-      refname: "a very long\nreference"
+      reftext: "a very long\nreference"
       type: href

@@ -69,7 +69,7 @@ children:
               text: " "
           - class: Reference
             attributes:
-              text: link
+              reftext: link
               markup: inline
               type: href
           - class: PlainText

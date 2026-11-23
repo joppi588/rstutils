@@ -14,7 +14,7 @@ children:
       children:
       - class: Reference
         attributes:
-          refname: uff
+          reftext: uff
           markup: inline
           type: href
           raw: uff <test1>
@@ -28,7 +28,7 @@ children:
       children:
       - class: Reference
         attributes:
-          refname: uff
+          reftext: uff
           markup: inline
           type: href
           raw: uff <test2>
