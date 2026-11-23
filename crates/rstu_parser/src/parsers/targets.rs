@@ -4,16 +4,15 @@
 
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
+use super::normalize_name;
 use crate::parser_errors::ParserError;
 use crate::parsers::hyperlink_reference::{
-    normalize_reference_name, parse_reference_expression, parse_reference_plain,
-    parse_reference_token,
+    parse_reference_expression, parse_reference_plain, parse_reference_token,
 };
 use crate::token::TokenCategory as TC;
 use crate::token::TokenKind as TK;
 use crate::token_stream::TokenStream;
 use crate::with_hanging_indent;
-
 pub(crate) fn parse_inline_target(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert!(stream.token_at_cursor().kind == TK::InlineInternalTargetStart);
 
@@ -59,7 +58,7 @@ pub(crate) fn parse_hyperlink_target(stream: &mut TokenStream) -> Result<NodeRef
                 .and_then(|refname| refname.strip_suffix(':'))
                 .expect("There is a refname.");
             target
-                .with_attr("label", normalize_reference_name(&refname))
+                .with_attr("label", normalize_name(&refname))
                 .with_attr("raw", refname);
         }
         TK::HyperlinkTargetQuote => {
@@ -84,7 +83,7 @@ pub(crate) fn parse_hyperlink_target(stream: &mut TokenStream) -> Result<NodeRef
                 });
             }
             target
-                .with_attr("label", normalize_reference_name(&refname))
+                .with_attr("label", normalize_name(&refname))
                 .with_attr("raw", refname);
         }
         _ => unreachable!(),
