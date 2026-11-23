@@ -43,22 +43,6 @@ fn ok_targets(#[case] test_case: &str) {
 // #[case::t17("targets_17", PE::UnexpectedToken)]
 // #[case::t19("targets_19", PE::UnexpectedToken)]
 // #[case::t20("targets_20", PE::UnexpectedToken)]
-// #[case::l00("legacy-ids_00", PE::UnexpectedToken)]
-// #[case::l01("legacy-ids_01", PE::UnexpectedToken)]
-// #[case::l02("legacy-ids_02", PE::UnexpectedToken)]
-// #[case::l03("legacy-ids_03", PE::UnexpectedToken)]
-// #[case::l04("legacy-ids_04", PE::UnexpectedToken)]
-// #[case::l05("legacy-ids_05", PE::UnexpectedToken)]
-// #[case::l00("legacy auto-id prefix_00", PE::UnexpectedToken)]
-// #[case::l01("legacy auto-id prefix_01", PE::UnexpectedToken)]
-// #[case::l02("legacy auto-id prefix_02", PE::UnexpectedToken)]
-// #[case::l03("legacy auto-id prefix_03", PE::UnexpectedToken)]
-// #[case::l04("legacy auto-id prefix_04", PE::UnexpectedToken)]
-// #[case::l05("legacy auto-id prefix_05", PE::UnexpectedToken)]
-// #[case::l06("legacy auto-id prefix_06", PE::UnexpectedToken)]
-// #[case::l07("legacy auto-id prefix_07", PE::UnexpectedToken)]
-// #[case::l09("legacy auto-id prefix_09", PE::UnexpectedToken)]
-// #[ignore]
 fn err_targets(#[case] test_case: &str, #[case] expected_error: PE) {
     rst_err!("targets", test_case, expected_error);
 }
