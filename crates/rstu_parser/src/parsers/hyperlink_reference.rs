@@ -19,7 +19,7 @@ static REFERENCE_ESCAPE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\\(?s:(
 static URI_NORMALIZATION: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"\\(?P<escaped>(?s:.))|\\$|\s").unwrap());
 
-fn normalize_reference_name(reference: &str) -> String {
+pub(crate) fn normalize_reference_name(reference: &str) -> String {
     REFERENCE_ESCAPE
         .replace_all(reference, "$1")
         .split_whitespace()
@@ -71,11 +71,11 @@ pub(crate) fn parse_reference_token(stream: &mut TokenStream) -> Result<NodeRef,
         }
         TK::SimpleHyperlinkReference => {
             node.with_attr("label", &lexeme[0..lexeme.len() - 1])
-                .with_attr("type", "simple_ref");
+                .with_attr("type", "simple_href");
         }
         TK::SimpleAnonymousHyperLinkReference => {
             node.with_attr("label", &lexeme[0..lexeme.len() - 2])
-                .with_attr("type", "simple_anonymous_ref");
+                .with_attr("type", "simple_ahref");
         }
         TK::Uri => {
             let uri = lexeme.replace("\\*", "*").replace("\\_", "_");
@@ -91,15 +91,29 @@ pub(crate) fn parse_reference_token(stream: &mut TokenStream) -> Result<NodeRef,
 }
 
 pub(crate) fn parse_reference_expression(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
-    stream.consume();
-    let text = &stream.consume_text_until(&[
-        TK::AnonymousHyperlinkReferenceEnd,
-        TK::HyperlinkReferenceEnd,
-    ]);
+    debug_assert_eq!(stream.token_at_cursor().kind, TK::BackquoteStart);
+    stream.consume(); // consume backquote
+    let text = &stream.consume_text_until(
+        &[
+            &[
+                TK::AnonymousHyperlinkReferenceEnd,
+                TK::HyperlinkReferenceEnd,
+            ],
+            TC::PARAGRAPH_END,
+        ]
+        .concat(),
+    );
     let node = AstNode::new_ref(NodeClass::Reference);
-    match &stream.consume().kind {
-        TK::AnonymousHyperlinkReferenceEnd => node.with_attr("type", "ahref"),
-        TK::HyperlinkReferenceEnd => node.with_attr("type", "href"),
+    match &stream.token_at_cursor().kind {
+        TK::AnonymousHyperlinkReferenceEnd => {
+            stream.consume();
+            node.with_attr("type", "ahref");
+        }
+        TK::HyperlinkReferenceEnd => {
+            stream.consume();
+            node.with_attr("type", "href");
+        }
+        kind if kind.is(TC::PARAGRAPH_END) => {}
         _ => unreachable!(),
     };
     let captures = EMBEDDED_REF
@@ -129,5 +143,13 @@ pub(crate) fn parse_reference_expression(stream: &mut TokenStream) -> Result<Nod
         }
         _ => {}
     };
+    Ok(node)
+}
+
+pub(crate) fn parse_reference_plain(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    let text = stream.consume_text_until(TC::PARAGRAPH_END);
+    let node = AstNode::new_ref(NodeClass::Reference);
+    node.with_attr("refname", normalize_reference_name(&text))
+        .with_attr("raw", text);
     Ok(node)
 }

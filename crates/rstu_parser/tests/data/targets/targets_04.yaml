@@ -1,0 +1,16 @@
+class: Document
+children:
+- class: Target
+  attributes:
+    label: a long target name
+    raw: a long target name
+- class: BlankLine
+- class: Target
+  attributes:
+    label: "target name: including a colon (quoted)"
+    raw: " target name: including a colon (quoted)"
+- class: BlankLine
+- class: Target
+  attributes:
+    label: "a target name: including a colon (escaped)"
+    raw: "a target name\\: including a colon (escaped)"

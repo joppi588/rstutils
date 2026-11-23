@@ -1,0 +1,73 @@
+class: Document
+children:
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "External hyperlink targets:\n"
+- class: BlankLine
+- class: Target
+  attributes:
+    label: one-liner
+    raw: one-liner
+  children:
+  - class: Spaces
+    attributes:
+      count: 1
+  - class: Reference
+    attributes:
+      raw: http://structuredtext.sourceforge.net
+      refuri: http://structuredtext.sourceforge.net
+- class: BlankLine
+- class: Target
+  attributes:
+    label: starts-on-this-line
+    raw: starts-on-this-line
+  children:
+  - class: Spaces
+    attributes:
+      count: 1
+  - class: Reference
+    attributes:
+      hanging_indent: 25
+      raw: "http://\nstructuredtext.\nsourceforge.net\n"
+      refname: http:// structuredtext. sourceforge.net
+- class: BlankLine
+- class: Target
+  attributes:
+    label: entirely-below
+    raw: entirely-below
+  children:
+  - class: Reference
+    attributes:
+      hanging_indent: 3
+      raw: "\nhttp://structuredtext.\nsourceforge.net\n"
+      refname: http://structuredtext. sourceforge.net
+- class: BlankLine
+- class: Target
+  attributes:
+    label: escaped-whitespace
+    raw: escaped-whitespace
+  children:
+  - class: Spaces
+    attributes:
+      count: 1
+  - class: Reference
+    attributes:
+      hanging_indent: 3
+      raw: "http://example.org/a\\ path\\ with\\\nspaces.html\n"
+      refname: http://example.org/a path with spaces.html
+- class: BlankLine
+- class: Target
+  attributes:
+    label: not-indirect
+    raw: not-indirect
+  children:
+  - class: Spaces
+    attributes:
+      count: 1
+  - class: Reference
+    attributes:
+      raw: "uri\\_\n"
+      refname: uri_

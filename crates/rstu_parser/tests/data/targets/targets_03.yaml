@@ -1,0 +1,33 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Indirect hyperlink targets:\n"
+- class: BlankLine
+- class: Target
+  attributes:
+    label: target1
+    raw: target1
+  children:
+  - class: Spaces
+    attributes:
+      count: 1
+  - class: Reference
+    attributes:
+      label: reference
+      type: simple_href
+- class: BlankLine
+- class: Target
+  attributes:
+    label: target2
+    raw: target2
+  children:
+  - class: Spaces
+    attributes:
+      count: 1
+  - class: Reference
+    attributes:
+      label: phrase-link reference
+      type: href

@@ -1,0 +1,27 @@
+class: Document
+children:
+  - class: Target
+    attributes:
+      label: email
+      raw: email
+    children:
+      - class: Spaces
+        attributes:
+          count: 1
+      - class: Reference
+        attributes:
+          refuri: mailto:jdoe@example.com
+  - class: BlankLine
+  - class: Target
+    attributes:
+      label: multi-line email
+      raw: multi-line email
+    children:
+      - class: Spaces
+        attributes:
+          count: 1
+      - class: Reference
+        attributes:
+          hanging_indent: 3
+          raw: "jdoe\n@example.com\n"
+          refname: jdoe @example.com

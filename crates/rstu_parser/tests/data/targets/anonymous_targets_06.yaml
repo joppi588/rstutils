@@ -1,0 +1,5 @@
+class: Document
+children:
+- class: Comment
+  attributes:
+    text: "_\n"

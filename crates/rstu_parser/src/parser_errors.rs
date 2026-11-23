@@ -66,6 +66,13 @@ pub enum ParserError {
         closing_style: String,
         position: Position,
     },
+    TargetMissingClosing {
+        markup: String,
+        position: Position,
+    },
+    TargetHyperlinkMalformed {
+        position: Position,
+    },
     UnexpectedIndentError {
         position: Position,
     },
@@ -160,6 +167,15 @@ impl std::fmt::Display for ParserError {
                 formatter,
                 "{position}: Section underline {closing_style:?} does not match overline {opening_style:?}"
             ),
+            Self::TargetMissingClosing {
+                markup, position, ..
+            } => write!(
+                formatter,
+                "{position}: Target ({markup}) is not closed."
+            ),
+            Self::TargetHyperlinkMalformed { position } => {
+                write!(formatter, "{position}: Malformed hyperlink target.")
+            }
             Self::UnexpectedIndentError { position } => {
                 write!(formatter, "{position}: Unexpected indentation")
             }

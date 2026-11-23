@@ -1,0 +1,33 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Duplicate external targets (different URIs):\n"
+- class: BlankLine
+- class: Target
+  attributes:
+    label: target
+    raw: target
+  children:
+  - class: Spaces
+    attributes:
+      count: 1
+  - class: Reference
+    attributes:
+      raw: http://first
+      refuri: http://first
+- class: BlankLine
+- class: Target
+  attributes:
+    label: target
+    raw: target
+  children:
+  - class: Spaces
+    attributes:
+      count: 1
+  - class: Reference
+    attributes:
+      raw: http://second
+      refuri: http://second

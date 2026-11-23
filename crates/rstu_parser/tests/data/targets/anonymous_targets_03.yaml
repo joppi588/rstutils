@@ -1,0 +1,25 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Anonymous external hyperlink target, not indirect:\n"
+- class: BlankLine
+- class: Target
+  attributes:
+    markup: standalone_anonymous_short
+  children:
+  - class: Reference
+    attributes:
+      raw: "uri\\_\n"
+      refname: uri_
+- class: BlankLine
+- class: Target
+  attributes:
+    markup: standalone_anonymous_short
+  children:
+  - class: Reference
+    attributes:
+      raw: "this URI ends with an underscore_\n"
+      refname: this URI ends with an underscore_
