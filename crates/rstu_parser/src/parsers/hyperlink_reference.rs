@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Jochen Schmaehling <tostmann1@web.de>
 //
 // SPDX-License-Identifier: MIT
+use super::normalize_name;
 use crate::parser_errors::ParserError;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
 use crate::token_stream::TokenStream;
@@ -15,17 +16,8 @@ static EMBEDDED_REF: LazyLock<Regex> = LazyLock::new(|| {
     .unwrap()
 });
 
-static REFERENCE_ESCAPE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\\(?s:(.))|\\$").unwrap());
 static URI_NORMALIZATION: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"\\(?P<escaped>(?s:.))|\\$|\s").unwrap());
-
-pub(crate) fn normalize_reference_name(reference: &str) -> String {
-    REFERENCE_ESCAPE
-        .replace_all(reference, "$1")
-        .split_whitespace()
-        .collect::<Vec<_>>()
-        .join(" ")
-}
 
 fn normalize_uri(uri: &str) -> String {
     URI_NORMALIZATION
@@ -132,7 +124,7 @@ pub(crate) fn parse_reference_expression(stream: &mut TokenStream) -> Result<Nod
         .map_or(None, |value| Some(value.as_str()));
     match reference {
         Some(refname) if refname.ends_with("_") && !refname.ends_with(r"\_") => {
-            let normalized_refname = normalize_reference_name(refname.strip_suffix('_').unwrap());
+            let normalized_refname = normalize_name(refname.strip_suffix('_').unwrap());
             node.with_attr("refname", normalized_refname)
                 .with_attr("raw", text.to_owned());
         }
@@ -149,7 +141,7 @@ pub(crate) fn parse_reference_expression(stream: &mut TokenStream) -> Result<Nod
 pub(crate) fn parse_reference_plain(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     let text = stream.consume_text_until(TC::PARAGRAPH_END);
     let node = AstNode::new_ref(NodeClass::Reference);
-    node.with_attr("refname", normalize_reference_name(&text))
+    node.with_attr("refname", normalize_name(&text))
         .with_attr("raw", text);
     Ok(node)
 }

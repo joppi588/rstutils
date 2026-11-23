@@ -23,6 +23,10 @@ pub(crate) mod paragraph;
 pub(crate) mod section;
 pub(crate) mod targets;
 pub(crate) mod transition;
+use regex::Regex;
+use std::sync::LazyLock;
+
+static REFERENCE_ESCAPE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\\(?s:(.))|\\$").unwrap());
 
 pub(crate) fn with_hanging_indent<F>(
     stream: &mut TokenStream,
@@ -69,4 +73,12 @@ where
     }
 
     Ok(node)
+}
+
+pub(crate) fn normalize_name(reference: &str) -> String {
+    REFERENCE_ESCAPE
+        .replace_all(reference, "$1")
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ")
 }
