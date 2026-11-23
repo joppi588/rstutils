@@ -4,7 +4,7 @@ children:
   children:
   - class: Reference
     attributes:
-      label: embedded URI on next line
+      reftext: embedded URI on next line
       markup: inline
       raw: "embedded URI on next line\n<http://example.com>"
       refuri: http://example.com

@@ -4,7 +4,7 @@ children:
   children:
   - class: Reference
     attributes:
-      label: "substitution\nreference"
+      refname: "substitution\nreference"
       type: sub_ref
   - class: PlainText
     attributes:

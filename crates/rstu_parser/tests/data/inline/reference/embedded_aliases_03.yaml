@@ -4,10 +4,10 @@ children:
   children:
   - class: Reference
     attributes:
-      label: embedded alias across lines
       markup: inline
       raw: "embedded alias across lines <alias\nphrase_>"
       refname: alias phrase
+      reftext: embedded alias across lines
       type: ahref
   - class: PlainText
     attributes:

@@ -7,7 +7,7 @@ children:
       text: "Substitution reference with "
   - class: Reference
     attributes:
-      label: mix
+      refname: mix
       type: sub_ref
   - class: PlainText
     attributes:

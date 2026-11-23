@@ -7,7 +7,7 @@ children:
       text: quoted '
   - class: Reference
     attributes:
-      label: phrase reference
+      reftext: phrase reference
       markup: inline
       type: href
   - class: PlainText
@@ -15,7 +15,7 @@ children:
       text: "', quoted \""
   - class: Reference
     attributes:
-      label: phrase reference
+      reftext: phrase reference
       markup: inline
       type: href
   - class: PlainText
@@ -23,7 +23,7 @@ children:
       text: "\",\nquoted ‘"
   - class: Reference
     attributes:
-      label: phrase reference
+      reftext: phrase reference
       markup: inline
       type: href
   - class: PlainText
@@ -31,7 +31,7 @@ children:
       text: "’,\nquoted “"
   - class: Reference
     attributes:
-      label: phrase reference
+      reftext: phrase reference
       markup: inline
       type: href
   - class: PlainText
@@ -39,7 +39,7 @@ children:
       text: "”,\nquoted «"
   - class: Reference
     attributes:
-      label: phrase reference
+      reftext: phrase reference
       markup: inline
       type: href
   - class: PlainText
