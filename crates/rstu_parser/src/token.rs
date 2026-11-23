@@ -635,11 +635,7 @@ mod tests {
     fn hyperlink_target_markers_match_before_generic_explicit_markup() {
         for (input, expected_kind, expected_lexeme) in [
             ("\n.. _target:\n", TK::HyperlinkTarget, ".. _target:"),
-            (
-                "\n.. _`a: phrase`:\n",
-                TK::HyperlinkTarget,
-                ".. _`a: phrase`:",
-            ),
+            ("\n.. _`a: phrase`:\n", TK::HyperlinkTargetQuote, ".. _`"),
             (
                 "\n.. _a very long target name,\n   split across lines:\n",
                 TK::HyperlinkTarget,
@@ -647,8 +643,8 @@ mod tests {
             ),
             (
                 "\n.. _`and another,\n   with backquotes`:\n",
-                TK::HyperlinkTarget,
-                ".. _`and another,\n   with backquotes`:",
+                TK::HyperlinkTargetQuote,
+                ".. _`",
             ),
             (
                 "\n.. __: https://example.org\n",
@@ -657,7 +653,7 @@ mod tests {
             ),
             (
                 "\n__ https://example.org\n",
-                TK::HyperlinkTargetAnonymous,
+                TK::HyperlinkTargetAnonymousShort,
                 "__ ",
             ),
         ] {
