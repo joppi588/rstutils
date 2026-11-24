@@ -34,7 +34,6 @@ pub(crate) fn parse_definition_list(stream: &mut TokenStream) -> Result<NodeRef,
     }
     Err(ParserError::MissingFinalBlankLineError {
         entity: "Definition list".to_owned(),
-
         position: stream.position_at_cursor(),
     })
 }
