@@ -29,8 +29,14 @@ Collection only - to be implemented in rstu-check
   - Fix: n/a
 
 - **Missing blank line after various elements**
-  - File: TBD
-  - Fix: TBD
+  - File: `indent_04b.rst`
+  - Fix: insert blank line
+
+- **Missing blank line before literal block**
+  tbd, required by original spec?
+  - File: `indented_03.rst`
+  - Fix: insert blank line
+
 
 ## Directive Specific Warnings
 
