@@ -38,9 +38,6 @@ pub enum ParserError {
         marker: char,
         position: Position,
     },
-    LiteralBlockMissingBlankLine {
-        position: Position,
-    },
     LiteralBlockMissingContent {
         position: Position,
     },
@@ -131,10 +128,7 @@ impl std::fmt::Display for ParserError {
                 formatter,
                 "{position}: {marker:?} is not a valid quoted literal block marker."
             ),
-            Self::LiteralBlockMissingBlankLine { position } => write!(
-                formatter,
-                "{position}: Literal block marker is not followed by a blank line."
-            ),
+
             Self::LiteralBlockMissingContent { position } => write!(
                 formatter,
                 "{position}: Literal block expected after literal marker."

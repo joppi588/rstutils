@@ -16,6 +16,7 @@ use test_parser::rst_vs_yaml;
 #[case::i01("indented_01")]
 #[case::i02("indented_02")]
 #[case::i03("indented_03")]
+#[case::i03("indented_04b")]
 #[case::i05("indented_05")]
 #[case::i06("indented_06")]
 #[case::i07("indented_07")]
@@ -29,7 +30,7 @@ fn ok_literal_block(#[case] test_case: &str) {
 }
 
 #[rstest]
-#[case::i04("indented_04", PE::MissingFinalBlankLineError)]
+#[case::i04("indented_04a", PE::MissingFinalBlankLineError)]
 #[case::i10("indented_10", PE::LiteralBlockInvalidQuoteMarker)]
 #[case::i12("indented_12", PE::LiteralBlockMissingContent)]
 #[case::q03("quoted_03", PE::LiteralBlockInvalidQuoteMarker)]

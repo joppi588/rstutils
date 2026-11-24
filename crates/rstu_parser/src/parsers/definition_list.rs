@@ -28,14 +28,12 @@ pub(crate) fn parse_definition_list(stream: &mut TokenStream) -> Result<NodeRef,
     }
     if stream.token_at_cursor().kind == TK::EoF
         || stream.token_peek_relative(-1).kind == TK::BlankLine
-        || (stream.token_at_cursor().kind == TK::Dedent
-            && stream.token_peek_relative(1).kind == TK::BlankLine)
+        || stream.token_at_cursor().kind == TK::Dedent
     {
         return Ok(list);
     }
     Err(ParserError::MissingFinalBlankLineError {
         entity: "Definition list".to_owned(),
-
         position: stream.position_at_cursor(),
     })
 }
