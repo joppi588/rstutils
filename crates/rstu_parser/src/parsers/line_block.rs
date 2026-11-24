@@ -58,7 +58,12 @@ pub(crate) fn parse_line_block(
     }
 
     // TODO: Ticket 378 and 395, try to make this check more generic on upper level.
-    if indent == 0 && !matches!(stream.token_at_cursor().kind, TK::BlankLine | TK::EoF) {
+    if indent == 0
+        && !matches!(
+            stream.token_at_cursor().kind,
+            TK::BlankLine | TK::Dedent | TK::EoF
+        )
+    {
         return Err(ParserError::MissingFinalBlankLineError {
             entity: "Line Block".to_owned(),
             position: stream.position_at_cursor(),
