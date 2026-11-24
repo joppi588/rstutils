@@ -1,0 +1,158 @@
+// SPDX-FileCopyrightText: 2026 Jochen Schmaehling <tostmann1@web.de>
+//
+// SPDX-License-Identifier: MIT
+
+use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
+
+use crate::parser_errors::ParserError;
+use crate::token::TokenKind as TK;
+use crate::token_stream::{Position, TokenStream};
+use std::debug_assert_matches;
+
+#[derive(Debug)]
+pub enum LiteralBlockType {
+    Expanded,
+    PartiallyMinimized,
+    FullyMinimized,
+}
+
+pub(crate) fn parse_literal_block(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    debug_assert_matches!(
+        stream.token_at_cursor().kind,
+        TK::LiteralBlock | TK::LiteralBlockMinimized | TK::LiteralBlockPartiallyMinimized
+    );
+
+    let block = AstNode::new_ref(NodeClass::LiteralBlock);
+
+    let literal_block_token = stream.consume();
+    let literal_block_type = match literal_block_token.kind {
+        TK::LiteralBlockMinimized => LiteralBlockType::FullyMinimized,
+        TK::LiteralBlock => LiteralBlockType::Expanded,
+        TK::LiteralBlockPartiallyMinimized => LiteralBlockType::PartiallyMinimized,
+        _ => unreachable!(),
+    };
+    block.with_attr("type", format!("{literal_block_type:?}"));
+    stream.consume_newline();
+    if stream.token_at_cursor().kind == TK::BlankLine {
+        block.push_blank_lines(stream.consume().len());
+    }
+    if stream.token_at_cursor().kind == TK::Indent {
+        set_text_indented_content(stream, &block)?;
+    } else if stream.token_at_cursor().kind != TK::EoF {
+        set_text_quoted_content(stream, &block)?;
+    } else {
+        return Err(ParserError::LiteralBlockMissingContent {
+            position: stream.position_at_cursor(),
+        });
+    }
+
+    Ok(block)
+}
+
+fn set_text_indented_content(stream: &mut TokenStream, block: &NodeRef) -> Result<(), ParserError> {
+    let mut rel_indent = stream.consume().len();
+    block.with_attr("indent", rel_indent);
+
+    let mut text = String::new();
+    loop {
+        match stream.token_at_cursor().kind {
+            TK::EoF => {
+                break;
+            }
+            TK::Indent => {
+                let indent = stream.consume();
+                rel_indent += indent.len();
+                text.push_str(&indent.lexeme.to_string());
+            }
+            TK::Dedent => {
+                let dedent_token = stream.token_at_cursor();
+                let dedent = dedent_token.len();
+                if dedent > rel_indent {
+                    stream.update_at_cursor(space!(dedent - rel_indent));
+                    break;
+                } else if dedent == rel_indent {
+                    stream.consume();
+                    break;
+                } else {
+                    rel_indent -= dedent;
+                }
+            }
+            _ => text.push_str(&stream.consume().lexeme),
+        }
+    }
+
+    if text.is_empty() {
+        return Err(ParserError::LiteralBlockMissingContent {
+            position: stream.position_at_cursor(),
+        });
+    }
+    if !matches!(stream.token_at_cursor().kind, TK::BlankLine | TK::EoF) {
+        return Err(ParserError::MissingFinalBlankLineError {
+            entity: "Literal block".to_owned(),
+            position: stream.position_at_cursor(),
+        });
+    }
+    block.with_attr("text", text);
+    Ok(())
+}
+
+fn set_text_quoted_content(stream: &mut TokenStream, block: &NodeRef) -> Result<(), ParserError> {
+    let mut text = String::new();
+    let mut at_line_start = true;
+    let mut marker = None;
+    loop {
+        let position = stream.position_at_cursor();
+        let token = stream.consume();
+        match token.kind {
+            TK::BlankLine | TK::EoF => {
+                break;
+            }
+            TK::NewLine => {
+                at_line_start = true;
+                text.push_str("\n");
+            }
+            _ => {
+                if at_line_start {
+                    let first_char = token.lexeme.chars().nth(0).expect("lexeme is not empty.");
+                    check_quoted_marker(&mut marker, first_char, position)?;
+                    at_line_start = false;
+                }
+                text.push_str(&token.lexeme);
+            }
+        }
+    }
+    if text.is_empty() {
+        return Err(ParserError::LiteralBlockMissingContent {
+            position: stream.position_at_cursor(),
+        });
+    }
+
+    block.with_attr("text", text);
+    Ok(())
+}
+
+fn check_quoted_marker(
+    marker: &mut Option<char>,
+    candidate: char,
+    position: Position,
+) -> Result<(), ParserError> {
+    const ALLOWED_MARKERS: &str = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+
+    if !ALLOWED_MARKERS.contains(candidate) {
+        return Err(ParserError::LiteralBlockInvalidQuoteMarker {
+            marker: candidate,
+            position,
+        });
+    }
+
+    if let Some(expected) = marker.filter(|marker| *marker != candidate) {
+        return Err(ParserError::LiteralBlockInconsistentQuoteMarker {
+            expected,
+            found: candidate,
+            position,
+        });
+    }
+
+    *marker = Some(candidate);
+    Ok(())
+}

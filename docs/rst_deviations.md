@@ -41,7 +41,7 @@ All of these are believed to be non-critical. A few might be considered bug fixe
   * Quoted indirect references must start after the colon, starting on the next line is not supported.
 
 
-# Spec extensions
+# Spec relaxations
 - Enumerated list:
     * Auto in between explicit markers is accepted.
       (test case docutils_mixed_auto_and_explicit, docutils does not accept that.)
@@ -50,7 +50,9 @@ All of these are believed to be non-critical. A few might be considered bug fixe
     * <BlankLine>===<BlankLine> would be interpreted by the parser as a section header with
       empty title and missing closing -> error
 - whitespaces in uris are accepted, see tests\data\inline_markup\embedded_uris_07.rst
-
+- Block quotes, literal blocks, line blocks, and definition lists:
+  Final blank line if not required if there is a dedent.
+  Rationale: Dedent clearly marks the end of the block.
 
 # Interpretations
 Things that would be according to the spec book but not to the python parser implementation:
