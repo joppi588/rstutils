@@ -2,64 +2,46 @@
 
 Collection only - to be implemented in rstu-check
 
----
+## General Warnings
 
-Pattern:
-Warning text
-Example file
-Quick fix
+- **Section marker shorter than title**
+  - File: `section_headers`
+  - Fix: Align with title length
 
----
+- **Section marker length unbalanced** (if both over/under)
+  - File: `section_headers`
+  - Fix: Min possible (see above)
 
-Section marker shorter than title
-section_headers.
-Align with title length
+- **Empty section title**
+  - File: `section_headers_14.rst`
+  - Fix: n/a
 
----
+- **Inconsistent section marker order or missing section level**
+  - File: `section_headers_18.rst`
+  - Fix: Use standard order / Use order defined first
 
-Section marker length unbalanced (if both over/under)
-section_headers
-Min possible (see above)
+- **Explicit markup ends without a blank line; unexpected unindent.**
+  - Files: `comments_04`, `substitution_definitions_10`
+  - Fix: Insert blank line
 
----
+- **Empty citation**
+  - File: `citations_05`
+  - Fix: n/a
 
-Empty section title
-section_headers_14.rst
-n/a
+- **Missing blank line after various elements**
+  - File: TBD
+  - Fix: TBD
 
----
+## Directive Specific Warnings
 
-Inconsistent section marker order or missing section level
-section_headers_18.rst
-Use standard order / Use order defined first
+- **Image directive does not allow content** (except blank line)
+  - File: `substitution_definitions_05.rst`
+  - Fix: Insert comment marker / dedent / insert empty comment
 
----
+- **Duplicate substitutions**
+  - File: `substitution_definitions_09.rst`
+  - Fix: enumerate
 
-Explicit markup ends without a blank line; unexpected unindent.
-comments_04, substitution_definitions_10
-Insert blank line
-
----
-
-Empty citation
-citations_05
-n/a
-
----
-
-Missing Blank line after various elements
-
-
-# Directive specific warnings
-
-image directive does not allow content (except blank line)
-substitution_definitions_05.rst
-Insert comment marker / dedent / insert empty comment
----
-duplicate substitutions
-substitution_definitions_09.rst
-enumerate
----
-References are not allowed as directive arguments.
-substitution_definitions_11
-n/a
+- **References are not allowed as directive arguments.**
+  - File: `substitution_definitions_11`
+  - Fix: n/a
