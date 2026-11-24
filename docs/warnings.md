@@ -3,29 +3,51 @@
 Collection only - to be implemented in rstu-check
 
 ---
+
+Pattern:
+Warning text
+Example file
+Quick fix
+
+---
+
 Section marker shorter than title
 section_headers.
 Align with title length
+
 ---
+
 Section marker length unbalanced (if both over/under)
 section_headers
 Min possible (see above)
+
 ---
+
 Empty section title
 section_headers_14.rst
 n/a
+
 ---
+
 Inconsistent section marker order or missing section level
 section_headers_18.rst
 Use standard order / Use order defined first
+
 ---
+
 Explicit markup ends without a blank line; unexpected unindent.
 comments_04, substitution_definitions_10
 Insert blank line
+
 ---
+
 Empty citation
 citations_05
 n/a
+
+---
+
+Missing Blank line after various elements
 
 
 # Directive specific warnings
