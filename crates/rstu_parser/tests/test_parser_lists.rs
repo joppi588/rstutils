@@ -108,6 +108,7 @@ fn err_enumerated_list(#[case] test_case: &str, #[case] expected_error: PE) {
 #[case::f07("07_field_list")]
 #[case::f08("08_oneliners_no_blank")]
 #[case::f09("09_complex_field_bodies")]
+#[case::f12("field_12")]
 // TODO: NOT IMPLEMENTED:
 // #[case::f12("12_inline_markup_in_name")]
 // #[case::f13("13_bad_inline_markup")]
