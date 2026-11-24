@@ -454,7 +454,7 @@ impl TokenKind {
         (ClassifierSeparator,r"(.|\n)\s+:\s+(.|\n)"),
 
         // Lists
-        (Field,r"\s:[[:word:] ]+:\s"),
+        (Field,r"\s:[[:word:] +\-]+:\s"),
         (EnumeratedListMarker, r"[\n\s](?:(?:#|[0-9]+|[A-Za-z]+|[IVXLCDMivxlcdm]+)(?:\.|\))[ \t]|\([A-Za-z0-9]+\)[ \t])"),
         (BulletListMarker, r"(\s|\n)[\-\+\*•‣⁃](\s|\n)"),
         (Option, OPTION),
@@ -819,6 +819,12 @@ mod tests {
         assert_eq!(TK::Field.find_lexeme(" :F_2: Some value"), Some(":F_2:"));
         assert_eq!(TK::Field.find_lexeme(" :F_2:Some value"), None);
         assert_eq!(TK::Field.find_lexeme("\n:F$x: "), None);
+        assert_eq!(
+            TK::Field.find_lexeme(" :+field+3: value"),
+            Some(":+field+3:")
+        );
+        assert_eq!(TK::Field.find_lexeme(" :field-2: value"), Some(":field-2:"));
+        assert_eq!(TK::Field.find_lexeme(" :-field: value"), Some(":-field:"));
     }
 
     #[test]
