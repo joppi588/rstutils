@@ -51,7 +51,7 @@ All of these are believed to be non-critical. A few might be considered bug fixe
       empty title and missing closing -> error
 - whitespaces in uris are accepted, see tests\data\inline_markup\embedded_uris_07.rst
 - Block quotes, literal blocks, line blocks, and definition lists:
-  Final blank line if not required if there is a dedent.
+  Final blank line if not required if there is a dedent beyond the block indent.
   Rationale: Dedent clearly marks the end of the block.
 
 # Interpretations

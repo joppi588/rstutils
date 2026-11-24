@@ -1,0 +1,25 @@
+class: Document
+children:
+- class: Directive
+  attributes:
+    directive_type: directive
+  children:
+  - class: Block
+    attributes:
+      indent: 4
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "A paragraph:\n"
+    - class: LiteralBlock
+      attributes:
+        indent: 4
+        text: "A literal block.\n"
+        type: FullyMinimized
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "no blank line but two-stage dedent\n"
