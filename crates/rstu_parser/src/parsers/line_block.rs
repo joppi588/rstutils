@@ -43,7 +43,7 @@ pub(crate) fn parse_line_block(
 
         let index_next_line: usize = stream.find_end_of_line() + 1;
         let paragraph = match stream.token_at(index_next_line).kind {
-            TK::Indent => with_hanging_indent(stream, parse_paragraph)?,
+            TK::Indent => with_hanging_indent(parse_paragraph, stream)?,
             TK::LineBlock | TK::BlankLine | TK::EoF => parse_paragraph(stream)?,
             kind => {
                 return Err(ParserError::UnexpectedToken {

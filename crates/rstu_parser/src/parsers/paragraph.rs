@@ -89,7 +89,7 @@ mod tests {
         let mut stream = tokenize(input);
         stream.consume(); //synthetic blank line
 
-        let paragraph = with_hanging_indent(&mut stream, parse_paragraph)
+        let paragraph = with_hanging_indent(parse_paragraph, &mut stream)
             .expect("Paragraph parses successfully");
         let paragraph = paragraph.borrow();
 
@@ -114,7 +114,7 @@ mod tests {
         let mut stream = tokenize(input);
         stream.consume(); //synthetic blank line
 
-        let paragraph = with_hanging_indent(&mut stream, parse_paragraph)
+        let paragraph = with_hanging_indent(parse_paragraph, &mut stream)
             .expect("Paragraph parses successfully");
         let paragraph = paragraph.borrow();
 

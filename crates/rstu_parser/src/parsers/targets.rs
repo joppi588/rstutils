@@ -105,11 +105,11 @@ pub(crate) fn parse_hyperlink_target(stream: &mut TokenStream) -> Result<NodeRef
         stream.token_at_nextline().kind,
     ) {
         (TK::BackquoteStart, TK::Indent) => {
-            target.push_child(with_hanging_indent(stream, parse_reference_expression)?);
+            target.push_child(with_hanging_indent(parse_reference_expression, stream)?);
             // 3c
         }
         (_, TK::Indent) => {
-            target.push_child(with_hanging_indent(stream, parse_reference_plain)?);
+            target.push_child(with_hanging_indent(parse_reference_plain, stream)?);
             // 2b
         }
         (TK::NewLine, kind) if kind.is(TC::PARAGRAPH_END) => {

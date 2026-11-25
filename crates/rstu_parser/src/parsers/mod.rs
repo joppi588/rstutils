@@ -29,8 +29,8 @@ use std::sync::LazyLock;
 static REFERENCE_ESCAPE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\\(?s:(.))|\\$").unwrap());
 
 pub(crate) fn with_hanging_indent<F>(
-    stream: &mut TokenStream,
     parser: F,
+    stream: &mut TokenStream,
 ) -> Result<rstu_ast::NodeRef, ParserError>
 where
     F: Fn(&mut TokenStream) -> Result<rstu_ast::NodeRef, ParserError>,

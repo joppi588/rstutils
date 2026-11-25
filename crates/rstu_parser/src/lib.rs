@@ -171,7 +171,7 @@ fn parse_body_element(
             (TK::Attribution, _) => {
                 let attribution = AstNode::new_ref(NodeClass::Attribution);
                 attribution.with_attr("marker", stream.consume().lexeme);
-                let paragraph = with_hanging_indent(stream, parse_paragraph)?;
+                let paragraph = with_hanging_indent(parse_paragraph, stream)?;
                 attribution.push_child(paragraph);
                 current_parent.push_child(attribution);
             }

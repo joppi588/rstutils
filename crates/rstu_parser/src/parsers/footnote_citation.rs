@@ -38,7 +38,7 @@ fn parse_note(
     }
     let index_next_line: usize = stream.find_end_of_line() + 1;
     let paragraph = match stream.token_at(index_next_line).kind {
-        TK::Indent => with_hanging_indent(stream, parse_paragraph)?,
+        TK::Indent => with_hanging_indent(parse_paragraph, stream)?,
         kind if matches!(kind, TK::BlankLine | TK::EoF) || (kind == token_kind) => {
             parse_paragraph(stream)?
         }
