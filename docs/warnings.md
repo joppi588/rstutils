@@ -1,16 +1,26 @@
 # Format Warnings
 
 Collection only - to be implemented in rstu-check
+Template:
+- **Description**
+  - File: `test_case.rst`
+  - Fix: Fix by ...
+  - Auto-fix: yes/no
+
 
 ## General Warnings
+
+### Sections
 
 - **Section marker shorter than title**
   - File: `section_headers`
   - Fix: Align with title length
+  - Autofix: yes
 
 - **Section marker length unbalanced** (if both over/under)
   - File: `section_headers`
   - Fix: Min possible (see above)
+  - Autofix: yes
 
 - **Empty section title**
   - File: `section_headers_14.rst`
@@ -19,14 +29,13 @@ Collection only - to be implemented in rstu-check
 - **Inconsistent section marker order or missing section level**
   - File: `section_headers_18.rst`
   - Fix: Use standard order / Use order defined first
+  - Autofix: yes
+
+### Blank lines
 
 - **Explicit markup ends without a blank line; unexpected unindent.**
   - Files: `comments_04`, `substitution_definitions_10`
   - Fix: Insert blank line
-
-- **Empty citation**
-  - File: `citations_05`
-  - Fix: n/a
 
 - **Missing blank line after various elements**
   - File: `indent_04b.rst`
@@ -36,6 +45,18 @@ Collection only - to be implemented in rstu-check
   tbd, required by original spec?
   - File: `indented_03.rst`
   - Fix: insert blank line
+
+
+### Various
+
+- **Empty citation**
+  - File: `citations_05`
+  - Fix: n/a
+
+
+- **Definition list inside bullet list**
+  - File: `definition_16.rst`
+  - Fix: Correct indentation
 
 
 ## Directive Specific Warnings
