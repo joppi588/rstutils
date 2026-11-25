@@ -313,6 +313,7 @@ impl TokenCategory {
         TokenKind::Separator,
     ];
     pub const PLAIN: &'static [TokenKind] = &[
+        TokenKind::Continuation,
         TokenKind::DoctestStart,
         TokenKind::EnclosedInlineStart,
         TokenKind::EscapedChar,
@@ -337,6 +338,7 @@ pub enum TokenKind {
     Citation,
     CitationReference,
     ClassifierSeparator,
+    Continuation,
     Dedent,
     Directive,
     DoctestStart,
@@ -388,6 +390,7 @@ impl TokenKind {
         // IMPORTANT:
         // The order of the enum matters, as the first matching token will be picked.
         // Format (name, token regex)
+        (Continuation,r"[ \w]\.\.\.(?:.|\n)"),
         (Separator, section_separator_pattern()),
         (Attribution, r" (?:—|--|---) +(?:.|\n)"),
 
