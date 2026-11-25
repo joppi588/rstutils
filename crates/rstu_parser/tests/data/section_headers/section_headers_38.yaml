@@ -28,6 +28,3 @@ children:
   attributes:
     marker_len: 3
     marker_type: '.'
-- class: BlankLine
-  attributes:
-    count: 2
