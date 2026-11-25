@@ -1,0 +1,33 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "This is no section title opening ...\nIt is a continuation\n"
+- class: BlockQuote
+  children:
+  - class: BlankLine
+  - class: Block
+    attributes:
+      indent: 3
+    children:
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "...\nSame here\n"
+- class: BlankLine
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "Transition:\n"
+- class: BlankLine
+- class: Transition
+  attributes:
+    marker_len: 3
+    marker_type: '.'
+- class: BlankLine
+  attributes:
+    count: 2

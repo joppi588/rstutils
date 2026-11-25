@@ -15,6 +15,7 @@ Consequences:
 All of these are believed to be non-critical. A few might be considered bug fixes.
 
 - Allowed section/transition markers: restrict to the "recommended" set.
+  "..." is not a section marker but always plain text.
 - Field names only allow [A-Za-z0-9_ ]
   Rationale: Field names are like identifiers.
 - Bullet list:
@@ -46,9 +47,6 @@ All of these are believed to be non-critical. A few might be considered bug fixe
     * Auto in between explicit markers is accepted.
       (test case docutils_mixed_auto_and_explicit, docutils does not accept that.)
 - Transitions are 3+ characters, not 4+ as in the original spec.
-  Rationale:
-    * <BlankLine>===<BlankLine> would be interpreted by the parser as a section header with
-      empty title and missing closing -> error
 - whitespaces in uris are accepted, see tests\data\inline_markup\embedded_uris_07.rst
 - Block quotes, literal blocks, line blocks, and definition lists:
   Final blank line if not required if there is a dedent beyond the block indent.

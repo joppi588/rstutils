@@ -1,0 +1,9 @@
+This is no section title opening ...
+It is a continuation
+
+   ...
+   Same here
+
+Transition:
+
+...
