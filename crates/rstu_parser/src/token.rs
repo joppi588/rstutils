@@ -131,7 +131,7 @@ fn enclosed_inline_start_pattern() -> String {
         .collect::<Vec<_>>()
         .join("|");
 
-    format!(r"(.|\n)(?:{enclosed_patterns})(.|\n)")
+    format!(r"(?:.|\n)(?:{enclosed_patterns})(?:.|\n)")
 }
 
 fn section_separator_pattern() -> String {
@@ -395,19 +395,19 @@ impl TokenKind {
         (Attribution, r" (?:—|--|---) +(?:.|\n)"),
 
         (Indent, r"\n[ \t]+[^ \t\n]"),
-        (BlankLine, r"\n[ \t]*\n+(.|\n)"),
-        (NewLine, r"[^\n]\n(.|\n)"),
+        (BlankLine, r"\n[ \t]*\n+(?:.|\n)"),
+        (NewLine, r"[^\n]\n(?:.|\n)"),
 
-        (HyperlinkTargetQuote,r"(.|\n)\.\. _`[^\s]"),
-        (HyperlinkTarget, r"(.|\n)\.\. _(?:[^\s_:\n](?:\\.|[^:])*)[ \t]*:(.|\n)"),
-        (HyperlinkTargetAnonymous, r"(.|\n)\.\. __:(.|\n)"),
-        (HyperlinkTargetAnonymousShort, r"(.|\n)__ (.|\n)"),
+        (HyperlinkTargetQuote,r"(?:.|\n)\.\. _`[^\s]"),
+        (HyperlinkTarget, r"(?:.|\n)\.\. _(?:[^\s_:\n](?:\\.|[^:])*)[ \t]*:(?:.|\n)"),
+        (HyperlinkTargetAnonymous, r"(?:.|\n)\.\. __:(?:.|\n)"),
+        (HyperlinkTargetAnonymousShort, r"(?:.|\n)__ (?:.|\n)"),
         (Directive, format!(r"[\n\s]\.\.\s(?:\|{0}\|\s)?[\p{{L}}\p{{N}}]+(?:[-_+:.][\p{{L}}\p{{N}}]+)*::\s", SUBSTITUTION_NAME)),
 
         (DoctestStart, r"\s>>>\s"),
 
-        (FootNote, format!(r"(.|\n)(?:\.\. \[{0}\])(.|\n)", FOOTNOTE_LABEL)),
-        (Citation, format!(r"(.|\n)(?:\.\. \[{0}\])(.|\n)", CITATION_LABEL)),
+        (FootNote, format!(r"(?:.|\n)(?:\.\. \[{0}\])(?:.|\n)", FOOTNOTE_LABEL)),
+        (Citation, format!(r"(?:.|\n)(?:\.\. \[{0}\])(?:.|\n)", CITATION_LABEL)),
 
         // Comments
         (DoubleDot, r"\s\.\. *\s"),
@@ -454,23 +454,23 @@ impl TokenKind {
 
 
         // Classifiers for definition list (must precede Field: " : x :" would match Field)
-        (ClassifierSeparator,r"(.|\n)\s+:\s+(.|\n)"),
+        (ClassifierSeparator,r"(?:.|\n)\s+:\s+(?:.|\n)"),
 
         // Lists
         (Field,r"\s:[[:word:] +\-]+:\s"),
         (EnumeratedListMarker, r"[\n\s](?:(?:#|[0-9]+|[A-Za-z]+|[IVXLCDMivxlcdm]+)(?:\.|\))[ \t]|\([A-Za-z0-9]+\)[ \t])"),
-        (BulletListMarker, r"(\s|\n)[\-\+\*•‣⁃](\s|\n)"),
+        (BulletListMarker, r"(?:\s|\n)[\-\+\*•‣⁃](\s|\n)"),
         (Option, OPTION),
 
         // Plain text
         (Spaces, r"[^ \t\n][ \t]+[^ \t]"),
         (Word, r"[^\w][\w&&[^_]]\w*[^\w]"),
-        (EscapedChar,r"(.|\n)\\.(.|\n)"),
-        (Punctuation, r"(.|\n)[[:punct:]](.|\n)"),
+        (EscapedChar,r"(?:.|\n)\\.(?:.|\n)"),
+        (Punctuation, r"(?:.|\n)[[:punct:]](?:.|\n)"),
 
         (Dedent, r"\b\B"), // never matches, assigned by the lexer
         (EoF, r"\b\B"), // never matches, only assigned by lexer / returned by TokenStream::kind_at
-        (LiteralChar, r"(.|\n).(.|\n)"),
+        (LiteralChar, r"(?:.|\n).(?:.|\n)"),
     );
 
     pub fn is(self, kinds: &[TokenKind]) -> bool {
