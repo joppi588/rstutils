@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 use super::block::parse_block;
-use super::inline_markup::parse_inline_token;
+use super::inline_markup::parse_inline_markup;
 use crate::parser_errors::ParserError;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
 use crate::token_stream::TokenStream;
@@ -71,7 +71,7 @@ fn parse_term_or_classifier(stream: &mut TokenStream, node: &NodeRef) -> Result<
         if matches!(kind, TK::NewLine | TK::ClassifierSeparator | TK::EoF) {
             break;
         }
-        if let Some(inline) = parse_inline_token(stream)? {
+        if let Some(inline) = parse_inline_markup(stream)? {
             node.push_child(inline);
             continue;
         }

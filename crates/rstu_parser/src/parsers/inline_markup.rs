@@ -8,7 +8,9 @@ use crate::token::{TokenCategory as TC, TokenKind as TK};
 use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
-pub(crate) fn parse_inline_token(stream: &mut TokenStream) -> Result<Option<NodeRef>, ParserError> {
+pub(crate) fn parse_inline_markup(
+    stream: &mut TokenStream,
+) -> Result<Option<NodeRef>, ParserError> {
     let node = match stream.token_at_cursor().kind {
         TK::RolePrefix => parse_prefix_role(stream)?,
         TK::StrongStart => parse_strong(stream)?,
