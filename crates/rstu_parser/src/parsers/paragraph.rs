@@ -4,9 +4,7 @@
 
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
-use super::hyperlink_reference::parse_reference_token;
-use super::inline_markup::{parse_inline_markup, parse_interpreted_or_ref, parse_prefix_role};
-use super::targets::parse_inline_target;
+use super::inline_markup::parse_inline_token;
 
 use crate::parser_errors::ParserError;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
@@ -15,28 +13,23 @@ use crate::token_stream::TokenStream;
 pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     let paragraph = AstNode::new_ref(NodeClass::Paragraph);
     loop {
-        let kind = stream.token_at_cursor().kind;
-        let node = match kind {
-            TK::RolePrefix => parse_prefix_role(stream)?,
-            kind if kind.is(TC::INLINE_MARKUP) => parse_inline_markup(stream)?,
-            kind if kind.is(TC::INLINE_REFERENCE) => parse_reference_token(stream)?,
-            TK::InlineInternalTargetStart => parse_inline_target(stream)?,
-            TK::BackquoteStart => parse_interpreted_or_ref(stream)?,
-            kind if kind.is(TC::PARAGRAPH_END) => break,
-            _ => {
-                let plain_text = parse_plain(stream);
-                if stream.token_at_cursor().kind == TK::LiteralBlockMinimized {
-                    // TODO: Adds a colon, simplify this
-                    let text = plain_text
-                        .borrow()
-                        .attributes
-                        .get_str("text")
-                        .unwrap_or_default();
+        let node = if let Some(node) = parse_inline_token(stream)? {
+            node
+        } else if stream.token_at_cursor().kind.is(TC::PARAGRAPH_END) {
+            break;
+        } else {
+            let plain_text = parse_plain(stream);
+            if stream.token_at_cursor().kind == TK::LiteralBlockMinimized {
+                // TODO: Adds a colon, simplify this
+                let text = plain_text
+                    .borrow()
+                    .attributes
+                    .get_str("text")
+                    .unwrap_or_default();
 
-                    plain_text.with_attr("text", format!("{text}:\n"));
-                }
-                plain_text
+                plain_text.with_attr("text", format!("{text}:\n"));
             }
+            plain_text
         };
         paragraph.push_child(node);
     }

@@ -3,9 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 use super::block::parse_block;
-use super::hyperlink_reference::parse_reference_token;
-use super::inline_markup::{parse_inline_markup, parse_interpreted_or_ref, parse_prefix_role};
-use super::targets::parse_inline_target;
+use super::inline_markup::parse_inline_token;
 use crate::parser_errors::ParserError;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
 use crate::token_stream::TokenStream;
@@ -68,39 +66,33 @@ fn is_term_text(kind: TK) -> bool {
 }
 
 fn parse_term_or_classifier(stream: &mut TokenStream, node: &NodeRef) -> Result<(), ParserError> {
-    // TODO: #465 very similar to paragraph parsing, reuse.
     loop {
         let kind = stream.token_at_cursor().kind;
-        match kind {
-            TK::NewLine | TK::ClassifierSeparator | TK::EoF => break,
-            TK::RolePrefix => {
-                let inline = parse_prefix_role(stream)?;
-                node.push_child(inline);
-            }
-            kind if kind.is(TC::INLINE_MARKUP) => {
-                let inline = parse_inline_markup(stream)?;
-                node.push_child(inline);
-            }
-            kind if kind.is(TC::INLINE_REFERENCE) => {
-                node.push_child(parse_reference_token(stream)?)
-            }
-            TK::InlineInternalTargetStart => node.push_child(parse_inline_target(stream)?),
-            TK::BackquoteStart => node.push_child(parse_interpreted_or_ref(stream)?),
-            kind if is_term_text(kind) => {
-                let mut text = String::new();
-                while {
-                    let kind = stream.token_at_cursor().kind;
-                    kind != TK::NewLine && is_term_text(kind)
-                } {
-                    text.push_str(&stream.consume().lexeme);
-                }
-                if !text.is_empty() {
-                    let plain_text = AstNode::new_ref(NodeClass::PlainText);
-                    plain_text.with_attr("text", text);
-                    node.push_child(plain_text);
-                }
-            }
-            _ => unreachable!(),
+        if matches!(kind, TK::NewLine | TK::ClassifierSeparator | TK::EoF) {
+            break;
+        }
+        if let Some(inline) = parse_inline_token(stream)? {
+            node.push_child(inline);
+            continue;
+        }
+        if !is_term_text(kind) {
+            return Err(ParserError::UnexpectedToken {
+                expected: "Plain text, bullet list marker or field".to_owned(),
+                found: format!("{kind:?}"),
+                position: stream.position_at_cursor(),
+            });
+        }
+        let mut text = String::new();
+        while {
+            let kind = stream.token_at_cursor().kind;
+            kind != TK::NewLine && is_term_text(kind)
+        } {
+            text.push_str(&stream.consume().lexeme);
+        }
+        if !text.is_empty() {
+            let plain_text = AstNode::new_ref(NodeClass::PlainText);
+            plain_text.with_attr("text", text);
+            node.push_child(plain_text);
         }
     }
     Ok(())

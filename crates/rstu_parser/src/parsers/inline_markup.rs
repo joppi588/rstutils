@@ -2,10 +2,23 @@
 //
 // SPDX-License-Identifier: MIT
 use crate::parser_errors::ParserError;
-use crate::parsers::hyperlink_reference::parse_reference_expression;
+use crate::parsers::hyperlink_reference::{parse_reference_expression, parse_reference_token};
+use crate::parsers::targets::parse_inline_target;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
 use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
+
+pub(crate) fn parse_inline_token(stream: &mut TokenStream) -> Result<Option<NodeRef>, ParserError> {
+    let node = match stream.token_at_cursor().kind {
+        TK::RolePrefix => parse_prefix_role(stream)?,
+        kind if kind.is(TC::INLINE_MARKUP) => parse_inline_markup(stream)?,
+        kind if kind.is(TC::INLINE_REFERENCE) => parse_reference_token(stream)?,
+        TK::InlineInternalTargetStart => parse_inline_target(stream)?,
+        TK::BackquoteStart => parse_interpreted_or_ref(stream)?,
+        _ => return Ok(None),
+    };
+    Ok(Some(node))
+}
 
 pub(crate) fn parse_interpreted_or_ref(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert!(stream.token_at_cursor().kind == TK::BackquoteStart);
