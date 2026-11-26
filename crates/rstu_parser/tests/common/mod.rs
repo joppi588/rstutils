@@ -168,7 +168,10 @@ pub fn format_side_by_side(
 
 #[allow(unused_macros)]
 macro_rules! rst_vs_yaml {
-    ($directory:expr, $test_case:expr) => {{
+    ($directory:expr, $test_case:expr) => {
+        rst_vs_yaml!($directory, $test_case, &rstu_parser::ParserConfig::default())
+    };
+    ($directory:expr, $test_case:expr, $config:expr) => {{
         let rst_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
             .join("tests/data")
             .join($directory)
@@ -176,7 +179,8 @@ macro_rules! rst_vs_yaml {
         let rst_contents = std::fs::read_to_string(&rst_path)
             .unwrap_or_else(|_| panic!("failed to read test file: {}", $test_case));
 
-        let parsed = rstu_parser::parse(&rst_contents).expect("expected parse to succeed");
+        let parsed = rstu_parser::parse_with_config(&rst_contents, $config)
+            .expect("expected parse to succeed");
         let actual_yaml =
             rstu_ast::AstNode::to_yaml(&parsed).expect("failed to serialize parse output to yaml");
 

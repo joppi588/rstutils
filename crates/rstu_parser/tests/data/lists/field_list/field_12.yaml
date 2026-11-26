@@ -3,52 +3,8 @@ children:
 - class: Directive
   attributes:
     directive_type: some-directive
-  children:
-  - class: Block
-    attributes:
-      indent: 4
-    children:
-    - class: FieldList
-      children:
-      - class: FieldListItem
-        attributes:
-          fieldname: field1
-        children:
-        - class: Block
-          attributes:
-            indent: 9
-          children:
-          - class: Paragraph
-            children:
-            - class: PlainText
-              attributes:
-                text: |
-                  value1
-      - class: FieldListItem
-        attributes:
-          fieldname: field-2
-        children:
-        - class: Block
-          attributes:
-            indent: 10
-          children:
-          - class: Paragraph
-            children:
-            - class: PlainText
-              attributes:
-                text: |
-                  value-2
-      - class: FieldListItem
-        attributes:
-          fieldname: +field+3
-        children:
-        - class: Block
-          attributes:
-            indent: 11
-          children:
-          - class: Paragraph
-            children:
-            - class: PlainText
-              attributes:
-                text: |
-                  value+3
+    indent: 4
+    raw_content: |
+      :field1: value1
+      :field-2: value-2
+      :+field+3: value+3

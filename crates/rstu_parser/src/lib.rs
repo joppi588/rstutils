@@ -40,9 +40,60 @@ use crate::token::{TokenCategory as TC, TokenKind as TK};
 use parser_errors::ParserError;
 use token_stream::TokenStream;
 
+/// Directives whose body is parsed as rst; all others keep their body as `raw_content`.
+/// TODO: read from a configuration file and pass it via `ParserConfig`.
+const DEFAULT_RST_DIRECTIVES: &[&str] = &["figure", "note", "image"];
+
+thread_local! {
+    static RST_DIRECTIVES: RefCell<Vec<String>> = RefCell::new(default_rst_directives());
+}
+
+fn default_rst_directives() -> Vec<String> {
+    DEFAULT_RST_DIRECTIVES
+        .iter()
+        .map(|name| name.to_string())
+        .collect()
+}
+
+/// Configuration for the few places where parsing depends on user settings (currently directives only).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ParserConfig {
+    /// Names of directives whose body is parsed as rst.
+    pub rst_directives: Vec<String>,
+}
+
+impl Default for ParserConfig {
+    fn default() -> Self {
+        Self {
+            rst_directives: default_rst_directives(),
+        }
+    }
+}
+
+pub(crate) fn is_rst_directive(name: &str) -> bool {
+    RST_DIRECTIVES.with(|names| names.borrow().iter().any(|candidate| candidate == name))
+}
+
 /// Parser implementation:
 /// Lookahead one line -> Decide on element.
 pub fn parse(input: &str) -> Result<NodeRef, ParserError> {
+    parse_with_config(input, &ParserConfig::default())
+}
+
+pub fn parse_with_config(input: &str, config: &ParserConfig) -> Result<NodeRef, ParserError> {
+    // Restores the previous setting on return, also when parsing fails or panics.
+    struct Restore(Vec<String>);
+    impl Drop for Restore {
+        fn drop(&mut self) {
+            let previous = std::mem::take(&mut self.0);
+            RST_DIRECTIVES.with(|names| *names.borrow_mut() = previous);
+        }
+    }
+    let _restore =
+        Restore(RST_DIRECTIVES.with(|names| {
+            std::mem::replace(&mut *names.borrow_mut(), config.rst_directives.clone())
+        }));
+
     let mut stream = tokenize(input);
     let doc = AstNode::new_ref(NodeClass::Document);
 

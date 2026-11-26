@@ -10,26 +10,8 @@ children:
   attributes:
     directive_arguments: python(code)
     directive_type: role
-  children:
-  - class: Block
-    attributes:
-      indent: 3
-    children:
-    - class: FieldList
-      children:
-      - class: FieldListItem
-        attributes:
-          fieldname: language
-        children:
-        - class: Block
-          attributes:
-            indent: 11
-          children:
-          - class: Paragraph
-            children:
-            - class: PlainText
-              attributes:
-                text: "none\n"
+    indent: 3
+    raw_content: ":language: none\n"
 - class: BlankLine
 - class: Paragraph
   children:

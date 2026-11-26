@@ -21,26 +21,8 @@ children:
   attributes:
     directive_arguments: this is a title too
     directive_type: rubric
-  children:
-  - class: Block
-    attributes:
-      indent: 3
-    children:
-    - class: FieldList
-      children:
-      - class: FieldListItem
-        attributes:
-          fieldname: name
-        children:
-        - class: Block
-          attributes:
-            indent: 7
-          children:
-          - class: Paragraph
-            children:
-            - class: PlainText
-              attributes:
-                text: "title\n"
+    indent: 3
+    raw_content: ":name: title\n"
 - class: BlankLine
 - class: Paragraph
   children:

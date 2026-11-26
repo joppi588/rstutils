@@ -3,21 +3,8 @@ children:
 - class: Directive
   attributes:
     directive_type: directive
-  children:
-  - class: Block
-    attributes:
-      indent: 4
-    children:
-    - class: Paragraph
-      children:
-      - class: PlainText
-        attributes:
-          text: "A paragraph:\n"
-    - class: LiteralBlock
-      attributes:
-        indent: 4
-        text: "A literal block.\n"
-        type: FullyMinimized
+    indent: 4
+    raw_content: "A paragraph::\n    A literal block.\n"
 - class: Paragraph
   children:
   - class: PlainText

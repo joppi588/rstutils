@@ -12,15 +12,8 @@ children:
     directive_arguments: latex
     directive_type: raw
     substitution: alpha
+    indent: 3
+    raw_content: |
+      $\\alpha$
   children:
   - class: BlankLine
-  - class: Block
-    attributes:
-      indent: 3
-    children:
-    - class: Paragraph
-      children:
-      - class: PlainText
-        attributes:
-          text: |
-            $\\alpha$
