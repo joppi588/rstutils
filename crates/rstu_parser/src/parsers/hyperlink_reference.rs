@@ -53,19 +53,19 @@ pub(crate) fn parse_reference_token(stream: &mut TokenStream) -> Result<NodeRef,
             node.with_attr("refname", &lexeme[1..lexeme.len() - 1])
                 .with_attr("type", "sub_ref");
         }
-        TK::SubRefHyperlink => {
+        TK::HyperlinkSubRef => {
             node.with_attr("refname", &lexeme[1..lexeme.len() - 2])
                 .with_attr("type", "sub_href");
         }
-        TK::SubRefAnonymousHyperlink => {
+        TK::HyperlinkSubRefAnonymous => {
             node.with_attr("refname", &lexeme[1..lexeme.len() - 3])
                 .with_attr("type", "sub_ahref");
         }
-        TK::SimpleHyperlinkReference => {
+        TK::HyperlinkReferenceSimple => {
             node.with_attr("refname", &lexeme[0..lexeme.len() - 1])
                 .with_attr("type", "simple_href");
         }
-        TK::SimpleAnonymousHyperLinkReference => {
+        TK::HyperLinkReferenceSimpleAnonymous => {
             node.with_attr("refname", &lexeme[0..lexeme.len() - 2])
                 .with_attr("type", "simple_ahref");
         }
@@ -88,7 +88,7 @@ pub(crate) fn parse_reference_expression(stream: &mut TokenStream) -> Result<Nod
     let text = &stream.consume_text_until(
         &[
             &[
-                TK::AnonymousHyperlinkReferenceEnd,
+                TK::HyperlinkReferenceAnonymousEnd,
                 TK::HyperlinkReferenceEnd,
             ],
             TC::PARAGRAPH_END,
@@ -97,7 +97,7 @@ pub(crate) fn parse_reference_expression(stream: &mut TokenStream) -> Result<Nod
     );
     let node = AstNode::new_ref(NodeClass::Reference);
     match &stream.token_at_cursor().kind {
-        TK::AnonymousHyperlinkReferenceEnd => {
+        TK::HyperlinkReferenceAnonymousEnd => {
             stream.consume();
             node.with_attr("type", "ahref");
         }

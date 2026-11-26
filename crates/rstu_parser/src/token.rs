@@ -237,7 +237,7 @@ pub struct TokenCategory;
 
 impl TokenCategory {
     pub const BACKQUOTE: &'static [TokenKind] = &[
-        TokenKind::AnonymousHyperlinkReferenceEnd,
+        TokenKind::HyperlinkReferenceAnonymousEnd,
         TokenKind::BackquoteEnd,
         TokenKind::HyperlinkReferenceEnd,
         TokenKind::RolePostfix,
@@ -253,8 +253,8 @@ impl TokenCategory {
         TokenKind::InlineLiteralStart,
         TokenKind::LiteralChar,
         TokenKind::Punctuation,
-        TokenKind::SimpleAnonymousHyperLinkReference,
-        TokenKind::SimpleHyperlinkReference,
+        TokenKind::HyperLinkReferenceSimpleAnonymous,
+        TokenKind::HyperlinkReferenceSimple,
         TokenKind::StrongStart,
         TokenKind::SubstitutionReference,
         TokenKind::Word,
@@ -280,11 +280,11 @@ impl TokenCategory {
         TokenKind::CitationReference,
         TokenKind::Email,
         TokenKind::FootnoteReference,
-        TokenKind::SimpleAnonymousHyperLinkReference,
-        TokenKind::SimpleHyperlinkReference,
+        TokenKind::HyperLinkReferenceSimpleAnonymous,
+        TokenKind::HyperlinkReferenceSimple,
         TokenKind::SubstitutionReference,
-        TokenKind::SubRefHyperlink,
-        TokenKind::SubRefAnonymousHyperlink,
+        TokenKind::HyperlinkSubRef,
+        TokenKind::HyperlinkSubRefAnonymous,
         TokenKind::Uri,
     ];
 
@@ -327,9 +327,6 @@ impl TokenCategory {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, EnumCount)]
 pub enum TokenKind {
-    AnonymousHyperlinkReferenceEnd,
-    HyperlinkTargetAnonymous,
-    HyperlinkTargetAnonymousShort,
     Attribution,
     BackquoteEnd,
     BackquoteStart,
@@ -353,8 +350,15 @@ pub enum TokenKind {
     Field,
     FootNote,
     FootnoteReference,
+    HyperlinkReferenceAnonymousEnd,
     HyperlinkReferenceEnd,
+    HyperlinkReferenceSimple,
+    HyperLinkReferenceSimpleAnonymous,
+    HyperlinkSubRef,
+    HyperlinkSubRefAnonymous,
     HyperlinkTarget,
+    HyperlinkTargetAnonymous,
+    HyperlinkTargetAnonymousShort,
     HyperlinkTargetQuote,
     Indent,
     InlineInternalTargetStart,
@@ -371,13 +375,9 @@ pub enum TokenKind {
     RolePostfix,
     RolePrefix,
     Separator,
-    SimpleAnonymousHyperLinkReference,
-    SimpleHyperlinkReference,
     Spaces,
     StrongEnd,
     StrongStart,
-    SubRefAnonymousHyperlink,
-    SubRefHyperlink,
     SubstitutionReference,
     TableHorizontal,
     Uri,
@@ -435,16 +435,16 @@ impl TokenKind {
         (RolePostfix, format!(r"[^\s\\](`:{0}:){1}", ROLE_NAME, INLINE_POST_CHARS)),
 
         // Inline references
-        (SubRefAnonymousHyperlink, format!(r"{0}\|{1}\|__{2}", INLINE_PRE_CHARS, SUBSTITUTION_NAME, INLINE_POST_CHARS)),
-        (SubRefHyperlink, format!(r"{0}\|{1}\|_{2}", INLINE_PRE_CHARS, SUBSTITUTION_NAME, INLINE_POST_CHARS)),
+        (HyperlinkSubRefAnonymous, format!(r"{0}\|{1}\|__{2}", INLINE_PRE_CHARS, SUBSTITUTION_NAME, INLINE_POST_CHARS)),
+        (HyperlinkSubRef, format!(r"{0}\|{1}\|_{2}", INLINE_PRE_CHARS, SUBSTITUTION_NAME, INLINE_POST_CHARS)),
         (SubstitutionReference, format!(r"{0}\|{1}\|{2}", INLINE_PRE_CHARS, SUBSTITUTION_NAME, INLINE_POST_CHARS)),
 
         (FootnoteReference, format!(r"{0}\[{1}\]_{2}", INLINE_PRE_CHARS, FOOTNOTE_LABEL, INLINE_POST_CHARS)),
         (CitationReference, format!(r"{0}\[{1}\]_{2}", INLINE_PRE_CHARS, CITATION_LABEL, INLINE_POST_CHARS)),
-        (AnonymousHyperlinkReferenceEnd, format!(r"(?:[^\s]`__|[^\s]__){}", INLINE_POST_CHARS)),
+        (HyperlinkReferenceAnonymousEnd, format!(r"(?:[^\s]`__|[^\s]__){}", INLINE_POST_CHARS)),
         (HyperlinkReferenceEnd, format!(r"(?:[^\s]`_|[^\s]_){}", INLINE_POST_CHARS)),
-        (SimpleAnonymousHyperLinkReference,r"[\W_][\w&&[^_]]+(?:[-_.:+][\w&&[^_]]+)*__\s"),
-        (SimpleHyperlinkReference,r"[\W_][\w&&[^_]]+(?:[-_.:+][\w&&[^_]]+)*_\s"),
+        (HyperLinkReferenceSimpleAnonymous,r"[\W_][\w&&[^_]]+(?:[-_.:+][\w&&[^_]]+)*__\s"),
+        (HyperlinkReferenceSimple,r"[\W_][\w&&[^_]]+(?:[-_.:+][\w&&[^_]]+)*_\s"),
         (EnclosedInlineStart, enclosed_inline_start_pattern()),
         (Uri, uri_pattern()),
         (Email, email_pattern()),
@@ -866,11 +866,11 @@ mod tests {
             Some("[cit.ation]_")
         );
         assert_eq!(
-            TK::SimpleHyperlinkReference.find_lexeme(" simple_ref_ text"),
+            TK::HyperlinkReferenceSimple.find_lexeme(" simple_ref_ text"),
             Some("simple_ref_")
         );
         assert_eq!(
-            TK::SimpleAnonymousHyperLinkReference.find_lexeme("_This__ "),
+            TK::HyperLinkReferenceSimpleAnonymous.find_lexeme("_This__ "),
             Some("This__")
         );
     }
@@ -881,11 +881,11 @@ mod tests {
     #[test]
     fn anonymous_hyperlink_reference_matches_double_underscore_endings() {
         assert_eq!(
-            TK::AnonymousHyperlinkReferenceEnd.find_lexeme(">`__ "),
+            TK::HyperlinkReferenceAnonymousEnd.find_lexeme(">`__ "),
             Some("`__")
         );
         assert_eq!(
-            TK::AnonymousHyperlinkReferenceEnd.find_lexeme("e__ "),
+            TK::HyperlinkReferenceAnonymousEnd.find_lexeme("e__ "),
             Some("__")
         );
     }
@@ -976,9 +976,9 @@ mod tests {
                 " |line1\nline2| ",
                 "|line1\nline2|",
             ),
-            (TK::SubRefHyperlink, " |line1\nline2|_ ", "|line1\nline2|_"),
+            (TK::HyperlinkSubRef, " |line1\nline2|_ ", "|line1\nline2|_"),
             (
-                TK::SubRefAnonymousHyperlink,
+                TK::HyperlinkSubRefAnonymous,
                 " |line1\nline2|__ ",
                 "|line1\nline2|__",
             ),
@@ -1005,7 +1005,7 @@ mod tests {
                 " |na|me| ",
             ),
             (
-                TK::SubRefHyperlink,
+                TK::HyperlinkSubRef,
                 " ||_ ",
                 " | name|_ ",
                 " |name |_ ",
@@ -1014,7 +1014,7 @@ mod tests {
                 " |na|me|_ ",
             ),
             (
-                TK::SubRefAnonymousHyperlink,
+                TK::HyperlinkSubRefAnonymous,
                 " ||__ ",
                 " | name|__ ",
                 " |name |__ ",

@@ -18,7 +18,7 @@ pub(crate) fn parse_interpreted_or_ref(stream: &mut TokenStream) -> Result<NodeR
     let end_kind = stream.token_at(end_kind_index).kind;
 
     let node = match end_kind {
-        TK::AnonymousHyperlinkReferenceEnd | TK::HyperlinkReferenceEnd => {
+        TK::HyperlinkReferenceAnonymousEnd | TK::HyperlinkReferenceEnd => {
             parse_reference_expression(stream)?.with_attr("markup", "inline")
         }
         TK::BackquoteEnd => {
@@ -58,7 +58,7 @@ pub(crate) fn parse_prefix_role(stream: &mut TokenStream) -> Result<NodeRef, Par
         TK::RolePostfix => {
             return Err(ParserError::RolePrefixAndPostfix { position });
         }
-        TK::HyperlinkReferenceEnd | TK::AnonymousHyperlinkReferenceEnd => {
+        TK::HyperlinkReferenceEnd | TK::HyperlinkReferenceAnonymousEnd => {
             return Err(ParserError::RoleReferenceMismatch { position });
         }
         TK::BackquoteEnd => {}
