@@ -75,22 +75,24 @@ fn parse_term_or_classifier(stream: &mut TokenStream, node: &NodeRef) -> Result<
             node.push_child(inline);
             continue;
         }
-        match kind {
-            kind if is_term_text(kind) => {
-                let mut text = String::new();
-                while {
-                    let kind = stream.token_at_cursor().kind;
-                    kind != TK::NewLine && is_term_text(kind)
-                } {
-                    text.push_str(&stream.consume().lexeme);
-                }
-                if !text.is_empty() {
-                    let plain_text = AstNode::new_ref(NodeClass::PlainText);
-                    plain_text.with_attr("text", text);
-                    node.push_child(plain_text);
-                }
-            }
-            _ => unreachable!(),
+        if !is_term_text(kind) {
+            return Err(ParserError::UnexpectedToken {
+                expected: "Plain text, bullet list marker or field".to_owned(),
+                found: format!("{kind:?}"),
+                position: stream.position_at_cursor(),
+            });
+        }
+        let mut text = String::new();
+        while {
+            let kind = stream.token_at_cursor().kind;
+            kind != TK::NewLine && is_term_text(kind)
+        } {
+            text.push_str(&stream.consume().lexeme);
+        }
+        if !text.is_empty() {
+            let plain_text = AstNode::new_ref(NodeClass::PlainText);
+            plain_text.with_attr("text", text);
+            node.push_child(plain_text);
         }
     }
     Ok(())
