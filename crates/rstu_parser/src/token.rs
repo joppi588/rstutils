@@ -431,8 +431,8 @@ impl TokenKind {
         (InlineLiteralStart, format!(r"{0}``[^\s]", INLINE_PRE_CHARS)),
         (InlineLiteralEnd, format!(r"[^\s]``{0}", INLINE_POST_CHARS)),
         (InlineInternalTargetStart, format!(r"{0}_`[^\s`]", INLINE_PRE_CHARS)),
-        (RolePrefix, format!(r"{0}(:{1}:`)([^\s`])", INLINE_PRE_CHARS, ROLE_NAME)),
-        (RolePostfix, format!(r"[^\s\\](`:{0}:){1}", ROLE_NAME, INLINE_POST_CHARS)),
+        (RolePrefix, format!(r"{0}(?::{1}:`)([^\s`])", INLINE_PRE_CHARS, ROLE_NAME)),
+        (RolePostfix, format!(r"[^\s\\](?:`:{0}:){1}", ROLE_NAME, INLINE_POST_CHARS)),
 
         // Inline references
         (HyperlinkSubRefAnonymous, format!(r"{0}\|{1}\|__{2}", INLINE_PRE_CHARS, SUBSTITUTION_NAME, INLINE_POST_CHARS)),
@@ -459,7 +459,7 @@ impl TokenKind {
         // Lists
         (Field,r"\s:[[:word:] +\-]+:\s"),
         (EnumeratedListMarker, r"[\n\s](?:(?:#|[0-9]+|[A-Za-z]+|[IVXLCDMivxlcdm]+)(?:\.|\))[ \t]|\([A-Za-z0-9]+\)[ \t])"),
-        (BulletListMarker, r"(?:\s|\n)[\-\+\*•‣⁃](\s|\n)"),
+        (BulletListMarker, r"(?:\s|\n)[\-\+\*•‣⁃](?:\s|\n)"),
         (Option, OPTION),
 
         // Plain text
