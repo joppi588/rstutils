@@ -94,7 +94,6 @@ pub(crate) fn parse_prefix_role(stream: &mut TokenStream) -> Result<NodeRef, Par
         .with_attr("text", text))
 }
 
-// TODO: Error on consecutive Start Tokens.
 pub(crate) fn parse_strong(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     debug_assert!(stream.token_at_cursor().kind == TK::StrongStart);
 
