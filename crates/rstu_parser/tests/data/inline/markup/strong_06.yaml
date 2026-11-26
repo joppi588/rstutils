@@ -7,13 +7,25 @@ children:
       text: "This "
   - class: Strong
     attributes:
-      text: "is a strong markup:"
+      text: works
   - class: PlainText
     attributes:
-      text: " Why not?\nThis as "
+      text: ".\nThis "
   - class: Strong
     attributes:
-      text: well
+      text: works?
   - class: PlainText
     attributes:
-      text: ". Yes!\n"
+      text: " Yes!\nThis "
+  - class: Strong
+    attributes:
+      text: works as well
+  - class: PlainText
+    attributes:
+      text: "? Yes!\nThis "
+  - class: Strong
+    attributes:
+      text: works as well.
+  - class: PlainText
+    attributes:
+      text: "? Should.\n"

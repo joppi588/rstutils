@@ -99,8 +99,10 @@ pub(crate) fn parse_strong(stream: &mut TokenStream) -> Result<NodeRef, ParserEr
 
     let position = stream.position_at_cursor();
     stream.consume();
-    let text = stream.consume_text_until(&[&[TK::StrongEnd], TC::PARAGRAPH_END].concat());
-    if stream.consume().kind != TK::StrongEnd {
+    let text =
+        // In some cases, both StrongStart and StrongEnd tokens match, and the lexer selects StrongStart then.
+        stream.consume_text_until(&[&[TK::StrongEnd, TK::StrongStart], TC::PARAGRAPH_END].concat());
+    if !matches!(stream.consume().kind, TK::StrongEnd | TK::StrongStart) {
         return Err(ParserError::InlineMissingClosing {
             markup: format!("{:?}", TK::StrongStart),
             position,
