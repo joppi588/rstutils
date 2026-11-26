@@ -24,6 +24,7 @@ fn ok_inline_variants() {
 #[case::strong("strong_00")]
 #[case::strong("strong_01")]
 #[case::strong("strong_02")]
+#[case::strong("strong_06")]
 // #[case::strong("strong_04")] TODO: #439
 fn ok_inline_markup(#[case] test_case: &str) {
     rst_vs_yaml!("inline/markup", test_case)

@@ -8,10 +8,14 @@ use crate::token::{TokenCategory as TC, TokenKind as TK};
 use crate::token_stream::TokenStream;
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
-pub(crate) fn parse_inline_token(stream: &mut TokenStream) -> Result<Option<NodeRef>, ParserError> {
+pub(crate) fn parse_inline_markup(
+    stream: &mut TokenStream,
+) -> Result<Option<NodeRef>, ParserError> {
     let node = match stream.token_at_cursor().kind {
         TK::RolePrefix => parse_prefix_role(stream)?,
-        kind if kind.is(TC::INLINE_MARKUP) => parse_inline_markup(stream)?,
+        TK::StrongStart => parse_strong(stream)?,
+        TK::EmphasisStart => parse_emphasis(stream)?,
+        TK::InlineLiteralStart => parse_inline_literal(stream)?,
         kind if kind.is(TC::INLINE_REFERENCE) => parse_reference_token(stream)?,
         TK::InlineInternalTargetStart => parse_inline_target(stream)?,
         TK::BackquoteStart => parse_interpreted_or_ref(stream)?,
@@ -90,33 +94,59 @@ pub(crate) fn parse_prefix_role(stream: &mut TokenStream) -> Result<NodeRef, Par
         .with_attr("text", text))
 }
 
-pub(crate) fn parse_inline_markup(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
-    debug_assert!(stream.token_at_cursor().kind.is(TC::INLINE_MARKUP));
+pub(crate) fn parse_strong(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    debug_assert!(stream.token_at_cursor().kind == TK::StrongStart);
 
     let position = stream.position_at_cursor();
-    let token = stream.consume();
-    let expected_end_kind = match token.kind {
-        TK::StrongStart => TK::StrongEnd,
-        TK::EmphasisStart => TK::EmphasisEnd,
-        TK::InlineLiteralStart => TK::InlineLiteralEnd,
-        _ => unreachable!(),
-    };
-
-    let text = stream.consume_text_until(&[&[expected_end_kind], TC::PARAGRAPH_END].concat());
-    if stream.consume().kind != expected_end_kind {
+    stream.consume();
+    let text =
+        // In some cases, both StrongStart and StrongEnd tokens match, and the lexer selects StrongStart then.
+        stream.consume_text_until(&[&[TK::StrongEnd, TK::StrongStart], TC::PARAGRAPH_END].concat());
+    if !matches!(stream.consume().kind, TK::StrongEnd | TK::StrongStart) {
         return Err(ParserError::InlineMissingClosing {
-            markup: format!("{:?}", token.kind),
+            markup: format!("{:?}", TK::StrongStart),
             position,
         });
     }
+    Ok(AstNode::new_ref(NodeClass::Strong).with_attr("text", text))
+}
 
-    let inline = match token.kind {
-        TK::EmphasisStart => AstNode::new_ref(NodeClass::Emphasis),
-        TK::StrongStart => AstNode::new_ref(NodeClass::Strong),
-        TK::InlineLiteralStart => AstNode::new_ref(NodeClass::Literal),
-        _ => unreachable!(),
-    };
+pub(crate) fn parse_emphasis(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    debug_assert!(stream.token_at_cursor().kind == TK::EmphasisStart);
 
-    inline.with_attr("text", text);
-    Ok(inline)
+    let position = stream.position_at_cursor();
+    stream.consume();
+    let text = stream
+        .consume_text_until(&[&[TK::EmphasisEnd, TK::EmphasisStart], TC::PARAGRAPH_END].concat());
+    if !matches!(stream.consume().kind, TK::EmphasisEnd | TK::EmphasisStart) {
+        return Err(ParserError::InlineMissingClosing {
+            markup: format!("{:?}", TK::EmphasisStart),
+            position,
+        });
+    }
+    Ok(AstNode::new_ref(NodeClass::Emphasis).with_attr("text", text))
+}
+
+pub(crate) fn parse_inline_literal(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
+    debug_assert!(stream.token_at_cursor().kind == TK::InlineLiteralStart);
+
+    let position = stream.position_at_cursor();
+    stream.consume();
+    let text = stream.consume_text_until(
+        &[
+            &[TK::InlineLiteralEnd, TK::InlineLiteralStart],
+            TC::PARAGRAPH_END,
+        ]
+        .concat(),
+    );
+    if !matches!(
+        stream.consume().kind,
+        TK::InlineLiteralEnd | TK::InlineLiteralStart
+    ) {
+        return Err(ParserError::InlineMissingClosing {
+            markup: format!("{:?}", TK::InlineLiteralStart),
+            position,
+        });
+    }
+    Ok(AstNode::new_ref(NodeClass::Literal).with_attr("text", text))
 }

@@ -4,7 +4,7 @@
 
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
-use super::inline_markup::parse_inline_token;
+use super::inline_markup::parse_inline_markup;
 
 use crate::parser_errors::ParserError;
 use crate::token::{TokenCategory as TC, TokenKind as TK};
@@ -13,7 +13,7 @@ use crate::token_stream::TokenStream;
 pub(crate) fn parse_paragraph(stream: &mut TokenStream) -> Result<NodeRef, ParserError> {
     let paragraph = AstNode::new_ref(NodeClass::Paragraph);
     loop {
-        let node = if let Some(node) = parse_inline_token(stream)? {
+        let node = if let Some(node) = parse_inline_markup(stream)? {
             node
         } else if stream.token_at_cursor().kind.is(TC::PARAGRAPH_END) {
             break;

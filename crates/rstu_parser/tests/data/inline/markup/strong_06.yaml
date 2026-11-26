@@ -1,0 +1,31 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "This "
+  - class: Strong
+    attributes:
+      text: works
+  - class: PlainText
+    attributes:
+      text: ".\nThis "
+  - class: Strong
+    attributes:
+      text: works?
+  - class: PlainText
+    attributes:
+      text: " Yes!\nThis "
+  - class: Strong
+    attributes:
+      text: works as well
+  - class: PlainText
+    attributes:
+      text: "? Yes!\nThis "
+  - class: Strong
+    attributes:
+      text: works as well.
+  - class: PlainText
+    attributes:
+      text: "? Should.\n"
