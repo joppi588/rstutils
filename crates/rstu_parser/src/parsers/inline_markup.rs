@@ -116,8 +116,9 @@ pub(crate) fn parse_emphasis(stream: &mut TokenStream) -> Result<NodeRef, Parser
 
     let position = stream.position_at_cursor();
     stream.consume();
-    let text = stream.consume_text_until(&[&[TK::EmphasisEnd], TC::PARAGRAPH_END].concat());
-    if stream.consume().kind != TK::EmphasisEnd {
+    let text = stream
+        .consume_text_until(&[&[TK::EmphasisEnd, TK::EmphasisStart], TC::PARAGRAPH_END].concat());
+    if !matches!(stream.consume().kind, TK::EmphasisEnd | TK::EmphasisStart) {
         return Err(ParserError::InlineMissingClosing {
             markup: format!("{:?}", TK::EmphasisStart),
             position,
@@ -131,8 +132,17 @@ pub(crate) fn parse_inline_literal(stream: &mut TokenStream) -> Result<NodeRef, 
 
     let position = stream.position_at_cursor();
     stream.consume();
-    let text = stream.consume_text_until(&[&[TK::InlineLiteralEnd], TC::PARAGRAPH_END].concat());
-    if stream.consume().kind != TK::InlineLiteralEnd {
+    let text = stream.consume_text_until(
+        &[
+            &[TK::InlineLiteralEnd, TK::InlineLiteralStart],
+            TC::PARAGRAPH_END,
+        ]
+        .concat(),
+    );
+    if !matches!(
+        stream.consume().kind,
+        TK::InlineLiteralEnd | TK::InlineLiteralStart
+    ) {
         return Err(ParserError::InlineMissingClosing {
             markup: format!("{:?}", TK::InlineLiteralStart),
             position,
