@@ -1,0 +1,19 @@
+class: Document
+children:
+- class: Paragraph
+  children:
+  - class: PlainText
+    attributes:
+      text: "This "
+  - class: Strong
+    attributes:
+      text: "is a strong markup:"
+  - class: PlainText
+    attributes:
+      text: " Why not?\nThis as "
+  - class: Strong
+    attributes:
+      text: well
+  - class: PlainText
+    attributes:
+      text: ". Yes!\n"
