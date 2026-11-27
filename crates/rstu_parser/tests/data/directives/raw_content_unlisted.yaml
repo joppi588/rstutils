@@ -5,11 +5,24 @@ children:
     directive_arguments: argument
     directive_type: custom
     indent: 3
-    raw_content: |
-      :option: value
-
-      Body with *markup*
-        and nested indent.
+    raw_content: "Body with *markup*\n  and nested indent.\n"
+  children:
+  - class: FieldList
+    children:
+    - class: FieldListItem
+      attributes:
+        fieldname: option
+      children:
+      - class: Block
+        attributes:
+          indent: 9
+        children:
+        - class: Paragraph
+          children:
+          - class: PlainText
+            attributes:
+              text: "value\n"
+    - class: BlankLine
 - class: BlankLine
 - class: Paragraph
   children:

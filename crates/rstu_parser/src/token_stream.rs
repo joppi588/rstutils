@@ -110,8 +110,7 @@ impl TokenStream {
         self.consume_text_until(&[TokenKind::NewLine]) + &self.consume().lexeme
     }
 
-    pub(crate) fn consume_indented_text(&mut self) -> (usize, String) {
-        let base = self.consume().len();
+    pub(crate) fn consume_indented_text(&mut self, base: usize) -> String {
         let mut depth = base;
         let mut text = String::new();
         loop {
@@ -137,7 +136,7 @@ impl TokenStream {
                 _ => text.push_str(&self.consume().lexeme),
             }
         }
-        (base, text)
+        text
     }
 
     // TODO: Remove

@@ -1,15 +1,14 @@
 class: Document
 children:
-  - class: Directive
-    attributes:
-      directive_type: note
+- class: Directive
+  attributes:
+    directive_type: note
+    indent: 3
+  children:
+  - class: Block
     children:
-      - class: Block
+    - class: Paragraph
+      children:
+      - class: PlainText
         attributes:
-          indent: 3
-        children:
-          - class: Paragraph
-            children:
-              - class: PlainText
-                attributes:
-                  text: "This is a simple note directive.\n"
+          text: "This is a simple note directive.\n"

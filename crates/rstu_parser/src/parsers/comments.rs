@@ -5,7 +5,7 @@
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use crate::parser_errors::ParserError;
-use crate::token::TokenKind as TK;
+use crate::token::TokenKind::{self as TK};
 use crate::token_stream::TokenStream;
 use std::debug_assert_matches;
 
@@ -23,7 +23,7 @@ pub(crate) fn parse_comment(stream: &mut TokenStream) -> Result<NodeRef, ParserE
 
     stream.consume(); // Comment marker
     if stream.token_at_cursor().kind == TK::Spaces {
-        stream.consume();
+        stream.consume(); // TODO: push something or set attribute
     }
     let mut text = stream.consume_text_incl_newline();
     if text == "\n" {
@@ -43,9 +43,9 @@ pub(crate) fn parse_comment(stream: &mut TokenStream) -> Result<NodeRef, ParserE
         text += &stream.consume().lexeme;
     }
     if stream.token_at_cursor().kind == TK::Indent {
-        let (base_indent, indented) = stream.consume_indented_text();
+        let base_indent = stream.consume().len();
         comment.with_attr("indent", base_indent);
-        text.push_str(&indented);
+        text.push_str(&stream.consume_indented_text(base_indent));
     }
     comment.with_attr("text", text);
     Ok(comment)

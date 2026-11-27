@@ -7,6 +7,7 @@ use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 use super::block::parse_block;
 use crate::is_rst_directive;
 use crate::parser_errors::ParserError;
+use crate::parsers::lists::parse_field_list;
 use crate::token::TokenKind as TK;
 use crate::token_stream::TokenStream;
 use std::debug_assert_matches;
@@ -22,13 +23,17 @@ pub(crate) fn parse_directive(stream: &mut TokenStream) -> Result<NodeRef, Parse
     }
 
     if stream.token_at_cursor().kind == TK::Indent {
+        let base_indent = stream.consume().len();
+        directive.with_attr("indent", base_indent);
+        if stream.token_at_cursor().kind == TK::Field {
+            directive.push_child(parse_field_list(stream)?);
+        }
         let directive_type = directive.borrow().attributes.get_str("directive_type");
         if is_rst_directive(directive_type.as_deref().unwrap_or_default()) {
             let content = parse_block(stream)?;
             directive.push_child(content);
         } else {
-            let (indent, raw_content) = stream.consume_indented_text();
-            directive.with_attr("indent", indent);
+            let raw_content = stream.consume_indented_text(base_indent);
             directive.with_attr("raw_content", raw_content);
         }
     }
