@@ -75,39 +75,6 @@ where
     Ok(node)
 }
 
-/// Consumes an indented region starting at the cursor's `Indent` token and returns
-/// `(base indent, text)`. Text keeps nested indentation relative to the base indent.
-/// Stops after the dedent closing the region; a larger dedent leaves its remainder in the stream.
-pub(crate) fn consume_indented_text(stream: &mut TokenStream) -> (usize, String) {
-    let base = stream.consume().len();
-    let mut depth = base;
-    let mut text = String::new();
-    loop {
-        match stream.token_at_cursor().kind {
-            TK::EoF => break,
-            TK::Indent => {
-                depth += stream.consume().len();
-                text.push_str(&space!(depth - base));
-            }
-            TK::Dedent => {
-                let dedent = stream.token_at_cursor().len();
-                if dedent > depth {
-                    stream.update_at_cursor(space!(dedent - depth));
-                    break;
-                }
-                stream.consume();
-                if dedent == depth {
-                    break;
-                }
-                depth -= dedent;
-                text.push_str(&space!(depth - base));
-            }
-            _ => text.push_str(&stream.consume().lexeme),
-        }
-    }
-    (base, text)
-}
-
 pub(crate) fn normalize_name(reference: &str) -> String {
     REFERENCE_ESCAPE
         .replace_all(reference, "$1")

@@ -5,7 +5,6 @@
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use super::block::parse_block;
-use super::consume_indented_text;
 use crate::is_rst_directive;
 use crate::parser_errors::ParserError;
 use crate::token::TokenKind as TK;
@@ -28,7 +27,7 @@ pub(crate) fn parse_directive(stream: &mut TokenStream) -> Result<NodeRef, Parse
             let content = parse_block(stream)?;
             directive.push_child(content);
         } else {
-            let (indent, raw_content) = consume_indented_text(stream);
+            let (indent, raw_content) = stream.consume_indented_text();
             directive.with_attr("indent", indent);
             directive.with_attr("raw_content", raw_content);
         }

@@ -4,7 +4,6 @@
 
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
-use super::consume_indented_text;
 use crate::parser_errors::ParserError;
 use crate::token::TokenKind as TK;
 use crate::token_stream::TokenStream;
@@ -44,7 +43,7 @@ pub(crate) fn parse_comment(stream: &mut TokenStream) -> Result<NodeRef, ParserE
         text += &stream.consume().lexeme;
     }
     if stream.token_at_cursor().kind == TK::Indent {
-        let (base_indent, indented) = consume_indented_text(stream);
+        let (base_indent, indented) = stream.consume_indented_text();
         comment.with_attr("indent", base_indent);
         text.push_str(&indented);
     }
