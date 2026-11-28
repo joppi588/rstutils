@@ -29,12 +29,14 @@ pub(crate) fn parse_directive(stream: &mut TokenStream) -> Result<NodeRef, Parse
             directive.push_child(parse_field_list(stream)?);
         }
         let directive_type = directive.borrow().attributes.get_str("directive_type");
-        if is_rst_directive(directive_type.as_deref().unwrap_or_default()) {
-            let content = parse_block(stream)?;
-            directive.push_child(content);
-        } else {
-            let raw_content = stream.consume_indented_text(base_indent);
-            directive.with_attr("raw_content", raw_content);
+        if !matches!(stream.token_at_cursor().kind, TK::Dedent | TK::EoF) {
+            if is_rst_directive(directive_type.as_deref().unwrap_or_default()) {
+                let content = parse_block(stream)?;
+                directive.push_child(content);
+            } else {
+                let raw_content = stream.consume_indented_text(base_indent);
+                directive.with_attr("raw_content", raw_content);
+            }
         }
     }
     Ok(directive)
