@@ -4,12 +4,11 @@ children:
   attributes:
     directive_arguments: symbol.png
     directive_type: image
+    indent: 4
     substitution: symbol 1
   children:
   - class: BlankLine
   - class: Block
-    attributes:
-      indent: 4
     children:
     - class: Paragraph
       children:

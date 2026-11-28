@@ -4,7 +4,8 @@ children:
   children:
   - class: PlainText
     attributes:
-      text: "Duplicate explicit/directive targets.\n"
+      text: |
+        Duplicate explicit/directive targets.
 - class: BlankLine
 - class: Target
   attributes:
@@ -15,17 +16,28 @@ children:
   children:
   - class: PlainText
     attributes:
-      text: "First.\n"
+      text: |
+        First.
 - class: BlankLine
 - class: Directive
   attributes:
     directive_arguments: this is a title too
     directive_type: rubric
     indent: 3
-    raw_content: ":name: title\n"
-- class: BlankLine
-- class: Paragraph
   children:
-  - class: PlainText
-    attributes:
-      text: "The system message is left dangling\n(to be handled by the \"universal.Messages\" transform).\n"
+  - class: FieldList
+    children:
+    - class: FieldListItem
+      attributes:
+        fieldname: name
+      children:
+      - class: Block
+        attributes:
+          indent: 7
+        children:
+        - class: Paragraph
+          children:
+          - class: PlainText
+            attributes:
+              text: |
+                title

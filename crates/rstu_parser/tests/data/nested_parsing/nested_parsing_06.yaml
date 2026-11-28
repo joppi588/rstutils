@@ -11,15 +11,15 @@ children:
       children:
       - class: PlainText
         attributes:
-          text: "sec1\n"
+          text: |
+            sec1
   - class: Directive
     attributes:
       directive_type: nested-section
+      indent: 2
     children:
     - class: BlankLine
     - class: Block
-      attributes:
-        indent: 2
       children:
       - class: Section
         attributes:
@@ -32,7 +32,8 @@ children:
             children:
             - class: PlainText
               attributes:
-                text: "nested-section1\n"
+                text: |
+                  nested-section1
         - class: Paragraph
           children:
           - class: PlainText
