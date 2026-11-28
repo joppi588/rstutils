@@ -3,11 +3,10 @@ children:
 - class: Directive
   attributes:
     directive_type: nested
+    indent: 2
   children:
   - class: BlankLine
   - class: Block
-    attributes:
-      indent: 2
     children:
     - class: Section
       attributes:
@@ -20,7 +19,8 @@ children:
           children:
           - class: PlainText
             attributes:
-              text: "nested1\n"
+              text: |
+                nested1
     - class: Section
       attributes:
         marker_len: 7
@@ -32,7 +32,8 @@ children:
           children:
           - class: PlainText
             attributes:
-              text: "nested2\n"
+              text: |
+                nested2
       - class: Section
         attributes:
           marker_len: 9
@@ -44,16 +45,12 @@ children:
             children:
             - class: PlainText
               attributes:
-                text: "nested2.1\n"
+                text: |
+                  nested2.1
         - class: BlankLine
         - class: Paragraph
           children:
           - class: PlainText
             attributes:
-              text: "This paragraph belongs to the last nested section.\n"
-- class: BlankLine
-- class: Paragraph
-  children:
-  - class: PlainText
-    attributes:
-      text: "This not.\n"
+              text: |
+                This paragraph belongs to the last nested section.

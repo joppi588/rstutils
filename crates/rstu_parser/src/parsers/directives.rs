@@ -5,7 +5,9 @@
 use rstu_ast::{AstNode, NodeClass, NodeRef, NodeRefExt};
 
 use super::block::parse_block;
+use crate::is_rst_directive;
 use crate::parser_errors::ParserError;
+use crate::parsers::lists::parse_field_list;
 use crate::token::TokenKind as TK;
 use crate::token_stream::TokenStream;
 use std::debug_assert_matches;
@@ -21,8 +23,21 @@ pub(crate) fn parse_directive(stream: &mut TokenStream) -> Result<NodeRef, Parse
     }
 
     if stream.token_at_cursor().kind == TK::Indent {
-        let content = parse_block(stream)?;
-        directive.push_child(content);
+        let base_indent = stream.consume().len();
+        directive.with_attr("indent", base_indent);
+        if stream.token_at_cursor().kind == TK::Field {
+            directive.push_child(parse_field_list(stream)?);
+        }
+        let directive_type = directive.borrow().attributes.get_str("directive_type");
+        if !matches!(stream.token_at_cursor().kind, TK::Dedent | TK::EoF) {
+            if is_rst_directive(directive_type.as_deref().unwrap_or_default()) {
+                let content = parse_block(stream)?;
+                directive.push_child(content);
+            } else {
+                let raw_content = stream.consume_indented_text(base_indent);
+                directive.with_attr("raw_content", raw_content);
+            }
+        }
     }
     Ok(directive)
 }
@@ -61,6 +76,34 @@ fn parse_directive_header(stream: &mut TokenStream, directive: &NodeRef) {
 mod tests {
     use super::parse_directive;
     use crate::lexer::tokenize;
+    use crate::{parse_with_config, ParserConfig};
+
+    #[test]
+    fn config_selects_rst_parsing_and_is_restored() {
+        let source = ".. custom::\n\n   text\n";
+        let config = ParserConfig {
+            rst_directives: vec!["custom".to_owned()],
+        };
+
+        let parsed = parse_with_config(source, &config).unwrap();
+        let directive = parsed.borrow().children[0].clone();
+        assert!(directive
+            .borrow()
+            .attributes
+            .get_str("raw_content")
+            .is_none());
+
+        let parsed = crate::parse(source).unwrap();
+        let directive = parsed.borrow().children[0].clone();
+        assert_eq!(
+            directive
+                .borrow()
+                .attributes
+                .get_str("raw_content")
+                .as_deref(),
+            Some("text\n")
+        );
+    }
 
     #[test]
     fn parse_substitution_directive_marker() {

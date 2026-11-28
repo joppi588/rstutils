@@ -3,52 +3,49 @@ children:
 - class: Directive
   attributes:
     directive_type: some-directive
+    indent: 4
   children:
-  - class: Block
-    attributes:
-      indent: 4
+  - class: FieldList
     children:
-    - class: FieldList
+    - class: FieldListItem
+      attributes:
+        fieldname: field1
       children:
-      - class: FieldListItem
+      - class: Block
         attributes:
-          fieldname: field1
+          indent: 9
         children:
-        - class: Block
-          attributes:
-            indent: 9
+        - class: Paragraph
           children:
-          - class: Paragraph
-            children:
-            - class: PlainText
-              attributes:
-                text: |
-                  value1
-      - class: FieldListItem
+          - class: PlainText
+            attributes:
+              text: |
+                value1
+    - class: FieldListItem
+      attributes:
+        fieldname: field-2
+      children:
+      - class: Block
         attributes:
-          fieldname: field-2
+          indent: 10
         children:
-        - class: Block
-          attributes:
-            indent: 10
+        - class: Paragraph
           children:
-          - class: Paragraph
-            children:
-            - class: PlainText
-              attributes:
-                text: |
-                  value-2
-      - class: FieldListItem
+          - class: PlainText
+            attributes:
+              text: |
+                value-2
+    - class: FieldListItem
+      attributes:
+        fieldname: +field+3
+      children:
+      - class: Block
         attributes:
-          fieldname: +field+3
+          indent: 11
         children:
-        - class: Block
-          attributes:
-            indent: 11
+        - class: Paragraph
           children:
-          - class: Paragraph
-            children:
-            - class: PlainText
-              attributes:
-                text: |
-                  value+3
+          - class: PlainText
+            attributes:
+              text: |
+                value+3

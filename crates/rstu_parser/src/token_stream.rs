@@ -110,6 +110,35 @@ impl TokenStream {
         self.consume_text_until(&[TokenKind::NewLine]) + &self.consume().lexeme
     }
 
+    pub(crate) fn consume_indented_text(&mut self, base: usize) -> String {
+        let mut depth = base;
+        let mut text = String::new();
+        loop {
+            match self.token_at_cursor().kind {
+                TokenKind::EoF => break,
+                TokenKind::Indent => {
+                    depth += self.consume().len();
+                    text.push_str(&space!(depth - base));
+                }
+                TokenKind::Dedent => {
+                    let dedent = self.token_at_cursor().len();
+                    if dedent > depth {
+                        self.update_at_cursor(space!(dedent - depth));
+                        break;
+                    }
+                    self.consume();
+                    if dedent == depth {
+                        break;
+                    }
+                    depth -= dedent;
+                    text.push_str(&space!(depth - base));
+                }
+                _ => text.push_str(&self.consume().lexeme),
+            }
+        }
+        text
+    }
+
     // TODO: Remove
     /// Panic-free lookahead by absolute index, treating out-of-bounds reads as a synthetic `EoF` token.
     pub fn token_at(&self, index: usize) -> Token {

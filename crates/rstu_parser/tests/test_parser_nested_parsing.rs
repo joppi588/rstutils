@@ -23,5 +23,17 @@ use test_parser::rst_vs_yaml;
 #[case::n08("nested_parsing_08")]
 #[case::n09("nested_parsing_09")]
 fn ok_nested_parsing(#[case] test_case: &str) {
-    rst_vs_yaml!("nested_parsing", test_case);
+    // These fixtures check section nesting inside directive bodies, so parse the bodies as rst.
+    let mut config = rstu_parser::ParserConfig::default();
+    config.rst_directives.extend(
+        [
+            "nested",
+            "nested-section",
+            "nested-current",
+            "fresh",
+            "fresh-current",
+        ]
+        .map(String::from),
+    );
+    rst_vs_yaml!("nested_parsing", test_case, &config);
 }

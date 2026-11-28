@@ -10,11 +10,10 @@ children:
     - class: Directive
       attributes:
         directive_type: nested
+        indent: 2
       children:
       - class: BlankLine
       - class: Block
-        attributes:
-          indent: 2
         children:
         - class: Paragraph
           children:
@@ -26,7 +25,8 @@ children:
               text: valid
           - class: PlainText
             attributes:
-              text: ".\n"
+              text: |
+                .
         - class: BlankLine
         - class: Section
           attributes:
@@ -39,54 +39,27 @@ children:
               children:
               - class: PlainText
                 attributes:
-                  text: "invalid section\n"
-    - class: BlankLine
-    - class: Directive
+                  text: |
+                    invalid section
+- class: BlankLine
+- class: Directive
+  attributes:
+    directive_type: nested-current
+    indent: 2
+  children:
+  - class: BlankLine
+  - class: Block
+    children:
+    - class: Section
       attributes:
-        directive_type: nested-current
+        marker_len: 12
+        section_marker: "="
       children:
-      - class: BlankLine
-      - class: Block
-        attributes:
-          indent: 2
-        children:
-        - class: Section
-          attributes:
-            marker_len: 12
-            section_marker: "="
-          children:
-          - class: Title
-            children:
-            - class: Paragraph
-              children:
-              - class: PlainText
-                attributes:
-                  text: "valid, too\n"
-    - class: BlankLine
-    - class: Directive
-      attributes:
-        directive_type: nested-section
-      children:
-      - class: BlankLine
-      - class: Block
-        attributes:
-          indent: 2
+      - class: Title
         children:
         - class: Paragraph
           children:
           - class: PlainText
             attributes:
-              text: "The <section> base node is discarded.\n"
-        - class: BlankLine
-        - class: Section
-          attributes:
-            marker_len: 22
-            section_marker: '-'
-          children:
-          - class: Title
-            children:
-            - class: Paragraph
-              children:
-              - class: PlainText
-                attributes:
-                  text: "valid section (sic!)\n"
+              text: |
+                valid, too

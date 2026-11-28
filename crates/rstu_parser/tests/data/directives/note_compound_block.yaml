@@ -1,21 +1,20 @@
 class: Document
 children:
-  - class: Directive
-    attributes:
-      directive_type: note
+- class: Directive
+  attributes:
+    directive_type: note
+    indent: 3
+  children:
+  - class: Block
     children:
-      - class: Block
+    - class: Paragraph
+      children:
+      - class: PlainText
         attributes:
-          indent: 3
-        children:
-          - class: Paragraph
-            children:
-              - class: PlainText
-                attributes:
-                  text: "This is inside the note.\n"
-          - class: BlankLine
-          - class: Paragraph
-            children:
-              - class: PlainText
-                attributes:
-                  text: "This paragraph follows the note.\n"
+          text: "This is inside the note.\n"
+    - class: BlankLine
+    - class: Paragraph
+      children:
+      - class: PlainText
+        attributes:
+          text: "This paragraph follows the note.\n"

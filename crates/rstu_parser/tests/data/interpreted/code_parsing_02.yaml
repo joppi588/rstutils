@@ -4,43 +4,28 @@ children:
   children:
   - class: PlainText
     attributes:
-      text: "Turn off syntax highlight with language \"none\".\n"
+      text: |
+        Turn off syntax highlight with language "none".
 - class: BlankLine
 - class: Directive
   attributes:
     directive_arguments: python(code)
     directive_type: role
+    indent: 3
   children:
-  - class: Block
-    attributes:
-      indent: 3
+  - class: FieldList
     children:
-    - class: FieldList
+    - class: FieldListItem
+      attributes:
+        fieldname: language
       children:
-      - class: FieldListItem
+      - class: Block
         attributes:
-          fieldname: language
+          indent: 11
         children:
-        - class: Block
-          attributes:
-            indent: 11
+        - class: Paragraph
           children:
-          - class: Paragraph
-            children:
-            - class: PlainText
-              attributes:
-                text: "none\n"
-- class: BlankLine
-- class: Paragraph
-  children:
-  - class: PlainText
-    attributes:
-      text: "Python code "
-  - class: InterpretedText
-    attributes:
-      pos: prefix
-      role: python
-      text: print("The end")
-  - class: PlainText
-    attributes:
-      text: ".\n"
+          - class: PlainText
+            attributes:
+              text: |
+                none

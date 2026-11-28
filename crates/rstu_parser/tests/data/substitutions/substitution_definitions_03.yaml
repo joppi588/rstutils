@@ -16,44 +16,36 @@ children:
   attributes:
     directive_arguments: symbol2.png
     directive_type: image
+    indent: 3
     substitution: SYMBOL 2
   children:
-  - class: Block
-    attributes:
-      indent: 3
+  - class: FieldList
     children:
-    - class: FieldList
+    - class: FieldListItem
+      attributes:
+        fieldname: height
       children:
-      - class: FieldListItem
+      - class: Block
         attributes:
-          fieldname: height
+          indent: 9
         children:
-        - class: Block
-          attributes:
-            indent: 9
+        - class: Paragraph
           children:
-          - class: Paragraph
-            children:
-            - class: PlainText
-              attributes:
-                text: |
-                  50
-      - class: FieldListItem
+          - class: PlainText
+            attributes:
+              text: |
+                50
+    - class: FieldListItem
+      attributes:
+        fieldname: width
+      children:
+      - class: Block
         attributes:
-          fieldname: width
+          indent: 8
         children:
-        - class: Block
-          attributes:
-            indent: 8
+        - class: Paragraph
           children:
-          - class: Paragraph
-            children:
-            - class: PlainText
-              attributes:
-                text: |
-                  100
-- class: Directive
-  attributes:
-    directive_arguments: symbol3.png
-    directive_type: image
-    substitution: symbol 3
+          - class: PlainText
+            attributes:
+              text: |
+                100
